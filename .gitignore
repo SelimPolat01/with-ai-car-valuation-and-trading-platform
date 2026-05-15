@@ -63,3 +63,6 @@ logs
 # --- OS Specific ---
 .DS_Store
 Thumbs.db
+
+pytorch-model-backend/.venv/
+**/node_modules/

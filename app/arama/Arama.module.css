@@ -1,0 +1,71 @@
+.div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+}
+
+.listWrapper {
+  width: 1055px;
+  margin: 0 0 2rem 0;
+}
+
+.searchTextDiv {
+  width: 1055px;
+}
+
+.filteredAdvertDiv {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  overflow: hidden;
+}
+
+.listHeader {
+  display: grid;
+  grid-template-columns: 135px 1fr 100px 100px 100px;
+  justify-content: center;
+  align-items: center;
+  background-color: beige;
+  min-height: 35px;
+  gap: 2px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.listHeader span {
+  text-align: center;
+  font-weight: bolder;
+}
+
+.listItem {
+  display: grid;
+  grid-template-columns: 135px 1fr 100px 100px 100px;
+  align-items: center;
+  padding: 8px;
+  min-height: 100px;
+  background-color: rgb(233, 218, 244);
+}
+
+.listItem span {
+  padding: 0 4px;
+  text-align: center;
+}
+
+.title {
+  color: rgb(72, 144, 216);
+}
+
+.price {
+  color: darkcyan;
+}
+
+.title:hover {
+  text-decoration: underline;
+}
+
+.img {
+  width: 135px;
+  height: 100px;
+  border-radius: 8px;
+}

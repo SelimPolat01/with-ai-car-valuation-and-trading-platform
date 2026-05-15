@@ -1,0 +1,17 @@
+.li {
+  width: 150px;
+  list-style-type: none;
+  height: 25px;
+}
+
+.button {
+  color: rgb(72, 144, 216);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.button:hover {
+  text-decoration: underline;
+}

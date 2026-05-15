@@ -1,0 +1,43 @@
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(100px, 150px));
+  grid-template-rows: auto auto;
+  gap: 30px;
+  border-radius: 20px;
+}
+
+.brandWrapper {
+  grid-column: span 2;
+}
+
+.selected {
+  color: black;
+  font-size: 15px;
+  font-weight: bold;
+  border: 1px solid #ccc;
+}
+
+.boxShadow {
+  box-shadow: 0 0 15px #acacac;
+  border-radius: 8px;
+}
+
+.button {
+  border-radius: 15px;
+  background-color: #ff6b6b;
+  color: white;
+  grid-column: span 2;
+  width: 100%;
+  border: 5px solid #ff6b6b;
+  height: 60px;
+  font-size: 25px;
+  transition: background 0.5s ease, color 0.5s ease;
+  margin: 0 0 1rem 0;
+  font-weight: bolder;
+}
+
+.button:hover {
+  background: white;
+  color: #ff6b6b;
+  cursor: pointer;
+}

@@ -1,0 +1,194 @@
+.advertDiv {
+  display: flex;
+  justify-content: center;
+  min-height: 90vh;
+}
+
+.advertDiv h2 {
+  margin: 0;
+}
+
+.advertInfoDiv {
+  width: 1050px;
+}
+
+.titleFavoriteDiv {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  margin: 0 0 1rem 0;
+}
+
+.advertInfoWrapper1 {
+  display: flex;
+  gap: 1rem;
+  margin: 0 0 1rem 0;
+  align-items: flex-start;
+}
+
+.advertInfoWrapper2 {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+}
+
+.imgDiv {
+  width: 480px;
+  height: 368px;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.ul {
+  width: 320px;
+  margin: 0;
+  padding: 0;
+}
+
+.li {
+  list-style: none;
+  padding: 0 5px;
+  margin: 0 0 3.1px 0;
+}
+
+.strong {
+  width: 120px;
+  display: inline-flex;
+  padding: 0 10px 0 0;
+}
+
+.button {
+  color: darkblue;
+}
+
+.userInfoDiv {
+  width: 18rem;
+  background-color: beige;
+  border-radius: 8px;
+  height: auto;
+}
+
+.userInfoWrapper {
+  padding: 1rem;
+}
+
+.userName {
+  margin: 0;
+}
+
+.userCreatedAt {
+  color: purple;
+  padding: 0;
+  font-size: 13px;
+  margin: 8px 0 0 0;
+}
+
+.userTelWrapper {
+  display: flex;
+  padding: 12px 1rem;
+  background-color: white;
+  justify-content: space-between;
+  margin: 1rem 0 1rem 0;
+  border-radius: 8px;
+}
+
+.userTelWrapper strong {
+  font-weight: normal;
+}
+
+.userTelWrapper span {
+  font-weight: bold;
+}
+
+.messageLink {
+  display: flex;
+  justify-content: center;
+}
+
+.messageLink a {
+  font-family: "Oswald", sans-serif;
+  color: rgb(72, 144, 216);
+}
+
+.messageLink a:hover {
+  text-decoration: underline;
+}
+
+.descriptionTextDiv {
+  cursor: pointer;
+  background-color: beige;
+  padding: 8px 10px;
+  border: 1px solid beige;
+  font-weight: bold;
+}
+
+.descriptionDiv {
+  border: 1px solid beige;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.descriptionWrapper {
+  padding: 1rem;
+}
+
+.description {
+  margin: 0;
+  padding: 0 0 10px 0;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+.fullBorderRadius {
+  border-radius: 8px;
+}
+
+.semiBorderRadius {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.price {
+  font-weight: bold;
+  color: rgb(0, 51, 153);
+}
+
+.advertNo {
+  color: red;
+}
+
+.userNameCreatedDiv {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.userNameCreatedWrapper {
+  width: 150px;
+}
+
+.userPicDiv {
+  width: 60px;
+  height: 60px;
+}
+
+.userNameCreatedDiv img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.input {
+  width: 218px;
+  height: 30px;
+  border-radius: 8px;
+  border: none;
+  outline: whitesmoke;
+  font-family: "Oswald", sans-serif;
+  overflow-y: auto;
+  padding: 0 8px;
+}

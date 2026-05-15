@@ -1,0 +1,210 @@
+.main {
+  background: linear-gradient(
+    to bottom right,
+    #ffffffe6,
+    rgba(64, 224, 208, 0.8)
+  );
+}
+
+.form input {
+  border-radius: 8px;
+  text-indent: 3px;
+  height: 40px;
+  font-family: "Oswald", sans-serif;
+  font-style: normal;
+  border: 1px solid #ccc;
+}
+
+.form input:focus {
+  box-shadow: 0 0 15px #acacac;
+}
+
+.form input::placeholder {
+  color: #a8a8a8;
+}
+
+.button {
+  border-radius: 15px;
+  background-color: #ff6b6b;
+  color: white;
+  grid-column: span 2;
+  width: 100%;
+  border: 5px solid #ff6b6b;
+  height: 60px;
+  font-size: 25px;
+  transition: background 0.5s ease, color 0.5s ease;
+  margin: 0 0 1rem 0;
+  font-weight: bolder;
+}
+
+.button:hover {
+  background: white;
+  color: #ff6b6b;
+  cursor: pointer;
+}
+
+.title h1 {
+  margin: 0;
+  padding: 0;
+  font-size: 30px;
+  font-family: "Oswald", sans-serif;
+  font-weight: bolder;
+  font-style: normal;
+}
+
+.flex hr {
+  border: none;
+  height: 1px;
+  background-color: black;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 30%;
+  top: 17%;
+}
+
+.flexContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.flexContainer1 {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  align-items: center;
+}
+
+.flexContainer2 {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 150px 150px;
+  grid-template-rows: auto auto;
+  gap: 30px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.kmInput {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.kmInput:focus {
+  box-shadow: 0 0 15px #acacac;
+  border-radius: 8px;
+}
+
+.title {
+  margin-bottom: 20px;
+}
+
+.bodyTypeWrapper {
+  grid-column: span 2;
+}
+
+.carLogo {
+  margin-bottom: 20px;
+  transition: transform 0.5s ease;
+}
+
+.carLogo:hover {
+  transform: scale(1.275);
+  cursor: zoom-in;
+}
+
+.carImg {
+  transition: transform 0.5s ease;
+  animation: carImgAnimate 1s ease;
+}
+
+.carImg:hover {
+  transform: scale(1.2);
+  transform-origin: center center;
+  cursor: zoom-in;
+}
+
+@keyframes carImgAnimate {
+  0% {
+    transform: translateY(40px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.carYear {
+  padding: 0;
+  margin: 0;
+  color: #303030;
+  font-family: "Oswald", sans-serif;
+  font-weight: bolder;
+  font-style: normal;
+  font-size: 18px;
+  opacity: 0;
+  transition: transform 1s ease, opacity 1s ease;
+}
+
+.flexContainer1:hover .carYear {
+  opacity: 1;
+  transform: translateY(50px);
+}
+
+.volkswagenLogo {
+  width: 50px;
+  height: auto;
+  margin-left: 10px;
+}
+
+.fordLogo {
+  width: 90px;
+  height: 40px;
+}
+
+.toggLogo {
+  width: 100px;
+  height: 120px;
+}
+
+.mercedesLogo {
+  width: 58px;
+  height: auto;
+}
+
+.audiLogo {
+  width: 75px;
+  height: 45px;
+}
+
+.renaultLogo {
+  width: 70px;
+  height: auto;
+}
+
+.selected {
+  color: black;
+  font-size: 15px;
+  font-weight: bold;
+  border: 1px solid #ccc;
+}
+
+.boxShadow {
+  box-shadow: 0 0 15px #acacac;
+  border-radius: 8px;
+}

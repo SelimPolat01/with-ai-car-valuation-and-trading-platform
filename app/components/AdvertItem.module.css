@@ -1,0 +1,154 @@
+.advertWrapper {
+  background-color: white;
+  border-radius: 8px;
+}
+
+.advert {
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.5s ease-out;
+  display: inline-block;
+  overflow: hidden;
+  background: radial-gradient(circle at top left, rgb(153, 103, 103), black);
+  position: relative;
+  border-radius: 8px;
+}
+
+.advert:hover {
+  transform: scaleY(1.03) scaleX(1.03);
+  box-shadow: 0 0 10px 0 gray;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0.5;
+  transition: opacity 0.3s ease-out;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.advert:hover .overlay {
+  opacity: 0;
+}
+
+.imgDiv {
+  position: relative;
+}
+
+.img {
+  width: 220px;
+  height: 150px;
+}
+
+.brandModel,
+.modelYear,
+.price,
+.engineCapacity,
+.city {
+  margin: 0;
+}
+
+.modelYearDiv,
+.priceDiv {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 0.5rem 0;
+}
+
+.modelYearDiv {
+  justify-content: space-between;
+}
+
+.brandModelEngineCapacityDiv {
+  margin: 0 0 0.5rem 0;
+}
+
+.price {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.modelYear,
+.city {
+  font-weight: bold;
+  color: aquamarine;
+}
+
+.brandModel,
+.engineCapacity {
+  color: black;
+}
+
+.city,
+.brandModel,
+.engineCapacity {
+  margin: 0 0 0 0.5rem;
+}
+
+.brandModel,
+.engineCapacity {
+  color: white;
+}
+
+.modelYear,
+.price {
+  margin: 0 0.5rem 0 0;
+}
+
+.deleteAdvertButton {
+  background: url("/images/cancel1.jpg");
+  background-color: white;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  left: 200px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  border-bottom-left-radius: 8px;
+}
+
+.imgDiv:hover .deleteAdvertButton {
+  opacity: 1;
+  box-shadow: 0 0 4px 1px rgba(211, 47, 47, 0.5);
+}
+
+.deleteAdvertButton:hover,
+.editAdvertButton:hover {
+  transform: scale(1.07);
+}
+
+.editAdvertButton {
+  background-color: white;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  border-bottom-right-radius: 8px;
+  color: #fbc02d;
+}
+
+.imgDiv:hover .editAdvertButton {
+  opacity: 1;
+  box-shadow: 0 0 4px 1px rgba(251, 192, 45, 0.5);
+}

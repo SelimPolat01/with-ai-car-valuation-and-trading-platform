@@ -1,0 +1,37 @@
+.dialog {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 10px 25px gray;
+  padding: 20px;
+}
+
+.h3 {
+  margin: 0;
+}
+
+.p {
+  color: gray;
+}
+
+.buttonWrapperDiv {
+  display: flex;
+  gap: 1rem;
+}
+
+.confirmButton {
+  background: radial-gradient(circle, #b71c1c, #d32f2f, #f44336);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+  font-family: "Oswald", sans-serif;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.confirmButton:hover {
+  background: radial-gradient(circle, #c62828, #d32f2f, #ef5350);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  transform: scale(1.05);
+}

@@ -1,0 +1,91 @@
+.advertDiv {
+  display: flex;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 820px;
+  background-color: beige;
+  margin: 0 0 6px 0;
+}
+
+.imageDiv {
+  padding: 0 12px;
+  height: 120px;
+}
+
+.imageDiv img {
+  width: 150px;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.titleBrandModelDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 450px;
+}
+
+.titleBrandModelDiv i {
+  color: #ccc;
+}
+
+.titleBrandModelDiv a {
+  margin: 0;
+  padding: 0;
+}
+
+.titleBrandModelDiv a {
+  color: darkblue;
+}
+
+.titleBrandModelDiv a:hover {
+  text-decoration: underline;
+}
+
+.titleBrandModelDiv p {
+  color: rgb(40, 38, 38);
+  font-weight: normal;
+  margin: 5px 0 0 0;
+}
+
+.priceDiv {
+  display: flex;
+  width: 150px;
+  padding: 0 1rem 0 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.priceDiv p {
+  margin: 0;
+  padding: 0;
+  color: #800080;
+}
+
+.deleteAdvertButtonDiv {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.deleteAdvertButton {
+  background: url("/images/cancel1.jpg");
+  background-color: white;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+}
+
+.advertDiv:hover .deleteAdvertButton {
+  opacity: 1;
+  box-shadow: 0 0 4px 1px rgba(211, 47, 47, 0.5);
+}

@@ -1,0 +1,11 @@
+.rootMain {
+  flex: 1;
+}
+.div {
+  margin: 0 0 2rem 0;
+}
+
+.managementNav {
+  margin: 0 0 1rem 0;
+  padding: 0 0 0 10rem;
+}

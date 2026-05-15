@@ -1,0 +1,167 @@
+.rootMain {
+  flex: 1;
+  background: url("/images/price-offer-bg.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.wrapperDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttonDiv {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  align-items: center;
+}
+
+.svgCircleDiv {
+  position: relative;
+}
+
+.priceOfferText {
+  color: white;
+  margin: 0;
+}
+
+.priceOfferText span {
+  color: bisque;
+}
+
+.button {
+  border-radius: 15px;
+  background-color: rgb(72, 144, 216);
+  color: white;
+  grid-column: span 2;
+  border: 3px solid rgb(72, 144, 216);
+  font-size: 14px;
+  transition: background 0.5s ease, color 0.5s ease;
+  font-weight: bolder;
+  padding: 5px;
+}
+
+.button:hover {
+  background: white;
+  color: rgb(72, 144, 216);
+  cursor: pointer;
+}
+
+.cancelButton {
+  color: #ff6b6b;
+}
+
+.carModel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.carModel h2 {
+  color: #ffb74d;
+}
+
+.validatyDateDiv {
+  display: flex;
+  justify-content: center;
+}
+
+.validatyDate strong {
+  font-weight: normal;
+  color: whitesmoke;
+}
+
+.validatyDate span {
+  color: whitesmoke;
+}
+
+.svgTechParamsWrapper {
+  position: relative;
+}
+
+.svgTechParamsWrapper:hover .techParams {
+  display: block;
+}
+
+.techParams {
+  width: 190px;
+  background-color: whitesmoke;
+  position: absolute;
+  left: 50%;
+  top: 85%;
+  transform: translateX(0%);
+  border-radius: 8px;
+  z-index: 1000;
+  display: none;
+  box-shadow: 0 0 6px #fff;
+}
+
+.techParams ul {
+  padding: 0.5rem;
+  margin: 0;
+}
+
+.techParams li {
+  list-style: none;
+  margin: 0;
+}
+
+.techParams strong {
+  font-weight: bold;
+}
+
+.techParams span {
+  color: purple;
+  margin: 0;
+}
+
+.svgCircleDiv {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.svgPriceParamsWrapper {
+  position: relative;
+  height: 24px;
+}
+
+.svgPriceParamsWrapper:hover .priceParams {
+  display: block;
+}
+
+.priceParams {
+  width: 280px;
+  position: absolute;
+  left: 50%;
+  top: 85%;
+  transform: translateX(0%);
+  border-radius: 8px;
+  background-color: whitesmoke;
+  z-index: 1000;
+  margin: 0;
+  padding: 0;
+  display: none;
+  box-shadow: 0 0 6px #fff;
+}
+
+.priceParams li {
+  padding: 0.5rem;
+  margin: 0;
+  color: purple;
+  list-style: none;
+}
+
+.svg {
+  color: beige;
+}

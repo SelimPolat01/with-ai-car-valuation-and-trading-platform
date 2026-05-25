@@ -1,16 +1,20 @@
 .advertWrapper {
   background-color: white;
   border-radius: 8px;
+  height: 290px;
 }
 
 .advert {
   border-radius: 8px;
-  transition: transform 0.2s ease, box-shadow 0.5s ease-out;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.5s ease-out;
   display: inline-block;
   overflow: hidden;
   background: radial-gradient(circle at top left, rgb(153, 103, 103), black);
   position: relative;
   border-radius: 8px;
+  height: 100%;
 }
 
 .advert:hover {

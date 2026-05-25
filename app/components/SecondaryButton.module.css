@@ -1,0 +1,26 @@
+.button {
+  border-radius: 12px;
+  outline: none;
+  font-size: 20px;
+  width: max-content;
+  height: max-content;
+  background: linear-gradient(
+    105.66deg,
+    #00f4ff 16.76%,
+    #68ffed 46.39%,
+    #9867ff 76.01%
+  );
+  font-family: inherit;
+  color: #150a29;
+  transition: transform 0.25s ease-in;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
+  cursor: pointer;
+  padding: 8px 10px;
+  margin: 0.5rem 0 0 0;
+}
+
+.button:hover {
+  outline: none;
+  transform: scale(1.05);
+}

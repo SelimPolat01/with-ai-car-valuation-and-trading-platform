@@ -1,20 +1,22 @@
 "use client";
 
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import classes from "./FiyatTeklifi.module.css";
 import { animate, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Button from "../components/Button";
+import CancelButton from "../components/CancelButton";
+import SecondaryButton from "../components/SecondaryButton";
 
 export default function PriceOffer() {
+  useCheckAuth();
+
   const [displayPrice, setDisplayPrice] = useState(0);
   const [animationFinished, setAnimationFinished] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
   const prediction = useSelector((state) => state.prediction.prediction);
-  const priceOffer = prediction.price;
-  useCheckAuth();
-  const price = Number(priceOffer);
   const router = useRouter();
   const today = new Date();
   const validatyDate = new Date();
@@ -25,8 +27,10 @@ export default function PriceOffer() {
     day: "numeric",
   });
 
+  const priceOffer = Number(prediction.price);
+
   useEffect(() => {
-    const controls = animate(0, price, {
+    const controls = animate(0, priceOffer, {
       duration: 5,
       ease: "easeOut",
       onUpdate: (value) => setDisplayPrice(value),
@@ -34,7 +38,7 @@ export default function PriceOffer() {
     });
 
     return () => controls.stop();
-  }, [price]);
+  }, [priceOffer]);
 
   function capitalize(text) {
     if (typeof text !== "string") {
@@ -128,7 +132,7 @@ export default function PriceOffer() {
             </motion.div>
           </div>
           {animationFinished && (
-            <div
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeIn" }}
@@ -156,7 +160,7 @@ export default function PriceOffer() {
                   ve adil fiyat teklifini sunuyoruz.
                 </li>
               </ul>
-            </div>
+            </motion.div>
           )}
         </div>
         {animationFinished && (
@@ -181,15 +185,13 @@ export default function PriceOffer() {
           transition={{ duration: 1, ease: "easeIn" }}
           className={classes.buttonDiv}
         >
-          <Button
-            cancelButton
+          <CancelButton
             text="Ana sayfaya dön"
             type="button"
             className={classes.cancelButton}
-          />{" "}
-          <Button
+          />
+          <SecondaryButton
             text="Son detayları gir"
-            className={classes.button}
             type="button"
             onClick={() => router.replace("/ilan-olustur/detaylar")}
           />

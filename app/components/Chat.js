@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
-import Button from "./Button";
 import { useRouter } from "next/navigation";
 import classes from "./Chat.module.css";
+import SecondaryButton from "./SecondaryButton";
 
 export default function Chat({ currentUserId, initialTargetUserId, advertId }) {
   const [advertInfo, setAdvertInfo] = useState({
@@ -43,7 +43,7 @@ export default function Chat({ currentUserId, initialTargetUserId, advertId }) {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         if (response.status === 401) {
@@ -69,7 +69,7 @@ export default function Chat({ currentUserId, initialTargetUserId, advertId }) {
             created_at: msg.created_at
               ? msg.created_at
               : new Date().toISOString(),
-          }))
+          })),
         );
       } catch (err) {
         console.log("Error: " + err);
@@ -93,7 +93,7 @@ export default function Chat({ currentUserId, initialTargetUserId, advertId }) {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         if (response.status === 401) {
@@ -224,7 +224,7 @@ export default function Chat({ currentUserId, initialTargetUserId, advertId }) {
               }
             }}
           />
-          <Button
+          <SecondaryButton
             className={classes.button}
             text="Gönder"
             type="button"

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import classes from "./Dropdown.module.css";
-import Button from "./Button";
+import Button from "./PrimaryButton";
+import PrimaryButton from "./PrimaryButton";
 
 export default function Dropdown() {
   const [value, setValue] = useState({
@@ -54,10 +55,10 @@ export default function Dropdown() {
     }
     router.push(
       `/ilan-olustur/${encodeURIComponent(
-        value.brandValue
-      ).toLocaleLowerCase()}/${encodeURIComponent(
-        value.modelValue
-      ).toLowerCase()}/${value.modelYearValue}`
+        value.brandValue,
+      ).toLowerCase()}/${encodeURIComponent(
+        value.modelValue,
+      ).toLowerCase()}/${value.modelYearValue}`,
     );
   }
 
@@ -65,7 +66,7 @@ export default function Dropdown() {
     async function fetchBrands() {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/cars/brands`
+          `${process.env.NEXT_PUBLIC_URL}/cars/brands`,
         );
 
         if (!response.ok) {
@@ -84,7 +85,7 @@ export default function Dropdown() {
   async function fetchModels(brand) {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/cars/models/${brand}`
+        `${process.env.NEXT_PUBLIC_URL}/cars/models/${brand}`,
       );
       if (!response.ok) {
         throw new Error("Modeller getirilemedi!");
@@ -99,7 +100,7 @@ export default function Dropdown() {
   async function fetchModelYears(brand, model) {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/cars/model_years/${brand}/${model}`
+        `${process.env.NEXT_PUBLIC_URL}/cars/model_years/${brand}/${model}`,
       );
       if (!response.ok) {
         throw new Error("Yıllar getirilemedi!");
@@ -142,9 +143,10 @@ export default function Dropdown() {
         word
           .split("-")
           .map(
-            (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+            (part) =>
+              part.charAt(0).toUpperCase() + part.slice(1).toLowerCase(),
           )
-          .join("-")
+          .join("-"),
       )
       .join(" ");
   }
@@ -219,7 +221,7 @@ export default function Dropdown() {
 
                   fetchModelYears(
                     encodeURIComponent(value.brandValue.toLowerCase()),
-                    encodeURIComponent(modelOption.model.toLowerCase())
+                    encodeURIComponent(modelOption.model.toLowerCase()),
                   );
                 }}
               >
@@ -267,7 +269,7 @@ export default function Dropdown() {
         )}
         <input type="hidden" name="modelYear" value={value.modelYearValue} />
       </div>
-      <Button className={classes.button} type="submit" text="Hemen Sat" />
+      <PrimaryButton type="submit" text="Hemen Sat" />
     </form>
   );
 }

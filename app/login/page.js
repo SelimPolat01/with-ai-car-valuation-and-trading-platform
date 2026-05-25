@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Input from "@/app/components/Input";
 import classes from "./Login.module.css";
-import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/store/authSlice";
+import SecondaryButton from "../components/SecondaryButton";
 
 export default function Login() {
   const [input, setInput] = useState({
@@ -151,8 +151,7 @@ export default function Login() {
           <p className="error">Parola en az 6 karakterden oluşmalı.</p>
         )}
         {error === "Girilen parola hatalı." && <p className="error">{error}</p>}
-        <Button
-          className={classes.button}
+        <SecondaryButton
           type="submit"
           text={loading ? "Yükleniyor..." : "Giriş Yap"}
         />

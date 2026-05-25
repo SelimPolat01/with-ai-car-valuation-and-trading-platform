@@ -39,26 +39,13 @@
   color: bisque;
 }
 
-.button {
-  border-radius: 15px;
-  background-color: rgb(72, 144, 216);
-  color: white;
-  grid-column: span 2;
-  border: 3px solid rgb(72, 144, 216);
-  font-size: 14px;
-  transition: background 0.5s ease, color 0.5s ease;
-  font-weight: bolder;
-  padding: 5px;
-}
-
-.button:hover {
-  background: white;
-  color: rgb(72, 144, 216);
-  cursor: pointer;
-}
-
 .cancelButton {
-  color: #ff6b6b;
+  color: #ff6b6b !important ;
+  border: none;
+}
+
+.cancelButton:hover {
+  text-decoration: underline;
 }
 
 .carModel {

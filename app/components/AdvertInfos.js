@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Button from "./Button";
+import Button from "./PrimaryButton";
 import { toggleFavorite } from "@/store/advertsSlice";
 import { useParams, useRouter } from "next/navigation";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
@@ -32,7 +32,7 @@ export default function AdvertInfos() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         if (response.status === 401) {
@@ -74,7 +74,7 @@ export default function AdvertInfos() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       if (response.status === 401) {
@@ -96,7 +96,7 @@ export default function AdvertInfos() {
         toggleFavorite({
           advert,
           isFavorite: data.isFavorite,
-        })
+        }),
       );
     } catch (err) {
       console.log("Error: " + err);
@@ -126,9 +126,10 @@ export default function AdvertInfos() {
         word
           .split("-")
           .map(
-            (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+            (part) =>
+              part.charAt(0).toUpperCase() + part.slice(1).toLowerCase(),
           )
-          .join("-")
+          .join("-"),
       )
       .join(" ");
   }
@@ -190,7 +191,7 @@ export default function AdvertInfos() {
           id: 7,
           label: "Model",
           value: `${formatBrandModel(advert.model)} ${capitalize(
-            advert.body_type
+            advert.body_type,
           )} ${engineCapacityFormat(advert.engine_capacity)}`,
         },
         { id: 8, label: "Yıl", value: advert.model_year },
@@ -280,7 +281,7 @@ export default function AdvertInfos() {
                         {
                           year: "numeric",
                           month: "long",
-                        }
+                        },
                       )}
                     </span>
                   </p>

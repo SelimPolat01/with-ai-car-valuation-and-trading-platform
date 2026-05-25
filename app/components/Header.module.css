@@ -1,8 +1,13 @@
+.header {
+  margin: 0 0 0.5rem 0;
+}
+
 .nav {
   margin: 0 4.5rem 0 0;
   display: flex;
   justify-content: space-between;
-  height: 50px;
+  height: 35px;
+  align-items: center;
 }
 
 .ul {
@@ -47,7 +52,8 @@
 .registerLink i:hover,
 .loginLink i:hover,
 .allAdvertsLink i:hover,
-.accountLink i:hover {
+.accountLink i:hover,
+.icon:hover {
   transform: scale(1.2);
 }
 
@@ -74,13 +80,9 @@
   display: block;
 }
 
-.accountMenu li {
-  list-style: none;
-}
-
 .accountMenu a {
   width: 120px;
-  display: inline-block;
+  display: flex;
   color: black;
   transition: color 0.15s ease-in;
   padding: 7px;
@@ -113,10 +115,7 @@
   height: 16px;
 }
 
-.logoutLink i,
-.myAdvertsLink i,
-.favoriteAdvertsLink i,
-.juniorAccountLink i {
+.icon {
   color: black;
   border-radius: 8px;
   transition: transform 0.5s ease;
@@ -124,4 +123,5 @@
   font-weight: bold;
   border: none;
   font-size: 16px;
+  margin: 0.2rem 0 0 0;
 }

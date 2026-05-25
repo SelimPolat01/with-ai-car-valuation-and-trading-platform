@@ -23,7 +23,7 @@ export default function AllAdverts() {
   const user = useSelector((state) => state.auth.user);
   const filteredAdverts = useSelector((state) => state.adverts.filteredAdverts);
   const uniqueBrands = Array.from(
-    new Set(allAdverts.map((advert) => advert.brand))
+    new Set(allAdverts.map((advert) => advert.brand)),
   );
   useCheckAuth();
 
@@ -75,7 +75,7 @@ export default function AllAdverts() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       if (response.status === 401) {
@@ -91,7 +91,7 @@ export default function AllAdverts() {
       }
 
       dispatch(
-        setAdverts(allAdverts.filter((prevAdvert) => prevAdvert.id !== id))
+        setAdverts(allAdverts.filter((prevAdvert) => prevAdvert.id !== id)),
       );
     } catch (err) {
       console.log("Error: " + err);
@@ -115,7 +115,8 @@ export default function AllAdverts() {
       <ConfirmDialog
         ref={deleteDialogRef}
         onConfirm={() => advertDeleteHandler(selectedAdvertId)}
-        text="Bu ilanı yayından kaldırmak"
+        text="Bunu yapmak istediğinizden emin misiniz?"
+        title="Kaldır"
       />
       <div className={classes.filterDiv}>
         <div className={classes.filterTextDiv}>

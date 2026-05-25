@@ -2,13 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import classes from "./AiCarDetector.module.css";
-import Button from "../components/PrimaryButton";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import SecondaryButton from "./SecondaryButton";
+import { Camera } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { setPrediction as setPredictionAction } from "@/store/predictionSlice";
 
-export default function AiCarDetectora() {
+export default function AiCarDetector() {
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
+  const predictionCarValues = useSelector(
+    (state) => state.prediction.prediction,
+  );
+  const dispatch = useDispatch();
   const [prediction, setPrediction] = useState({
     prediction: [],
     predictionPercent: null,
@@ -40,6 +47,19 @@ export default function AiCarDetectora() {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
+      setError(null);
+      setPrediction({
+        prediction: [],
+        predictionPercent: null,
+      });
+      setCar({
+        brand: "",
+        model: "",
+        bodyType: "",
+        yearInterval: "",
+        selectedYear: null,
+      });
+      setShowYearInterval(false);
       if (preview) URL.revokeObjectURL(preview);
       setPreview(URL.createObjectURL(selectedFile));
     }
@@ -51,10 +71,14 @@ export default function AiCarDetectora() {
     formData.append("file", file);
     try {
       setLoading(true);
-      const response = await fetch("http://127.0.0.1:8000/upload", {
-        method: "POST",
-        body: formData,
-      });
+      setError(null);
+      const response = await fetch(
+        "http://127.0.0.1:8000/car-detection-upload",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       if (response.status === 401) {
         localStorage.removeItem("token");
@@ -112,8 +136,6 @@ export default function AiCarDetectora() {
 
   const yearsArray = generateYearList();
 
-  if (error) return <p>{error}</p>;
-
   return (
     <div className={classes.div}>
       <div className={classes.photoDiv}>
@@ -125,12 +147,15 @@ export default function AiCarDetectora() {
           onChange={handleChange}
         />
         <div className={classes.photoContainer} onClick={handleClick}>
-          <span
-            onClick={(event) => event.stopPropagation()}
-            className="customUpload"
-          >
-            Fotoğraf Yükle 📷
-          </span>
+          <div className={classes.photoUploadTextContainer}>
+            <span
+              onClick={(event) => event.stopPropagation()}
+              className={classes.customUpload}
+            >
+              Fotoğraf Yükle
+            </span>
+            <Camera size={32} stroke="url(#gold-stroke)" />
+          </div>
           {preview ? (
             <Image
               width={300}
@@ -143,14 +168,21 @@ export default function AiCarDetectora() {
             <div className={classes.emptyBox}></div>
           )}
         </div>
-        <Button
+        <SecondaryButton
           type="button"
-          title="Gönder"
           text="Gönder"
-          className={classes.button}
           onClick={handleUpload}
-          disabled={loading}
+          disabled={loading || !file}
+          className={classes.uploadButton}
         />
+        {error && (
+          <p
+            className={classes.errorText}
+            style={{ color: "red", marginTop: "10px" }}
+          >
+            {error}
+          </p>
+        )}
       </div>
 
       <div>
@@ -192,18 +224,35 @@ export default function AiCarDetectora() {
             </div>
 
             <button
-              onClick={() =>
+              onClick={() => {
+                dispatch(
+                  setPredictionAction({
+                    brand: car.brand.toLowerCase(),
+                    model: car.model.toLowerCase(),
+                    bodyType: car.bodyType.toLowerCase(),
+                  }),
+                );
                 router.push(
-                  `/ilan-olustur/${car.brand}/${car.model}/${car.selectedYear}`,
-                )
-              }
+                  `/ilan-olustur/${car.brand.toLowerCase()}/${car.model.toLowerCase()}/${car.selectedYear}?fromImage=true`,
+                );
+              }}
               className={`${classes.confirmButton} ${classes.primary}`}
+              disabled={!car.selectedYear}
             >
               Evet, aracımı doğrula
             </button>
 
             <button
-              onClick={() => router.push("/")}
+              onClick={() => {
+                dispatch(
+                  setPredictionAction({
+                    brand: "",
+                    model: "",
+                    bodyType: "",
+                  }),
+                );
+                router.push("?mode=form");
+              }}
               className={`${classes.confirmButton} ${classes.secondary}`}
             >
               Bilgileri elle düzenle

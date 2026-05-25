@@ -7,9 +7,9 @@ export const metadata = {
 
 export default function CarDetailLayout({ children }) {
   return (
-    <>
+    <div className="bgGetPriceOffer">
       <Header className="blackColorLink" />
       <main className="rootMain">{children}</main>
-    </>
+    </div>
   );
 }

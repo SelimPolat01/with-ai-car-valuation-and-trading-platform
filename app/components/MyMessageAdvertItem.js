@@ -5,7 +5,7 @@ import classes from "./MyMessageAdvertItem.module.css";
 import Chat from "./Chat";
 import { useSelector } from "react-redux";
 import { useState } from "react";
-import Button from "./Button";
+import CancelButton from "./CancelButton";
 
 export default function MyMessageAdvertItem({ advert }) {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -55,7 +55,7 @@ export default function MyMessageAdvertItem({ advert }) {
           <p>{Number(advert.price).toLocaleString("tr-TR")} ₺</p>
         </div>
         <div className={classes.chatToggleButtonDiv}>
-          <Button
+          <CancelButton
             type="button"
             onClick={() => setIsChatOpen((prev) => !prev)}
             text={isChatOpen ? "Mesajları Kapat" : "Mesajları Aç"}

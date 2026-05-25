@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 import Input from "@/app/components/Input";
 import classes from "./Register.module.css";
-import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/store/authSlice";
+import SecondaryButton from "../components/SecondaryButton";
 
 export default function Register() {
   const router = useRouter();
@@ -104,7 +104,7 @@ export default function Register() {
             surname: input.surname.value,
             tel_number: input.tel_number.value,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -210,8 +210,7 @@ export default function Register() {
           <p className="error">Lütfen telefon numaranı gir.</p>
         )}
         {error && <p className="error">{error}</p>}
-        <Button
-          className={classes.button}
+        <SecondaryButton
           type="submit"
           text={isLoading ? "Yükleniyor..." : "Kayıt ol"}
         />

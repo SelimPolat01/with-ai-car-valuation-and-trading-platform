@@ -11,7 +11,6 @@ const initialState = {
     transmission: "",
     kilometer: "",
     fuelType: "",
-    changedPartCount: "",
     price: "",
   },
 };

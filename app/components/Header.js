@@ -7,6 +7,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/store/authSlice";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
+import {
+  FolderHeart,
+  Home,
+  LayoutGrid,
+  LogIn,
+  LogOut,
+  Tags,
+  User,
+  UserPlus,
+} from "lucide-react";
 
 export default function Header({ className }) {
   const path = usePathname();
@@ -25,14 +35,26 @@ export default function Header({ className }) {
     notLoginlinks: [
       {
         href: "/register",
-        label: <i className="bi bi-person-plus"></i>,
+        label: (
+          <UserPlus
+            className={classes.icon}
+            size={30}
+            stroke="url(#magic-gradient)"
+          />
+        ),
         hideOn: "/register",
         className: "registerLink",
         title: "Kayıt Ol",
       },
       {
         href: "/login",
-        label: <i className="bi bi-box-arrow-in-right"></i>,
+        label: (
+          <LogIn
+            className={classes.icon}
+            size={30}
+            stroke="url(#magic-gradient)"
+          />
+        ),
         hideOn: "/login",
         className: "loginLink",
         title: "Giriş Yap",
@@ -41,7 +63,13 @@ export default function Header({ className }) {
     loginLinks: [
       {
         href: "/",
-        label: <i className="bi bi-house"></i>,
+        label: (
+          <Home
+            className={classes.icon}
+            size={30}
+            stroke="url(#magic-gradient)"
+          />
+        ),
         hideOn: "/",
         className: "homeLink",
         title: "Anasayfa",
@@ -50,7 +78,7 @@ export default function Header({ className }) {
   };
 
   return (
-    <header>
+    <header className={classes.header}>
       <nav className={classes.nav}>
         <Link href="/">
           <Image
@@ -61,7 +89,7 @@ export default function Header({ className }) {
             height={60}
             priority
           />
-        </Link>{" "}
+        </Link>
         <ul className={classes.ul}>
           {isLogin && <SearchBar />}
           {links.notLoginlinks
@@ -103,7 +131,11 @@ export default function Header({ className }) {
                 title="Tüm İlanlar"
                 href="/tum-ilanlar"
               >
-                <i className="bi bi-card-list"></i>
+                <LayoutGrid
+                  className={classes.icon}
+                  size={30}
+                  stroke="url(#magic-gradient)"
+                />
               </Link>
               <li className={classes.account}>
                 <Link
@@ -113,7 +145,11 @@ export default function Header({ className }) {
                   title="Hesabım"
                   href="/hesabim"
                 >
-                  <i className="bi bi-person"></i>
+                  <User
+                    className={classes.icon}
+                    size={30}
+                    stroke="url(#magic-gradient)"
+                  />
                 </Link>
                 <ul className={classes.accountMenu}>
                   <Link
@@ -121,21 +157,36 @@ export default function Header({ className }) {
                     className={classes.myAdvertsLink}
                     title="İlanlarım"
                   >
-                    <i className="bi bi-megaphone"></i> İlanlarım
+                    <Tags
+                      className={classes.juniorIcon}
+                      size={20}
+                      stroke="url(#magic-gradient)"
+                    />
+                    İlanlarım
                   </Link>
                   <Link
                     href="/favori-ilanlar"
                     className={classes.favoriteAdvertsLink}
                     title="Favori İlanlarım"
                   >
-                    <i className="bi bi-heart-fill"></i> Favorilerim
+                    <FolderHeart
+                      className={classes.juniorIcon}
+                      size={20}
+                      stroke="url(#magic-gradient)"
+                    />
+                    Favorilerim
                   </Link>
                   <Link
                     href="/hesabim"
                     className={classes.juniorAccountLink}
                     title="Hesabım"
                   >
-                    <i className="bi bi-person"></i> Hesabım
+                    <User
+                      className={classes.juniorIcon}
+                      size={20}
+                      stroke="url(#magic-gradient)"
+                    />
+                    Hesabım
                   </Link>
                   <Link
                     href="/login"
@@ -143,7 +194,12 @@ export default function Header({ className }) {
                     className={classes.favoriteAdvertsLink}
                     title="Çıkış Yap"
                   >
-                    <i className="bi bi-box-arrow-right"></i> Çıkış Yap
+                    <LogOut
+                      className={classes.juniorIcon}
+                      size={20}
+                      stroke="url(#magic-gradient)"
+                    />
+                    Çıkış Yap
                   </Link>
                 </ul>
               </li>

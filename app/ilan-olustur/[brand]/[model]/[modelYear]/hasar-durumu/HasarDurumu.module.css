@@ -1,0 +1,146 @@
+.container {
+  max-width: 500px;
+  margin: 5rem auto;
+  padding: 0 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #a0aec0;
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  width: 224px;
+  height: 224px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  border-color: #4a90e2;
+  background-color: #eff6ff;
+}
+
+.icon {
+  width: 60%;
+  height: 60%;
+  margin-bottom: 10px;
+  pointer-events: none;
+  transition: filter 0.3s;
+}
+
+.card:hover .icon {
+  filter: grayscale(0) brightness(0.5);
+}
+
+.cardError {
+  border-color: #e53e3e !important;
+  background-color: #fff5f5;
+}
+
+.imagePreview {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.removeBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.removeBtn:hover {
+  background: rgb(220, 38, 38);
+}
+
+.label {
+  color: #718096;
+  font-weight: 500;
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.fileInput {
+  display: none;
+}
+
+.overlayMask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(254, 242, 242, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 10;
+}
+
+.targetCross {
+  font-size: 2rem;
+  color: #e53e3e;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 5px;
+  animation: pulse 1.5s infinite;
+}
+
+.overlayMessage {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #dc2626;
+  margin: 10px 0;
+  width: 100%;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.clickToTry {
+  font-size: 0.75rem;
+  color: #718096;
+  text-decoration: underline;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+}

@@ -1,0 +1,27 @@
+.button {
+  background: none;
+  font-family: inherit;
+  outline: none;
+  font-size: 16px;
+  color: #f8f8f8;
+  transition: transform 0.25s ease-in;
+  padding: 0;
+}
+
+.button:hover {
+  cursor: pointer;
+  outline: none;
+}
+
+.button:active {
+  transform: scale(0.98);
+  background-color: #edf2f7;
+}
+
+.button:disabled {
+  background-color: #edf2f7;
+  color: #a0aec0;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+  transform: none;
+}

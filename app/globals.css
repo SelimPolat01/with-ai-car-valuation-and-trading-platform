@@ -3,9 +3,19 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: "Lora", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol", "Noto Color Emoji";
+  font-family:
+    "Lora",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji";
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -84,9 +94,19 @@ a {
   margin: 0 0 0.1rem 0;
   padding: 0;
   width: 100%;
-  font-family: "Lora", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol", "Noto Color Emoji";
+  font-family:
+    "Lora",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji";
 }
 
 .bi.bi-person-plus,
@@ -210,9 +230,19 @@ a {
   font-weight: 300;
   line-height: 1.1;
   display: block;
-  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family:
+    "Open Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji";
 }
 
 .pageHeading h1 {
@@ -268,15 +298,20 @@ a {
   font-size: 17.5px;
 }
 
-.bgHome {
+.bgForm {
   background-image: url("/images/bg.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
+.bgAiCarDetector {
+  background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
+}
+
 .bgLogin {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url("/images/login.jpg");
   background-size: cover;
   background-position: center;
@@ -286,7 +321,8 @@ a {
 }
 
 .bgRegister {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url("/images/register.jpg");
   background-size: cover;
   background-position: center;
@@ -297,13 +333,8 @@ a {
 
 .bgGetPriceOffer {
   position: relative;
-
   height: 100vh;
-  background: linear-gradient(
-    to bottom right,
-    rgba(255, 255, 255, 0.9),
-    rgba(64, 224, 208, 0.8)
-  );
+  background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
 }
 
 .bgAdverts {

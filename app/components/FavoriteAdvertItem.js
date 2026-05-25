@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Button from "./Button";
+import Button from "./PrimaryButton";
 import classes from "./FavoriteAdvertItem.module.css";
 import { motion } from "framer-motion";
 

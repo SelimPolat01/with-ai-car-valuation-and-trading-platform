@@ -31,7 +31,7 @@ export default function MyAdverts() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         if (response.status === 401) {
@@ -71,7 +71,7 @@ export default function MyAdverts() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       if (response.status === 401) {
@@ -87,7 +87,7 @@ export default function MyAdverts() {
       }
 
       setMyAdverts((prevAdverts) =>
-        prevAdverts.filter((prevAdvert) => prevAdvert.id !== id)
+        prevAdverts.filter((prevAdvert) => prevAdvert.id !== id),
       );
     } catch (err) {
       console.log("Error: " + err);
@@ -119,7 +119,8 @@ export default function MyAdverts() {
       <ConfirmDialog
         ref={deleteDialogRef}
         onConfirm={() => advertDeleteHandler(selectedAdvertId)}
-        text="Bu ilanı yayından kaldırmak"
+        text="Bunu yapmak istediğinizden emin misiniz?"
+        title="Kaldır"
       />
       <ConfirmDialog
         ref={editDialogRef}

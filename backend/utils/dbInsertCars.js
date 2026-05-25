@@ -1,10 +1,12 @@
+import "dotenv/config";
+
 import { fetchCarData } from "../lib/api.js";
 import { db } from "../lib/db.js";
 
 export async function dbInsertCars() {
   const allCars = [];
   try {
-    for (let page = 1; page <= 1; page++) {
+    for (let page = 16; page <= 16; page++) {
       const carsFromAPI = await fetchCarData(page);
       console.log(carsFromAPI);
       allCars.push(...carsFromAPI);
@@ -26,7 +28,7 @@ export async function dbInsertCars() {
           car.kilometer,
           car.fuelType,
           car.price,
-        ]
+        ],
       );
     }
 
@@ -35,3 +37,5 @@ export async function dbInsertCars() {
     console.error("API verisi alınamadı veya DB hatası oluştu:", err);
   }
 }
+
+dbInsertCars();

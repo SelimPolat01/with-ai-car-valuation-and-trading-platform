@@ -23,26 +23,6 @@
   color: #a8a8a8;
 }
 
-.button {
-  border-radius: 15px;
-  background-color: #ff6b6b;
-  color: white;
-  grid-column: span 2;
-  width: 100%;
-  border: 5px solid #ff6b6b;
-  height: 60px;
-  font-size: 25px;
-  transition: background 0.5s ease, color 0.5s ease;
-  margin: 0 0 1rem 0;
-  font-weight: bolder;
-}
-
-.button:hover {
-  background: white;
-  color: #ff6b6b;
-  cursor: pointer;
-}
-
 .title h1 {
   margin: 0;
   padding: 0;
@@ -115,7 +95,7 @@
   margin-bottom: 20px;
 }
 
-.bodyTypeWrapper {
+.engineCapacityWrapper {
   grid-column: span 2;
 }
 
@@ -158,7 +138,9 @@
   font-style: normal;
   font-size: 18px;
   opacity: 0;
-  transition: transform 1s ease, opacity 1s ease;
+  transition:
+    transform 1s ease,
+    opacity 1s ease;
 }
 
 .flexContainer1:hover .carYear {

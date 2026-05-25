@@ -11,6 +11,10 @@ bin/
 lib/
 lib64/
 
+*.pt
+*.pth
+*.onnx
+
 # --- Python / Machine Learning ---
 __pycache__/
 **/__pycache__/

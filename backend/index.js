@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
       try {
         const result = await db.query(
           "INSERT INTO messages (user_id, receiver_id, advert_id, message) VALUES ($1, $2, $3, $4) RETURNING *",
-          [senderId, receiverId, advertId, message]
+          [senderId, receiverId, advertId, message],
         );
         const savedMessage = result.rows[0];
         const receiverSocketId = onlineUsers.get(receiverId.toString());
@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
       } catch (err) {
         console.log(err);
       }
-    }
+    },
   );
 
   socket.on("disconnect", () => {
@@ -69,7 +69,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 app.use(express.json());
@@ -77,8 +77,6 @@ app.use("/api", authRoutes);
 app.use("/cars", carsRoutes);
 app.use("/adverts", advertsRoutes);
 app.use("/predict", predictRoutes);
-
-// await dbInsertCars();
 
 server.listen(PORT, () => {
   console.log(`Server ve Socket.IO ${PORT} portunda çalışıyor.`);

@@ -1,5 +1,4 @@
 import { useDispatch } from "react-redux";
-import Button from "./Button";
 import classes from "./FilterBrand.module.css";
 import { setFilterAdverts } from "@/store/advertsSlice";
 
@@ -18,12 +17,12 @@ export default function FilterBrand({ brand }) {
   }
   return (
     <li className={classes.li}>
-      <Button
+      <button
         className={classes.button}
         onClick={() => filterBrandHandler(brand)}
       >
         {capitalize(decodeURIComponent(brand))}
-      </Button>
+      </button>
     </li>
   );
 }

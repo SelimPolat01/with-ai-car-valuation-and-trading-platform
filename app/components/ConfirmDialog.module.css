@@ -1,37 +1,93 @@
 .dialog {
-  border-radius: 8px;
   border: none;
-  box-shadow: 0 10px 25px gray;
-  padding: 20px;
+  background: transparent;
+  border-radius: 16px;
+  margin: auto;
+  font-family: "Josefin Sans", sans-serif;
 }
 
-.h3 {
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  width: max-content;
+  align-items: center;
+  background: rgba(20, 10, 40, 0.8);
+  color: #f8f8f8;
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+}
+
+.title {
+  color: #f8f8f8;
+  font-weight: 400;
+}
+
+.text {
+  color: rgb(209, 209, 209);
+  font-size: 18px;
+}
+
+.title,
+.text {
   margin: 0;
 }
 
-.p {
-  color: gray;
+.trashContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+  width: fit-content;
+  padding: 6px 16px;
+  margin: 0 auto;
 }
 
 .buttonWrapperDiv {
   display: flex;
-  gap: 1rem;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cancelButton {
+  background: transparent;
+  color: #a7b8d4;
+  border: 1px solid rgba(167, 184, 212, 0.3);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 200px;
+}
+
+.cancelButton:hover {
+  background: rgba(167, 184, 212, 0.1);
+  color: #ffffff;
+  transform: none;
 }
 
 .confirmButton {
-  background: radial-gradient(circle, #b71c1c, #d32f2f, #f44336);
-  color: white;
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
-  border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-  font-family: "Oswald", sans-serif;
-  font-size: 16px;
   transition: all 0.2s ease;
+  font-family: "Josefin Sans", sans-serif;
+  width: 200px;
+  font-size: 16px;
 }
 
 .confirmButton:hover {
-  background: radial-gradient(circle, #c62828, #d32f2f, #ef5350);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-  transform: scale(1.05);
+  background: #dc2626;
 }

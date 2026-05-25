@@ -1,12 +1,12 @@
 "use client";
 
-import Button from "@/app/components/Button";
 import { useEffect, useState } from "react";
 import classes from "./PriceOffer.module.css";
 import { useRouter } from "next/navigation";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import { useSelector } from "react-redux";
 import Input from "@/app/components/Input";
+import PrimaryButton from "@/app/components/PrimaryButton";
 
 export default function PriceOffer({ advertId }) {
   const isEdit = !!advertId;
@@ -106,7 +106,7 @@ export default function PriceOffer({ advertId }) {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
 
           if (response.status === 401) {
@@ -181,7 +181,7 @@ export default function PriceOffer({ advertId }) {
           value={inputTextareValue.image}
           onChange={inputTextareaChangeHandler}
         />
-        <Button type="submit" className={classes.button} text="İlanı yayınla" />
+        <PrimaryButton type="submit" text="İlanı yayınla" />
       </form>
     </main>
   );

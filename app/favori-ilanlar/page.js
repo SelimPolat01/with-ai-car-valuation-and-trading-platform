@@ -121,7 +121,8 @@ export default function FavoriIlanlar() {
       <ConfirmDialog
         ref={deleteDialogRef}
         onConfirm={() => removeFavoriteAdvert(selectedAdvertId)}
-        text="Bu ilanı favorilerden kaldırmak"
+        text="Bunu yapmak istediğinizden emin misiniz?"
+        title="Kaldır"
       />
       <ManagementNav className={classes.managementNav} />
       <div className={classes.myFavoriteAdvertsTextDiv}>

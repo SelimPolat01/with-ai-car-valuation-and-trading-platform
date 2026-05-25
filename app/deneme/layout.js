@@ -1,5 +1,5 @@
 import Header from "@/app/components/Header";
-import classes from "./Deneme.module.css";
+import classes from "./AiCarDetector.module.css";
 
 export const metadata = {
   title: "Deneme",

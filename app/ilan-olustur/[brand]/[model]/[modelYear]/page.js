@@ -1,19 +1,29 @@
 "use client";
 
-import Button from "@/app/components/Button";
 import classes from "./TahminYap.module.css";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setPrediction } from "@/store/predictionSlice";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
+import PrimaryButton from "@/app/components/PrimaryButton";
 
 export default function TahminYap() {
+  useCheckAuth();
   const params = useParams();
+  const searchParams = useSearchParams();
+  const isFromImage = searchParams.get("fromImage") === "true";
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [openDropdown, setOpenDropdown] = useState(null);
+  const predictionCarValues = useSelector(
+    (state) => state.prediction.prediction,
+  );
   const dispatch = useDispatch();
   const [carValues, setCarValues] = useState({
+    trimLevels: [],
     bodyTypes: [],
     engineCapacities: [],
     horsepowers: [],
@@ -21,24 +31,27 @@ export default function TahminYap() {
     fuelTypes: [],
   });
   const [value, setValue] = useState({
-    bodyType: "Kasa Tipi",
+    trimLevel: "Paket",
+    bodyType: predictionCarValues?.bodyType || "Kasa Tipi",
     engineCapacity: "Motor Hacmi",
     horsepower: "Beygir Gücü",
     transmission: "Vites Tipi",
     kilometer: "",
     fuelType: "Yakıt Tipi",
-    changedPartCount: "Değişen Sayısı",
+    // changedPartCount: "Değişen Sayısı",
   });
   const [isKmFocused, setIsKmFocused] = useState(false);
   const [errors, setErrors] = useState({
+    trimLevel: false,
     bodyType: false,
     engineCapacity: false,
     horsepower: false,
     transmission: false,
     fuelType: false,
-    changedPartCount: false,
+    // changedPartCount: false,
   });
   const [shake, setShake] = useState({
+    shakeTrimLevel: false,
     shakeBodyType: false,
     shakeEngineCapacity: false,
     shakeHorsepower: false,
@@ -58,6 +71,9 @@ export default function TahminYap() {
   };
 
   const carTypeMap = {
+    trimLevelMap: {
+      ambition: "Ambition",
+    },
     bodyTypeMap: {
       sedan: "Sedan",
       suv: "SUV",
@@ -71,35 +87,68 @@ export default function TahminYap() {
     },
     transmissionTypeMap: {
       automatic: "Otomatik",
+      "semi automatic": "Yarı Otomatik",
       manual: "Manuel",
     },
   };
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  useCheckAuth();
+
+  useEffect(() => {
+    const { engineCapacity, fuelType, horsepower, transmission, bodyType } =
+      value;
+
+    const isValid =
+      engineCapacity &&
+      engineCapacity !== "Motor Hacmi" &&
+      fuelType &&
+      fuelType !== "Yakıt Tipi" &&
+      horsepower &&
+      horsepower !== "Beygir Gücü" &&
+      transmission &&
+      transmission !== "Vites Tipi" &&
+      bodyType &&
+      bodyType !== "Kasa Tipi";
+
+    if (isValid) {
+      fetchTrimLevels(
+        engineCapacity,
+        fuelType,
+        horsepower,
+        transmission,
+        bodyType,
+      );
+    }
+  }, [
+    value.engineCapacity,
+    value.fuelType,
+    value.horsepower,
+    value.transmission,
+    value.bodyType,
+  ]);
 
   async function submitHandler(event) {
     event.preventDefault();
     const newErrors = {
+      trimLevel: value.trimLevel === "Paket",
       bodyType: value.bodyType === "Kasa Tipi",
       engineCapacity: value.engineCapacity === "Motor Hacmi",
       horsepower: value.horsepower === "Beygir Gücü",
       transmission: value.transmission === "Vites Tipi",
       fuelType: value.fuelType === "Yakıt Tipi",
-      changedPartCount: value.changedPartCount === "Değişen Sayısı",
+      // changedPartCount: value.changedPartCount === "Değişen Sayısı",
     };
     setErrors(newErrors);
     setShake({
+      shakeTrimLevel: newErrors.trimLevel,
       shakeBodyType: newErrors.bodyType,
       shakeEngineCapacity: newErrors.engineCapacity,
       shakeHorsepower: newErrors.horsepower,
       shakeTransmission: newErrors.transmission,
       shakeFuelType: newErrors.fuelType,
-      shakeChangedPartCount: newErrors.changedPartCount,
+      // shakeChangedPartCount: newErrors.changedPartCount,
     });
     setTimeout(() => {
       setShake({
+        shakeTrimLevel: false,
         shakeBodyType: false,
         shakeEngineCapacity: false,
         shakeHorsepower: false,
@@ -110,25 +159,27 @@ export default function TahminYap() {
     }, 250);
 
     if (
+      newErrors.trimLevel ||
       newErrors.bodyType ||
       newErrors.engineCapacity ||
       newErrors.horsepower ||
       newErrors.transmission ||
-      newErrors.fuelType ||
-      newErrors.changedPartCount
+      newErrors.fuelType
+      // newErrors.changedPartCount
     ) {
       return;
     }
 
     const token = localStorage.getItem("token");
     const payload = {
+      trimLevel: value.trimLevel,
       bodyType: value.bodyType,
       engineCapacity: Number(value.engineCapacity),
       horsepower: Number(value.horsepower),
       transmission: value.transmission,
       kilometer: Number(value.kilometer),
       fuelType: value.fuelType,
-      changedPartCount: Number(value.changedPartCount),
+      // changedPartCount: Number(value.changedPartCount),
     };
 
     try {
@@ -155,21 +206,25 @@ export default function TahminYap() {
       }
 
       const data = await response.json();
+      console.log("Backend'den gelen veri:", data);
       const reduxData = {
         brand: params.brand,
         model: params.model,
         modelYear: Number(params.modelYear),
+        trimLevel: payload.trimLevel,
         bodyType: payload.bodyType,
         engineCapacity: Number(payload.engineCapacity),
         horsepower: Number(payload.horsepower),
         transmission: payload.transmission,
         kilometer: Number(payload.kilometer),
         fuelType: payload.fuelType,
-        changedPartCount: Number(payload.changedPartCount),
         price: Number(data.price),
+        // changedPartCount: Number(payload.changedPartCount),
       };
       dispatch(setPrediction(reduxData));
-      router.replace("/fiyat-teklifi");
+      router.push(
+        `/ilan-olustur/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/hasar-durumu`,
+      );
     } catch (err) {
       console.log("Error: " + err);
       setError(err.message);
@@ -179,45 +234,260 @@ export default function TahminYap() {
   }
 
   useEffect(() => {
-    if (!params || !params.brand || !params.model || !params.modelYear) return;
+    async function fetchEngineCapacities(brand, model, modelYear) {
+      if (!params || !params.brand || !params.model || !params.modelYear)
+        return;
 
-    async function fetchCarValue(brand, model, modelYear) {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${brand}/${model}/${modelYear}`
-        );
+        const token = localStorage.getItem("token");
+        let url = `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${brand}/${model}/${modelYear}`;
+        console.log(predictionCarValues?.bodyType);
+        if (predictionCarValues?.bodyType) {
+          url += `?bodyType=${predictionCarValues.bodyType.toLowerCase().trim()}`;
+        }
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          router.replace("/login");
+          return;
+        }
+
         if (!response.ok) {
-          throw new Error("Otomobil bilgileri getirilemedi!");
+          const errorData = await response.json();
+          setError(errorData.message);
+          return;
         }
         const data = await response.json();
-        const car = data[0];
-        setCarValues({
-          bodyTypes: Array.isArray(car.body_types)
-            ? car.body_types
-            : [car.body_types],
-          engineCapacities: Array.isArray(car.engine_capacities)
-            ? car.engine_capacities
-            : [car.engine_capacities],
-          horsepowers: Array.isArray(car.horsepowers)
-            ? car.horsepowers
-            : [car.horsepowers],
-          transmissions: Array.isArray(car.transmissions)
-            ? car.transmissions
-            : [car.transmissions],
-          fuelTypes: Array.isArray(car.fuel_types)
-            ? car.fuel_types
-            : [car.fuel_types],
-        });
+        const engines = data[0];
+        console.log(engines);
+        setCarValues((prev) => ({
+          ...prev,
+          engineCapacities: engines.engine_capacities,
+        }));
       } catch (err) {
-        console.log("Sunucu Hatası: ", err);
+        console.log("Error: " + err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     }
-    fetchCarValue(
+    fetchEngineCapacities(
       params.brand.toLowerCase(),
       params.model.toLowerCase(),
-      params.modelYear
+      params.modelYear,
     );
   }, [params.brand, params.model, params.modelYear]);
+
+  async function fetchFuelTypes(selectedEngineCapacity) {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/${selectedEngineCapacity}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        router.replace("/login");
+        return;
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message);
+        return;
+      }
+      const data = await response.json();
+      const fuels = data[0];
+      setCarValues((prev) => ({
+        ...prev,
+        fuelTypes: fuels.fuel_types,
+      }));
+    } catch (err) {
+      console.log("Error: " + err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchHorsepowers(selectedEngineCapacity, selectedFuelType) {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/${selectedEngineCapacity}/${selectedFuelType}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        router.replace("/login");
+        return;
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message);
+        return;
+      }
+      const data = await response.json();
+      const hps = data[0];
+      setCarValues((prev) => ({
+        ...prev,
+        horsepowers: hps.horsepowers,
+      }));
+    } catch (err) {
+      console.log("Error: " + err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchTransmissions(
+    selectedEngineCapacity,
+    selectedFuelType,
+    selectedHorsepower,
+  ) {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/${selectedEngineCapacity}/${selectedFuelType}/${selectedHorsepower}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        router.replace("/login");
+        return;
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message);
+        return;
+      }
+      const data = await response.json();
+      const gears = data[0];
+      setCarValues((prev) => ({
+        ...prev,
+        transmissions: gears.transmissions,
+      }));
+    } catch (err) {
+      console.log("Error: " + err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchBodyTypes(
+    selectedEngineCapacity,
+    selectedFuelType,
+    selectedHorsepower,
+    selecedTransmission,
+  ) {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/${selectedEngineCapacity}/${selectedFuelType}/${selectedHorsepower}/${selecedTransmission}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        router.replace("/login");
+        return;
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message);
+        return;
+      }
+      const data = await response.json();
+      const bodies = data[0];
+      setCarValues((prev) => ({
+        ...prev,
+        bodyTypes: bodies.body_types,
+      }));
+    } catch (err) {
+      console.log("Error: " + err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchTrimLevels(
+    selectedEngineCapacity,
+    selectedFuelType,
+    selectedHorsepower,
+    selecedTransmission,
+    selectedBodyType,
+  ) {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/${selectedEngineCapacity}/${selectedFuelType}/${selectedHorsepower}/${selecedTransmission}/${selectedBodyType}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        router.replace("/login");
+        return;
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message);
+        return;
+      }
+      const data = await response.json();
+      const trims = data[0];
+      setCarValues((prev) => ({
+        ...prev,
+        trimLevels: trims.trim_levels,
+      }));
+    } catch (err) {
+      console.log("Error: " + err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -277,51 +547,9 @@ export default function TahminYap() {
           </div>
           <div className={classes.flexContainer2}>
             <form className={classes.form} onSubmit={submitHandler}>
-              <div className={`${classes.bodyTypeWrapper}  dropdownWrapper`}>
-                <div
-                  className={`dropdown ${
-                    errors.bodyType ? "notSelected" : ""
-                  } ${value.bodyType !== "Kasa Tipi" ? classes.selected : ""} ${
-                    shake.shakeBodyType ? "notSelectedAnimation" : ""
-                  } ${openDropdown === "bodyType" ? classes.boxShadow : ""}`}
-                  onClick={() =>
-                    setOpenDropdown(
-                      openDropdown === "bodyType" ? null : "bodyType"
-                    )
-                  }
-                >
-                  {value.bodyType === "Kasa Tipi"
-                    ? "Kasa Tipi"
-                    : carTypeMap.bodyTypeMap[value.bodyType] ||
-                      capitalize(value.bodyType)}
-                </div>
-                {openDropdown === "bodyType" && (
-                  <>
-                    <ul className="dropdownList">
-                      {carValues.bodyTypes.map((bodyType) => (
-                        <li
-                          key={bodyType}
-                          onClick={() => {
-                            setOpenDropdown(null);
-                            setValue((prevValues) => ({
-                              ...prevValues,
-                              bodyType: bodyType,
-                            }));
-                            setErrors((prevError) => ({
-                              ...prevError,
-                              bodyType: false,
-                            }));
-                          }}
-                        >
-                          {carTypeMap.bodyTypeMap[bodyType] ||
-                            capitalize(bodyType)}
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </div>
-              <div className="dropdownWrapper">
+              <div
+                className={`${classes.engineCapacityWrapper}  dropdownWrapper`}
+              >
                 <div
                   className={`dropdown ${
                     errors.engineCapacity ? "notSelected" : ""
@@ -338,7 +566,7 @@ export default function TahminYap() {
                     setOpenDropdown(
                       openDropdown === "engineCapacity"
                         ? null
-                        : "engineCapacity"
+                        : "engineCapacity",
                     )
                   }
                 >
@@ -356,6 +584,7 @@ export default function TahminYap() {
                           <li
                             key={index}
                             onClick={() => {
+                              fetchFuelTypes(engineCapacity);
                               setOpenDropdown(null);
                               setValue((prevValues) => ({
                                 ...prevValues,
@@ -369,8 +598,58 @@ export default function TahminYap() {
                           >
                             {engineCapacity} cc
                           </li>
-                        )
+                        ),
                       )}
+                    </ul>
+                  </>
+                )}
+              </div>
+
+              <div className="dropdownWrapper">
+                <div
+                  className={`dropdown ${
+                    errors.fuelType ? "notSelected" : ""
+                  } ${
+                    value.fuelType !== "Yakıt Tipi" ? classes.selected : ""
+                  } ${shake.shakeFuelType ? "notSelectedAnimation" : ""} ${
+                    openDropdown === "fuelType" ? classes.boxShadow : ""
+                  }`}
+                  onClick={() =>
+                    setOpenDropdown(
+                      openDropdown === "fuelType" ? null : "fuelType",
+                    )
+                  }
+                >
+                  <span>
+                    {value.fuelType === "Yakıt Tipi"
+                      ? "Yakıt Tipi"
+                      : carTypeMap.fuelTypeMap[value.fuelType] ||
+                        capitalize(value.fuelType)}
+                  </span>
+                </div>
+                {openDropdown === "fuelType" && (
+                  <>
+                    <ul className="dropdownList">
+                      {carValues.fuelTypes.map((fuelType, index) => (
+                        <li
+                          key={index}
+                          onClick={() => {
+                            fetchHorsepowers(value.engineCapacity, fuelType);
+                            setOpenDropdown(null);
+                            setValue((prevValues) => ({
+                              ...prevValues,
+                              fuelType: fuelType,
+                            }));
+                            setErrors((prevError) => ({
+                              ...prevError,
+                              fuelType: false,
+                            }));
+                          }}
+                        >
+                          {carTypeMap.fuelTypeMap[fuelType] ||
+                            capitalize(fuelType)}
+                        </li>
+                      ))}
                     </ul>
                   </>
                 )}
@@ -386,7 +665,7 @@ export default function TahminYap() {
                   }`}
                   onClick={() =>
                     setOpenDropdown(
-                      openDropdown === "horsepower" ? null : "horsepower"
+                      openDropdown === "horsepower" ? null : "horsepower",
                     )
                   }
                 >
@@ -403,6 +682,11 @@ export default function TahminYap() {
                         <li
                           key={index}
                           onClick={() => {
+                            fetchTransmissions(
+                              value.engineCapacity,
+                              value.fuelType,
+                              horsepower,
+                            );
                             setOpenDropdown(null);
                             setValue((prevValues) => ({
                               ...prevValues,
@@ -432,7 +716,7 @@ export default function TahminYap() {
                   }`}
                   onClick={() =>
                     setOpenDropdown(
-                      openDropdown === "transmission" ? null : "transmission"
+                      openDropdown === "transmission" ? null : "transmission",
                     )
                   }
                 >
@@ -450,6 +734,12 @@ export default function TahminYap() {
                         <li
                           key={index}
                           onClick={() => {
+                            fetchBodyTypes(
+                              value.engineCapacity,
+                              value.fuelType,
+                              value.horsepower,
+                              transmission,
+                            );
                             setOpenDropdown(null);
                             setValue((prevValues) => ({
                               ...prevValues,
@@ -469,6 +759,102 @@ export default function TahminYap() {
                   </>
                 )}
               </div>
+              <div className="dropdownWrapper">
+                <div
+                  className={`dropdown ${
+                    errors.bodyType ? "notSelected" : ""
+                  } ${value.bodyType !== "Kasa Tipi" ? classes.selected : ""} ${
+                    shake.shakeBodyType ? "notSelectedAnimation" : ""
+                  } ${openDropdown === "bodyType" ? classes.boxShadow : ""}`}
+                  onClick={() => {
+                    if (isFromImage) return;
+                    setOpenDropdown(
+                      openDropdown === "bodyType" ? null : "bodyType",
+                    );
+                  }}
+                >
+                  {value.bodyType === "Kasa Tipi"
+                    ? "Kasa Tipi"
+                    : carTypeMap.bodyTypeMap[value.bodyType] ||
+                      capitalize(value.bodyType)}
+                </div>
+                {openDropdown === "bodyType" && !isFromImage && (
+                  <>
+                    <ul className="dropdownList">
+                      {carValues.bodyTypes.map((bodyType) => (
+                        <li
+                          key={bodyType}
+                          onClick={() => {
+                            fetchTrimLevels(
+                              value.engineCapacity,
+                              value.fuelType,
+                              value.horsepower,
+                              value.transmission,
+                              bodyType,
+                            );
+                            setOpenDropdown(null);
+                            setValue((prevValues) => ({
+                              ...prevValues,
+                              bodyType: bodyType,
+                            }));
+                            setErrors((prevError) => ({
+                              ...prevError,
+                              bodyType: false,
+                            }));
+                          }}
+                        >
+                          {carTypeMap.bodyTypeMap[bodyType] ||
+                            capitalize(bodyType)}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </div>
+              <div className="dropdownWrapper">
+                <div
+                  className={`dropdown ${
+                    errors.trimLevel ? "notSelected" : ""
+                  } ${value.trimLevel !== "Paket" ? classes.selected : ""} ${
+                    shake.shakeTrimLevel ? "notSelectedAnimation" : ""
+                  } ${openDropdown === "trimLevel" ? classes.boxShadow : ""}`}
+                  onClick={() =>
+                    setOpenDropdown(
+                      openDropdown === "trimLevel" ? null : "trimLevel",
+                    )
+                  }
+                >
+                  {value.trimLevel === "Paket"
+                    ? "Paket"
+                    : carTypeMap.trimLevelMap[value.trimLevel] ||
+                      capitalize(value.trimLevel)}
+                </div>
+                {openDropdown === "trimLevel" && (
+                  <>
+                    <ul className="dropdownList">
+                      {carValues.trimLevels.map((trimLevel) => (
+                        <li
+                          key={trimLevel}
+                          onClick={() => {
+                            setOpenDropdown(null);
+                            setValue((prevValues) => ({
+                              ...prevValues,
+                              trimLevel: trimLevel,
+                            }));
+                            setErrors((prevError) => ({
+                              ...prevError,
+                              trimLevel: false,
+                            }));
+                          }}
+                        >
+                          {carTypeMap.trimLevelMap[trimLevel] ||
+                            capitalize(trimLevel)}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </div>
               <input
                 className={classes.kmInput}
                 type="text"
@@ -478,8 +864,8 @@ export default function TahminYap() {
                   isKmFocused
                     ? value.kilometer
                     : value.kilometer
-                    ? `${Number(value.kilometer).toLocaleString()} km`
-                    : ""
+                      ? `${Number(value.kilometer).toLocaleString()} km`
+                      : ""
                 }
                 onFocus={() => setIsKmFocused(true)}
                 onBlur={() => setIsKmFocused(false)}
@@ -488,55 +874,7 @@ export default function TahminYap() {
                   setValue((prev) => ({ ...prev, kilometer: numericValue }));
                 }}
               />
-              <div className="dropdownWrapper">
-                <div
-                  className={`dropdown ${
-                    errors.fuelType ? "notSelected" : ""
-                  } ${
-                    value.fuelType !== "Yakıt Tipi" ? classes.selected : ""
-                  } ${shake.shakeFuelType ? "notSelectedAnimation" : ""} ${
-                    openDropdown === "fuelType" ? classes.boxShadow : ""
-                  }`}
-                  onClick={() =>
-                    setOpenDropdown(
-                      openDropdown === "fuelType" ? null : "fuelType"
-                    )
-                  }
-                >
-                  <span>
-                    {value.fuelType === "Yakıt Tipi"
-                      ? "Yakıt Tipi"
-                      : carTypeMap.fuelTypeMap[value.fuelType] ||
-                        capitalize(value.fuelType)}
-                  </span>
-                </div>
-                {openDropdown === "fuelType" && (
-                  <>
-                    <ul className="dropdownList">
-                      {carValues.fuelTypes.map((fuelType, index) => (
-                        <li
-                          key={index}
-                          onClick={() => {
-                            setOpenDropdown(null);
-                            setValue((prevValues) => ({
-                              ...prevValues,
-                              fuelType: fuelType,
-                            }));
-                            setErrors((prevError) => ({
-                              ...prevError,
-                              fuelType: false,
-                            }));
-                          }}
-                        >
-                          {carTypeMap.fuelTypeMap[fuelType] ||
-                            capitalize(fuelType)}
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </div>
-              <div className="dropdownWrapper">
+              {/* <div className="dropdownWrapper">
                 <div
                   className={`dropdown ${
                     errors.changedPartCount ? "notSelected" : ""
@@ -553,7 +891,7 @@ export default function TahminYap() {
                     setOpenDropdown(
                       openDropdown === "changedPartCount"
                         ? null
-                        : "changedPartCount"
+                        : "changedPartCount",
                     )
                   }
                 >
@@ -561,8 +899,8 @@ export default function TahminYap() {
                     {value.changedPartCount === 0
                       ? "Değişen Yok"
                       : value.changedPartCount === "Değişen Sayısı"
-                      ? "Değişen Sayısı"
-                      : `${value.changedPartCount} Değişen`}
+                        ? "Değişen Sayısı"
+                        : `${value.changedPartCount} Değişen`}
                   </span>
                 </div>
                 {openDropdown === "changedPartCount" && (
@@ -604,12 +942,8 @@ export default function TahminYap() {
                     </ul>
                   </>
                 )}
-              </div>
-              <Button
-                className={classes.button}
-                type="submit"
-                text="Fiyat teklifi al"
-              />
+              </div> */}
+              <PrimaryButton text="Hasar bilgilerini ekle" type="submit" />
             </form>
           </div>
         </div>

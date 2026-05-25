@@ -36,11 +36,46 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet"
         />
-
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap"
+          rel="stylesheet"
+        />
         <title>Araç Fiyat Teklif Al / Sat</title>
       </head>
       <body className="rootBody">
         <Providers>
+          <svg width="0" height="0" style={{ position: "absolute" }}>
+            <defs>
+              <linearGradient
+                id="magic-gradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" stopColor="#00c6ff" />
+                <stop offset="50%" stopColor="#833ab4" />
+                <stop offset="100%" stopColor="#ff007f" />
+              </linearGradient>
+            </defs>
+          </svg>{" "}
+          <svg width="0" height="0" style={{ position: "absolute" }}>
+            <defs>
+              <linearGradient
+                id="gold-stroke"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" stopColor="#F9D423" />
+                <stop offset="50%" stopColor="#FF4E50" />
+                <stop offset="100%" stopColor="#C33764" />
+              </linearGradient>
+            </defs>
+          </svg>
           {children}
           <Footer />
         </Providers>

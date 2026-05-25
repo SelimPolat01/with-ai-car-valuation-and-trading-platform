@@ -1,6 +1,5 @@
 import { useRouter } from "next/navigation";
 import classes from "./AdvertItem.module.css";
-import Button from "./Button";
 import { motion } from "framer-motion";
 
 export default function AdvertItem({
@@ -50,7 +49,7 @@ export default function AdvertItem({
         <div className={classes.imgDiv}>
           <>
             {showEditButton && (
-              <Button
+              <button
                 className={classes.editAdvertButton}
                 type="button"
                 onClick={(event) => {
@@ -61,10 +60,10 @@ export default function AdvertItem({
                 title="İlanı Düzenle"
               >
                 <span className="material-icons">edit</span>
-              </Button>
+              </button>
             )}
             {showDeleteButton && (
-              <Button
+              <button
                 className={classes.deleteAdvertButton}
                 type="button"
                 onClick={(event) => {
@@ -73,7 +72,7 @@ export default function AdvertItem({
                   onDeleteDialog();
                 }}
                 title="İlanı Kaldır"
-              />
+              ></button>
             )}
           </>
           <img className={classes.img} src={imgSrc} />

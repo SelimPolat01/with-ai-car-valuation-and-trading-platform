@@ -176,11 +176,11 @@ export default function Garajim() {
             subText="Her ay için belirlediğin hedefler"
             percent={75}
             change="21"
-            description="Bugün 4 Milyon ₺ kazandın. Geçen aya göre daha yüksek. Devam et!"
+            description="Bu ay 10.2 milyon ₺ kazandın. Geçen aya göre daha yüksek. Devam et!"
             upChange={<ArrowUp />}
             downChange={<ArrowDown />}
             optionsIcon={<MoreVertical />}
-            targetValue="9.7 Milyon ₺"
+            targetValue="14.7 Milyon ₺"
             revenueValue={formatMaliDeger(toplamCiro)}
             netIncome="750 Bin ₺"
           />

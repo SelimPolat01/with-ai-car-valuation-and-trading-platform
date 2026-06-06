@@ -4,11 +4,35 @@
   gap: 1rem;
 }
 
+.advertsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 1142px;
+}
+
+.headerDiv {
+  background: linear-gradient(90deg, #6b21a8, #4c1d95);
+  padding: 12px 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(107, 33, 168, 0.25);
+}
+
+.headerDiv h1 {
+  margin: 0;
+  font-family: "Oswald", sans-serif;
+  font-size: 24px;
+  color: #ffffff;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .div {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  width: 1142px;
+  width: 100%;
+  margin: 0 0 0 0.3rem;
 }
 
 .filterDiv {

@@ -391,9 +391,9 @@ export default function HasarDurumu() {
               damping: 15,
             }}
           >
-            <span className={styles.bubbleTitle}>Tahmini</span>
+            <span className={styles.bubbleTitle}>Tahmini Satış Süresi</span>
             <span className={styles.bubbleValue}>{avarageSellPrediction}</span>
-            <span className={styles.bubbleSubtitle}>Günde Satılır</span>
+            <span className={styles.bubbleSubtitle}>GÜN</span>
           </motion.div>
         )}
       </AnimatePresence>

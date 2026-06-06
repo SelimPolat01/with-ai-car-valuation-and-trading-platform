@@ -28,11 +28,12 @@
 }
 
 .bubbleTitle {
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 2px;
+  text-align: center;
 }
 
 .bubbleValue {

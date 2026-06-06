@@ -150,33 +150,39 @@ export default function AllAdverts() {
           </div>
         </div>
       </div>
-      <div className={classes.div}>
-        <AnimatePresence>
-          {displayAdverts.map((advert) => {
-            const coverImage = advert.image_src;
 
-            return (
-              <AdvertItem
-                id={advert.id}
-                key={advert.id}
-                imgSrc={coverImage}
-                brand={advert.brand}
-                model={advert.model}
-                engineCapacity={advert.engine_capacity}
-                modelYear={advert.model_year}
-                price={advert.price}
-                city={advert.city}
-                onDeleteDialog={() => openDeleteModal(advert.id)}
-                showDeleteButton={
-                  user && Number(user.id) === Number(advert.user_id)
-                }
-                showEditButton={
-                  user && Number(user.id) === Number(advert.user_id)
-                }
-              />
-            );
-          })}
-        </AnimatePresence>
+      <div className={classes.advertsContainer}>
+        <div className={classes.headerDiv}>
+          <h1>TÜM İLANLAR</h1>
+        </div>
+        <div className={classes.div}>
+          <AnimatePresence>
+            {displayAdverts.map((advert) => {
+              const coverImage = advert.image_src;
+
+              return (
+                <AdvertItem
+                  id={advert.id}
+                  key={advert.id}
+                  imgSrc={coverImage}
+                  brand={advert.brand}
+                  model={advert.model}
+                  engineCapacity={advert.engine_capacity}
+                  modelYear={advert.model_year}
+                  price={advert.price}
+                  city={advert.city}
+                  onDeleteDialog={() => openDeleteModal(advert.id)}
+                  showDeleteButton={
+                    user && Number(user.id) === Number(advert.user_id)
+                  }
+                  showEditButton={
+                    user && Number(user.id) === Number(advert.user_id)
+                  }
+                />
+              );
+            })}
+          </AnimatePresence>
+        </div>
       </div>
     </main>
   );

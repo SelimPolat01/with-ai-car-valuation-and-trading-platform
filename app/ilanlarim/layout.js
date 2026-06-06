@@ -8,9 +8,9 @@ export const metadata = {
 
 export default function MyAdvertsLayout({ children }) {
   return (
-    <>
-      <Header className="blackColorLink" />
-      <main className={classes.rootMain}>{children}</main>
-    </>
+    <main className="mainBg">
+      <Header />
+      <div className={classes.rootMain}>{children}</div>
+    </main>
   );
 }

@@ -2,7 +2,7 @@
 
 import AdvertItem from "../components/AdvertItem.js";
 import { setAdverts } from "@/store/advertsSlice.js";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import classes from "./TumIlanlar.module.css";
 import { useRouter } from "next/navigation.js";
@@ -21,10 +21,25 @@ export default function AllAdverts() {
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
   const allAdverts = useSelector((state) => state.adverts.allAdverts);
   const user = useSelector((state) => state.auth.user);
-  const filteredAdverts = useSelector((state) => state.adverts.filteredAdverts);
-  const uniqueBrands = Array.from(
-    new Set(allAdverts.map((advert) => advert.brand)),
+  const filteredAdverts = useSelector(
+    (state) => state.adverts.filteredAdverts || [],
   );
+  const displayAdverts =
+    filteredAdverts.length > 0 ? filteredAdverts : allAdverts;
+
+  const { uniqueBrands, brandCounts } = useMemo(() => {
+    const counts = {};
+    allAdverts.forEach((advert) => {
+      if (advert.brand) {
+        counts[advert.brand] = (counts[advert.brand] || 0) + 1;
+      }
+    });
+    return {
+      uniqueBrands: Object.keys(counts),
+      brandCounts: counts,
+    };
+  }, [allAdverts]);
+
   useCheckAuth();
 
   useEffect(() => {
@@ -37,19 +52,16 @@ export default function AllAdverts() {
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (response.status === 401) {
           localStorage.removeItem("token");
           router.replace("/login");
           return;
         }
-
         if (!response.ok) {
           const errorData = await response.json();
           setError(errorData.message);
           return;
         }
-
         const advertData = await response.json();
         dispatch(setAdverts(advertData));
       } catch (err) {
@@ -59,7 +71,6 @@ export default function AllAdverts() {
         setLoading(false);
       }
     };
-
     fetchAdverts();
   }, [dispatch, router]);
 
@@ -77,19 +88,16 @@ export default function AllAdverts() {
           },
         },
       );
-
       if (response.status === 401) {
         localStorage.removeItem("token");
         router.replace("/login");
         return;
       }
-
       if (!response.ok) {
         const errorData = await response.json();
         setError(errorData.message);
         return;
       }
-
       dispatch(
         setAdverts(allAdverts.filter((prevAdvert) => prevAdvert.id !== id)),
       );
@@ -106,9 +114,13 @@ export default function AllAdverts() {
     deleteDialogRef.current.showModal();
   }
 
-  // if (loading) return <LoadingSpinner />;
   if (error) return <p>{error}</p>;
-  if (!allAdverts || allAdverts.length === 0) return <p>İlan Bulunamadı</p>;
+  if (!allAdverts || allAdverts.length === 0)
+    return (
+      <div className={classes.notFoundAdvertDiv}>
+        <p>İlan Bulunamadı...</p>
+      </div>
+    );
 
   return (
     <main className={classes.main}>
@@ -128,7 +140,11 @@ export default function AllAdverts() {
           <div className={classes.filterWrapper2}>
             <ul className={classes.ul}>
               {uniqueBrands.map((brand, index) => (
-                <FilterBrand brand={brand} key={index} />
+                <FilterBrand
+                  brand={brand}
+                  count={brandCounts[brand]}
+                  key={index}
+                />
               ))}
             </ul>
           </div>
@@ -136,22 +152,30 @@ export default function AllAdverts() {
       </div>
       <div className={classes.div}>
         <AnimatePresence>
-          {filteredAdverts.map((advert) => (
-            <AdvertItem
-              id={advert.id}
-              key={advert.id}
-              imgSrc={advert.image_src}
-              brand={advert.brand}
-              model={advert.model}
-              engineCapacity={advert.engine_capacity}
-              modelYear={advert.model_year}
-              price={advert.price}
-              city={advert.city}
-              onDeleteDialog={() => openDeleteModal(advert.id)}
-              showDeleteButton={user && user.id === advert.user_id}
-              showEditButton={user && user.id === advert.user_id}
-            />
-          ))}
+          {displayAdverts.map((advert) => {
+            const coverImage = advert.image_src;
+
+            return (
+              <AdvertItem
+                id={advert.id}
+                key={advert.id}
+                imgSrc={coverImage}
+                brand={advert.brand}
+                model={advert.model}
+                engineCapacity={advert.engine_capacity}
+                modelYear={advert.model_year}
+                price={advert.price}
+                city={advert.city}
+                onDeleteDialog={() => openDeleteModal(advert.id)}
+                showDeleteButton={
+                  user && Number(user.id) === Number(advert.user_id)
+                }
+                showEditButton={
+                  user && Number(user.id) === Number(advert.user_id)
+                }
+              />
+            );
+          })}
         </AnimatePresence>
       </div>
     </main>

@@ -1,10 +1,7 @@
 import Footer from "@/app/components/Footer";
 import "./globals.css";
-import { Provider } from "react-redux";
-import { store } from "@/store";
-import AuthInitializer from "@/app/components/AuthInitializer";
 import Providers from "./components/Providers";
-import Header from "./components/Header";
+import ReactQuery from "./lib/reactQuery";
 
 export default function RootLayout({ children }) {
   return (
@@ -46,38 +43,40 @@ export default function RootLayout({ children }) {
       </head>
       <body className="rootBody">
         <Providers>
-          <svg width="0" height="0" style={{ position: "absolute" }}>
-            <defs>
-              <linearGradient
-                id="magic-gradient"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="100%"
-              >
-                <stop offset="0%" stopColor="#00c6ff" />
-                <stop offset="50%" stopColor="#833ab4" />
-                <stop offset="100%" stopColor="#ff007f" />
-              </linearGradient>
-            </defs>
-          </svg>{" "}
-          <svg width="0" height="0" style={{ position: "absolute" }}>
-            <defs>
-              <linearGradient
-                id="gold-stroke"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="100%"
-              >
-                <stop offset="0%" stopColor="#F9D423" />
-                <stop offset="50%" stopColor="#FF4E50" />
-                <stop offset="100%" stopColor="#C33764" />
-              </linearGradient>
-            </defs>
-          </svg>
-          {children}
-          <Footer />
+          <ReactQuery>
+            <svg width="0" height="0" style={{ position: "absolute" }}>
+              <defs>
+                <linearGradient
+                  id="magic-gradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor="#00c6ff" />
+                  <stop offset="50%" stopColor="#833ab4" />
+                  <stop offset="100%" stopColor="#ff007f" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <svg width="0" height="0" style={{ position: "absolute" }}>
+              <defs>
+                <linearGradient
+                  id="gold-stroke"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor="#F9D423" />
+                  <stop offset="50%" stopColor="#FF4E50" />
+                  <stop offset="100%" stopColor="#C33764" />
+                </linearGradient>
+              </defs>
+            </svg>
+            {children}
+            <Footer />
+          </ReactQuery>
         </Providers>
       </body>
     </html>

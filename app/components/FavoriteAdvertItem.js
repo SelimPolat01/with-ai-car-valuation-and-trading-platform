@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Button from "./PrimaryButton";
 import classes from "./FavoriteAdvertItem.module.css";
 import { motion } from "framer-motion";
+import { X } from "lucide-react"; // <-- Modern ikon kütüphanesi eklendi
 
 export default function FavoriteAdvertItem({
   advert,
@@ -10,13 +10,20 @@ export default function FavoriteAdvertItem({
 }) {
   function capitalizeText(text) {
     if (!text) return "";
-
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   }
+
   function engineCapacityFormat(engineCapacity) {
     if (!engineCapacity) return "";
     return (+engineCapacity / 1000).toFixed(1);
   }
+
+  const advertImage =
+    advert?.images && advert.images.length > 0
+      ? advert.images[0].image_data || "/images/no-image.png"
+      : advert?.image_data || "/images/no-image.png";
+
+  if (!advert) return null;
 
   return (
     <motion.div
@@ -31,16 +38,18 @@ export default function FavoriteAdvertItem({
         <Link
           href={`/ilan/${advert.brand}-${advert.model}-${advert.model_year}/${advert.id}`}
         >
-          <img src={advert.image_src} alt={advert.title} />
+          <img src={advertImage} alt={advert.title} />
         </Link>
       </div>
+
       <div className={classes.titleBrandModelDiv}>
         <Link
           href={`/ilan/${advert.brand}-${advert.model}-${advert.model_year}/${advert.id}`}
+          className={classes.titleLink}
         >
           {advert.title}
         </Link>
-        <p>
+        <p className={classes.carDetails}>
           {capitalizeText(advert.brand)}{" "}
           <i className="bi bi-caret-right-fill"></i>{" "}
           {capitalizeText(advert.model)}{" "}
@@ -48,11 +57,13 @@ export default function FavoriteAdvertItem({
           {engineCapacityFormat(advert.engine_capacity)}
         </p>
       </div>
+
       <div className={classes.priceDiv}>
         <p>{Number(advert.price).toLocaleString("tr-TR")} ₺</p>
       </div>
+
       {showDeleteButton && (
-        <Button
+        <button
           className={classes.deleteAdvertButton}
           type="button"
           onClick={(event) => {
@@ -61,7 +72,9 @@ export default function FavoriteAdvertItem({
             onDeleteDialog();
           }}
           title="İlanı Kaldır"
-        />
+        >
+          <X size={18} strokeWidth={2.5} />
+        </button>
       )}
     </motion.div>
   );

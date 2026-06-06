@@ -11,7 +11,10 @@ const initialState = {
     transmission: "",
     kilometer: "",
     fuelType: "",
+    trimLevel: "",
     price: "",
+    hasScratch: "",
+    hasDent: "",
   },
 };
 

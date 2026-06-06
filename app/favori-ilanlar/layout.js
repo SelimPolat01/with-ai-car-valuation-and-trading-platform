@@ -8,9 +8,9 @@ export const metadata = {
 
 export default function FavoriteAdvertsLayout({ children }) {
   return (
-    <>
-      <Header className="purpleColorLink" />
-      <main className={classes.rootMain}>{children}</main>
-    </>
+    <main className="mainBg">
+      <Header />
+      <div className="rootMain">{children}</div>
+    </main>
   );
 }

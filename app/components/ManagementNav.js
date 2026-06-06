@@ -24,15 +24,15 @@ export default function ManagementNav({ className }) {
           >
             Favorilerim
           </Link>
-        </li>{" "}
-        <li>
+        </li>
+        {/* <li>
           <Link
             className={path === "/mesajlarim" ? classes.active : ""}
             href={"/mesajlarim"}
           >
             Mesajlarım
           </Link>
-        </li>
+        </li> */}
         <li>
           <Link
             className={path === "/hesabim" ? classes.active : ""}

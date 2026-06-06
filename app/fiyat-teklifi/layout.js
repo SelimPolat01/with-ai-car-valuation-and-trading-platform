@@ -8,9 +8,9 @@ export const metadata = {
 
 export default function PriceOfferLayout({ children }) {
   return (
-    <>
-      <Header className="blackColorLink" />
-      <main className={classes.rootMain}>{children}</main>
-    </>
+    <div className={classes.rootMain}>
+      <Header />
+      {children}
+    </div>
   );
 }

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import classes from "./Dropdown.module.css";
-import Button from "./PrimaryButton";
 import PrimaryButton from "./PrimaryButton";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Dropdown() {
   const [value, setValue] = useState({
@@ -29,6 +29,12 @@ export default function Dropdown() {
     shakeModelYear: false,
   });
   const router = useRouter();
+
+  function formatBrand(brand) {
+    if (!brand) return;
+    if (brand == "mercedes-benz") return "mercedes";
+    return brand;
+  }
 
   function submitHandler(event) {
     event.preventDefault();
@@ -55,7 +61,7 @@ export default function Dropdown() {
     }
     router.push(
       `/ilan-olustur/${encodeURIComponent(
-        value.brandValue,
+        formatBrand(value.brandValue),
       ).toLowerCase()}/${encodeURIComponent(
         value.modelValue,
       ).toLowerCase()}/${value.modelYearValue}`,
@@ -126,16 +132,7 @@ export default function Dropdown() {
   function formatBrandModel(text) {
     if (!text) return "";
     if (text === "bmw") return "BMW";
-    if (text === "i10") return "i10";
     if (text === "i20") return "i20";
-    if (text === "i30") return "i30";
-    if (text === "ix35") return "ix35";
-    if (text === "gla 180") return "GLA 180";
-    if (text === "glb 200") return "GLB 200";
-    if (text === "glc 180") return "GLC 180";
-    if (text === "c-hr") return "C-HR";
-    if (text === "xc40") return "XC40";
-    if (text === "xc60") return "XC60";
 
     return text
       .split(" ")
@@ -151,9 +148,49 @@ export default function Dropdown() {
       .join(" ");
   }
 
+  const formContainerVariants = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const dropdownVariants = {
+    hidden: { opacity: 0, y: -8, scale: 0.98 },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.18 } },
+    exit: { opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.15 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16, scale: 0.98 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+      },
+    },
+  };
+
   return (
-    <form className={classes.form} onSubmit={submitHandler}>
-      <div className={`${classes.brandWrapper} dropdownWrapper `}>
+    <motion.form
+      variants={formContainerVariants}
+      initial="hidden"
+      animate="visible"
+      className={classes.form}
+      onSubmit={submitHandler}
+    >
+      <motion.div
+        variants={itemVariants}
+        className={`${classes.brandWrapper} dropdownWrapper `}
+      >
         <div
           onClick={() => {
             setOpenDropdown(openDropdown === "brand" ? null : "brand");
@@ -167,8 +204,14 @@ export default function Dropdown() {
           {value.brandValue}
         </div>
         {openDropdown === "brand" && (
-          <>
-            <ul className="dropdownList">
+          <AnimatePresence>
+            <motion.ul
+              variants={dropdownVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="dropdownList"
+            >
               {options.brandOptions.map((brandOption) => (
                 <li
                   key={brandOption.brand}
@@ -188,12 +231,12 @@ export default function Dropdown() {
                   {formatBrandModel(brandOption.brand)}
                 </li>
               ))}
-            </ul>
-          </>
+            </motion.ul>
+          </AnimatePresence>
         )}
         <input type="hidden" name="brand" value={value.brandValue} />
-      </div>
-      <div className="dropdownWrapper">
+      </motion.div>
+      <motion.div variants={itemVariants} className="dropdownWrapper">
         <div
           onClick={() => {
             setOpenDropdown(openDropdown === "model" ? null : "model");
@@ -207,32 +250,40 @@ export default function Dropdown() {
           {value.modelValue}
         </div>
         {openDropdown === "model" && (
-          <ul className="dropdownList">
-            {options.modelOptions.map((modelOption) => (
-              <li
-                key={modelOption.model}
-                onClick={() => {
-                  setOpenDropdown(null);
-                  setValue((prevValue) => ({
-                    ...prevValue,
-                    modelValue: formatBrandModel(modelOption.model),
-                    modelYearValue: "Yıl",
-                  }));
+          <AnimatePresence>
+            <motion.ul
+              variants={dropdownVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="dropdownList"
+            >
+              {options.modelOptions.map((modelOption) => (
+                <li
+                  key={modelOption.model}
+                  onClick={() => {
+                    setOpenDropdown(null);
+                    setValue((prevValue) => ({
+                      ...prevValue,
+                      modelValue: formatBrandModel(modelOption.model),
+                      modelYearValue: "Yıl",
+                    }));
 
-                  fetchModelYears(
-                    encodeURIComponent(value.brandValue.toLowerCase()),
-                    encodeURIComponent(modelOption.model.toLowerCase()),
-                  );
-                }}
-              >
-                {formatBrandModel(modelOption.model)}
-              </li>
-            ))}
-          </ul>
+                    fetchModelYears(
+                      encodeURIComponent(value.brandValue.toLowerCase()),
+                      encodeURIComponent(modelOption.model.toLowerCase()),
+                    );
+                  }}
+                >
+                  {formatBrandModel(modelOption.model)}
+                </li>
+              ))}
+            </motion.ul>
+          </AnimatePresence>
         )}
         <input type="hidden" name="modelYear" value={value.modelValue} />
-      </div>
-      <div className="dropdownWrapper">
+      </motion.div>
+      <motion.div variants={itemVariants} className="dropdownWrapper">
         <div
           onClick={() => {
             setOpenDropdown(openDropdown === "modelYear" ? null : "modelYear");
@@ -246,30 +297,38 @@ export default function Dropdown() {
           {value.modelYearValue}
         </div>
         {openDropdown === "modelYear" && (
-          <ul className="dropdownList">
-            {options.modelYearOptions.map((modelYearOption) => (
-              <li
-                key={modelYearOption.model_year}
-                onClick={() => {
-                  setOpenDropdown(null);
-                  setValue((prevValue) => ({
-                    ...prevValue,
-                    modelYearValue: modelYearOption.model_year,
-                  }));
-                  setErrors((prevError) => ({
-                    ...prevError,
-                    modelYear: false,
-                  }));
-                }}
-              >
-                {modelYearOption.model_year}
-              </li>
-            ))}
-          </ul>
+          <AnimatePresence>
+            <motion.ul
+              variants={dropdownVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="dropdownList"
+            >
+              {options.modelYearOptions.map((modelYearOption) => (
+                <li
+                  key={modelYearOption.model_year}
+                  onClick={() => {
+                    setOpenDropdown(null);
+                    setValue((prevValue) => ({
+                      ...prevValue,
+                      modelYearValue: modelYearOption.model_year,
+                    }));
+                    setErrors((prevError) => ({
+                      ...prevError,
+                      modelYear: false,
+                    }));
+                  }}
+                >
+                  {modelYearOption.model_year}
+                </li>
+              ))}
+            </motion.ul>
+          </AnimatePresence>
         )}
         <input type="hidden" name="modelYear" value={value.modelYearValue} />
-      </div>
+      </motion.div>
       <PrimaryButton type="submit" text="Hemen Sat" />
-    </form>
+    </motion.form>
   );
 }

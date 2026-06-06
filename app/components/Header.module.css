@@ -26,7 +26,7 @@
 
 .logo {
   margin-left: 1rem;
-  transition: transform 0.5 ease;
+  transition: transform 0.5s ease;
 }
 
 .registerLink,
@@ -61,67 +61,82 @@
   position: relative;
   height: 28px;
   margin: 0;
+  padding-bottom: 20px;
 }
 
 .accountMenu {
   position: absolute;
-  top: 30px;
+  top: 35px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(15px);
+  opacity: 0;
+  visibility: hidden;
   margin: 0;
-  padding: 0;
-  background-color: whitesmoke;
+  padding: 8px;
+  min-width: 160px;
+  background: rgba(20, 10, 30, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   z-index: 1000;
-  border-radius: 8px;
-  display: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .account:hover .accountMenu {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.accountMenu li {
+  list-style: none;
+  margin-bottom: 4px;
+}
+
+.accountMenu li:last-child {
+  margin-bottom: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 4px;
+  margin-top: 4px;
 }
 
 .accountMenu a {
-  width: 120px;
+  width: 100%;
   display: flex;
-  color: black;
-  transition: color 0.15s ease-in;
-  padding: 7px;
-}
-
-.accountMenu a:hover:first-child {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-}
-
-.accountMenu a:hover:last-child {
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
 }
 
 .accountMenu a:hover {
-  color: darkgreen;
-  background-color: rgb(233, 218, 244);
-}
-
-.accountMenu i {
-  transition: color 0.25s ease-in;
+  color: #00f4ff;
+  background-color: rgba(0, 244, 255, 0.1);
+  transform: translateX(4px);
 }
 
 .myAdvertsLink,
 .favoriteAdvertsLink,
 .logoutLink,
 .juniorAccountLink {
-  font-size: 16x;
-  height: 16px;
+  font-size: 14px;
+  height: auto;
 }
 
 .icon {
-  color: black;
-  border-radius: 8px;
-  transition: transform 0.5s ease;
+  color: #f8f8f8;
+  transition: transform 0.3s ease;
   display: inline-block;
-  font-weight: bold;
-  border: none;
-  font-size: 16px;
   margin: 0.2rem 0 0 0;
+}
+
+.juniorIcon {
+  margin: 0 0.5rem 0 0;
+  stroke: currentColor;
 }

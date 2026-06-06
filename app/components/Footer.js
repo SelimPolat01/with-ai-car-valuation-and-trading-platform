@@ -1,29 +1,40 @@
 import Link from "next/link";
+import classes from "./Footer.module.css";
+// lucide-react yerine react-icons kullanıyoruz
+import { FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa";
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="footer">
-      <hr className="hr" />
-      <ul className="iconUl">
-        <li className="iconLi">
-          <Link href="#!" title="Instagram">
-            <div className="iconCircleDiv">
-              <i className="fab fa-instagram"></i>
-            </div>
+    <footer className={classes.footer}>
+      <hr className={classes.hr} />
+      <ul className={classes.iconUl}>
+        <li className={classes.iconLi}>
+          <Link href="#!" title="Instagram" className={classes.iconCircleDiv}>
+            <FaInstagram size={20} />
           </Link>
-          <Link href="#!" title="X">
-            <div className="iconCircleDiv">
-              <i className="fab fa-x-twitter"></i>
-            </div>
+          <Link
+            href="https://www.linkedin.com/in/selim-polat-6245553a1/"
+            title="LinkedIn"
+            className={classes.iconCircleDiv}
+            target="_blank"
+          >
+            <FaLinkedinIn size={20} />
           </Link>
-          <Link href="#!" title="Github">
-            <div className="iconCircleDiv">
-              <i className="fab fa-github"></i>
-            </div>
+          <Link
+            href="https://github.com/SelimPolat01"
+            title="Github"
+            className={classes.iconCircleDiv}
+            target="_blank"
+          >
+            <FaGithub size={20} />
           </Link>
         </li>
       </ul>
-      <div className="copyright">Copyright &copy; Selim POLAT 2025</div>
+      <div className={classes.copyright}>
+        Copyright 2025 Selim POLAT {currentYear}
+      </div>
     </footer>
   );
 }

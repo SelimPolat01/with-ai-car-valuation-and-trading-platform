@@ -18,12 +18,15 @@
 .filteredAdvertDiv {
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  overflow: hidden;
+}
+
+.advertDiv {
+  width: 100%;
 }
 
 .listHeader {
   display: grid;
-  grid-template-columns: 135px 1fr 100px 100px 100px;
+  grid-template-columns: 140px 1fr 130px 100px 130px;
   justify-content: center;
   align-items: center;
   background-color: beige;
@@ -40,7 +43,7 @@
 
 .listItem {
   display: grid;
-  grid-template-columns: 135px 1fr 100px 100px 100px;
+  grid-template-columns: 130px 1fr 130px 100px 130px;
   align-items: center;
   padding: 8px;
   min-height: 100px;

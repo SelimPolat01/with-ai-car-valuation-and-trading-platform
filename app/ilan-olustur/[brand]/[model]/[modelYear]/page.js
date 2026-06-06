@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPrediction } from "@/store/predictionSlice";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import PrimaryButton from "@/app/components/PrimaryButton";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function TahminYap() {
   useCheckAuth();
@@ -38,7 +39,6 @@ export default function TahminYap() {
     transmission: "Vites Tipi",
     kilometer: "",
     fuelType: "Yakıt Tipi",
-    // changedPartCount: "Değişen Sayısı",
   });
   const [isKmFocused, setIsKmFocused] = useState(false);
   const [errors, setErrors] = useState({
@@ -48,7 +48,6 @@ export default function TahminYap() {
     horsepower: false,
     transmission: false,
     fuelType: false,
-    // changedPartCount: false,
   });
   const [shake, setShake] = useState({
     shakeTrimLevel: false,
@@ -57,34 +56,28 @@ export default function TahminYap() {
     shakeHorsepower: false,
     shakeTransmission: false,
     shakeFuelType: false,
-    shakeChangedPartCount: false,
   });
+
   const brandLogos = {
     audi: classes.audiLogo,
     bmw: classes.bmwLogo,
+    chevrolet: classes.chevroletLogo,
+    citroen: classes.citroenLogo,
+    dacia: classes.daciaLogo,
+    fiat: classes.fiatLogo,
     ford: classes.fordLogo,
+    honda: classes.hondaLogo,
+    hyundai: classes.hyundaiLogo,
     mercedes: classes.mercedesLogo,
     renault: classes.renaultLogo,
     toyota: classes.toyotaLogo,
-    togg: classes.toggLogo,
     volkswagen: classes.volkswagenLogo,
   };
 
   const carTypeMap = {
-    trimLevelMap: {
-      ambition: "Ambition",
-    },
-    bodyTypeMap: {
-      sedan: "Sedan",
-      suv: "SUV",
-      hatchback: "Hatchback",
-    },
-    fuelTypeMap: {
-      gasoline: "Benzin",
-      diesel: "Dizel",
-      electric: "Elektrik",
-      hybrid: "Hibrit",
-    },
+    trimLevelMap: { ambition: "Ambition" },
+    bodyTypeMap: { sedan: "Sedan", suv: "SUV", hatchback: "Hatchback" },
+    fuelTypeMap: { gasoline: "Benzin", diesel: "Dizel", hybrid: "Hibrit" },
     transmissionTypeMap: {
       automatic: "Otomatik",
       "semi automatic": "Yarı Otomatik",
@@ -95,7 +88,6 @@ export default function TahminYap() {
   useEffect(() => {
     const { engineCapacity, fuelType, horsepower, transmission, bodyType } =
       value;
-
     const isValid =
       engineCapacity &&
       engineCapacity !== "Motor Hacmi" &&
@@ -134,7 +126,6 @@ export default function TahminYap() {
       horsepower: value.horsepower === "Beygir Gücü",
       transmission: value.transmission === "Vites Tipi",
       fuelType: value.fuelType === "Yakıt Tipi",
-      // changedPartCount: value.changedPartCount === "Değişen Sayısı",
     };
     setErrors(newErrors);
     setShake({
@@ -144,7 +135,6 @@ export default function TahminYap() {
       shakeHorsepower: newErrors.horsepower,
       shakeTransmission: newErrors.transmission,
       shakeFuelType: newErrors.fuelType,
-      // shakeChangedPartCount: newErrors.changedPartCount,
     });
     setTimeout(() => {
       setShake({
@@ -154,7 +144,6 @@ export default function TahminYap() {
         shakeHorsepower: false,
         shakeTransmission: false,
         shakeFuelType: false,
-        shakeChangedPartCount: false,
       });
     }, 250);
 
@@ -165,21 +154,22 @@ export default function TahminYap() {
       newErrors.horsepower ||
       newErrors.transmission ||
       newErrors.fuelType
-      // newErrors.changedPartCount
     ) {
       return;
     }
 
     const token = localStorage.getItem("token");
     const payload = {
-      trimLevel: value.trimLevel,
-      bodyType: value.bodyType,
-      engineCapacity: Number(value.engineCapacity),
+      brand: params.brand.toLowerCase(),
+      model: params.model.toLowerCase(),
+      model_year: Number(params.modelYear),
+      trim_level: value.trimLevel.toLowerCase(),
+      body_type: value.bodyType.toLowerCase(),
+      engine_capacity: Number(value.engineCapacity),
       horsepower: Number(value.horsepower),
-      transmission: value.transmission,
+      transmission: value.transmission.toLowerCase(),
       kilometer: Number(value.kilometer),
-      fuelType: value.fuelType,
-      // changedPartCount: Number(value.changedPartCount),
+      fuel_type: value.fuelType.toLowerCase(),
     };
 
     try {
@@ -206,21 +196,20 @@ export default function TahminYap() {
       }
 
       const data = await response.json();
-      console.log("Backend'den gelen veri:", data);
       const reduxData = {
         brand: params.brand,
         model: params.model,
         modelYear: Number(params.modelYear),
-        trimLevel: payload.trimLevel,
-        bodyType: payload.bodyType,
-        engineCapacity: Number(payload.engineCapacity),
+        trimLevel: payload.trim_level,
+        bodyType: payload.body_type,
+        engineCapacity: Number(payload.engine_capacity),
         horsepower: Number(payload.horsepower),
         transmission: payload.transmission,
         kilometer: Number(payload.kilometer),
-        fuelType: payload.fuelType,
+        fuelType: payload.fuel_type,
         price: Number(data.price),
-        // changedPartCount: Number(payload.changedPartCount),
       };
+      console.log(data.price);
       dispatch(setPrediction(reduxData));
       router.push(
         `/ilan-olustur/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/hasar-durumu`,
@@ -233,6 +222,19 @@ export default function TahminYap() {
     }
   }
 
+  function formatModelForApi(modelParam) {
+    if (!modelParam) return "";
+    let model = decodeURIComponent(modelParam).toLowerCase().trim();
+    model = model.replace(/\s+/g, " ");
+    return model;
+  }
+
+  function brandParser(brand) {
+    if (!brand) return;
+    if (brand == "mercedes") return "mercedes-benz";
+    return brand.toLowerCase();
+  }
+
   useEffect(() => {
     async function fetchEngineCapacities(brand, model, modelYear) {
       if (!params || !params.brand || !params.model || !params.modelYear)
@@ -240,11 +242,14 @@ export default function TahminYap() {
 
       try {
         const token = localStorage.getItem("token");
-        let url = `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${brand}/${model}/${modelYear}`;
-        console.log(predictionCarValues?.bodyType);
+        const encodedBrand = encodeURIComponent(brand);
+        const encodedModel = encodeURIComponent(model);
+
+        let url = `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${encodedBrand}/${encodedModel}/${modelYear}`;
         if (predictionCarValues?.bodyType) {
-          url += `?bodyType=${predictionCarValues.bodyType.toLowerCase().trim()}`;
+          url += `?bodyType=${encodeURIComponent(predictionCarValues.bodyType.toLowerCase().trim())}`;
         }
+
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -252,6 +257,7 @@ export default function TahminYap() {
             "Content-Type": "application/json",
           },
         });
+
         if (response.status === 401) {
           localStorage.removeItem("token");
           router.replace("/login");
@@ -264,11 +270,10 @@ export default function TahminYap() {
           return;
         }
         const data = await response.json();
-        const engines = data[0];
-        console.log(engines);
+        const engines = data && data[0];
         setCarValues((prev) => ({
           ...prev,
-          engineCapacities: engines.engine_capacities,
+          engineCapacities: engines.engine_capacities || [],
         }));
       } catch (err) {
         console.log("Error: " + err);
@@ -278,8 +283,8 @@ export default function TahminYap() {
       }
     }
     fetchEngineCapacities(
-      params.brand.toLowerCase(),
-      params.model.toLowerCase(),
+      brandParser(params.brand),
+      formatModelForApi(params.model.toLowerCase()),
       params.modelYear,
     );
   }, [params.brand, params.model, params.modelYear]);
@@ -287,8 +292,12 @@ export default function TahminYap() {
   async function fetchFuelTypes(selectedEngineCapacity) {
     try {
       const token = localStorage.getItem("token");
+      const brandEnc = encodeURIComponent(brandParser(params.brand));
+      const modelEnc = encodeURIComponent(formatModelForApi(params.model));
+      const engineEnc = encodeURIComponent(selectedEngineCapacity);
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/${selectedEngineCapacity}`,
+        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${brandEnc}/${modelEnc}/${params.modelYear}/${engineEnc}`,
         {
           method: "GET",
           headers: {
@@ -302,17 +311,16 @@ export default function TahminYap() {
         router.replace("/login");
         return;
       }
-
       if (!response.ok) {
         const errorData = await response.json();
         setError(errorData.message);
         return;
       }
       const data = await response.json();
-      const fuels = data[0];
+      const fuels = data && data[0];
       setCarValues((prev) => ({
         ...prev,
-        fuelTypes: fuels.fuel_types,
+        fuelTypes: fuels.fuel_types || [],
       }));
     } catch (err) {
       console.log("Error: " + err);
@@ -325,8 +333,13 @@ export default function TahminYap() {
   async function fetchHorsepowers(selectedEngineCapacity, selectedFuelType) {
     try {
       const token = localStorage.getItem("token");
+      const brandEnc = encodeURIComponent(brandParser(params.brand));
+      const modelEnc = encodeURIComponent(formatModelForApi(params.model));
+      const engineEnc = encodeURIComponent(selectedEngineCapacity);
+      const fuelEnc = encodeURIComponent(selectedFuelType);
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/${selectedEngineCapacity}/${selectedFuelType}`,
+        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${brandEnc}/${modelEnc}/${params.modelYear}/${engineEnc}/${fuelEnc}`,
         {
           method: "GET",
           headers: {
@@ -340,17 +353,16 @@ export default function TahminYap() {
         router.replace("/login");
         return;
       }
-
       if (!response.ok) {
         const errorData = await response.json();
         setError(errorData.message);
         return;
       }
       const data = await response.json();
-      const hps = data[0];
+      const hps = data && data[0];
       setCarValues((prev) => ({
         ...prev,
-        horsepowers: hps.horsepowers,
+        horsepowers: hps.horsepowers || [],
       }));
     } catch (err) {
       console.log("Error: " + err);
@@ -367,8 +379,14 @@ export default function TahminYap() {
   ) {
     try {
       const token = localStorage.getItem("token");
+      const brandEnc = encodeURIComponent(brandParser(params.brand));
+      const modelEnc = encodeURIComponent(formatModelForApi(params.model));
+      const engineEnc = encodeURIComponent(selectedEngineCapacity);
+      const fuelEnc = encodeURIComponent(selectedFuelType);
+      const hpEnc = encodeURIComponent(selectedHorsepower);
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/${selectedEngineCapacity}/${selectedFuelType}/${selectedHorsepower}`,
+        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${brandEnc}/${modelEnc}/${params.modelYear}/${engineEnc}/${fuelEnc}/${hpEnc}`,
         {
           method: "GET",
           headers: {
@@ -382,17 +400,16 @@ export default function TahminYap() {
         router.replace("/login");
         return;
       }
-
       if (!response.ok) {
         const errorData = await response.json();
         setError(errorData.message);
         return;
       }
       const data = await response.json();
-      const gears = data[0];
+      const gears = data && data[0];
       setCarValues((prev) => ({
         ...prev,
-        transmissions: gears.transmissions,
+        transmissions: gears.transmissions || [],
       }));
     } catch (err) {
       console.log("Error: " + err);
@@ -410,8 +427,15 @@ export default function TahminYap() {
   ) {
     try {
       const token = localStorage.getItem("token");
+      const brandEnc = encodeURIComponent(brandParser(params.brand));
+      const modelEnc = encodeURIComponent(formatModelForApi(params.model));
+      const engineEnc = encodeURIComponent(selectedEngineCapacity);
+      const fuelEnc = encodeURIComponent(selectedFuelType);
+      const hpEnc = encodeURIComponent(selectedHorsepower);
+      const transEnc = encodeURIComponent(selecedTransmission);
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/${selectedEngineCapacity}/${selectedFuelType}/${selectedHorsepower}/${selecedTransmission}`,
+        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${brandEnc}/${modelEnc}/${params.modelYear}/${engineEnc}/${fuelEnc}/${hpEnc}/${transEnc}`,
         {
           method: "GET",
           headers: {
@@ -425,17 +449,16 @@ export default function TahminYap() {
         router.replace("/login");
         return;
       }
-
       if (!response.ok) {
         const errorData = await response.json();
         setError(errorData.message);
         return;
       }
       const data = await response.json();
-      const bodies = data[0];
+      const bodies = data && data[0];
       setCarValues((prev) => ({
         ...prev,
-        bodyTypes: bodies.body_types,
+        bodyTypes: bodies.body_types || [],
       }));
     } catch (err) {
       console.log("Error: " + err);
@@ -454,8 +477,16 @@ export default function TahminYap() {
   ) {
     try {
       const token = localStorage.getItem("token");
+      const brandEnc = encodeURIComponent(brandParser(params.brand));
+      const modelEnc = encodeURIComponent(formatModelForApi(params.model));
+      const engineEnc = encodeURIComponent(selectedEngineCapacity);
+      const fuelEnc = encodeURIComponent(selectedFuelType);
+      const hpEnc = encodeURIComponent(selectedHorsepower);
+      const transEnc = encodeURIComponent(selecedTransmission);
+      const bodyEnc = encodeURIComponent(selectedBodyType);
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/${selectedEngineCapacity}/${selectedFuelType}/${selectedHorsepower}/${selecedTransmission}/${selectedBodyType}`,
+        `${process.env.NEXT_PUBLIC_URL}/cars/car-value/${brandEnc}/${modelEnc}/${params.modelYear}/${engineEnc}/${fuelEnc}/${hpEnc}/${transEnc}/${bodyEnc}`,
         {
           method: "GET",
           headers: {
@@ -469,17 +500,16 @@ export default function TahminYap() {
         router.replace("/login");
         return;
       }
-
       if (!response.ok) {
         const errorData = await response.json();
         setError(errorData.message);
         return;
       }
       const data = await response.json();
-      const trims = data[0];
+      const trims = data && data[0];
       setCarValues((prev) => ({
         ...prev,
-        trimLevels: trims.trim_levels,
+        trimLevels: trims.trim_levels || [],
       }));
     } catch (err) {
       console.log("Error: " + err);
@@ -502,73 +532,433 @@ export default function TahminYap() {
     };
   }, []);
 
-  function capitalize(text) {
+  // Tüm kelimelerin baş harfini büyütmek için güncelledik (Örn: "s line" -> "S Line")
+  function capitalizeWords(text) {
     if (typeof text !== "string") {
       return "";
     }
-
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    return text
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
   }
+
+  const carGenerations = {
+    audi: {
+      a3: {
+        hatchback: [
+          { start: 2004, end: 2012, interval: "2004-2012" },
+          { start: 2012, end: 2016, interval: "2012-2016" },
+          { start: 2016, end: 2020, interval: "2016-2020" },
+          { start: 2020, end: 2024, interval: "2020-2024" },
+          { start: 2024, end: 2025, interval: "2024-2025" },
+        ],
+        sedan: [
+          { start: 2013, end: 2016, interval: "2013-2016" },
+          { start: 2016, end: 2020, interval: "2016-2020" },
+          { start: 2020, end: 2025, interval: "2020-2025" },
+        ],
+      },
+      a4: {
+        sedan: [
+          { start: 2012, end: 2015, interval: "2012-2015" },
+          { start: 2015, end: 2019, interval: "2015-2019" },
+          { start: 2019, end: 2024, interval: "2019-2024" },
+        ],
+      },
+    },
+    bmw: {
+      "1series": {
+        hatchback: [
+          { start: 2004, end: 2011, interval: "2004-2011" },
+          { start: 2011, end: 2014, interval: "2011-2014" },
+          { start: 2015, end: 2019, interval: "2015-2019" },
+          { start: 2019, end: 2025, interval: "2019-2025" },
+        ],
+      },
+      "3series": {
+        sedan: [
+          { start: 2012, end: 2015, interval: "2012-2015" },
+          { start: 2015, end: 2019, interval: "2015-2019" },
+          { start: 2019, end: 2023, interval: "2019-2023" },
+          { start: 2023, end: 2025, interval: "2023-2025" },
+        ],
+      },
+      "5series": {
+        sedan: [
+          { start: 2007, end: 2010, interval: "2007-2010" },
+          { start: 2011, end: 2016, interval: "2011-2016" },
+          { start: 2017, end: 2023, interval: "2017-2023" },
+          { start: 2024, end: 2025, interval: "2024-2025" },
+        ],
+      },
+    },
+    chevrolet: {
+      cruze: {
+        sedan: [
+          { start: 2009, end: 2012, interval: "2009-2012" },
+          { start: 2012, end: 2013, interval: "2012-2013" },
+        ],
+        hatchback: [{ start: 2011, end: 2013, interval: "2011-2013" }],
+      },
+    },
+    citroen: {
+      c3: {
+        hatchback: [
+          { start: 2002, end: 2009, interval: "2002-2009" },
+          { start: 2010, end: 2016, interval: "2010-2016" },
+          { start: 2016, end: 2020, interval: "2016-2020" },
+          { start: 2020, end: 2024, interval: "2020-2024" },
+        ],
+      },
+      c4: {
+        hatchback: [
+          { start: 2014, end: 2020, interval: "2014-2020" },
+          { start: 2020, end: 2024, interval: "2020-2024" },
+          { start: 2024, end: 2025, interval: "2024-2025" },
+        ],
+      },
+      celysee: {
+        sedan: [
+          { start: 2012, end: 2017, interval: "2012-2017" },
+          { start: 2017, end: 2023, interval: "2017-2023" },
+        ],
+      },
+    },
+    dacia: {
+      duster: {
+        suv: [
+          { start: 2010, end: 2017, interval: "2010-2017" },
+          { start: 2018, end: 2023, interval: "2018-2023" },
+          { start: 2024, end: 2024, interval: "2024-2024" },
+        ],
+      },
+    },
+    fiat: {
+      egea: {
+        sedan: [
+          { start: 2015, end: 2021, interval: "2015-2021" },
+          { start: 2021, end: 2026, interval: "2021-2026" },
+        ],
+        hatchback: [
+          { start: 2016, end: 2021, interval: "2016-2021" },
+          { start: 2021, end: 2024, interval: "2021-2024" },
+        ],
+      },
+    },
+    ford: {
+      fiesta: {
+        hatchback: [
+          { start: 2008, end: 2013, interval: "2008-2013" },
+          { start: 2013, end: 2017, interval: "2013-2017" },
+          { start: 2017, end: 2020, interval: "2017-2020" },
+        ],
+      },
+      focus: {
+        sedan: [
+          { start: 2011, end: 2014, interval: "2011-2014" },
+          { start: 2014, end: 2018, interval: "2014-2018" },
+          { start: 2018, end: 2022, interval: "2018-2022" },
+          { start: 2022, end: 2025, interval: "2022-2025" },
+        ],
+        hatchback: [
+          { start: 2011, end: 2014, interval: "2011-2014" },
+          { start: 2014, end: 2018, interval: "2014-2018" },
+          { start: 2018, end: 2022, interval: "2018-2022" },
+          { start: 2022, end: 2025, interval: "2022-2025" },
+        ],
+      },
+    },
+    honda: {
+      civic: {
+        sedan: [
+          { start: 2006, end: 2011, interval: "2006-2011" },
+          { start: 2011, end: 2016, interval: "2011-2016" },
+          { start: 2016, end: 2021, interval: "2016-2021" },
+          { start: 2021, end: 2025, interval: "2021-2025" },
+        ],
+      },
+    },
+    hyundai: {
+      i20: {
+        hatchback: [
+          { start: 2014, end: 2020, interval: "2014-2020" },
+          { start: 2020, end: 2025, interval: "2020-2025" },
+        ],
+      },
+    },
+    mercedes: {
+      cseries: {
+        sedan: [
+          { start: 2007, end: 2011, interval: "2007-2011" },
+          { start: 2011, end: 2014, interval: "2011-2014" },
+          { start: 2014, end: 2021, interval: "2014-2021" },
+          { start: 2021, end: 2025, interval: "2021-2025" },
+        ],
+      },
+      eseries: {
+        sedan: [
+          { start: 2009, end: 2013, interval: "2009-2013" },
+          { start: 2014, end: 2016, interval: "2014-2016" },
+          { start: 2016, end: 2020, interval: "2016-2020" },
+          { start: 2020, end: 2023, interval: "2020-2023" },
+          { start: 2023, end: 2025, interval: "2023-2025" },
+        ],
+      },
+    },
+    renault: {
+      clio: {
+        hatchback: [
+          { start: 2012, end: 2019, interval: "2012-2019" },
+          { start: 2019, end: 2023, interval: "2019-2023" },
+          { start: 2023, end: 2025, interval: "2019-2025" },
+        ],
+      },
+      megane: {
+        sedan: [
+          { start: 2016, end: 2020, interval: "2016-2020" },
+          { start: 2020, end: 2025, interval: "2020-2025" },
+        ],
+        hatchback: [
+          { start: 2011, end: 2014, interval: "2011-2014" },
+          { start: 2014, end: 2016, interval: "2014-2016" },
+          { start: 2016, end: 2020, interval: "2016-2020" },
+        ],
+      },
+    },
+    toyota: {
+      corolla: {
+        sedan: [
+          { start: 2013, end: 2018, interval: "2013-2018" },
+          { start: 2019, end: 2026, interval: "2019-2026" },
+        ],
+      },
+    },
+    volkswagen: {
+      golf: {
+        hatchback: [
+          { start: 2012, end: 2017, interval: "2012-2017" },
+          { start: 2017, end: 2020, interval: "2017-2020" },
+          { start: 2020, end: 2024, interval: "2020-2024" },
+          { start: 2024, end: 2025, interval: "2024-2025" },
+        ],
+      },
+      jetta: {
+        sedan: [
+          { start: 2011, end: 2014, interval: "2011-2014" },
+          { start: 2014, end: 2017, interval: "2014-2017" },
+        ],
+      },
+      passat: {
+        sedan: [
+          { start: 2011, end: 2014, interval: "2011-2014" },
+          { start: 2014, end: 2019, interval: "2014-2019" },
+          { start: 2019, end: 2022, interval: "2019-2022" },
+        ],
+      },
+      polo: {
+        hatchback: [
+          { start: 2010, end: 2017, interval: "2010-2017" },
+          { start: 2018, end: 2021, interval: "2018-2021" },
+          { start: 2021, end: 2025, interval: "2021-2025" },
+        ],
+      },
+      tiguan: {
+        suv: [
+          { start: 2011, end: 2016, interval: "2011-2016" },
+          { start: 2016, end: 2020, interval: "2016-2020" },
+          { start: 2020, end: 2024, interval: "2020-2024" },
+          { start: 2024, end: 2025, interval: "2024-2025" },
+        ],
+      },
+      troc: {
+        suv: [
+          { start: 2019, end: 2021, interval: "2019-2021" },
+          { start: 2022, end: 2025, interval: "2022-2025" },
+        ],
+      },
+    },
+  };
+
+  function findIntervalFromYear(
+    brandParam,
+    modelParam,
+    bodyType,
+    selectedYear,
+  ) {
+    if (!brandParam || !modelParam || !bodyType || !selectedYear) return null;
+    const brandKey = brandParam.toLowerCase().trim();
+    let decodedModel = decodeURIComponent(modelParam);
+    let modelKey = decodedModel
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "")
+      .replace(/-/g, "");
+    if (modelKey.includes("serisi")) {
+      modelKey = modelKey.replace("serisi", "series");
+    }
+    const body = bodyType.toLowerCase().trim();
+    const year = Number(selectedYear);
+    const generations = carGenerations[brandKey]?.[modelKey]?.[body];
+    if (!generations) {
+      return null;
+    }
+    const foundGen = generations.find(
+      (gen) => year >= gen.start && year <= gen.end,
+    );
+    return foundGen ? foundGen.interval : null;
+  }
+
+  const getDbModelName = (modelParam) => {
+    if (!modelParam) return "";
+    let name = decodeURIComponent(modelParam).toLowerCase().trim();
+    name = name.replace("serisi", "series");
+    return name.replace(/[\s-]/g, "");
+  };
+
+  const getCarStockImageSrc = () => {
+    const brand = params?.brand;
+    const model = params?.model;
+    const bodyType = value?.bodyType;
+    const selectedYear = params?.modelYear;
+    if (!brand || !model || !bodyType || !selectedYear) return null;
+    const modelStr = getDbModelName(model);
+    const brandStr = brand.toLowerCase().trim();
+    const bodyStr = bodyType.toLowerCase().trim();
+    const finalYearInterval = findIntervalFromYear(
+      brand,
+      model,
+      bodyType,
+      selectedYear,
+    );
+    if (!finalYearInterval) return null;
+    const [startYear, endYear] = finalYearInterval.split("-");
+    const shortYearInterval = `${startYear.slice(-2)}-${endYear.slice(-2)}`;
+    return `/images/cars/${brand}/${brandStr}-${modelStr}-${bodyStr}-${shortYearInterval}.png`;
+  };
+
+  const stockImageSrc = getCarStockImageSrc();
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.25,
+        when: "beforeChildren",
+        staggerChildren: 0.03,
+      },
+    },
+  };
+
+  const formContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16, scale: 0.98 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+      },
+    },
+  };
+
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 0.92, y: 12 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.35, ease: "easeOut" },
+    },
+  };
+
+  const dropdownVariants = {
+    hidden: { opacity: 0, y: -8, scale: 0.98 },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.18 } },
+    exit: { opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.15 } },
+  };
 
   if (error) return <p>{error}</p>;
 
   return (
-    <main className={classes.main}>
+    <motion.main
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className={classes.main}
+    >
       <div className={classes.flex}>
-        <div className={classes.title}>
+        <motion.div variants={itemVariants} className={classes.title}>
           <h1>Lütfen aracın bilgilerini gir</h1>
-        </div>
+        </motion.div>
         <hr />
-        <div className={classes.flexContainer}>
+        <motion.div variants={itemVariants} className={classes.flexContainer}>
           <div className={classes.flexContainer1}>
             <Image
               className={`${classes.carLogo} ${brandLogos[params.brand] || ""}`}
               src={`/images/car_logos/${params.brand}.png`}
               alt={`${params.brand} logo`}
-              width={56}
-              height={50}
+              width={70}
+              height={70}
             />
 
-            {value.bodyType !== "Kasa Tipi" && (
-              <Image
+            {stockImageSrc && (
+              <motion.img
+                variants={imageVariants}
+                initial="hidden"
+                animate="visible"
+                whileHover={{
+                  scale: 1.2,
+                  transition: { duration: 0.5, ease: "easeOut" },
+                }}
                 className={`${classes.carImg} ${classes.visible}`}
-                src={`/images/cars/${params.brand.toLowerCase()}/${params.brand.toLowerCase()}-${params.model.toLowerCase()}-${
-                  value.bodyType
-                }.png`}
-                alt={`${params.brand.toLowerCase()} ${params.model.toLowerCase()} ${
-                  value.bodyType
-                } image`}
-                width={300}
-                height={200}
+                src={stockImageSrc}
               />
             )}
 
             <p className={classes.carYear}>{params.modelYear}</p>
           </div>
+
           <div className={classes.flexContainer2}>
-            <form className={classes.form} onSubmit={submitHandler}>
-              <div
-                className={`${classes.engineCapacityWrapper}  dropdownWrapper`}
+            <motion.form
+              className={classes.form}
+              onSubmit={submitHandler}
+              variants={formContainerVariants}
+            >
+              <motion.div
+                variants={itemVariants}
+                className={`${classes.engineCapacityWrapper} dropdownWrapper`}
               >
                 <div
-                  className={`dropdown ${
-                    errors.engineCapacity ? "notSelected" : ""
-                  } ${
+                  className={`dropdown ${errors.engineCapacity ? "notSelected" : ""} ${
                     value.engineCapacity !== "Motor Hacmi"
                       ? classes.selected
                       : ""
-                  } ${
-                    shake.shakeEngineCapacity ? "notSelectedAnimation" : ""
-                  } ${
+                  } ${shake.shakeEngineCapacity ? "notSelectedAnimation" : ""} ${
                     openDropdown === "engineCapacity" ? classes.boxShadow : ""
                   }`}
-                  onClick={() =>
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setOpenDropdown(
                       openDropdown === "engineCapacity"
                         ? null
                         : "engineCapacity",
-                    )
-                  }
+                    );
+                  }}
                 >
                   <span>
                     {value.engineCapacity !== "Motor Hacmi"
@@ -576,9 +966,16 @@ export default function TahminYap() {
                       : value.engineCapacity}
                   </span>
                 </div>
-                {openDropdown === "engineCapacity" && (
-                  <>
-                    <ul className="dropdownList">
+
+                <AnimatePresence>
+                  {openDropdown === "engineCapacity" && (
+                    <motion.ul
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="dropdownList"
+                    >
                       {carValues.engineCapacities.map(
                         (engineCapacity, index) => (
                           <li
@@ -588,7 +985,7 @@ export default function TahminYap() {
                               setOpenDropdown(null);
                               setValue((prevValues) => ({
                                 ...prevValues,
-                                engineCapacity: engineCapacity,
+                                engineCapacity,
                               }));
                               setErrors((prevError) => ({
                                 ...prevError,
@@ -600,16 +997,14 @@ export default function TahminYap() {
                           </li>
                         ),
                       )}
-                    </ul>
-                  </>
-                )}
-              </div>
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+              </motion.div>
 
-              <div className="dropdownWrapper">
+              <motion.div variants={itemVariants} className="dropdownWrapper">
                 <div
-                  className={`dropdown ${
-                    errors.fuelType ? "notSelected" : ""
-                  } ${
+                  className={`dropdown ${errors.fuelType ? "notSelected" : ""} ${
                     value.fuelType !== "Yakıt Tipi" ? classes.selected : ""
                   } ${shake.shakeFuelType ? "notSelectedAnimation" : ""} ${
                     openDropdown === "fuelType" ? classes.boxShadow : ""
@@ -624,22 +1019,29 @@ export default function TahminYap() {
                     {value.fuelType === "Yakıt Tipi"
                       ? "Yakıt Tipi"
                       : carTypeMap.fuelTypeMap[value.fuelType] ||
-                        capitalize(value.fuelType)}
+                        capitalizeWords(value.fuelType)}
                   </span>
                 </div>
-                {openDropdown === "fuelType" && (
-                  <>
-                    <ul className="dropdownList">
+
+                <AnimatePresence>
+                  {openDropdown === "fuelType" && (
+                    <motion.ul
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="dropdownList"
+                    >
                       {carValues.fuelTypes.map((fuelType, index) => (
                         <li
                           key={index}
                           onClick={() => {
-                            fetchHorsepowers(value.engineCapacity, fuelType);
-                            setOpenDropdown(null);
                             setValue((prevValues) => ({
                               ...prevValues,
-                              fuelType: fuelType,
+                              fuelType,
                             }));
+                            fetchHorsepowers(value.engineCapacity, fuelType);
+                            setOpenDropdown(null);
                             setErrors((prevError) => ({
                               ...prevError,
                               fuelType: false,
@@ -647,18 +1049,17 @@ export default function TahminYap() {
                           }}
                         >
                           {carTypeMap.fuelTypeMap[fuelType] ||
-                            capitalize(fuelType)}
+                            capitalizeWords(fuelType)}
                         </li>
                       ))}
-                    </ul>
-                  </>
-                )}
-              </div>
-              <div className="dropdownWrapper">
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="dropdownWrapper">
                 <div
-                  className={`dropdown ${
-                    errors.horsepower ? "notSelected" : ""
-                  } ${
+                  className={`dropdown ${errors.horsepower ? "notSelected" : ""} ${
                     value.horsepower !== "Beygir Gücü" ? classes.selected : ""
                   } ${shake.shakeHorsepower ? "notSelectedAnimation" : ""} ${
                     openDropdown === "horsepower" ? classes.boxShadow : ""
@@ -675,41 +1076,44 @@ export default function TahminYap() {
                       : value.horsepower}
                   </span>
                 </div>
-                {openDropdown === "horsepower" && (
-                  <>
-                    <ul className="dropdownList">
-                      {carValues.horsepowers.map((horsepower, index) => (
+
+                <AnimatePresence>
+                  {openDropdown === "horsepower" && (
+                    <motion.ul
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="dropdownList"
+                    >
+                      {carValues.horsepowers.map((hp, index) => (
                         <li
                           key={index}
                           onClick={() => {
+                            setValue((prev) => ({ ...prev, horsepower: hp }));
                             fetchTransmissions(
                               value.engineCapacity,
                               value.fuelType,
-                              horsepower,
+                              hp,
                             );
                             setOpenDropdown(null);
-                            setValue((prevValues) => ({
-                              ...prevValues,
-                              horsepower: horsepower,
-                            }));
-                            setErrors((prevError) => ({
-                              ...prevError,
+                            setErrors((prev) => ({
+                              ...prev,
                               horsepower: false,
                             }));
                           }}
                         >
-                          {horsepower} hp
+                          {hp} hp
                         </li>
                       ))}
-                    </ul>
-                  </>
-                )}
-              </div>
-              <div className="dropdownWrapper">
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="dropdownWrapper">
                 <div
-                  className={`dropdown ${
-                    errors.transmission ? "notSelected" : ""
-                  } ${
+                  className={`dropdown ${errors.transmission ? "notSelected" : ""} ${
                     value.transmission !== "Vites Tipi" ? classes.selected : ""
                   } ${shake.shakeTransmission ? "notSelectedAnimation" : ""} ${
                     openDropdown === "transmission" ? classes.boxShadow : ""
@@ -724,48 +1128,56 @@ export default function TahminYap() {
                     {value.transmission === "Vites Tipi"
                       ? "Vites Tipi"
                       : carTypeMap.transmissionTypeMap[value.transmission] ||
-                        capitalize(value.transmission)}
+                        capitalizeWords(value.transmission)}
                   </span>
                 </div>
-                {openDropdown === "transmission" && (
-                  <>
-                    <ul className="dropdownList">
-                      {carValues.transmissions.map((transmission, index) => (
+
+                <AnimatePresence>
+                  {openDropdown === "transmission" && (
+                    <motion.ul
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="dropdownList"
+                    >
+                      {carValues.transmissions.map((trans, index) => (
                         <li
                           key={index}
                           onClick={() => {
+                            setValue((prev) => ({
+                              ...prev,
+                              transmission: trans,
+                            }));
                             fetchBodyTypes(
                               value.engineCapacity,
                               value.fuelType,
                               value.horsepower,
-                              transmission,
+                              trans,
                             );
                             setOpenDropdown(null);
-                            setValue((prevValues) => ({
-                              ...prevValues,
-                              transmission: transmission,
-                            }));
-                            setErrors((prevError) => ({
-                              ...prevError,
+                            setErrors((prev) => ({
+                              ...prev,
                               transmission: false,
                             }));
                           }}
                         >
-                          {carTypeMap.transmissionTypeMap[transmission] ||
-                            capitalize(transmission)}
+                          {carTypeMap.transmissionTypeMap[trans] ||
+                            capitalizeWords(trans)}
                         </li>
                       ))}
-                    </ul>
-                  </>
-                )}
-              </div>
-              <div className="dropdownWrapper">
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="dropdownWrapper">
                 <div
-                  className={`dropdown ${
-                    errors.bodyType ? "notSelected" : ""
-                  } ${value.bodyType !== "Kasa Tipi" ? classes.selected : ""} ${
-                    shake.shakeBodyType ? "notSelectedAnimation" : ""
-                  } ${openDropdown === "bodyType" ? classes.boxShadow : ""}`}
+                  className={`dropdown ${errors.bodyType ? "notSelected" : ""} ${
+                    value.bodyType !== "Kasa Tipi" ? classes.selected : ""
+                  } ${shake.shakeBodyType ? "notSelectedAnimation" : ""} ${
+                    openDropdown === "bodyType" ? classes.boxShadow : ""
+                  }`}
                   onClick={() => {
                     if (isFromImage) return;
                     setOpenDropdown(
@@ -776,11 +1188,18 @@ export default function TahminYap() {
                   {value.bodyType === "Kasa Tipi"
                     ? "Kasa Tipi"
                     : carTypeMap.bodyTypeMap[value.bodyType] ||
-                      capitalize(value.bodyType)}
+                      capitalizeWords(value.bodyType)}
                 </div>
-                {openDropdown === "bodyType" && !isFromImage && (
-                  <>
-                    <ul className="dropdownList">
+
+                <AnimatePresence>
+                  {openDropdown === "bodyType" && !isFromImage && (
+                    <motion.ul
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="dropdownList"
+                    >
                       {carValues.bodyTypes.map((bodyType) => (
                         <li
                           key={bodyType}
@@ -795,7 +1214,7 @@ export default function TahminYap() {
                             setOpenDropdown(null);
                             setValue((prevValues) => ({
                               ...prevValues,
-                              bodyType: bodyType,
+                              bodyType,
                             }));
                             setErrors((prevError) => ({
                               ...prevError,
@@ -804,20 +1223,21 @@ export default function TahminYap() {
                           }}
                         >
                           {carTypeMap.bodyTypeMap[bodyType] ||
-                            capitalize(bodyType)}
+                            capitalizeWords(bodyType)}
                         </li>
                       ))}
-                    </ul>
-                  </>
-                )}
-              </div>
-              <div className="dropdownWrapper">
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="dropdownWrapper">
                 <div
-                  className={`dropdown ${
-                    errors.trimLevel ? "notSelected" : ""
-                  } ${value.trimLevel !== "Paket" ? classes.selected : ""} ${
-                    shake.shakeTrimLevel ? "notSelectedAnimation" : ""
-                  } ${openDropdown === "trimLevel" ? classes.boxShadow : ""}`}
+                  className={`dropdown ${errors.trimLevel ? "notSelected" : ""} ${
+                    value.trimLevel !== "Paket" ? classes.selected : ""
+                  } ${shake.shakeTrimLevel ? "notSelectedAnimation" : ""} ${
+                    openDropdown === "trimLevel" ? classes.boxShadow : ""
+                  }`}
                   onClick={() =>
                     setOpenDropdown(
                       openDropdown === "trimLevel" ? null : "trimLevel",
@@ -827,11 +1247,18 @@ export default function TahminYap() {
                   {value.trimLevel === "Paket"
                     ? "Paket"
                     : carTypeMap.trimLevelMap[value.trimLevel] ||
-                      capitalize(value.trimLevel)}
+                      capitalizeWords(value.trimLevel)}
                 </div>
-                {openDropdown === "trimLevel" && (
-                  <>
-                    <ul className="dropdownList">
+
+                <AnimatePresence>
+                  {openDropdown === "trimLevel" && (
+                    <motion.ul
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="dropdownList"
+                    >
                       {carValues.trimLevels.map((trimLevel) => (
                         <li
                           key={trimLevel}
@@ -839,7 +1266,7 @@ export default function TahminYap() {
                             setOpenDropdown(null);
                             setValue((prevValues) => ({
                               ...prevValues,
-                              trimLevel: trimLevel,
+                              trimLevel,
                             }));
                             setErrors((prevError) => ({
                               ...prevError,
@@ -848,14 +1275,16 @@ export default function TahminYap() {
                           }}
                         >
                           {carTypeMap.trimLevelMap[trimLevel] ||
-                            capitalize(trimLevel)}
+                            capitalizeWords(trimLevel)}
                         </li>
                       ))}
-                    </ul>
-                  </>
-                )}
-              </div>
-              <input
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              <motion.input
+                variants={itemVariants}
                 className={classes.kmInput}
                 type="text"
                 name="kilometer"
@@ -874,80 +1303,20 @@ export default function TahminYap() {
                   setValue((prev) => ({ ...prev, kilometer: numericValue }));
                 }}
               />
-              {/* <div className="dropdownWrapper">
-                <div
-                  className={`dropdown ${
-                    errors.changedPartCount ? "notSelected" : ""
-                  } ${
-                    value.changedPartCount !== "Değişen Sayısı"
-                      ? classes.selected
-                      : ""
-                  } ${
-                    shake.shakeChangedPartCount ? "notSelectedAnimation" : ""
-                  } ${
-                    openDropdown === "changedPartCount" ? classes.boxShadow : ""
-                  }`}
-                  onClick={() =>
-                    setOpenDropdown(
-                      openDropdown === "changedPartCount"
-                        ? null
-                        : "changedPartCount",
-                    )
-                  }
-                >
-                  <span>
-                    {value.changedPartCount === 0
-                      ? "Değişen Yok"
-                      : value.changedPartCount === "Değişen Sayısı"
-                        ? "Değişen Sayısı"
-                        : `${value.changedPartCount} Değişen`}
-                  </span>
-                </div>
-                {openDropdown === "changedPartCount" && (
-                  <>
-                    <ul className="dropdownList">
-                      <li
-                        onClick={() => {
-                          setOpenDropdown(null);
-                          setValue((prevValues) => ({
-                            ...prevValues,
-                            changedPartCount: 0,
-                          }));
-                          setErrors((prevError) => ({
-                            ...prevError,
-                            changedPartCount: false,
-                          }));
-                        }}
-                      >
-                        Değişen Yok
-                      </li>
-                      {[1, 2, 3, 4, 5].map((num) => (
-                        <li
-                          key={num}
-                          onClick={() => {
-                            setOpenDropdown(null);
-                            setValue((prevValues) => ({
-                              ...prevValues,
-                              changedPartCount: num,
-                            }));
-                            setErrors((prevError) => ({
-                              ...prevError,
-                              changedPartCount: false,
-                            }));
-                          }}
-                        >
-                          {num} Değişen
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </div> */}
-              <PrimaryButton text="Hasar bilgilerini ekle" type="submit" />
-            </form>
+
+              <motion.div
+                variants={itemVariants}
+                style={{
+                  gridColumn: "span 2",
+                  width: "100%",
+                }}
+              >
+                <PrimaryButton text="Hasar bilgilerini gir" type="submit" />
+              </motion.div>
+            </motion.form>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </main>
+    </motion.main>
   );
 }

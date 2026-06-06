@@ -7,7 +7,6 @@ import AdvertItem from "../components/AdvertItem";
 import { useRouter } from "next/navigation";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { AnimatePresence } from "framer-motion";
-import LoadingSpinner from "../components/LoadingSpinner";
 import ManagementNav from "../components/ManagementNav";
 
 export default function MyAdverts() {
@@ -128,15 +127,15 @@ export default function MyAdverts() {
         text="Bu ilanı düzenlemek"
       />
       <ManagementNav className={classes.managementNav} />
-      <div className={classes.div}>
-        <AnimatePresence>
-          {myAdverts &&
-            myAdverts.map((myAdvert) => (
+      {myAdverts && myAdverts.length > 0 ? (
+        <div className={classes.div}>
+          <AnimatePresence>
+            {myAdverts.map((myAdvert) => (
               <AdvertItem
                 id={myAdvert.id}
                 key={myAdvert.id}
                 userId={myAdvert.user_id}
-                imgSrc={myAdvert.image_src}
+                imgSrc={myAdvert.image_data}
                 brand={myAdvert.brand}
                 model={myAdvert.model}
                 engineCapacity={myAdvert.engine_capacity}
@@ -149,14 +148,14 @@ export default function MyAdverts() {
                 showEditButton={true}
               />
             ))}
-        </AnimatePresence>
-
-        {myAdverts.length === 0 && (
-          <div className={classes.noAdvertDiv}>
-            <p>İlanınınız bulunmamaktadır.</p>
-          </div>
-        )}
-      </div>
+          </AnimatePresence>
+        </div>
+      ) : (
+        /* İLAN YOKSA SADECE BU UYARIYI GÖSTER (GRID'DEN BAĞIMSIZ) */
+        <div className={classes.noAdvertDiv}>
+          <p>İlanınız bulunmamaktadır.</p>
+        </div>
+      )}
     </div>
   );
 }

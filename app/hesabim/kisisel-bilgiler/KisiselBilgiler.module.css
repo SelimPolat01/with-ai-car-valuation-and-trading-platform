@@ -1,0 +1,210 @@
+.div {
+  display: flex;
+  flex-direction: column;
+  padding: 0 3rem 2rem 3rem;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.pageTitle {
+  margin: 0 0 24px 0;
+  align-self: flex-start;
+  padding: 0;
+  font-size: 32px;
+  width: max-content;
+  background: linear-gradient(
+    105.66deg,
+    #00f4ff 16.76%,
+    #68ffed 46.39%,
+    #9867ff 76.01%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.formWrapper {
+  width: 100%;
+  width: 1000px;
+  padding: 3rem 4.3rem;
+  background: linear-gradient(to right, #341d5d, #945690, #b4c1d6);
+  border: 1px solid #4b336b;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  width: 100%;
+  gap: 2rem;
+}
+
+.mediaColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+  justify-content: center;
+  height: 345px;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatarPreview {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 2px dashed #a7b8d4;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  background-color: #0b0517;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.3s ease;
+}
+
+.uploadOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.avatarPreview:hover .uploadOverlay {
+  opacity: 1;
+}
+
+.avatarPreview:hover .profileImg {
+  filter: blur(2px);
+}
+
+.helperText {
+  font-size: 14px;
+  color: #a9a3b0;
+}
+
+.cvSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding-top: 2rem;
+  border-top: 1px solid #4b336b;
+}
+
+.sectionTitle {
+  margin: 0;
+  color: #f8f8f8;
+  font-size: 18px;
+}
+
+.cvBox {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background-color: rgba(75, 51, 107, 0.2);
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #4b336b;
+  width: 100%;
+  box-sizing: border-box;
+  color: #a9a3b0;
+  font-size: 14px;
+}
+
+.cvUploadBtn {
+  width: 100%;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.textColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.row {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.buttonWrapper {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submitContainer {
+  margin: 0.2rem 0 0 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.input {
+  min-height: 45px;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  background-color: #150a29;
+  border-radius: 12px;
+  color: #341d5d;
+  outline: none;
+  font-size: 16px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.button {
+  background: linear-gradient(to right, #a7b8d4, #934b8e, #2d1457) !important;
+  color: whitesmoke !important;
+  border: #2d1457 1px solid;
+}
+
+.button:hover {
+  transform: scale(1.05);
+}
+
+.successMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  height: 393.4px;
+}

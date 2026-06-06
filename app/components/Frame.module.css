@@ -1,0 +1,86 @@
+.div {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#f8f8f8) padding-box,
+    linear-gradient(45deg, black, #00c6ff) border-box;
+  border-radius: 12px;
+  transition: transform 0.25s ease-in;
+}
+
+.divContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.iconContainer {
+  border-radius: 12px;
+  padding: 8px;
+  align-self: flex-start;
+  background: rgba(59, 130, 246, 0.1);
+  height: 24px;
+  color: #3b82f6;
+}
+
+.text {
+  font-weight: 500;
+  color: rgb(111, 110, 110);
+  font-family: "Josefin Sans", sans-serif;
+}
+
+.totalChangeContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.totalContainer {
+  align-self: center;
+}
+
+.total {
+  color: black;
+  font-size: 38px;
+  margin: 0;
+}
+
+.greenBg {
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+.redBg {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.changeContainer {
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  align-self: center;
+}
+
+.upChange {
+  color: #22c55e;
+  margin: 0;
+  display: inline-block;
+}
+
+.downChange {
+  color: #ef4444;
+  margin: 0;
+  display: inline-block;
+}
+
+.upColor {
+  color: green;
+}
+
+.downColor {
+  color: #f00000;
+}
+
+.changeIcon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+}

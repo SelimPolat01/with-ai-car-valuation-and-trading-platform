@@ -1,0 +1,32 @@
+.div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 0 2rem 0;
+  font-family: "Josefin Sans", sans-serif;
+}
+
+.frameDiv {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  max-width: 1110px;
+  padding: 2px;
+}
+
+.divContainer {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+}
+
+.biggerFrame {
+  width: 740px;
+  height: 200px;
+}
+
+.frame {
+  width: 350px;
+  min-height: 160px;
+}

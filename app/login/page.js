@@ -30,7 +30,7 @@ export default function Login() {
     if (token) {
       router.replace("/");
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("email");
@@ -104,8 +104,8 @@ export default function Login() {
         setLoading(false);
         return;
       }
-
-      const expire = new Date().getTime() + 60 * 60 * 1000;
+      const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
+      const expire = decodedToken.exp * 1000;
       localStorage.setItem("token", data.token);
       localStorage.setItem("tokenExpire", expire);
       dispatch(loginSuccess(data.user));
@@ -154,6 +154,7 @@ export default function Login() {
         <SecondaryButton
           type="submit"
           text={loading ? "Yükleniyor..." : "Giriş Yap"}
+          className={classes.button}
         />
       </form>
     </div>

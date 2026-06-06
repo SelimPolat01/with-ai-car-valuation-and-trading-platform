@@ -5,13 +5,26 @@ import { router as authRoutes } from "./routes/auth.js";
 import { router as carsRoutes } from "./routes/cars.js";
 import { router as advertsRoutes } from "./routes/adverts.js";
 import { router as predictRoutes } from "./routes/predict.js";
+import { router as personalInfoRoutes } from "./routes/infos.js";
 import http from "http";
 import { Server } from "socket.io";
 import { db } from "./lib/db.js";
+import { rateLimit } from "express-rate-limit";
+import path from "path";
 
 // import { dbInsertCars } from "./utils/dbInsertCars.js";
 
 const app = express();
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: {
+    status: 429,
+    error: "Çok fazla istek atıldı. Lütfen 15 dakika sonra tekrar deneyin.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 const PORT = Number(process.env.PORT);
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -73,10 +86,13 @@ app.use(
 );
 
 app.use(express.json());
-app.use("/api", authRoutes);
-app.use("/cars", carsRoutes);
-app.use("/adverts", advertsRoutes);
-app.use("/predict", predictRoutes);
+
+app.use("/uploads", express.static(path.join(process.cwd(), "public/uploads")));
+app.use("/api", globalLimiter, authRoutes);
+app.use("/cars", globalLimiter, carsRoutes);
+app.use("/adverts", globalLimiter, advertsRoutes);
+app.use("/predict", globalLimiter, predictRoutes);
+app.use("/infos", personalInfoRoutes);
 
 server.listen(PORT, () => {
   console.log(`Server ve Socket.IO ${PORT} portunda çalışıyor.`);

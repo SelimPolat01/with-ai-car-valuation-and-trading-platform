@@ -4,6 +4,7 @@ const initialState = {
   allAdverts: [],
   filteredAdverts: [],
   favoriteAdverts: [],
+  selectedBrand: null,
 };
 
 const advertsSlice = createSlice({
@@ -13,11 +14,18 @@ const advertsSlice = createSlice({
     setAdverts: (state, action) => {
       state.allAdverts = action.payload;
       state.filteredAdverts = action.payload;
+      state.selectedBrand = null;
     },
     setFilterAdverts: (state, action) => {
-      state.filteredAdverts = state.allAdverts.filter(
-        (advert) => advert.brand === action.payload
-      );
+      const brand = action.payload;
+      state.selectedBrand = brand;
+      if (!brand) {
+        state.filteredAdverts = state.allAdverts;
+      } else {
+        state.filteredAdverts = state.allAdverts.filter(
+          (advert) => advert.brand === brand,
+        );
+      }
     },
     setFavorites: (state, action) => {
       state.favoriteAdverts = action.payload;
@@ -28,7 +36,7 @@ const advertsSlice = createSlice({
         state.favoriteAdverts.push(advert);
       } else {
         state.favoriteAdverts = state.favoriteAdverts.filter(
-          (favoriteAdvert) => favoriteAdvert.id !== advert.id
+          (favoriteAdvert) => favoriteAdvert.id !== advert.id,
         );
       }
     },

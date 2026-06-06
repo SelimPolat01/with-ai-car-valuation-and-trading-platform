@@ -3,7 +3,7 @@
 node_modules/
 **/node_modules/
 .venv/
-**/ .venv/
+**/.venv/
 env/
 venv/
 ENV/
@@ -70,3 +70,11 @@ Thumbs.db
 
 pytorch-model-backend/.venv/
 **/node_modules/
+
+uploads/
+
+xgboost_premium_model_dusuk.json
+xgboost_premium_model_yuksek.json
+xgboost_standard_model_dusuk.json
+xgboost_standard_model_yuksek.json
+days_to_sell_xgb_model.json

@@ -28,5 +28,5 @@ export function useCheckAuth() {
     check();
 
     return () => clearInterval(intervalId);
-  }, [router, dispatch]);
+  }, [router, dispatch, path]);
 }

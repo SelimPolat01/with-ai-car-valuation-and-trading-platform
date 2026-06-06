@@ -1,0 +1,40 @@
+.div {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#f8f8f8) padding-box,
+    linear-gradient(45deg, black, #00c6ff) border-box;
+  border-radius: 12px;
+  transition: transform 0.25s ease-in;
+}
+
+.linkDiv {
+  position: sticky;
+  top: 76px;
+  left: 0%;
+  height: calc(100vh - 60px);
+  width: 250px;
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+  border-right: 1px groove whitesmoke;
+  border-top: 1px groove whitesmoke;
+  border-top-right-radius: 8px;
+}
+
+.divContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 2rem;
+}
+
+.textOptionsContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.text {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  font-size: 24px;
+}

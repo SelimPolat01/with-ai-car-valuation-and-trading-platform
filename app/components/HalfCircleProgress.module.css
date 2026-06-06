@@ -1,0 +1,136 @@
+.div {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#f8f8f8) padding-box,
+    linear-gradient(45deg, black, #00c6ff) border-box;
+  border-radius: 12px;
+  width: 350px;
+  transition: transform 0.25s ease-in;
+  color: #333;
+}
+
+.divContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 0.5rem;
+}
+
+.circleBarContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.circleBar {
+  cursor: pointer;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.textContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.text,
+.subText,
+.percent,
+.change,
+.description {
+  margin: 0;
+  padding: 0;
+  font-family: "Josefin Sans", sans-serif;
+}
+
+.subText {
+  color: rgb(111, 110, 110);
+  font-size: 16px;
+}
+
+.descriptionContainer {
+  width: 92%;
+}
+
+.description {
+  text-align-last: center;
+  color: rgb(111, 110, 110);
+  word-break: break-word;
+  line-height: 1.2;
+}
+
+.subDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.textDiv {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.changeContainer {
+  border-radius: 12px;
+}
+
+.greenBg {
+  background-color: rgb(220, 255, 212);
+}
+
+.redBg {
+  background-color: rgb(254, 222, 222);
+}
+
+.upChange {
+  color: green;
+  padding: 4px 8px;
+}
+
+.downChange {
+  color: red;
+  padding: 4px 8px;
+}
+
+.textCash {
+  font-size: 14px;
+  color: rgb(111, 110, 110);
+  font-weight: bold;
+}
+
+.moneyDiv {
+  display: flex;
+  gap: 2rem;
+}
+
+.money {
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}
+
+.changeUpIcon {
+  color: green;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+}
+
+.changeDownIcon {
+  color: red;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+}
+
+.cashIconContainer {
+  display: flex;
+  align-items: flex-end;
+}

@@ -6,23 +6,6 @@
   );
 }
 
-.form input {
-  border-radius: 8px;
-  text-indent: 3px;
-  height: 40px;
-  font-family: "Oswald", sans-serif;
-  font-style: normal;
-  border: 1px solid #ccc;
-}
-
-.form input:focus {
-  box-shadow: 0 0 15px #acacac;
-}
-
-.form input::placeholder {
-  color: #a8a8a8;
-}
-
 .title h1 {
   margin: 0;
   padding: 0;
@@ -42,19 +25,20 @@
 
 .flex {
   display: flex;
-  flex-wrap: wrap;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: absolute;
-  left: 30%;
-  top: 17%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .flexContainer {
   display: flex;
   flex-wrap: wrap;
   gap: 40px;
+  align-items: center;
 }
 
 .flexContainer1 {
@@ -62,11 +46,11 @@
   flex-direction: column;
   width: 350px;
   align-items: center;
+  justify-content: center;
 }
 
 .flexContainer2 {
   display: flex;
-  flex: 1;
   flex-direction: column;
   overflow: hidden;
 }
@@ -79,6 +63,23 @@
   background: #fff;
   border-radius: 12px;
   padding: 20px;
+}
+
+.form input {
+  border-radius: 8px;
+  text-indent: 3px;
+  height: 40px;
+  font-family: "Oswald", sans-serif;
+  font-style: normal;
+  border: 1px solid #ccc;
+}
+
+.form input:focus {
+  box-shadow: 0 0 15px #acacac;
+}
+
+.form input::placeholder {
+  color: #a8a8a8;
 }
 
 .kmInput {
@@ -101,6 +102,7 @@
 
 .carLogo {
   margin-bottom: 20px;
+  object-fit: contain;
   transition: transform 0.5s ease;
 }
 
@@ -110,28 +112,18 @@
 }
 
 .carImg {
-  transition: transform 0.5s ease;
-  animation: carImgAnimate 1s ease;
+  object-fit: contain;
+  width: 300px;
+  height: 300px;
 }
 
 .carImg:hover {
-  transform: scale(1.2);
-  transform-origin: center center;
   cursor: zoom-in;
-}
-
-@keyframes carImgAnimate {
-  0% {
-    transform: translateY(40px);
-  }
-  100% {
-    transform: translateY(0);
-  }
 }
 
 .carYear {
   padding: 0;
-  margin: 0;
+  margin: 10px 0 0 0;
   color: #303030;
   font-family: "Oswald", sans-serif;
   font-weight: bolder;
@@ -139,29 +131,23 @@
   font-size: 18px;
   opacity: 0;
   transition:
-    transform 1s ease,
-    opacity 1s ease;
+    transform 0.5s ease,
+    opacity 0.5s ease;
 }
 
 .flexContainer1:hover .carYear {
   opacity: 1;
-  transform: translateY(50px);
+  transform: translateY(10px);
 }
 
-.volkswagenLogo {
+/* .volkswagenLogo {
   width: 50px;
   height: auto;
-  margin-left: 10px;
 }
 
 .fordLogo {
   width: 90px;
   height: 40px;
-}
-
-.toggLogo {
-  width: 100px;
-  height: 120px;
 }
 
 .mercedesLogo {
@@ -177,7 +163,7 @@
 .renaultLogo {
   width: 70px;
   height: auto;
-}
+} */
 
 .selected {
   color: black;

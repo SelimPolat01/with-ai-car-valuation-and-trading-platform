@@ -31,7 +31,7 @@ export default function PriceOffer() {
 
   useEffect(() => {
     const controls = animate(0, priceOffer, {
-      duration: 5,
+      duration: 3,
       ease: "easeOut",
       onUpdate: (value) => setDisplayPrice(value),
       onComplete: () => setAnimationFinished(true),
@@ -51,6 +51,17 @@ export default function PriceOffer() {
   function engineCapacityFormat(engineCapacity) {
     if (!engineCapacity) return "";
     return (+engineCapacity / 1000).toFixed(1);
+  }
+
+  function fuelTypeFormat(fuelType) {
+    if (!fuelType) return "";
+    const parsedFuelType = {
+      gasoline: "Benzin",
+      diesel: "Dizel",
+      hybrid: "Hibrit",
+      lpg: "LPG",
+    };
+    return parsedFuelType[fuelType];
   }
 
   return (
@@ -98,14 +109,23 @@ export default function PriceOffer() {
               </li>
               <li>
                 <strong>Motor Hacmi: </strong>
-                <span>{engineCapacityFormat(prediction.engineCapacity)}</span>
+                <span>{prediction.engineCapacity} cc</span>
+              </li>
+              <li>
+                <strong>Motor Gücü: </strong>
+                <span>{prediction.horsepower} hp</span>
+              </li>
+              <li>
+                <strong>Kilometre: </strong>
+                <span>{prediction.kilometer} km</span>
               </li>
               <li>
                 <strong>Yakıt Tipi: </strong>
-                <span>{capitalize(prediction.fuelType)}</span>
+                <span>{fuelTypeFormat(prediction.fuelType)}</span>
               </li>
               <li>
-                <strong>Kilometre: </strong> <span>{prediction.kilometer}</span>
+                <strong>Paket: </strong>
+                <span>{capitalize(prediction.trimLevel)}</span>
               </li>
             </ul>
           </div>
@@ -189,11 +209,13 @@ export default function PriceOffer() {
             text="Ana sayfaya dön"
             type="button"
             className={classes.cancelButton}
+            onClick={() => router.replace("/")}
           />
           <SecondaryButton
             text="Son detayları gir"
             type="button"
             onClick={() => router.replace("/ilan-olustur/detaylar")}
+            className={classes.button}
           />
         </motion.div>
       )}

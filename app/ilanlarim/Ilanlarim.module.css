@@ -2,7 +2,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  justify-content: center;
   flex: 1;
 }
 
@@ -11,18 +10,23 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   max-width: 922px;
+  margin: 0 0 0 2rem;
 }
 
 .noAdvertDiv {
   display: flex;
   justify-content: center;
-  height: 150px;
   align-items: center;
+  width: 100%;
+  min-height: 70vh;
+  grid-column: 1 / -1;
+  font-size: 1.2rem;
+  color: #6b7280;
+  text-align: center;
 }
 
 .rootMain {
   flex: 1;
-  background-color: #f0f0f0;
 }
 
 .nav {

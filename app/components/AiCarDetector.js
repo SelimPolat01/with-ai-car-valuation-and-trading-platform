@@ -8,6 +8,7 @@ import SecondaryButton from "./SecondaryButton";
 import { Camera } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPrediction as setPredictionAction } from "@/store/predictionSlice";
+import { motion } from "framer-motion";
 
 export default function AiCarDetector() {
   const [preview, setPreview] = useState(null);
@@ -38,6 +39,54 @@ export default function AiCarDetector() {
       if (preview) URL.revokeObjectURL(preview);
     };
   }, [preview]);
+
+  function brandParser(brand) {
+    if (!brand) return;
+    const normalizedBrand = brand.toLowerCase();
+    if (normalizedBrand == "bmw") return "BMW";
+    else return brand;
+  }
+
+  function modelParser(model, choice) {
+    if (!model) return;
+    const normalizedModel = model.toLowerCase();
+    const parsedModel = {
+      celysee: choice == "url" ? "c-elysee" : "C-Elysee",
+      cseries: choice == "url" ? "c series" : "C Serisi",
+      eseries: choice == "url" ? "e series" : "E Serisi",
+      "1series": choice == "url" ? "1 series" : "1 Serisi",
+      "3series": choice == "url" ? "3 series" : "3 Serisi",
+      "5series": choice == "url" ? "5 series" : "5 Serisi",
+      troc: choice == "url" ? "t-roc" : "T-Roc",
+      megane: choice == "url" ? "megane" : "Megane",
+      civic: choice == "url" ? "civic" : "Civic",
+      egea: choice == "url" ? "egea" : "Egea",
+      clio: choice == "url" ? "clio" : "Clio",
+      corolla: choice == "url" ? "corolla" : "Corolla",
+      passat: choice == "url" ? "passat" : "Passat",
+      polo: choice == "url" ? "polo" : "Polo",
+      i20: "i20",
+      duster: choice == "url" ? "duster" : "Duster",
+      tiguan: choice == "url" ? "tiguan" : "Tiguan",
+      focus: choice == "url" ? "focus" : "Focus",
+      fiesta: choice == "url" ? "fiesta" : "Fiesta",
+      golf: choice == "url" ? "golf" : "Golf",
+      a3: choice == "url" ? "a3" : "A3",
+      jetta: choice == "url" ? "jetta" : "Jetta",
+      c3: choice == "url" ? "c3" : "C3",
+      a4: choice == "url" ? "a4" : "A4",
+      cruze: choice == "url" ? "cruze" : "Cruze",
+      c4: choice == "url" ? "c4" : "C4",
+    };
+    return parsedModel[normalizedModel] || model;
+  }
+
+  function bodyTypeParser(bodyType) {
+    if (!bodyType) return;
+    const normalizedBodyType = bodyType.toLowerCase();
+    if (normalizedBodyType == "suv") return "SUV";
+    else return bodyType;
+  }
 
   function handleClick() {
     fileInputRef.current.click();
@@ -99,18 +148,30 @@ export default function AiCarDetector() {
         prediction: parsedPrediction,
         predictionPercent: data.prediction_percent,
       });
-      if (parsedPrediction && parsedPrediction.length >= 5) {
+
+      if (parsedPrediction && parsedPrediction.length >= 4) {
         const capitalize = (str) => {
           if (!str) return "";
           return str.charAt(0).toUpperCase() + str.slice(1);
         };
 
+        const startYearShort = parsedPrediction[3];
+        const endYearShort =
+          parsedPrediction[4] && parsedPrediction[4].trim() !== ""
+            ? parsedPrediction[4]
+            : startYearShort;
+
+        const calculatedYearFull = Number(`20${startYearShort}`);
+        const isSingleYear = startYearShort === endYearShort;
+
         setCar({
           brand: capitalize(parsedPrediction[0]),
           model: capitalize(parsedPrediction[1]),
           bodyType: capitalize(parsedPrediction[2]),
-          yearInterval: `20${parsedPrediction[3]}-20${parsedPrediction[4]}`,
-          selectedYear: null,
+          yearInterval: isSingleYear
+            ? `20${startYearShort}`
+            : `20${startYearShort}-20${endYearShort}`,
+          selectedYear: isSingleYear ? calculatedYearFull : null,
         });
       } else {
         setError("API'den gelen veri formatı geçersiz (Eksik parametre).");
@@ -136,8 +197,28 @@ export default function AiCarDetector() {
 
   const yearsArray = generateYearList();
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: { opacity: 1, x: 0 },
+  };
+
   return (
-    <div className={classes.div}>
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={classes.div}
+    >
       <div className={classes.photoDiv}>
         <input
           type="file"
@@ -158,8 +239,8 @@ export default function AiCarDetector() {
           </div>
           {preview ? (
             <Image
-              width={300}
-              height={300}
+              width={400}
+              height={250}
               src={preview}
               alt="preview"
               className={classes.preview}
@@ -168,6 +249,7 @@ export default function AiCarDetector() {
             <div className={classes.emptyBox}></div>
           )}
         </div>
+
         <SecondaryButton
           type="button"
           text="Gönder"
@@ -185,81 +267,111 @@ export default function AiCarDetector() {
         )}
       </div>
 
-      <div>
+      <motion.div
+        key={prediction.prediction.length > 0 ? "visible" : "hidden"}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {prediction.prediction && prediction.prediction.length > 0 && (
           <div className={classes.buttonGroup}>
-            <div className={classes.infoText}>
-              Tahmin Edilen:{" "}
+            <motion.div variants={itemVariants} className={classes.infoText}>
+              <span>Tespit Edilen Araç:</span>
               <strong>
-                {car.brand} {car.model} {car.bodyType}{" "}
-                <span
-                  onClick={() => setShowYearInterval((prev) => !prev)}
-                  className={classes.yearInterval}
-                >
-                  {!car.selectedYear ? car.yearInterval : car.selectedYear}
-                  {showYearInterval && (
-                    <div className={classes.yearIntervalDropdown}>
-                      <ul className={classes.yearIntervalDropdownMenu}>
-                        {yearsArray.map((year) => (
-                          <li
-                            className={classes.yearIntervalDropdownList}
-                            key={year}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setCar((prev) => ({
-                                ...prev,
-                                selectedYear: Number(year),
-                              }));
-                              setShowYearInterval(false);
-                            }}
-                          >
-                            {year}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </span>
+                {brandParser(car.brand)} {modelParser(car.model, "label")}{" "}
+                {bodyTypeParser(car.bodyType)}
               </strong>
-            </div>
 
-            <button
-              onClick={() => {
-                dispatch(
-                  setPredictionAction({
-                    brand: car.brand.toLowerCase(),
-                    model: car.model.toLowerCase(),
-                    bodyType: car.bodyType.toLowerCase(),
-                  }),
-                );
-                router.push(
-                  `/ilan-olustur/${car.brand.toLowerCase()}/${car.model.toLowerCase()}/${car.selectedYear}?fromImage=true`,
-                );
-              }}
-              className={`${classes.confirmButton} ${classes.primary}`}
-              disabled={!car.selectedYear}
-            >
-              Evet, aracımı doğrula
-            </button>
+              <span
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (yearsArray.length <= 1) return;
+                  setShowYearInterval((prev) => !prev);
+                }}
+                className={classes.yearInterval}
+                style={
+                  yearsArray.length <= 1
+                    ? {
+                        cursor: "default",
+                        backgroundColor: "transparent",
+                        borderColor: "transparent",
+                        padding: "4px 0",
+                        marginLeft: "0",
+                      }
+                    : {}
+                }
+              >
+                {!car.selectedYear ? car.yearInterval : car.selectedYear}
 
-            <button
-              onClick={() => {
-                dispatch(
-                  setPredictionAction({
-                    brand: "",
-                    model: "",
-                    bodyType: "",
-                  }),
-                );
-                router.push("?mode=form");
-              }}
-              className={`${classes.confirmButton} ${classes.secondary}`}
+                {yearsArray.length > 1 && showYearInterval && (
+                  <div className={classes.yearIntervalDropdown}>
+                    <ul className={classes.yearIntervalDropdownMenu}>
+                      {yearsArray.map((year) => (
+                        <li
+                          className={classes.yearIntervalDropdownList}
+                          key={year}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setCar((prev) => ({
+                              ...prev,
+                              selectedYear: Number(year),
+                            }));
+                            setShowYearInterval(false);
+                          }}
+                        >
+                          {year}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </span>
+            </motion.div>
+
+            <motion.div
+              variants={itemVariants}
+              className={classes.buttonContainer}
             >
-              Bilgileri elle düzenle
-            </button>
+              <button
+                onClick={() => {
+                  dispatch(
+                    setPredictionAction({
+                      brand: car.brand.toLowerCase(),
+                      model: car.model.toLowerCase(),
+                      bodyType: car.bodyType.toLowerCase(),
+                    }),
+                  );
+                  router.push(
+                    `/ilan-olustur/${car.brand.toLowerCase()}/${encodeURIComponent(modelParser(car.model.toLowerCase(), "url"))}/${car.selectedYear}?fromImage=true`,
+                  );
+                }}
+                className={`${classes.confirmButton} ${classes.primary}`}
+                disabled={!car.selectedYear}
+              >
+                Evet, aracımı doğrula
+              </button>
+
+              <button
+                onClick={() => {
+                  dispatch(
+                    setPredictionAction({
+                      brand: "",
+                      model: "",
+                      bodyType: "",
+                    }),
+                  );
+                  router.push("?mode=form");
+                }}
+                className={`${classes.confirmButton} ${classes.secondary}`}
+              >
+                Bilgileri elle düzenle
+              </button>
+            </motion.div>
           </div>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

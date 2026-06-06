@@ -1,0 +1,187 @@
+.div {
+  display: flex;
+  flex-direction: column;
+  padding: 0 2rem 2rem 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pageTitle {
+  font-size: 32px;
+  width: max-content;
+  background: linear-gradient(
+    105.66deg,
+    #00f4ff 16.76%,
+    #68ffed 46.39%,
+    #9867ff 76.01%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  margin: 0 0 24px 10px;
+}
+
+.settingsContainer {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
+  border: 1px solid #4b336b;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: 1rem 3rem 3rem 3rem;
+}
+
+.settingBlock {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 4rem;
+  padding: 3rem 0;
+  border-bottom: 1px solid rgba(75, 51, 107, 0.5);
+}
+
+.settingBlock:last-of-type {
+  border-bottom: none;
+}
+
+.blockInfo h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 18px;
+  color: #f8f8f8;
+  margin: 0 0 0.8rem 0;
+}
+
+.blockInfo p {
+  font-size: 14px;
+  color: #a9a3b0;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.icon {
+  color: #9867ff;
+}
+
+.blockForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.row {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.submitContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.dangerZone {
+  margin-top: 1rem;
+  padding: 3rem;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  border-radius: 12px;
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.dangerText {
+  color: #ef4444 !important;
+}
+
+.dangerBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.dangerBox h4 {
+  margin: 0 0 0.4rem 0;
+  color: #f8f8f8;
+  font-size: 16px;
+}
+
+.dangerBox p {
+  margin: 0;
+  color: #a9a3b0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.dangerBtn {
+  background: #ef4444 !important;
+  color: white !important;
+  border: #2d1457 1px solid;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4) !important;
+  white-space: nowrap;
+}
+
+.dangerBtn:hover {
+  background: #dc2626 !important;
+}
+
+.input {
+  min-height: 45px;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  background-color: #150a29;
+  border-radius: 12px;
+  color: inherit;
+  outline: none;
+  font-size: 16px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.button {
+  background: linear-gradient(to right, #a7b8d4, #934b8e, #2d1457) !important;
+  color: whitesmoke !important;
+  border: #2d1457 1px solid;
+}
+
+.button:hover {
+  transform: scale(1.05);
+}
+
+.emailSuccessMessage,
+.passwordSuccessMessage,
+.tokenDurationSuccessMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.emailSuccessMessage {
+  height: 406.2px;
+}
+
+.passwordSuccessMessage {
+  height: 293.2px;
+}
+
+.tokenDurationSuccessMessage {
+  height: 180.2px;
+}
+
+.errorDiv p {
+  margin: 0;
+  color: #ef4444;
+}
+
+.currentEmailInput {
+  background-color: #a7b8d4 !important;
+}

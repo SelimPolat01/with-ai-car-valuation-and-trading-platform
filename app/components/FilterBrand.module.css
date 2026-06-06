@@ -1,18 +1,41 @@
 .li {
-  width: 150px;
   list-style-type: none;
-  height: 25px;
-  color: black;
+  width: 100%;
+  margin-bottom: 8px;
 }
 
 .button {
-  color: rgb(72, 144, 216);
-  background: none;
-  border: none;
+  width: 100%;
+  text-align: left;
+  color: whitesmoke;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(72, 144, 216, 0.15);
+  padding: 10px 16px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: background-color, border-color, text-shadow, box-shadow;
 }
 
 .button:hover {
-  text-decoration: underline;
+  background: rgba(72, 144, 216, 0.08);
+  border-color: rgb(72, 144, 216);
+}
+
+.button.active {
+  background: linear-gradient(135deg, #8a4fff, #a855f7) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 12px rgba(152, 103, 255, 0.35);
+  font-weight: 500;
+  text-shadow:
+    0 0 0.6px #ffffff,
+    0 0 0.6px #ffffff;
 }

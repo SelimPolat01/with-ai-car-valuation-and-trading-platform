@@ -9,37 +9,29 @@ const SECRET = process.env.SECRET;
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, name, surname, tel_number } = req.body;
-
+    const { email, password, name, surname, tel_number, city, iban } = req.body;
     if (!email || !password) {
       return res.status(400).json({ message: "Email ve password gerekli!" });
     }
-
     const existingUser = await db.query(
       "SELECT * FROM users WHERE email = $1",
-      [email]
+      [email],
     );
-
     if (existingUser.rows.length > 0) {
       return res.status(409).json({
         message: "Bu email zaten kayıtlı!",
         user: existingUser.rows[0],
       });
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const result = await db.query(
-      "INSERT INTO users (email, password, name, surname, tel_number) VALUES ($1, $2, $3, $4, $5) RETURNING id, email, name, surname, tel_number",
-      [email, hashedPassword, name, surname, tel_number]
+      "INSERT INTO users (email, password, name, surname, tel_number, city, iban) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, email, name, surname, tel_number, city, iban",
+      [email, hashedPassword, name, surname, tel_number, city, iban],
     );
-
     const user = result.rows[0];
-
     const token = jwt.sign({ id: user.id, email: user.email }, SECRET, {
-      expiresIn: "1h",
+      expiresIn: "1d",
     });
-
     res.status(200).json({ message: "Kayıt başarılı!", user, token });
   } catch (err) {
     console.log("Error: ", err);
@@ -63,6 +55,8 @@ router.post("/login", async (req, res) => {
         return res.status(400).json({ message: "Girilen parola hatalı." });
       }
 
+      const durationDays = user.token_duration || 1;
+
       const token = jwt.sign(
         {
           id: user.id,
@@ -73,8 +67,8 @@ router.post("/login", async (req, res) => {
         },
         SECRET,
         {
-          expiresIn: "1h",
-        }
+          expiresIn: `${durationDays}d`,
+        },
       );
       return res.status(200).json({ message: "Giriş başarılı.", user, token });
     } else {
@@ -91,7 +85,7 @@ router.get("/me", verifyToken, async (req, res) => {
   try {
     const result = await db.query(
       "SELECT id, email, name, surname, tel_number FROM users WHERE id = $1",
-      [req.user.id]
+      [req.user.id],
     );
 
     if (result.rows.length === 0)

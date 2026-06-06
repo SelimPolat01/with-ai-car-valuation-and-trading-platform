@@ -1,15 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import AdvertItem from "../components/AdvertItem";
 import { useRouter } from "next/navigation";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import { useDispatch, useSelector } from "react-redux";
 import { setFavorites } from "@/store/advertsSlice";
 import classes from "./FavoriIlanlar.module.css";
-import LoadingSpinner from "../components/LoadingSpinner";
 import ConfirmDialog from "../components/ConfirmDialog";
-import AllAdverts from "../tum-ilanlar/page";
 import FavoriteAdvertItem from "../components/FavoriteAdvertItem";
 import ManagementNav from "../components/ManagementNav";
 import { AnimatePresence } from "framer-motion";
@@ -130,11 +127,13 @@ export default function FavoriIlanlar() {
         <hr style={{ width: "845px" }} />
       </div>
       <div className={classes.listWrapper}>
-        <div className={classes.listHeader}>
-          <span>Fotoğraf</span>
-          <span>İlan Başlığı</span>
-          <span>Fiyat</span>
-        </div>
+        {favoriteAdverts.length > 0 && (
+          <div className={classes.listHeader}>
+            <span>Fotoğraf</span>
+            <span>İlan Başlığı</span>
+            <span>Fiyat</span>
+          </div>
+        )}
         <AnimatePresence>
           {favoriteAdverts &&
             favoriteAdverts.map((favoriteAdvert) => (

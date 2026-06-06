@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Button from "./PrimaryButton";
 import { toggleFavorite } from "@/store/advertsSlice";
 import { useParams, useRouter } from "next/navigation";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import classes from "./AdvertInfos.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import Link from "next/link";
+import CancelButton from "./CancelButton";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import PrimaryButton from "./PrimaryButton";
 
 export default function AdvertInfos() {
   const [error, setError] = useState(null);
@@ -15,6 +16,7 @@ export default function AdvertInfos() {
   const params = useParams();
   const router = useRouter();
   const [advert, setAdvert] = useState(null);
+  const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const dispatch = useDispatch();
@@ -51,7 +53,6 @@ export default function AdvertInfos() {
         setAdvert(advertData);
         setIsFavorite(advertData.isFavorite);
       } catch (err) {
-        console.log("Error: " + err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -94,12 +95,11 @@ export default function AdvertInfos() {
 
       dispatch(
         toggleFavorite({
-          advert,
+          advert: advert,
           isFavorite: data.isFavorite,
         }),
       );
     } catch (err) {
-      console.log("Error: " + err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -161,6 +161,7 @@ export default function AdvertInfos() {
     },
     transmissionTypeMap: {
       automatic: "Otomatik",
+      "semi automatic": "Yarı Otomatik",
       manual: "Manuel",
     },
   };
@@ -220,15 +221,33 @@ export default function AdvertInfos() {
         },
         {
           id: 16,
-          label: "Değişen",
-          value: advert.changed_part_count > 0 ? "Var" : "Yok",
+          label: "Hasar Durumu",
+          value: "Yok",
         },
       ]
     : [];
 
-  // if (loading) return <LoadingSpinner />;
+  const advertImages =
+    advert && advert.images && advert.images.length > 0
+      ? advert.images.map((img) => img.image_data || "/images/no-image.png")
+      : ["/images/no-image.png"];
+
+  const nextImage = (e) => {
+    e.stopPropagation();
+    setCurrentImgIndex((prev) =>
+      prev === advertImages.length - 1 ? 0 : prev + 1,
+    );
+  };
+
+  const prevImage = (e) => {
+    e.stopPropagation();
+    setCurrentImgIndex((prev) =>
+      prev === 0 ? advertImages.length - 1 : prev - 1,
+    );
+  };
+
+  if (!advert) return <p>İlan yükleniyor...</p>;
   if (error) return <p>{error}</p>;
-  if (!advert) return <p>İlan Bulunamadı</p>;
 
   return (
     <div className={classes.advertDiv}>
@@ -236,80 +255,92 @@ export default function AdvertInfos() {
         <div className={classes.titleFavoriteDiv}>
           <h2>{advert.title}</h2>
           {user && advert && Number(user.id) !== Number(advert.user_id) && (
-            <Button
+            <CancelButton
               className={classes.button}
               type="button"
               text={isFavorite ? "Favorilerden Çıkar" : "Favorilere Ekle"}
               onClick={toggleFavoriteClick}
-              cancelButton
             />
           )}
         </div>
+
         <div className={classes.advertInfoWrapper1}>
           <div className={classes.imgDiv}>
-            <img
-              className={classes.img}
-              src={advert.image_src}
-              alt={advert.title}
-            />
+            <div
+              className={classes.sliderTrack}
+              style={{ transform: `translateX(-${currentImgIndex * 100}%)` }}
+            >
+              {advertImages.map((imgUrl, idx) => (
+                <img
+                  key={idx}
+                  className={classes.img}
+                  src={imgUrl}
+                  alt={`${advert.title} - ${idx + 1}`}
+                />
+              ))}
+            </div>
+
+            {advertImages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className={`${classes.sliderBtn} ${classes.prevBtn}`}
+                  onClick={prevImage}
+                >
+                  <ChevronLeft size={24} />
+                </button>
+
+                <button
+                  type="button"
+                  className={`${classes.sliderBtn} ${classes.nextBtn}`}
+                  onClick={nextImage}
+                >
+                  <ChevronRight size={24} />
+                </button>
+
+                <div className={classes.sliderDots}>
+                  {advertImages.map((_, idx) => (
+                    <span
+                      key={idx}
+                      className={`${classes.dot} ${idx === currentImgIndex ? classes.activeDot : ""}`}
+                      onClick={() => setCurrentImgIndex(idx)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
+
           <div className={classes.advertInfoWrapper2}>
             <ul className={classes.ul}>
-              {advertDetails.map((adv) => (
-                <li key={adv.id} className={classes.li}>
-                  <strong className={classes.strong}>{adv.label}</strong>
-                  <span className={adv.priceClassName || adv.spanClassName}>
-                    {adv.value}
+              {advertDetails.map((detail) => (
+                <li
+                  key={detail.id}
+                  className={`${classes.li} ${detail.priceClassName || ""}`}
+                >
+                  <strong className={classes.strong}>{detail.label}</strong>
+                  <span className={detail.spanClassName || ""}>
+                    {detail.value}
                   </span>
                 </li>
               ))}
             </ul>
-          </div>
-          <div className={classes.userInfoDiv}>
-            <div className={classes.userInfoWrapper}>
-              <div className={classes.userNameCreatedDiv}>
-                <div className={classes.userNameCreatedWrapper}>
-                  <h3 className={classes.userName}>
-                    {capitalize(advert.user_name)}{" "}
-                    {capitalize(advert.user_surname.charAt(0))}.
-                  </h3>
-                  <p className={classes.userCreatedAt}>
-                    Hesap açma tarihi:{" "}
-                    <span>
-                      {new Date(advert.user_created).toLocaleDateString(
-                        "tr-TR",
-                        {
-                          year: "numeric",
-                          month: "long",
-                        },
-                      )}
-                    </span>
-                  </p>
-                </div>
-                <div className={classes.userPicDiv}>
-                  <img
-                    src="/images/user-profile.png"
-                    alt="user profile picture"
-                  />
-                </div>
+            {user && advert && Number(user.id) !== Number(advert.user_id) && (
+              <div className={classes.buyButtonContainer}>
+                <PrimaryButton
+                  type="button"
+                  text="Satın Al"
+                  className={classes.buyButton}
+                  onClick={() => {
+                    console.log("Satın alma işlemi tetiklendi.");
+                  }}
+                />
               </div>
-              <div className={classes.userTelDiv}>
-                <div className={classes.userTelWrapper}>
-                  <strong>Cep</strong>
-                  <span className={classes.userTel}>{advert.user_tel}</span>
-                </div>
-              </div>
-              {user && advert && Number(user.id) !== Number(advert.user_id) && (
-                <div className={classes.messageLink}>
-                  <Link href={`/mesajlarim/detay/${advert.id}`}>
-                    Mesaj Gönder
-                  </Link>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
-        <div className={classes.descriptionDiv}>
+
+        <div className={classes.descriptionContainer}>
           <div
             onClick={() => setShowDescription((prevValue) => !prevValue)}
             className={`${classes.descriptionTextDiv} ${

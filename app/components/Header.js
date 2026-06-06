@@ -78,7 +78,7 @@ export default function Header({ className }) {
   };
 
   return (
-    <header className={classes.header}>
+    <header className={`${classes.header} ${className ? className : ""}`}>
       <nav className={classes.nav}>
         <Link href="/">
           <Image
@@ -152,55 +152,63 @@ export default function Header({ className }) {
                   />
                 </Link>
                 <ul className={classes.accountMenu}>
-                  <Link
-                    href="/ilanlarim"
-                    className={classes.myAdvertsLink}
-                    title="İlanlarım"
-                  >
-                    <Tags
-                      className={classes.juniorIcon}
-                      size={20}
-                      stroke="url(#magic-gradient)"
-                    />
-                    İlanlarım
-                  </Link>
-                  <Link
-                    href="/favori-ilanlar"
-                    className={classes.favoriteAdvertsLink}
-                    title="Favori İlanlarım"
-                  >
-                    <FolderHeart
-                      className={classes.juniorIcon}
-                      size={20}
-                      stroke="url(#magic-gradient)"
-                    />
-                    Favorilerim
-                  </Link>
-                  <Link
-                    href="/hesabim"
-                    className={classes.juniorAccountLink}
-                    title="Hesabım"
-                  >
-                    <User
-                      className={classes.juniorIcon}
-                      size={20}
-                      stroke="url(#magic-gradient)"
-                    />
-                    Hesabım
-                  </Link>
-                  <Link
-                    href="/login"
-                    onClick={logoutHandler}
-                    className={classes.favoriteAdvertsLink}
-                    title="Çıkış Yap"
-                  >
-                    <LogOut
-                      className={classes.juniorIcon}
-                      size={20}
-                      stroke="url(#magic-gradient)"
-                    />
-                    Çıkış Yap
-                  </Link>
+                  <li>
+                    <Link
+                      href="/ilanlarim"
+                      className={classes.myAdvertsLink}
+                      title="İlanlarım"
+                    >
+                      <Tags
+                        className={classes.juniorIcon}
+                        size={20}
+                        stroke="url(#magic-gradient)"
+                      />
+                      İlanlarım
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/favori-ilanlar"
+                      className={classes.favoriteAdvertsLink}
+                      title="Favori İlanlarım"
+                    >
+                      <FolderHeart
+                        className={classes.juniorIcon}
+                        size={20}
+                        stroke="url(#magic-gradient)"
+                      />
+                      Favorilerim
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/hesabim"
+                      className={classes.juniorAccountLink}
+                      title="Hesabım"
+                    >
+                      <User
+                        className={classes.juniorIcon}
+                        size={20}
+                        stroke="url(#magic-gradient)"
+                      />
+                      Hesabım
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/login"
+                      onClick={logoutHandler}
+                      className={classes.favoriteAdvertsLink}
+                      title="Çıkış Yap"
+                    >
+                      <LogOut
+                        className={classes.juniorIcon}
+                        size={20}
+                        stroke="url(#magic-gradient)"
+                      />
+                      Çıkış Yap
+                    </Link>
+                  </li>
                 </ul>
               </li>
             </>

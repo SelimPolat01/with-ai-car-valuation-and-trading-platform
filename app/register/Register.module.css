@@ -7,6 +7,33 @@
   height: auto;
 }
 
+.form {
+  margin: 0.5rem 0 1.5rem 0;
+}
+
+.nameSurnameDiv {
+  display: flex;
+  flex-direction: row;
+  gap: 2.5rem;
+  width: 40rem;
+}
+
+.inputColumn {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+}
+
+.halfInput {
+  flex: 1;
+  width: 100%;
+}
+
 .input {
   width: 40rem;
+}
+
+.button:hover {
+  transform: scale(1.05);
 }

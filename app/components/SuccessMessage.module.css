@@ -1,0 +1,41 @@
+.successContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  padding: 0;
+}
+
+.iconWrapper {
+  margin: 0;
+  filter: drop-shadow(0 0 25px rgba(74, 222, 128, 0.25));
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #f8f8f8;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.5px;
+  word-break: break-word;
+  margin: 0;
+}
+
+.text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #a3b0ae;
+  max-width: 85%;
+  margin: 0;
+  height: max-content;
+}
+
+.buttonWrapper {
+  margin: 0;
+}
+
+.buttonWrapper button {
+  width: max-content;
+}

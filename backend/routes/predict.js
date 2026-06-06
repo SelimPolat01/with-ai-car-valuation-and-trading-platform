@@ -1,9 +1,26 @@
 import express from "express";
 import verifyToken from "../middlewares/verifyToken.js";
+import { data } from "framer-motion/client";
 
 export const router = express.Router();
 
 router.post("/", verifyToken, async (req, res) => {
   const carData = req.body;
-  return res.status(200).json({ price: 500000 });
+  try {
+    const response = await fetch("http://127.0.0.1:8000/predict", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(carData),
+    });
+    if (!response.ok)
+      throw new Error("FastAPI modelinden fiyat teklifi alınamadı.");
+    const data = await response.json();
+    return res.status(200).json({ price: data.predicted_price });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Fiyat tahmini sırasında bir hata oluştu." });
+  }
 });

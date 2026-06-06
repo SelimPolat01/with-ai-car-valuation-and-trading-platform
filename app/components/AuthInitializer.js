@@ -19,7 +19,6 @@ export default function AuthInitializer({ children }) {
         setLoading(false);
         return;
       }
-
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/me`, {
           headers: {

@@ -208,3 +208,13 @@
   width: 100%;
   height: 393.4px;
 }
+
+.successMessage button {
+  background: linear-gradient(to right, #a7b8d4, #934b8e, #2d1457) !important;
+  color: whitesmoke !important;
+  border: #2d1457 1px solid;
+}
+
+.successMessage button:hover {
+  transform: scale(1.05);
+}

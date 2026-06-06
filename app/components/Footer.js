@@ -31,9 +31,7 @@ export default function Footer() {
           </Link>
         </li>
       </ul>
-      <div className={classes.copyright}>
-        Copyright 2025 Selim POLAT {currentYear}
-      </div>
+      <div className={classes.copyright}>Copyright &copy; 2025 Selim POLAT</div>
     </footer>
   );
 }

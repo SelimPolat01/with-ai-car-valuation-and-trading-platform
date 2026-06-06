@@ -69,10 +69,10 @@ carScratchDentDetectionModelV2.classifier[1] = torch.nn.Linear(
 carScratchDentDetectionModelV2 = carScratchDentDetectionModelV2.to(device)
 
 premium_model = xgb.XGBRegressor()
-premium_model.load_model("./models/price_prediction/xgboost_premium_model_yuksek.json")
+premium_model.load_model("./models/price_prediction/xgboost_premium_model_yeni.json")
 
 standard_model = xgb.XGBRegressor()
-standard_model.load_model("./models/price_prediction/xgboost_standard_model_yuksek.json")
+standard_model.load_model("./models/price_prediction/xgboost_standard_model_yeni.json")
 
 days_to_sell_model = xgb.XGBRegressor()
 days_to_sell_model.load_model("./models/average_sell_time_prediction/days_to_sell_xgb_model.json")
@@ -102,13 +102,13 @@ scratch_dent_transformV2 = torchvision.transforms.Compose([
                                      std=[0.229, 0.224, 0.225])
 ])
 
-car_detection_data = torchvision.datasets.ImageFolder(root="./cars/train",
+car_detection_data = torchvision.datasets.ImageFolder(root="./class_names/cars/train",
                                                transform=transform)
 
-car_direction_detection_data = torchvision.datasets.ImageFolder(root="./directions/train",
+car_direction_detection_data = torchvision.datasets.ImageFolder(root="./class_names/directions/train",
                                                                 transform=transform)
 
-car_scratch_dent_detection_data = torchvision.datasets.ImageFolder(root="./damages/train",
+car_scratch_dent_detection_data = torchvision.datasets.ImageFolder(root="./class_names/damages/train",
                                                                    transform=transform)
 
 car_detection_class_names = car_detection_data.classes
@@ -168,7 +168,7 @@ async def carDetectionUpload(request: Request, file: UploadFile = File(...)):
     }
 
 @app.post("/car-direction-detection-upload")
-@limiter.limit("10/minute")
+@limiter.limit("100/minute")
 async def carDirectionDetectionUpload(request: Request, file: UploadFile = File(...)):
     contents = await file.read()
     img = Image.open(io.BytesIO(contents)).convert("RGB")
@@ -185,7 +185,7 @@ async def carDirectionDetectionUpload(request: Request, file: UploadFile = File(
 
 
 @app.post("/car-scratch-dent-detection-upload")
-@limiter.limit("10/minute")
+@limiter.limit("100/minute")
 async def carStrachDentDetectionUpload(request: Request, file: UploadFile = File(...)):
     contents = await file.read()
     img = Image.open(io.BytesIO(contents)).convert("RGB")
@@ -244,7 +244,7 @@ luxury_models = [
 ]
 
 @app.post("/predict")
-@limiter.limit("5/minute")
+@limiter.limit("50/minute")
 async def predict(request: Request, data: CarData):
     if data.brand: data.brand = urllib.parse.unquote(data.brand).lower().strip()
     if data.model: data.model = urllib.parse.unquote(data.model).lower().strip()

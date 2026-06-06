@@ -186,23 +186,42 @@
   color: #642dda !important;
 }
 
-.button {
-  background: rgba(152, 103, 255, 0.15);
-  color: #f8f8f8;
-  border: 1px solid rgba(152, 103, 255, 0.5);
-  padding: 8px 16px;
+CSS .defaultButton {
+  background: rgba(241, 239, 113, 0.1);
+  color: #f1ef71;
+  border: 1px solid rgba(241, 239, 113, 0.3);
   border-radius: 8px;
+  padding: 4px 8px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(4px);
+  font-size: 14px;
 }
 
-.button:hover {
-  background: rgba(152, 103, 255, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(152, 103, 255, 0.3);
-  text-decoration: none;
+.defaultButton:hover {
+  background: rgba(241, 239, 113, 0.25);
+  border-color: rgba(241, 239, 113, 0.7);
+  color: #ffffff;
+}
+
+.favoriteButton {
+  background: #c2c047;
+  color: #1a1a1a;
+  border: 1px solid #c2c047;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 14px;
+  box-shadow: 0 0 10px rgba(194, 192, 71, 0.5);
+}
+
+.favoriteButton:hover {
+  background: #f1ef71;
+  border-color: #f1ef71;
+  box-shadow: 0 0 20px rgba(241, 239, 113, 0.9);
 }
 
 .descriptionContainer {

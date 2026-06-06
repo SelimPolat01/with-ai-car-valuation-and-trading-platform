@@ -38,4 +38,9 @@
 
 .buttonWrapper button {
   width: max-content;
+  margin: 0;
+}
+
+.buttonWrapper button:hover {
+  transform: scale(1.05);
 }

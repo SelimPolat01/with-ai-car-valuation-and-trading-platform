@@ -32,6 +32,10 @@
   gap: 0.5rem;
 }
 
+.infoContainer h1 {
+  font-size: 35px;
+}
+
 .textContainer {
   display: flex;
   justify-content: space-between;

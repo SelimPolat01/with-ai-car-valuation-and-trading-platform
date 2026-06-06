@@ -171,6 +171,8 @@
 
 .passwordSuccessMessage {
   height: 293.2px;
+  justify-content: flex-start !important;
+  gap: 1.4rem !important;
 }
 
 .tokenDurationSuccessMessage {
@@ -184,4 +186,17 @@
 
 .currentEmailInput {
   background-color: #a7b8d4 !important;
+}
+
+.tokenDurationSuccessMessage button,
+.passwordSuccessMessage button,
+.emailSuccessMessage button {
+  background: linear-gradient(to right, #a7b8d4, #934b8e, #2d1457) !important;
+  color: whitesmoke !important;
+  border: #2d1457 1px solid;
+}
+
+.tokenDurationSuccessMessage button:hover .passwordSuccessMessage button:hover,
+.emailSuccessMessage button:hover {
+  transform: scale(1.05);
 }

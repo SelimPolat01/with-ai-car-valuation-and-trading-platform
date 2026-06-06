@@ -17,14 +17,29 @@ export default function AdvertItem({
 }) {
   const router = useRouter();
 
-  function capitalizeText(text) {
-    if (!text) return "";
+  function modelParser(model) {
+    if (!model) return;
+    if (model === "1 series") return "1 Series";
+    if (model === "3 series") return "3 Series";
+    if (model === "5 series") return "5 Series";
+    if (model === "c series") return "C Series";
+    if (model === "e series") return "E Series";
+    return model.charAt(0).toUpperCase() + model.slice(1).toLowerCase();
+  }
 
+  function capitalizeText(text) {
+    if (!text) return;
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   }
 
+  function brandParser(brand) {
+    if (!brand) return;
+    if (brand === "bmw") return "BMW";
+    return brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
+  }
+
   function engineCapacityFormat(engineCapacity) {
-    if (!engineCapacity) return "";
+    if (!engineCapacity) return;
     return (+engineCapacity / 1000).toFixed(1);
   }
 
@@ -83,8 +98,8 @@ export default function AdvertItem({
         </div>
         <div className={classes.brandModelEngineCapacityDiv}>
           <p className={classes.brandModel}>
-            {decodeURIComponent(capitalizeText(brand))}{" "}
-            {decodeURIComponent(capitalizeText(model))}
+            {decodeURIComponent(brandParser(brand))}{" "}
+            {decodeURIComponent(modelParser(model))}
           </p>
           <p className={classes.engineCapacity}>
             {engineCapacityFormat(engineCapacity)} TDI

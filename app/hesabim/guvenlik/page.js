@@ -193,8 +193,7 @@ export default function Guvenlik() {
     event.preventDefault();
     if (input.password.letters !== input.confirmPassword.letters) {
       setError({
-        password:
-          "Girdiğiniz e-posta adresleri eşleşmiyor. Lütfen tekrar deneyiniz.",
+        password: "Girdiğiniz parolalar eşleşmiyor. Lütfen tekrar deneyiniz.",
       });
       return;
     }

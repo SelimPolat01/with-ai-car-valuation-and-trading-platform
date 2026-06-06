@@ -255,12 +255,15 @@ export default function AdvertInfos() {
         <div className={classes.titleFavoriteDiv}>
           <h2>{advert.title}</h2>
           {user && advert && Number(user.id) !== Number(advert.user_id) && (
-            <CancelButton
-              className={classes.button}
+            <button
+              className={
+                isFavorite ? classes.favoriteButton : classes.defaultButton
+              }
               type="button"
-              text={isFavorite ? "Favorilerden Çıkar" : "Favorilere Ekle"}
               onClick={toggleFavoriteClick}
-            />
+            >
+              {isFavorite ? "Favorilerimden Çıkar" : "Favorilerime Ekle"}
+            </button>
           )}
         </div>
 

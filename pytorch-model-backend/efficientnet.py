@@ -15,15 +15,13 @@ if __name__ == "__main__":
     print(f"Eğitim şu cihazda yapılıyor: {device}")
 
     Path("models/car_scratch_dent_detection").mkdir(parents=True, exist_ok=True)
-    
-    # EfficientNet için 384x384 harika bir çözünürlüktür (Çizikleri kaçırmaz)
+
     train_transforms = torchvision.transforms.Compose([
         torchvision.transforms.Resize((384, 384)),
         torchvision.transforms.RandomAffine(degrees=15, scale=(0.5, 1.0)),
         torchvision.transforms.RandomHorizontalFlip(p=0.5),
         torchvision.transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.05),
         torchvision.transforms.ToTensor(),
-        # ImageNet standart normalizasyonu (Hazır modeller için mecburidir)
         torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 

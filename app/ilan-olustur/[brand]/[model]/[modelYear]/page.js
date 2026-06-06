@@ -532,7 +532,6 @@ export default function TahminYap() {
     };
   }, []);
 
-  // Tüm kelimelerin baş harfini büyütmek için güncelledik (Örn: "s line" -> "S Line")
   function capitalizeWords(text) {
     if (typeof text !== "string") {
       return "";

@@ -151,7 +151,6 @@ export default function MyAdverts() {
           </AnimatePresence>
         </div>
       ) : (
-        /* İLAN YOKSA SADECE BU UYARIYI GÖSTER (GRID'DEN BAĞIMSIZ) */
         <div className={classes.noAdvertDiv}>
           <p>İlanınız bulunmamaktadır.</p>
         </div>

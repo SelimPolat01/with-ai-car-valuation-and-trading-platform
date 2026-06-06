@@ -1,6 +1,5 @@
 import Link from "next/link";
 import classes from "./Footer.module.css";
-// lucide-react yerine react-icons kullanıyoruz
 import { FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa";
 
 export default function Footer() {

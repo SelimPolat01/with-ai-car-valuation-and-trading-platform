@@ -38,7 +38,7 @@ export default function ChartBar({ text, optionsIcon, width, height, data }) {
       return months.map((m) => ({ month: m, count: 0 }));
     }
     return data.map((item) => ({
-      month: item.name ? item.name.substring(0, 3) : item.month, // "Ocak" ise "Oca" yapar
+      month: item.name ? item.name.substring(0, 3) : item.month,
       count: item.ilanSayisi !== undefined ? item.ilanSayisi : item.count || 0,
     }));
   }, [data]);

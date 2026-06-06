@@ -1,7 +1,7 @@
 import Link from "next/link";
 import classes from "./FavoriteAdvertItem.module.css";
 import { motion } from "framer-motion";
-import { X } from "lucide-react"; // <-- Modern ikon kütüphanesi eklendi
+import { X } from "lucide-react";
 
 export default function FavoriteAdvertItem({
   advert,

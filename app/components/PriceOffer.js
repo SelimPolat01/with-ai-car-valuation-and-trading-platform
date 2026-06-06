@@ -388,7 +388,6 @@ export default function PriceOffer({ advertId }) {
                       animate="visible"
                       exit="exit"
                       className={classes.uploadPlaceholder}
-                      // BURASI GÜNCELLENDİ: Yazı ve ikonu tam ortalamak için Flexbox eklendi
                       style={{
                         width: "100%",
                         height: "100%",

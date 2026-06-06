@@ -69,13 +69,13 @@ carScratchDentDetectionModelV2.classifier[1] = torch.nn.Linear(
 carScratchDentDetectionModelV2 = carScratchDentDetectionModelV2.to(device)
 
 premium_model = xgb.XGBRegressor()
-premium_model.load_model("xgboost_premium_model_yuksek.json")
+premium_model.load_model("./models/price_prediction/xgboost_premium_model_yuksek.json")
 
 standard_model = xgb.XGBRegressor()
-standard_model.load_model("xgboost_standard_model_yuksek.json")
+standard_model.load_model("./models/price_prediction/xgboost_standard_model_yuksek.json")
 
 days_to_sell_model = xgb.XGBRegressor()
-days_to_sell_model.load_model("days_to_sell_xgb_model.json")
+days_to_sell_model.load_model("./models/average_sell_time_prediction/days_to_sell_xgb_model.json")
 
 label_encoders = joblib.load("label_encoders.pkl")
 

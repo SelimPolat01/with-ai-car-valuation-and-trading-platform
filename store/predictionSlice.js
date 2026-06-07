@@ -15,6 +15,7 @@ const initialState = {
     price: "",
     hasScratch: "",
     hasDent: "",
+    daysToSell: "",
   },
 };
 

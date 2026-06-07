@@ -19,6 +19,7 @@ router.get("/", verifyToken, async (req, res) => {
           ROW_NUMBER() OVER (PARTITION BY advert_id ORDER BY id ASC) as rn
         FROM advert_images
       ) i ON a.id = i.advert_id AND i.rn = 1
+      WHERE a.is_sold = false
       ORDER BY a.id DESC;
     `;
     const result = await db.query(queryText);
@@ -40,7 +41,7 @@ router.get("/favoriteAdverts", verifyToken, async (req, res) => {
                LIMIT 1) AS image_data
        FROM adverts AS a 
        INNER JOIN favorite_adverts AS f ON a.id = f.advert_id 
-       WHERE f.user_id = $1 
+       WHERE f.user_id = $1 AND a.is_sold = false
        ORDER BY f.id DESC`,
       [userId],
     );
@@ -62,7 +63,7 @@ router.get("/myAdverts", verifyToken, async (req, res) => {
                WHERE advert_id = a.id 
                LIMIT 1) AS image_data
        FROM adverts AS a 
-       WHERE a.user_id = $1 
+       WHERE a.user_id = $1 AND a.is_sold = false
        ORDER BY a.id DESC`,
       [userId],
     );
@@ -77,7 +78,11 @@ router.get("/myMessageAdverts", verifyToken, async (req, res) => {
   const userId = Number(req.user.id);
   try {
     const result = await db.query(
-      "SELECT DISTINCT a.id AS advert_id, a.brand, a.model, a.model_year, a.engine_capacity, a.price, a.image_src, a.title, a.user_id AS advert_owner_id FROM adverts AS a JOIN messages AS m ON a.id = m.advert_id WHERE m.user_id = $1 OR m.receiver_id = $1 ORDER BY a.id ASC",
+      `SELECT DISTINCT a.id AS advert_id, a.brand, a.model, a.model_year, a.engine_capacity, a.price, a.image_src, a.title, a.user_id AS advert_owner_id 
+       FROM adverts AS a 
+       JOIN messages AS m ON a.id = m.advert_id 
+       WHERE (m.user_id = $1 OR m.receiver_id = $1) AND a.is_sold = false 
+       ORDER BY a.id ASC`,
       [userId],
     );
     return res.status(200).json(result.rows);
@@ -148,11 +153,13 @@ router.get("/:advertId", verifyToken, async (req, res) => {
         ) AS images
       FROM adverts AS a 
       JOIN users AS u ON u.id = a.user_id 
-      WHERE a.id = $2`,
+      WHERE a.id = $2 AND a.is_sold = false`,
       [userId, advertId],
     );
     if (!result.rows.length) {
-      return res.status(404).json({ message: "İlan bulunamadı" });
+      return res
+        .status(404)
+        .json({ message: "İlan bulunamadı veya satılmış olabilir." });
     }
     res.status(200).json(result.rows[0]);
   } catch (err) {

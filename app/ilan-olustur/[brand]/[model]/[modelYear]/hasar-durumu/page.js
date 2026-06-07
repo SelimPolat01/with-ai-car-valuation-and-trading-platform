@@ -207,6 +207,12 @@ export default function HasarDurumu() {
           } else {
             const averageData = await averageSellResponse.json();
             setAvarageSellPrediction(averageData.predicted_days_to_sell);
+            dispatch(
+              setPrediction({
+                ...prediction,
+                daysToSell: averageData.predicted_days_to_sell,
+              }),
+            );
           }
         }
       } else {

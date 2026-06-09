@@ -13,11 +13,13 @@ import xgboost as xgb
 from car_data import CarData 
 import urllib
 import joblib
+import traceback
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from starlette.requests import Request
+from fastapi import HTTPException, status
 
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
@@ -68,11 +70,8 @@ carScratchDentDetectionModelV2.classifier[1] = torch.nn.Linear(
 )
 carScratchDentDetectionModelV2 = carScratchDentDetectionModelV2.to(device)
 
-premium_model = xgb.XGBRegressor()
-premium_model.load_model("./models/price_prediction/xgboost_premium_model_yeni.json")
-
-standard_model = xgb.XGBRegressor()
-standard_model.load_model("./models/price_prediction/xgboost_standard_model_yeni.json")
+main_model = xgb.XGBRegressor()
+main_model.load_model("./models/price_prediction/xgboost_main_model_premium_son_son.json")
 
 days_to_sell_model = xgb.XGBRegressor()
 days_to_sell_model.load_model("./models/average_sell_time_prediction/days_to_sell_xgb_model.json")
@@ -243,53 +242,49 @@ luxury_models = [
         "a6", "a7", "a8", "q7", "q8", "x5", "x6", "x7"
 ]
 
+
+PREMIUM_BRANDS = [
+    "bmw", "mercedes-benz", "audi", "porsche", "land rover", 
+    "volvo", "jaguar", "lexus", "mini", "jeep", "alfa romeo", "maserati"
+]
+
 @app.post("/predict")
 @limiter.limit("50/minute")
 async def predict(request: Request, data: CarData):
     if data.brand: data.brand = urllib.parse.unquote(data.brand).lower().strip()
     if data.model: data.model = urllib.parse.unquote(data.model).lower().strip()
-    if data.body_type: data.body_type = urllib.parse.unquote(data.body_type)
+    if data.body_type: data.body_type = urllib.parse.unquote(data.body_type).lower().strip()
+    if data.trim_level: data.trim_level = urllib.parse.unquote(data.trim_level).lower().strip()
+    if data.transmission: data.transmission = urllib.parse.unquote(data.transmission).lower().strip()
+    if data.fuel_type: data.fuel_type = urllib.parse.unquote(data.fuel_type).lower().strip()
     if data.brand in ["mercedes", "mercedes benz"]:
         data.brand = "mercedes-benz"
 
     df = pd.DataFrame([data.dict()])
-    expected_price_cols = [
-        'brand', 'model', 'model_year', 'body_type', 'engine_capacity', 
-        'horsepower', 'transmission', 'kilometer', 'fuel_type', 'trim_level'
-    ]
     
+    # KM ve Yıl kontrolleri
     if 'kilometer' not in df.columns:
         df['kilometer'] = df['km'] if 'km' in df.columns else getattr(data, 'kilometer', getattr(data, 'km', 100000))
-        
     if 'model_year' not in df.columns:
         df['model_year'] = df['year'] if 'year' in df.columns else getattr(data, 'model_year', getattr(data, 'year', 2020))
 
+    df["is_premium"] = 1 if data.brand in PREMIUM_BRANDS else 0
+
+    expected_price_cols = [
+        'brand', 'model', 'model_year', 'body_type', 'engine_capacity', 
+        'horsepower', 'transmission', 'kilometer', 'fuel_type', 'trim_level', 'is_premium'
+    ]
     df = df[expected_price_cols]
+
     categorical_cols = ["brand", "model", "body_type", "transmission", "fuel_type", "trim_level"]
     for col in categorical_cols:
-        df[col] = df[col].astype("category")
+        df[col] = df[col].astype(str).fillna("missing").astype("category")
     
-    gelen_model = data.model if data.model else ""
-    
-    if gelen_model in luxury_models:
-        pred_log = premium_model.predict(df)
+    try:
+        pred_log = main_model.predict(df)
         real_price = np.expm1(pred_log[0])
-        ultra_luxury = ["s class", "s-class", "s serisi", "g class", "g-class", "g serisi", "7 series", "7 serisi", "q8", "x7"]
-        
-        if gelen_model in ultra_luxury:
-            km = float(df['kilometer'].iloc[0])
-            yil = int(df['model_year'].iloc[0])
-        
-            if km < 50000 and yil >= 2022:
-                real_price = real_price * 1.85  
-            elif km < 100000 and yil >= 2020:
-                real_price = real_price * 1.50  
-            else:
-                real_price = real_price * 1.25  
-                
-    else:
-        pred_log = standard_model.predict(df)
-        real_price = np.expm1(pred_log[0])
+    except Exception as e:
+        return {"error": f"Model tahmin hatası: {str(e)}. Lütfen kategorileri kontrol edin."}
     
     return {"predicted_price": round(float(real_price), 2)}
 
@@ -298,12 +293,22 @@ async def predict(request: Request, data: CarData):
 async def predict_sell_time(request: Request, data: CarData):
     if data.brand: data.brand = urllib.parse.unquote(data.brand).lower().strip()
     if data.model: data.model = urllib.parse.unquote(data.model).lower().strip()
-    if data.body_type: data.body_type = urllib.parse.unquote(data.body_type)
+    if data.body_type: data.body_type = urllib.parse.unquote(data.body_type).lower().strip()
+    if data.trim_level: data.trim_level = urllib.parse.unquote(data.trim_level).lower().strip()
+    if data.transmission: data.transmission = urllib.parse.unquote(data.transmission).lower().strip()
+    if data.fuel_type: data.fuel_type = urllib.parse.unquote(data.fuel_type).lower().strip()
+
     if data.brand in ["mercedes", "mercedes benz"]:
         data.brand = "mercedes-benz"
 
-    km = data.kilometer if hasattr(data, 'kilometer') else getattr(data, 'km', 100000)
-    yil = data.model_year if hasattr(data, 'model_year') else getattr(data, 'year', 2020)
+    try:
+        km = data.kilometer if hasattr(data, 'kilometer') and data.kilometer is not None else getattr(data, 'km')
+        yil = data.model_year if hasattr(data, 'model_year') and data.model_year is not None else getattr(data, 'year')
+    except AttributeError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Kilometre veya Model Yılı alanı eksik gönderildi!"
+        )
 
     input_data = {
         'brand': data.brand,
@@ -316,14 +321,29 @@ async def predict_sell_time(request: Request, data: CarData):
         'fuel_type': data.fuel_type,
         'price': data.price,
         'trim_level': data.trim_level,
-        'has_scratch': int(data.has_scratch) if hasattr(data, 'has_scratch') else 0,
-        'has_dent': int(data.has_dent) if hasattr(data, 'has_dent') else 0,
-        'car_age': 2026 - yil
+        'has_scratch': data.has_scratch,
+        'has_dent': data.has_dent,
+        'car_age': 2026 - int(yil)
     }
 
     df = pd.DataFrame([input_data])
+
+    try:
+        df['price'] = df['price'].astype(str).str.replace('.', '', regex=False).str.replace(',', '', regex=False)
+        df['price'] = pd.to_numeric(df['price'], errors='raise').astype(float)
+        df['kilometer'] = df['kilometer'].astype(str).str.replace('.', '', regex=False).str.replace(',', '', regex=False)
+        df['kilometer'] = pd.to_numeric(df['kilometer'], errors='raise').astype(float)
+        df['engine_capacity'] = pd.to_numeric(df['engine_capacity'], errors='raise').astype(float)
+        df['horsepower'] = pd.to_numeric(df['horsepower'], errors='raise').astype(float)
+        df['has_scratch'] = pd.to_numeric(df['has_scratch'], errors='raise').astype(int)
+        df['has_dent'] = pd.to_numeric(df['has_dent'], errors='raise').astype(int)
+    except (ValueError, TypeError):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Sayısal alanlardan biri (price, kilometer, engine_capacity, horsepower, has_scratch, has_dent) geçersiz formatta veya boş!"
+        )
+
     categorical_cols = ['brand', 'model', 'body_type', 'transmission', 'fuel_type', 'trim_level']
-    
     for col in categorical_cols:
         le = label_encoders.get(col)
         if le:
@@ -338,9 +358,15 @@ async def predict_sell_time(request: Request, data: CarData):
         'transmission', 'kilometer', 'fuel_type', 'price', 'trim_level', 
         'has_scratch', 'has_dent', 'car_age'
     ]
-    
     df = df[expected_cols]
-    pred = days_to_sell_model.predict(df)
-    predicted_days = max(1, int(round(float(pred[0]))))
+    
+    try:
+        pred = days_to_sell_model.predict(df)
+        predicted_days = max(1, int(round(float(pred[0]))))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Satış süresi tahmin motoru hatası: {str(e)}"
+        )
 
     return {"predicted_days_to_sell": predicted_days}

@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import classes from "./TumIlanlar.module.css";
 import { useRouter } from "next/navigation.js";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth.js";
-import LoadingSpinner from "../components/LoadingSpinner.js";
 import ConfirmDialog from "../components/ConfirmDialog.js";
 import { AnimatePresence } from "framer-motion";
 import FilterBrand from "../components/FilterBrand.js";

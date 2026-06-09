@@ -198,7 +198,7 @@ router.post(
   upload.array("images", 10),
   async (req, res) => {
     const data = req.body;
-    const userId = Number(req.user.id);
+    const user = req.user;
     const isScratched = data.hasScratch === "true" || data.hasScratch === true;
     const hasDent = data.hasDent === "true" || data.hasDent === true;
     const trimLevel = data.trimLevel;
@@ -210,7 +210,7 @@ router.post(
           fuel_type, price, city, title, description, has_scratch, has_dent, trim_level
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING id`,
         [
-          userId,
+          Number(user.id),
           data.brand,
           data.model,
           data.modelYear ? Number(data.modelYear) : null,
@@ -221,7 +221,7 @@ router.post(
           data.kilometer ? Number(data.kilometer) : null,
           data.fuelType,
           data.price ? Math.round(Number(data.price)) : null,
-          data.city,
+          user.city,
           data.title,
           data.description,
           isScratched,
@@ -263,13 +263,13 @@ router.put(
   verifyToken,
   upload.array("images", 10),
   async (req, res) => {
-    const { id, title, description, city, existingImages } = req.body;
-    const userId = Number(req.user.id);
+    const { id, title, description, existingImages } = req.body;
+    const user = req.user;
     const newFiles = req.files;
     try {
       await db.query(
         "UPDATE adverts SET city = $1, title = $2, description = $3 WHERE user_id = $4 AND id = $5",
-        [city, title, description, userId, id],
+        [user.city, title, description, Number(user.id), id],
       );
       await db.query("DELETE FROM advert_images WHERE advert_id = $1", [id]);
       if (existingImages) {

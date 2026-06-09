@@ -7,8 +7,8 @@ if __name__ == "__main__":
     LEARNING_RATE = 0.0001
     EPOCHS = 100
     BATCH_SIZE = 32 
-    LABEL_SMOOTHING = 0.02
-    WEIGHT_DECAY = 0.01
+    LABEL_SMOOTHING = 0.2
+    WEIGHT_DECAY = 0.1
     NUM_WORKERS = 8
     SEED = 42
     SAVE_PATH = "models/car_scratch_dent_detection/car_scratch_dent_detection_cnn_best_model.pth"

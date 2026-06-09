@@ -133,55 +133,53 @@ export default function PriceOffer() {
       </motion.div>
       <div className={classes.div}>
         <div className={classes.svgCircleDiv}>
-          <div className={classes.priceOfferDiv}>
-            <motion.div
-              initial={{ opacity: 0, backgroundColor: "#d4f7dc" }}
-              animate={{
-                opacity: 1,
-                backgroundColor: ["#a8f0b0", "#6edc7b", "#39b44a", "#1b8a2d"],
-              }}
-              transition={{ duration: 1, ease: "easeInOut" }}
-              className={classes.circle}
-            >
-              <h1 className={classes.priceOfferText}>
-                <strong>Fiyat teklifi: </strong>
-                <span>
-                  {Math.floor(displayPrice).toLocaleString("tr-TR")} ₺
-                </span>
-              </h1>
-            </motion.div>
-          </div>
-          {animationFinished && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: "easeIn" }}
-              className={classes.svgPriceParamsWrapper}
-            >
-              <svg
-                className={classes.svg}
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ width: "20px", height: "20px" }}
+          <motion.div
+            initial={{ opacity: 0, backgroundColor: "#d4f7dc" }}
+            animate={{
+              opacity: 1,
+              backgroundColor: ["#a8f0b0", "#6edc7b", "#39b44a", "#1b8a2d"],
+            }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+            className={classes.circle}
+          >
+            <h1 className={classes.priceOfferText}>
+              <strong>Fiyat teklifi: </strong>
+              <span>{Math.floor(displayPrice).toLocaleString("tr-TR")} ₺</span>
+            </h1>
+
+            {/* İkon şimdi TAM OLARAK yeşil yuvarlağın (.circle) içinde! */}
+            {animationFinished && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: "easeIn" }}
+                className={classes.svgPriceParamsWrapper}
               >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="16" x2="12" y2="12" />
-                <line x1="12" y1="8" x2="12" y2="8" />
-              </svg>
-              <ul className={classes.priceParams}>
-                <li>
-                  Aracınızın marka, model, yıl, motor hacmi ve kilometresi gibi
-                  faktörler ile piyasa verilerini analiz ederek size en güncel
-                  ve adil fiyat teklifini sunuyoruz.
-                </li>
-              </ul>
-            </motion.div>
-          )}
+                <svg
+                  className={classes.svg}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ width: "20px", height: "20px" }}
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12" y2="8" />
+                </svg>
+                <ul className={classes.priceParams}>
+                  <li>
+                    Aracınızın marka, model, yıl, motor hacmi ve kilometresi
+                    gibi faktörler ile piyasa verilerini analiz ederek size en
+                    güncel ve adil fiyat teklifini sunuyoruz.
+                  </li>
+                </ul>
+              </motion.div>
+            )}
+          </motion.div>
         </div>
         {animationFinished && (
           <motion.div

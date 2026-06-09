@@ -29,9 +29,20 @@ router.post("/register", async (req, res) => {
       [email, hashedPassword, name, surname, tel_number, city, iban],
     );
     const user = result.rows[0];
-    const token = jwt.sign({ id: user.id, email: user.email }, SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        surname: user.surname,
+        tel_number: user.tel_number,
+        city: user.city,
+      },
+      SECRET,
+      {
+        expiresIn: "1d",
+      },
+    );
     res.status(200).json({ message: "Kayıt başarılı!", user, token });
   } catch (err) {
     console.log("Error: ", err);
@@ -64,6 +75,7 @@ router.post("/login", async (req, res) => {
           name: user.name,
           surname: user.surname,
           tel_number: user.tel_number,
+          city: user.city,
         },
         SECRET,
         {

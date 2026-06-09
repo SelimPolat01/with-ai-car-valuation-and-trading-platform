@@ -39,7 +39,7 @@ export default function Header({ className }) {
           <UserPlus
             className={classes.icon}
             size={30}
-            stroke="url(#magic-gradient)"
+            stroke="url(#gold-stroke)"
           />
         ),
         hideOn: "/register",
@@ -52,7 +52,7 @@ export default function Header({ className }) {
           <LogIn
             className={classes.icon}
             size={30}
-            stroke="url(#magic-gradient)"
+            stroke="url(#gold-stroke)"
           />
         ),
         hideOn: "/login",
@@ -64,11 +64,7 @@ export default function Header({ className }) {
       {
         href: "/",
         label: (
-          <Home
-            className={classes.icon}
-            size={30}
-            stroke="url(#magic-gradient)"
-          />
+          <Home className={classes.icon} size={30} stroke="url(#gold-stroke)" />
         ),
         hideOn: "/",
         className: "homeLink",
@@ -134,7 +130,7 @@ export default function Header({ className }) {
                 <LayoutGrid
                   className={classes.icon}
                   size={30}
-                  stroke="url(#magic-gradient)"
+                  stroke="url(#gold-stroke)"
                 />
               </Link>
               <li className={classes.account}>
@@ -148,7 +144,7 @@ export default function Header({ className }) {
                   <User
                     className={classes.icon}
                     size={30}
-                    stroke="url(#magic-gradient)"
+                    stroke="url(#gold-stroke)"
                   />
                 </Link>
                 <ul className={classes.accountMenu}>
@@ -161,7 +157,7 @@ export default function Header({ className }) {
                       <Tags
                         className={classes.juniorIcon}
                         size={20}
-                        stroke="url(#magic-gradient)"
+                        stroke="url(#gold-stroke)"
                       />
                       İlanlarım
                     </Link>
@@ -175,7 +171,7 @@ export default function Header({ className }) {
                       <FolderHeart
                         className={classes.juniorIcon}
                         size={20}
-                        stroke="url(#magic-gradient)"
+                        stroke="url(#gold-stroke)"
                       />
                       Favorilerim
                     </Link>
@@ -189,7 +185,7 @@ export default function Header({ className }) {
                       <User
                         className={classes.juniorIcon}
                         size={20}
-                        stroke="url(#magic-gradient)"
+                        stroke="url(#gold-stroke)"
                       />
                       Hesabım
                     </Link>
@@ -204,7 +200,7 @@ export default function Header({ className }) {
                       <LogOut
                         className={classes.juniorIcon}
                         size={20}
-                        stroke="url(#magic-gradient)"
+                        stroke="url(#gold-stroke)"
                       />
                       Çıkış Yap
                     </Link>

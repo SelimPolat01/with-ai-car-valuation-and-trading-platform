@@ -54,7 +54,7 @@ class CarScratchDentDetectionCNN(nn.Module):
         self.classifier = nn.Sequential(
             nn.AdaptiveMaxPool2d((1, 1)),            
             nn.Flatten(),
-            nn.Dropout(p=0.2, inplace=True), 
+            nn.Dropout(p=0.3, inplace=True), 
             nn.Linear(in_features=hidden_units_4, out_features=output_shape)
         )
 

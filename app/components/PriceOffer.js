@@ -15,7 +15,6 @@ export default function PriceOffer({ advertId }) {
   const [inputTextareValue, setInputTextareaValue] = useState({
     title: "",
     description: "",
-    city: "",
   });
   const [images, setImages] = useState(Array(10).fill(null));
   const [loading, setLoading] = useState(false);
@@ -73,7 +72,6 @@ export default function PriceOffer({ advertId }) {
 
     const formData = new FormData();
 
-    formData.append("city", inputTextareValue.city);
     formData.append("title", inputTextareValue.title);
     formData.append("description", inputTextareValue.description);
 
@@ -131,14 +129,9 @@ export default function PriceOffer({ advertId }) {
         return;
       }
 
-      const contentType = response.headers.get("content-type");
       if (!response.ok) {
-        if (contentType && contentType.includes("application/json")) {
-          const errorData = await response.json();
-          setError(errorData.message);
-        } else {
-          setError(`Sunucu hatası oluştu. Durum kodu: ${response.status}`);
-        }
+        const errorData = await response.json();
+        setError(errorData.message);
         return;
       }
 
@@ -182,7 +175,6 @@ export default function PriceOffer({ advertId }) {
           setInputTextareaValue({
             title: data.title || "",
             description: data.description || "",
-            city: data.city || "",
           });
 
           const loadedImages = Array(10).fill(null);
@@ -289,17 +281,6 @@ export default function PriceOffer({ advertId }) {
             value={inputTextareValue.title}
             onChange={inputTextareaChangeHandler}
             autoFocus
-          />
-        </motion.div>
-
-        <motion.div variants={itemVariants}>
-          <Input
-            className={classes.input}
-            type="text"
-            identifier="city"
-            label="Şehir"
-            value={inputTextareValue.city}
-            onChange={inputTextareaChangeHandler}
           />
         </motion.div>
 

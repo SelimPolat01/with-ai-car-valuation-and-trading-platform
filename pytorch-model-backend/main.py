@@ -56,19 +56,12 @@ carDirectionDetectionModel = CarDirectionDetectionCNN(input_shape=3,
                                                       hidden_units_4=256,
                                                       output_shape=4).to(device)
 
-carScratchDentDetectionModelV1 = CarScratchDentDetectionCNN(input_shape=3,
+carScratchDentDetectionModel = CarScratchDentDetectionCNN(input_shape=3,
                                                           hidden_units_1=32,
                                                           hidden_units_2=64,
                                                           hidden_units_3=128,
                                                           hidden_units_4=256,
                                                           output_shape=3).to(device)
-
-carScratchDentDetectionModelV2 = models.efficientnet_b2()
-carScratchDentDetectionModelV2.classifier[1] = torch.nn.Linear(
-    in_features=carScratchDentDetectionModelV2.classifier[1].in_features, 
-    out_features=3
-)
-carScratchDentDetectionModelV2 = carScratchDentDetectionModelV2.to(device)
 
 main_model = xgb.XGBRegressor()
 main_model.load_model("./models/price_prediction/xgboost_main_model_premium_son_son.json")
@@ -87,15 +80,8 @@ transform = torchvision.transforms.Compose([
                                      std=[0.229, 0.224, 0.225])
 ])
 
-scratch_dent_transformV1 = torchvision.transforms.Compose([
+scratch_dent_transform = torchvision.transforms.Compose([
     torchvision.transforms.Resize(size=(256, 256)),
-    torchvision.transforms.ToTensor(),
-    torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
-])
-
-scratch_dent_transformV2 = torchvision.transforms.Compose([
-    torchvision.transforms.Resize(size=(384, 384)),
     torchvision.transforms.ToTensor(),
     torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
@@ -128,23 +114,15 @@ for k, v in car_direction_detection_state_dict.items()
 carDirectionDetectionModel.load_state_dict(car_direction_detection_clean_state_dict, strict=False)
 carDirectionDetectionModel.eval()
 
-car_scratch_dent_detection_class_namesV1 = car_scratch_dent_detection_data.classes
-car_scratch_dent_detection_state_dictV1= torch.load("models/car_scratch_dent_detection/car_scratch_dent_detection_cnn_model_5_epoch100_acc88.pth", map_location=device, weights_only=True)
-car_scratch_dent_detection_clean_state_dictV1 = {
+car_scratch_dent_detection_class_names = car_scratch_dent_detection_data.classes
+car_scratch_dent_detection_state_dict= torch.load("models/car_scratch_dent_detection/car_scratch_dent_detection_cnn_model_7_epoch100_acc90.pth", map_location=device, weights_only=True)
+car_scratch_dent_detection_clean_state_dict = {
     k.replace("_orig_mod.", ""): v
-for k, v in car_scratch_dent_detection_state_dictV1.items()
+for k, v in car_scratch_dent_detection_state_dict.items()
 }
-carScratchDentDetectionModelV1.load_state_dict(car_scratch_dent_detection_clean_state_dictV1, strict=False)
-carScratchDentDetectionModelV1.eval()
+carScratchDentDetectionModel.load_state_dict(car_scratch_dent_detection_clean_state_dict, strict=False)
+carScratchDentDetectionModel.eval()
 
-car_scratch_dent_detection_class_namesV2 = car_scratch_dent_detection_data.classes
-car_scratch_dent_detection_state_dictV2 = torch.load("models/car_scratch_dent_detection/efficientnet_b2_epoch30_acc99.pth", map_location=device, weights_only=True)
-car_scratch_dent_detection_clean_state_dictV2 = {
-    k.replace("_orig_mod.", ""): v
-for k, v in car_scratch_dent_detection_state_dictV2.items()
-}
-carScratchDentDetectionModelV2.load_state_dict(car_scratch_dent_detection_clean_state_dictV2, strict=False)
-carScratchDentDetectionModelV2.eval()
 
 @app.get("/")
 def home():
@@ -188,52 +166,21 @@ async def carDirectionDetectionUpload(request: Request, file: UploadFile = File(
 async def carStrachDentDetectionUpload(request: Request, file: UploadFile = File(...)):
     contents = await file.read()
     img = Image.open(io.BytesIO(contents)).convert("RGB")
-    width, height = img.size
-    half_w, half_h = width // 2, height // 2
-    boxes = [
-        (0, 0, half_w, half_h),        
-        (half_w, 0, width, half_h),       
-        (0, half_h, half_w, height),     
-        (half_w, half_h, width, height),  
-        (width//4, height//4, width*3//4, height*3//4)
-    ]
     
-    patches = [img.crop(box) for box in boxes]
-    predictions = []
+    # Doğrudan tüm resmi modele gönder (Kırpma yok)
+    img_tensor = scratch_dent_transform(img).unsqueeze(0).to(device)
     
     with torch.inference_mode():
-        for patch in patches:
-            img_tensor = scratch_dent_transformV2(patch).unsqueeze(0).to(device)
-            y_pred = carScratchDentDetectionModelV1(img_tensor)
-            
-            probs = torch.softmax(y_pred, dim=1)[0]
-            pred_class_idx = torch.argmax(probs).item()
-            pred_class_name = car_scratch_dent_detection_class_namesV1[pred_class_idx]
-            pred_percent = round(probs[pred_class_idx].item() * 100)
-            
-            predictions.append({
-                "class": pred_class_name,
-                "percent": pred_percent
-            })
-
-    final_prediction = "clean"
-    final_percent = 0
-    
-    for pred in predictions:
-        if pred["class"] in ["dent", "scratch"] and pred["percent"] > 50:
-            final_prediction = pred["class"]
-            final_percent = pred["percent"]
-            break
-
-    if final_prediction == "clean":
-        highest_clean = max([p["percent"] for p in predictions if p["class"] == "clean"] + [0])
-        final_percent = highest_clean if highest_clean > 0 else 99
+        y_pred = carScratchDentDetectionModel(img_tensor)
+        probs = torch.softmax(y_pred, dim=1)[0]
+        pred_class_idx = torch.argmax(probs).item()
+        pred_class_name = car_scratch_dent_detection_class_names[pred_class_idx]
+        pred_percent = round(probs[pred_class_idx].item() * 100)
 
     return {
-        "prediction": final_prediction,
-        "prediction_percent": final_percent
-    }
-
+        "prediction": pred_class_name,
+        "prediction_percent": pred_percent
+    }   
 
 luxury_models = [
         "5 series", "5 serisi", "5series", "5serisi", "5-series", "5-serisi",

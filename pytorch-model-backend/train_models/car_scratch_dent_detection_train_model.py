@@ -4,11 +4,11 @@ from CNNs.car_scratch_dent_detection_cnn import CarScratchDentDetectionCNN
 from train import train 
 
 if __name__ == "__main__":
-    LEARNING_RATE = 0.0001
+    LEARNING_RATE = 0.0002
     EPOCHS = 100
     BATCH_SIZE = 32 
-    LABEL_SMOOTHING = 0.2
-    WEIGHT_DECAY = 0.1
+    LABEL_SMOOTHING = 0.05
+    WEIGHT_DECAY = 0.01
     NUM_WORKERS = 8
     SEED = 42
     SAVE_PATH = "models/car_scratch_dent_detection/car_scratch_dent_detection_cnn_best_model.pth"
@@ -20,9 +20,9 @@ if __name__ == "__main__":
     
     train_transforms = torchvision.transforms.Compose([
         torchvision.transforms.Resize((256, 256)), 
-        torchvision.transforms.RandomAffine(degrees=15, scale=(0.5, 1.0)),
+        torchvision.transforms.RandomAffine(degrees=15, scale=(0.85, 1.1)),
         torchvision.transforms.RandomHorizontalFlip(p=0.5),
-        torchvision.transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.05),
+        torchvision.transforms.ColorJitter(brightness=0.05, contrast=0.05, saturation=0.05),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
@@ -30,15 +30,11 @@ if __name__ == "__main__":
     test_transforms = torchvision.transforms.Compose([
         torchvision.transforms.Resize((256, 256)),
         torchvision.transforms.ToTensor(),
-        torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225])
+        torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    train_data = torchvision.datasets.ImageFolder(root="./damages/train",
-                                                  transform=train_transforms)
-    
-    test_data = torchvision.datasets.ImageFolder(root="./damages/test",
-                                                 transform=test_transforms)
+    train_data = torchvision.datasets.ImageFolder(root="./damages/train", transform=train_transforms)
+    test_data = torchvision.datasets.ImageFolder(root="./damages/test", transform=test_transforms)
     
     class_names = train_data.classes
     print(f"Sınıflar: {class_names}")
@@ -64,19 +60,24 @@ if __name__ == "__main__":
     torch.cuda.manual_seed(SEED)
     torch.manual_seed(SEED)
     
-    car_scratch_dent_detection_cnn = CarScratchDentDetectionCNN(input_shape=3,
-                                                        hidden_units_1=32,
-                                                        hidden_units_2=64,
-                                                        hidden_units_3=128,
-                                                        hidden_units_4=256, 
-                                                        output_shape=len(class_names))
+    car_scratch_dent_detection_cnn = CarScratchDentDetectionCNN(
+        input_shape=3,
+        hidden_units_1=32,
+        hidden_units_2=64,
+        hidden_units_3=128,
+        hidden_units_4=256, 
+        output_shape=len(class_names)
+    )
     
     car_scratch_dent_detection_cnn = car_scratch_dent_detection_cnn.to(device)
 
-    loss_fn = torch.nn.CrossEntropyLoss()
+    loss_fn = torch.nn.CrossEntropyLoss(label_smoothing=LABEL_SMOOTHING)
     
-    optimizer = torch.optim.AdamW(params=car_scratch_dent_detection_cnn.parameters(), 
-                              lr=0.0005)
+    optimizer = torch.optim.AdamW(
+        params=car_scratch_dent_detection_cnn.parameters(), 
+        lr=LEARNING_RATE,
+        weight_decay=WEIGHT_DECAY
+    )
     
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, 
@@ -86,18 +87,20 @@ if __name__ == "__main__":
         min_lr=0.000001
     )
 
-    train_results = train(model=car_scratch_dent_detection_cnn,
-                          train_dataloader=train_dataloader,
-                          test_dataloader=test_dataloader,
-                          loss_fn=loss_fn,
-                          optimizer=optimizer,
-                          epochs=EPOCHS,
-                          device=device,
-                          scheduler=scheduler,
-                          save_path=SAVE_PATH)
+    train_results = train(
+        model=car_scratch_dent_detection_cnn,
+        train_dataloader=train_dataloader,
+        test_dataloader=test_dataloader,
+        loss_fn=loss_fn,
+        optimizer=optimizer,
+        epochs=EPOCHS,
+        device=device,
+        scheduler=scheduler,
+        save_path=SAVE_PATH
+    )
     
     BEST_ACC = max(train_results["test_acc"])
-    final_model_name = f"models/car_scratch_dent_detection/car_scratch_dent_detection_cnn_model_5_epoch{EPOCHS}_acc{int(BEST_ACC * 100)}.pth"
+    final_model_name = f"models/car_scratch_dent_detection/car_scratch_dent_detection_cnn_model_9_epoch{EPOCHS}_acc{int(BEST_ACC * 100)}.pth"
 
     if os.path.exists(SAVE_PATH):   
         if os.path.exists(final_model_name):

@@ -11,7 +11,8 @@
     box-shadow 0.5s ease-out;
   display: inline-block;
   overflow: hidden;
-  background: radial-gradient(circle at top left, rgb(153, 103, 103), black);
+  background: linear-gradient(145deg, #1e1e24, #151518);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   position: relative;
   border-radius: 8px;
   height: 100%;

@@ -24,7 +24,6 @@ def load_and_preprocess(file_path):
 def train_single_model(df):
     print(f"\n--- Ana Model Eğitiliyor ({len(df)} araç) ---")
     
-    # ✅ Premium ayrıştırması BURADA (Doğru)
     premium_brands = [
         "bmw", "mercedes-benz", "audi", 
         "porsche", "land rover", "volvo", 
@@ -46,12 +45,10 @@ def train_single_model(df):
         X, y, weights, test_size=0.15, random_state=42
     )
 
-    # ❌ Fiyatı bozan "monotone_constraints" BURADAN SİLİNDİ!
-    
     model = xgb.XGBRegressor(
         objective="reg:squarederror", 
         n_estimators=1500,
-        max_depth=9,                  # Premium ayrıştırması için derinliği 9 yapman daha iyi olur
+        max_depth=9,                 
         learning_rate=0.03,      
         subsample=0.85,
         colsample_bytree=0.85,

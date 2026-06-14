@@ -1,6 +1,5 @@
 import express from "express";
 import verifyToken from "../middlewares/verifyToken.js";
-import { data } from "framer-motion/client";
 
 export const router = express.Router();
 

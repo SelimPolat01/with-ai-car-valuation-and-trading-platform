@@ -37,12 +37,16 @@ app.use(
       "http://localhost:3000",
     ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELET E", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send("Node.js Backend Başarıyla Çalışıyor! 🚀");
+});
 
 app.use("/uploads", express.static(path.join(process.cwd(), "public/uploads")));
 app.use("/api", globalLimiter, authRoutes);

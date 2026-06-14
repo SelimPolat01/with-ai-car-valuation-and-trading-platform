@@ -1,20 +1,9 @@
-import torch
-import torchvision
 import os
 import io
-import gc
 import urllib
 import joblib
-import traceback
 from fastapi import FastAPI, UploadFile, File, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from CNNs.car_detection_cnn import CarDetectionCNN
-from CNNs.car_direction_detection_cnn import CarDirectionDetectionCNN
-from CNNs.car_scratch_dent_detection_cnn import CarScratchDentDetectionCNN
-from PIL import Image
-import numpy as np
-import pandas as pd
-import xgboost as xgb
 from car_data import CarData 
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -39,40 +28,18 @@ app.add_middleware(
 
 os.makedirs("uploads", exist_ok=True)
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
-main_model = xgb.XGBRegressor()
-main_model.load_model("./models/price_prediction/xgboost_main_model_premium_son_son.json")
-
-days_to_sell_model = xgb.XGBRegressor()
-days_to_sell_model.load_model("./models/average_sell_time_prediction/days_to_sell_xgb_model.json")
-
-label_encoders = joblib.load("label_encoders.pkl")
-
 premium_brands = ["audi", "bmw", "mercedes", "mercedes-benz"]
 
-transform = torchvision.transforms.Compose([
-    torchvision.transforms.Resize(size=(224, 224)),
-    torchvision.transforms.ToTensor(),
-    torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-])
-
-scratch_dent_transform = torchvision.transforms.Compose([
-    torchvision.transforms.Resize(size=(256, 256)),
-    torchvision.transforms.ToTensor(),
-    torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-])
+PREMIUM_BRANDS = [
+    "bmw", "mercedes-benz", "audi", "porsche", "land rover", 
+    "volvo", "jaguar", "lexus", "mini", "jeep", "alfa romeo", "maserati"
+]
 
 luxury_models = [
     "5 series", "5 serisi", "5series", "5serisi", "5-series", "5-serisi",
     "e series", "e serisi", "eseries", "eserisi", "e-series", "e-serisi",
     "g class", "g-class", "g serisi", "7 series", "7 serisi", "7-series",
     "a6", "a7", "a8", "q7", "q8", "x5", "x6", "x7"
-]
-
-PREMIUM_BRANDS = [
-    "bmw", "mercedes-benz", "audi", "porsche", "land rover", 
-    "volvo", "jaguar", "lexus", "mini", "jeep", "alfa romeo", "maserati"
 ]
 
 
@@ -84,6 +51,20 @@ def home():
 @app.post("/car-detection-upload")
 @limiter.limit("10/minute")
 async def carDetectionUpload(request: Request, file: UploadFile = File(...)):
+    import gc
+    import torch
+    import torchvision
+    from CNNs.car_detection_cnn import CarDetectionCNN
+    from PIL import Image
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    transform = torchvision.transforms.Compose([
+        torchvision.transforms.Resize(size=(224, 224)),
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+
     car_detection_data = torchvision.datasets.ImageFolder(root="./class_names/cars/train", transform=transform)
     car_detection_class_names = car_detection_data.classes
 
@@ -119,6 +100,20 @@ async def carDetectionUpload(request: Request, file: UploadFile = File(...)):
 @app.post("/car-direction-detection-upload")
 @limiter.limit("100/minute")
 async def carDirectionDetectionUpload(request: Request, file: UploadFile = File(...)):
+    import gc
+    import torch
+    import torchvision
+    from CNNs.car_direction_detection_cnn import CarDirectionDetectionCNN
+    from PIL import Image
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    transform = torchvision.transforms.Compose([
+        torchvision.transforms.Resize(size=(224, 224)),
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+
     car_direction_detection_data = torchvision.datasets.ImageFolder(root="./class_names/directions/train", transform=transform)
     car_direction_detection_class_names = car_direction_detection_data.classes
 
@@ -153,7 +148,21 @@ async def carDirectionDetectionUpload(request: Request, file: UploadFile = File(
 @app.post("/car-scratch-dent-detection-upload")
 @limiter.limit("100/minute")
 async def carStrachDentDetectionUpload(request: Request, file: UploadFile = File(...)):
-    car_scratch_dent_detection_data = torchvision.datasets.ImageFolder(root="./class_names/damages/train", transform=transform)
+    import gc
+    import torch
+    import torchvision
+    from CNNs.car_scratch_dent_detection_cnn import CarScratchDentDetectionCNN
+    from PIL import Image
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    scratch_dent_transform = torchvision.transforms.Compose([
+        torchvision.transforms.Resize(size=(256, 256)),
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+
+    car_scratch_dent_detection_data = torchvision.datasets.ImageFolder(root="./class_names/damages/train", transform=scratch_dent_transform)
     car_scratch_dent_detection_class_names = car_scratch_dent_detection_data.classes
 
     carScratchDentDetectionModel = CarScratchDentDetectionCNN(
@@ -190,6 +199,13 @@ async def carStrachDentDetectionUpload(request: Request, file: UploadFile = File
 @app.post("/predict")
 @limiter.limit("50/minute")
 async def predict(request: Request, data: CarData):
+    import xgboost as xgb
+    import pandas as pd
+    import numpy as np
+
+    main_model = xgb.XGBRegressor()
+    main_model.load_model("./models/price_prediction/xgboost_main_model_premium_son_son.json")
+
     if data.brand: data.brand = urllib.parse.unquote(data.brand).lower().strip()
     if data.model: data.model = urllib.parse.unquote(data.model).lower().strip()
     if data.body_type: data.body_type = urllib.parse.unquote(data.body_type).lower().strip()
@@ -230,6 +246,13 @@ async def predict(request: Request, data: CarData):
 @app.post("/predict-sell-time")
 @limiter.limit("50/minute")
 async def predict_sell_time(request: Request, data: CarData):
+    import xgboost as xgb
+    import pandas as pd
+
+    days_to_sell_model = xgb.XGBRegressor()
+    days_to_sell_model.load_model("./models/average_sell_time_prediction/days_to_sell_xgb_model.json")
+    label_encoders = joblib.load("label_encoders.pkl")
+
     if data.brand: data.brand = urllib.parse.unquote(data.brand).lower().strip()
     if data.model: data.model = urllib.parse.unquote(data.model).lower().strip()
     if data.body_type: data.body_type = urllib.parse.unquote(data.body_type).lower().strip()

@@ -91,7 +91,7 @@ export default function HasarDurumu() {
       setError(null);
 
       const response = await fetch(
-        "http://127.0.0.1:8000/car-direction-detection-upload",
+        `${process.env.NEXT_PUBLIC_FASTAPI_URL}/car-direction-detection-upload`,
         {
           method: "POST",
           body: formData,
@@ -124,7 +124,7 @@ export default function HasarDurumu() {
         setCardErrors((prev) => ({ ...prev, [side]: null }));
 
         const damageResponse = await fetch(
-          "http://127.0.0.1:8000/car-scratch-dent-detection-upload",
+          `${process.env.NEXT_PUBLIC_FASTAPI_URL}/car-scratch-dent-detection-upload`,
           {
             method: "POST",
             body: formData,
@@ -187,7 +187,7 @@ export default function HasarDurumu() {
 
         if (isAllImagesUploadedNow) {
           const averageSellResponse = await fetch(
-            "http://127.0.0.1:8000/predict-sell-time",
+            `${process.env.NEXT_PUBLIC_FASTAPI_URL}/predict-sell-time`,
             {
               method: "POST",
               headers: {

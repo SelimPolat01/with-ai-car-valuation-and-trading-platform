@@ -122,7 +122,7 @@ export default function AiCarDetector() {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        "http://127.0.0.1:8000/car-detection-upload",
+        `${process.env.NEXT_PUBLIC_FASTAPI_URL}/car-detection-upload`,
         {
           method: "POST",
           body: formData,

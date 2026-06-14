@@ -32,7 +32,10 @@ const server = http.createServer(app);
 
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: [
+      "https://with-ai-car-valuation-and-trading-sy9d.onrender.com",
+      "http://localhost:3000",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

@@ -8,7 +8,6 @@ env/
 venv/
 ENV/
 bin/
-lib/
 lib64/
 
 *.pt

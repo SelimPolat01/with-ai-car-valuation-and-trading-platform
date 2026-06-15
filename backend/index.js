@@ -53,6 +53,8 @@ app.use("/adverts", globalLimiter, advertsRoutes);
 app.use("/predict", globalLimiter, predictRoutes);
 app.use("/infos", personalInfoRoutes);
 
+await createTable();
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server ${PORT} portunda başarıyla çalışıyor.`);
 });

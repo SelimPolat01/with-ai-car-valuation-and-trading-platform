@@ -6,3 +6,7 @@ __pycache__/
 .venv/
 venv/
 .vscode/
+train_models/
+train.py
+train_step.py
+test_step.py

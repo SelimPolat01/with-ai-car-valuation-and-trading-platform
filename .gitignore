@@ -1,5 +1,4 @@
 # --- Dependencies & Environments ---
-# Klasörün neresinde olursa olsun bu isimdeki klasörleri engeller
 node_modules/
 **/node_modules/
 .venv/
@@ -10,9 +9,6 @@ ENV/
 bin/
 lib64/
 
-# *.pt
-# *.pth
-# *.onnx
 
 # --- Python / Machine Learning ---
 __pycache__/
@@ -22,10 +18,7 @@ __pycache__/
 *.so
 .Python
 .ipynb_checkpoints
-# Model dosyaları (opsiyonel - çok büyükse engelle)
-# *.pt
-# *.pth
-# *.pkl
+
 
 # --- Next.js / React ---
 .next/
@@ -72,8 +65,10 @@ pytorch-model-backend/.venv/
 
 # uploads/
 
-# xgboost_premium_model_dusuk.json
-# xgboost_premium_model_yuksek.json
-# xgboost_standard_model_dusuk.json
-# xgboost_standard_model_yuksek.json
-# days_to_sell_xgb_model.json
+pytorch-model-backend/train_models/
+pytorch-model-backend/Dockerfile
+pytorch-model-backend/requirements.txt
+pytorch-model-backend/README.md
+pytorch-model-backend/train.py
+pytorch-model-backend/train_step.py
+pytorch-model-backend/test_step.py

@@ -2,7 +2,7 @@ fastapi
 uvicorn
 pydantic
 pandas
-numpy
+numpy==1.26.4
 xgboost
 joblib
 slowapi
@@ -11,6 +11,6 @@ pillow
 python-multipart
 scikit-learn
 scipy
---find-links https://download.pytorch.org/whl/torch_stable.html
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.1.2+cpu
 torchvision==0.16.2+cpu

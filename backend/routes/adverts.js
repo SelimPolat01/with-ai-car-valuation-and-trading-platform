@@ -207,8 +207,8 @@ router.post(
         `INSERT INTO adverts (
           user_id, brand, model, model_year, body_type, 
           engine_capacity, horsepower, transmission, kilometer, 
-          fuel_type, price, city, title, description, has_scratch, has_dent, trim_level
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING id`,
+          fuel_type, price, title, description, has_scratch, has_dent, trim_level
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id`,
         [
           Number(user.id),
           data.brand,
@@ -221,7 +221,6 @@ router.post(
           data.kilometer ? Number(data.kilometer) : null,
           data.fuelType,
           data.price ? Math.round(Number(data.price)) : null,
-          user.city,
           data.title,
           data.description,
           isScratched,
@@ -268,8 +267,8 @@ router.put(
     const newFiles = req.files;
     try {
       await db.query(
-        "UPDATE adverts SET city = $1, title = $2, description = $3 WHERE user_id = $4 AND id = $5",
-        [user.city, title, description, Number(user.id), id],
+        "UPDATE adverts SET title = $1, description = $2 WHERE user_id = $3 AND id = $4",
+        [title, description, Number(user.id), id],
       );
       await db.query("DELETE FROM advert_images WHERE advert_id = $1", [id]);
       if (existingImages) {
@@ -306,18 +305,3 @@ router.put(
     }
   },
 );
-
-router.get("/messages/:advertId", verifyToken, async (req, res) => {
-  const userId = req.user.id;
-  const advertId = req.params.advertId;
-  try {
-    const result = await db.query(
-      "SELECT m.id, m.user_id, m.receiver_id, m.message FROM messages AS m JOIN users as u ON u.id = m.user_id WHERE advert_id = $1 AND (user_id = $2 OR receiver_id = $2) ORDER BY m.created_at ASC",
-      [advertId, userId],
-    );
-    return res.status(200).json(result.rows);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: "Sunucu hatası!" });
-  }
-});

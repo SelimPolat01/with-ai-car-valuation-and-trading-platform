@@ -10,9 +10,9 @@ ENV/
 bin/
 lib64/
 
-*.pt
-*.pth
-*.onnx
+# *.pt
+# *.pth
+# *.onnx
 
 # --- Python / Machine Learning ---
 __pycache__/
@@ -23,9 +23,9 @@ __pycache__/
 .Python
 .ipynb_checkpoints
 # Model dosyaları (opsiyonel - çok büyükse engelle)
-*.pt
-*.pth
-*.pkl
+# *.pt
+# *.pth
+# *.pkl
 
 # --- Next.js / React ---
 .next/
@@ -70,10 +70,10 @@ Thumbs.db
 pytorch-model-backend/.venv/
 **/node_modules/
 
-uploads/
+# uploads/
 
-xgboost_premium_model_dusuk.json
-xgboost_premium_model_yuksek.json
-xgboost_standard_model_dusuk.json
-xgboost_standard_model_yuksek.json
-days_to_sell_xgb_model.json
+# xgboost_premium_model_dusuk.json
+# xgboost_premium_model_yuksek.json
+# xgboost_standard_model_dusuk.json
+# xgboost_standard_model_yuksek.json
+# days_to_sell_xgb_model.json

@@ -1,16 +1,16 @@
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.11.0+cpu
-torchvision==0.26.0+cpu
-fastapi==0.135.3
-uvicorn==0.44.0
-pydantic==2.13.1
-python-multipart==0.0.26
-numpy==2.4.3
-pillow==12.1.1
-opencv-python==4.13.0.92
+fastapi
+uvicorn
+pydantic
 pandas
+numpy
 xgboost
 joblib
 slowapi
-scipy
+starlette
+pillow
+python-multipart
 scikit-learn
+scipy
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==2.1.2+cpu
+torchvision==0.16.2+cpu

@@ -45,7 +45,7 @@ router.post("/register", async (req, res) => {
     );
     res.status(200).json({ message: "Kayıt başarılı!", user, token });
   } catch (err) {
-    console.log("Error: ", err);
+    console.log("Kayıt Hatası: ", err);
     res.status(500).json({ message: "Sunucu hatası!" });
   }
 });
@@ -89,6 +89,7 @@ router.post("/login", async (req, res) => {
         .json({ message: "Girilen e-postaya ait kullanıcı bulunamadı." });
     }
   } catch (err) {
+    console.error("Login Hatası: ", err);
     return res.status(500).json({ message: "Sunucu hatası." });
   }
 });

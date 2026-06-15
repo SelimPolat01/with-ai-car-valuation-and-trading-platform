@@ -72,3 +72,5 @@ pytorch-model-backend/README.md
 pytorch-model-backend/train.py
 pytorch-model-backend/train_step.py
 pytorch-model-backend/test_step.py
+pytorch-model-backend/.gitignore
+pytorch-model-backend/.gitattributes

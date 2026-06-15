@@ -43,6 +43,14 @@ export default function AdvertItem({
     return (+engineCapacity / 1000).toFixed(1);
   }
 
+  function priceFormat(price) {
+    if (!price) return;
+    return Number(price).toLocaleString("tr-TR", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  }
+
   function editAdvertHandler() {
     router.replace(`/ilani-duzenle/${id}`);
   }
@@ -107,7 +115,7 @@ export default function AdvertItem({
         </div>
 
         <div className={classes.priceDiv}>
-          <p className={classes.price}>{price.toLocaleString("tr-TR")} ₺</p>
+          <p className={classes.price}>{priceFormat(price)} ₺</p>
         </div>
       </div>
     </motion.div>

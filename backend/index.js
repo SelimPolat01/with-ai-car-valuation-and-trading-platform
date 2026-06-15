@@ -10,7 +10,6 @@ import http from "http";
 import { db } from "./lib/db.js";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
-import { createTables } from "./lib/db.js";
 // import { dbInsertCars } from "./utils/dbInsertCars.js";
 
 const app = express();

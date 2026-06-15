@@ -71,6 +71,16 @@ a {
   padding: 2rem 0;
 }
 
+.homeContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 85vh;
+  gap: 0px;
+  font-family: sans-serif;
+  padding: 0 0 2rem 0;
+}
+
 .main {
   display: flex;
   flex-direction: column;

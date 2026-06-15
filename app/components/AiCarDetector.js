@@ -232,7 +232,7 @@ export default function AiCarDetector() {
             >
               Fotoğraf Yükle
             </span>
-            <Camera size={32} stroke="url(#gold-stroke)" />
+            <Camera size={32} stroke="url(#custom-text-stroke)" />
           </div>
           {preview ? (
             <Image

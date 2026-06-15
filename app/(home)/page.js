@@ -8,7 +8,7 @@ export default function Home() {
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
   return (
-    <main className="container">
+    <main className="homeContainer">
       {mode === "form" ? (
         <div className="dropdownContainer">
           <div>

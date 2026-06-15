@@ -14,17 +14,17 @@ db.query("SELECT NOW()")
   .then((res) => console.log("DB Bağlantısı başarılı:", res.rows))
   .catch((err) => console.log("DB bağlantı hatası:", err));
 
-export async function createTable() {
-  const query = `
-   ALTER TABLE adverts ALTER COLUMN kilometer SET DEFAULT 0;
-    `;
+// export async function createTable() {
+//   const query = `
+//    ALTER TABLE adverts ALTER COLUMN kilometer SET DEFAULT 0;
+//     `;
 
-  try {
-    await db.query(query);
-    console.log(
-      "Veritabanı tabloları başarıyla oluşturuldu veya kontrol edildi.",
-    );
-  } catch (error) {
-    console.error("Tablolar oluşturulurken hata oluştu:", error);
-  }
-}
+//   try {
+//     await db.query(query);
+//     console.log(
+//       "Veritabanı tabloları başarıyla oluşturuldu veya kontrol edildi.",
+//     );
+//   } catch (error) {
+//     console.error("Tablolar oluşturulurken hata oluştu:", error);
+//   }
+// }

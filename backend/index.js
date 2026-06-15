@@ -10,6 +10,7 @@ import http from "http";
 import { db } from "./lib/db.js";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
+import { createTables } from "./lib/db.js";
 // import { dbInsertCars } from "./utils/dbInsertCars.js";
 
 const app = express();
@@ -30,7 +31,8 @@ const globalLimiter = rateLimit({
 const PORT = Number(process.env.PORT) || 3000;
 const FRONTEND_URL = process.env.FRONT_END_URL || "*";
 
-const server = http.createServer(app);
+await db.query("SELECT 1");
+await createTables();
 
 app.use(
   cors({
@@ -57,6 +59,6 @@ app.use("/adverts", globalLimiter, advertsRoutes);
 app.use("/predict", globalLimiter, predictRoutes);
 app.use("/infos", personalInfoRoutes);
 
-server.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server ${PORT} portunda başarıyla çalışıyor.`);
 });

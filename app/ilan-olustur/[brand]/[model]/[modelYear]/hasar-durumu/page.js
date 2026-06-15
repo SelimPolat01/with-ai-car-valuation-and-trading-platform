@@ -9,14 +9,20 @@ import ConfirmDialog from "@/app/components/ConfirmDialog";
 import { AlertTriangle } from "lucide-react";
 import { setPrediction } from "@/store/predictionSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { usePostCarScratchDentDection } from "@/hooks/POST/usePostCarScratchDentDetection";
+import { usePostCarDirectionDetection } from "@/hooks/POST/usePostCarDirectionDetection";
+import { usePostCarSellTimePredict } from "@/hooks/POST/usePostCarSellTimePredict";
 
 export default function HasarDurumu() {
   const router = useRouter();
   const dispatch = useDispatch();
   const prediction = useSelector((state) => state.prediction.prediction);
   const dialogRef = useRef();
+
+  const [token, setToken] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const [images, setImages] = useState({
     front: null,
     back: null,
@@ -43,20 +49,30 @@ export default function HasarDurumu() {
     left: null,
   });
 
-  const sideLabelsTr = {
-    front: "ön",
-    back: "arka",
-    left: "sol",
-    right: "sağ",
-  };
+  const sideLabelsTr = { front: "ön", back: "arka", left: "sol", right: "sağ" };
+
+  useEffect(() => {
+    const currentToken = localStorage.getItem("token");
+    setToken(currentToken);
+    if (!currentToken) {
+      router.replace("/login");
+    }
+  }, [router]);
+
+  const { mutate: carDirectionDetectionMutate } =
+    usePostCarDirectionDetection();
+  const { mutate: carScratchDentDetectionMutate } =
+    usePostCarScratchDentDection();
+  const { mutate: carSellTimePredictMutate } = usePostCarSellTimePredict();
 
   const isAllImagesUploaded =
     images.front && images.back && images.right && images.left;
 
-  useEffect(() => {
+  const calculateFinalPriceAndShowDialog = (currentDamages) => {
     let scratchCount = 0;
     let dentCount = 0;
-    const hasDamage = Object.values(damagePredictions).some((damage) => {
+
+    const hasDamage = Object.values(currentDamages).some((damage) => {
       if (!damage) return false;
       const val = String(damage).trim().toLowerCase();
       if (val.includes("scratch")) scratchCount++;
@@ -64,183 +80,164 @@ export default function HasarDurumu() {
       return val !== "clean";
     });
 
-    if (
-      isAllImagesUploaded &&
-      hasDamage &&
-      dialogRef.current &&
-      !dialogRef.current.open
-    ) {
+    if (hasDamage && dialogRef.current && !dialogRef.current.open) {
       const PERCENT_PER_SCRATCH = 0.02;
       const PERCENT_PER_DENT = 0.05;
       const totalLossPercentage =
         scratchCount * PERCENT_PER_SCRATCH + dentCount * PERCENT_PER_DENT;
+
       const priceLoss = prediction.price * totalLossPercentage;
       const finalPrice = prediction.price - priceLoss;
+
       dispatch(setPrediction({ ...prediction, price: Math.round(finalPrice) }));
       dialogRef.current.showModal();
     }
-  }, [images, damagePredictions, dispatch, isAllImagesUploaded]);
+  };
 
   const handleImageChange = async (side, event) => {
     const file = event.target.files[0];
     if (!file) return;
+
     const formData = new FormData();
     formData.append("file", file);
-    try {
-      setLoading(true);
-      setError(null);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_FASTAPI_URL}/car-direction-detection-upload`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
-      if (response.status === 401) {
-        localStorage.removeItem("token");
-        router.replace("/login");
-        return;
-      }
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(`Yön API Hatası: ${errorData.message}`);
-        return;
-      }
-      const data = await response.json();
-
-      if (data.prediction != side) {
-        setCardErrors((prev) => ({
-          ...prev,
-          [side]: `⚠️ Lütfen ${sideLabelsTr[side]} açıdan çekilmiş görüntü yükleyiniz.`,
-        }));
-        setImages((prev) => ({ ...prev, [side]: null }));
-        setImagePredictions((prev) => ({ ...prev, [side]: null }));
-        event.target.value = "";
-        return;
-      } else if (data.prediction_percent >= 80) {
-        setImages((prev) => ({ ...prev, [side]: URL.createObjectURL(file) }));
-        setCardErrors((prev) => ({ ...prev, [side]: null }));
-
-        const damageResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_FASTAPI_URL}/car-scratch-dent-detection-upload`,
-          {
-            method: "POST",
-            body: formData,
-          },
-        );
-
-        if (!damageResponse.ok) {
-          const errorData = await damageResponse.json();
-          setCardErrors((prev) => ({
-            ...prev,
-            [side]: "⚠️ Hasar API'si çalışmadı.",
-          }));
-          setImages((prev) => ({ ...prev, [side]: null }));
-          setImagePredictions((prev) => ({ ...prev, [side]: null }));
-          return;
-        }
-
-        const damageData = await damageResponse.json();
-        const updatedDamages = {
-          ...damagePredictions,
-          [side]: damageData.prediction,
-        };
-        setDamagePredictions(updatedDamages);
-
-        const isScratch = Object.values(updatedDamages).some(
-          (damage) => damage && damage.toLowerCase().includes("scratch"),
-        );
-        const isDent = Object.values(updatedDamages).some(
-          (damage) => damage && damage.toLowerCase().includes("dent"),
-        );
-        const updatedPrediction = {
-          ...prediction,
-          has_scratch: isScratch,
-          has_dent: isDent,
-          hasScratch: isScratch,
-          hasDent: isDent,
-        };
-        dispatch(setPrediction(updatedPrediction));
-        const payload = {
-          brand: prediction.brand,
-          model: prediction.model,
-          model_year: Number(prediction.modelYear),
-          body_type: prediction.bodyType,
-          engine_capacity: Number(prediction.engineCapacity),
-          horsepower: Number(prediction.horsepower),
-          transmission: prediction.transmission,
-          kilometer: Number(prediction.kilometer),
-          fuel_type: prediction.fuelType,
-          trim_level: prediction.trimLevel,
-          price: Number(prediction.price),
-          has_scratch: prediction.hasScratch,
-          has_dent: prediction.hasDent,
-        };
-        const currentImages = { ...images, [side]: true };
-        const isAllImagesUploadedNow =
-          currentImages.front &&
-          currentImages.back &&
-          currentImages.right &&
-          currentImages.left;
-
-        if (isAllImagesUploadedNow) {
-          const averageSellResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_FASTAPI_URL}/predict-sell-time`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(payload),
-            },
-          );
-
-          if (!averageSellResponse.ok) {
-            const averageSellErrorData = await averageSellResponse.json();
-            console.log("Satış Süresi API Hatası:", averageSellErrorData);
-            setError(
-              "Tüm fotoğraflar eklendi ancak araç bilgileri eksik olduğu için satış süresi hesaplanamadı.",
-            );
-            setAvarageSellPrediction(null);
-          } else {
-            const averageData = await averageSellResponse.json();
-            setAvarageSellPrediction(averageData.predicted_days_to_sell);
-            dispatch(
-              setPrediction({
-                ...prediction,
-                daysToSell: averageData.predicted_days_to_sell,
-              }),
-            );
+    carDirectionDetectionMutate(
+      { token, body: formData },
+      {
+        onSuccess: (carDirectionDetectionData) => {
+          if (carDirectionDetectionData.result?.prediction !== side) {
+            setCardErrors((prev) => ({
+              ...prev,
+              [side]: `⚠️ Lütfen ${sideLabelsTr[side]} açıdan çekilmiş görüntü yükleyiniz.`,
+            }));
+            setImages((prev) => ({ ...prev, [side]: null }));
+            setImagePredictions((prev) => ({ ...prev, [side]: null }));
+            event.target.value = "";
+            return;
           }
-        }
-      } else {
-        setCardErrors((prev) => ({
-          ...prev,
-          [side]:
-            "⚠️ Doğru bir ekspertiz raporu için aracın tam karşısına geçip, kamerayı dik tutarak tekrar çekim yapıp yükleyiniz.",
-        }));
-        setImages((prev) => ({ ...prev, [side]: null }));
-        setImagePredictions((prev) => ({ ...prev, [side]: null }));
 
-        event.target.value = "";
-        return;
-      }
+          if (carDirectionDetectionData.result?.prediction_percent >= 80) {
+            setImages((prev) => ({
+              ...prev,
+              [side]: URL.createObjectURL(file),
+            }));
+            setCardErrors((prev) => ({ ...prev, [side]: null }));
 
-      setImagePredictions((prev) => ({
-        ...prev,
-        [side]: {
-          label: data.prediction,
-          percent: data.prediction_percent,
+            setImagePredictions((prev) => ({
+              ...prev,
+              [side]: {
+                label: carDirectionDetectionData.result?.prediction,
+                percent: carDirectionDetectionData.result?.prediction_percent,
+              },
+            }));
+
+            carScratchDentDetectionMutate(
+              { token, body: formData },
+              {
+                onSuccess: (carScratchDentDetectionData) => {
+                  const updatedDamages = {
+                    ...damagePredictions,
+                    [side]: carScratchDentDetectionData.result?.prediction,
+                  };
+
+                  setDamagePredictions(updatedDamages);
+
+                  const isScratch = Object.values(updatedDamages).some(
+                    (damage) =>
+                      damage && damage.toLowerCase().includes("scratch"),
+                  );
+                  const isDent = Object.values(updatedDamages).some(
+                    (damage) => damage && damage.toLowerCase().includes("dent"),
+                  );
+
+                  const updatedPrediction = {
+                    ...prediction,
+                    has_scratch: isScratch,
+                    has_dent: isDent,
+                    hasScratch: isScratch,
+                    hasDent: isDent,
+                  };
+
+                  dispatch(setPrediction(updatedPrediction));
+
+                  const currentImages = { ...images, [side]: true };
+                  const isAllImagesUploadedNow =
+                    currentImages.front &&
+                    currentImages.back &&
+                    currentImages.right &&
+                    currentImages.left;
+
+                  if (isAllImagesUploadedNow) {
+                    const payload = {
+                      brand: prediction.brand,
+                      model: prediction.model,
+                      model_year: Number(prediction.modelYear),
+                      body_type: prediction.bodyType,
+                      engine_capacity: Number(prediction.engineCapacity),
+                      horsepower: Number(prediction.horsepower),
+                      transmission: prediction.transmission,
+                      kilometer: Number(prediction.kilometer),
+                      fuel_type: prediction.fuelType,
+                      trim_level: prediction.trimLevel,
+                      price: Number(prediction.price),
+                      has_scratch: isScratch,
+                      has_dent: isDent,
+                    };
+
+                    carSellTimePredictMutate(
+                      { token, body: payload },
+                      {
+                        onSuccess: (carSellPredictData) => {
+                          setAvarageSellPrediction(
+                            carSellPredictData.result?.predicted_days_to_sell,
+                          );
+                          dispatch(
+                            setPrediction({
+                              ...updatedPrediction,
+                              daysToSell:
+                                carSellPredictData.result
+                                  ?.predicted_days_to_sell,
+                            }),
+                          );
+                          calculateFinalPriceAndShowDialog(updatedDamages);
+                        },
+                        onError: (carSellPredictError) => {
+                          setError(
+                            "Tüm fotoğraflar eklendi ancak araç bilgileri eksik olduğu için satış süresi hesaplanamadı.",
+                          );
+                          setAvarageSellPrediction(null);
+                          calculateFinalPriceAndShowDialog(updatedDamages);
+                        },
+                      },
+                    );
+                  }
+                },
+                onError: () => {
+                  setCardErrors((prev) => ({
+                    ...prev,
+                    [side]: "⚠️ Hasar API'si çalışmadı.",
+                  }));
+                  setImages((prev) => ({ ...prev, [side]: null }));
+                  setImagePredictions((prev) => ({ ...prev, [side]: null }));
+                },
+              },
+            );
+          } else {
+            setCardErrors((prev) => ({
+              ...prev,
+              [side]:
+                "⚠️ Doğru bir ekspertiz raporu için aracın tam karşısına geçip, kamerayı dik tutarak tekrar çekim yapıp yükleyiniz.",
+            }));
+            setImages((prev) => ({ ...prev, [side]: null }));
+            setImagePredictions((prev) => ({ ...prev, [side]: null }));
+            event.target.value = "";
+          }
         },
-      }));
-    } catch (err) {
-      setError(`Sistem Hatası: ${err.message}`);
-    } finally {
-      setLoading(false);
-      event.target.value = "";
-    }
+        onError: (carDirectionDetectionError) => {
+          setError(`Yön API Hatası: ${carDirectionDetectionError.message}`);
+        },
+      },
+    );
   };
 
   const handleRemoveImage = (side, event) => {
@@ -283,13 +280,9 @@ export default function HasarDurumu() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1,
-      },
+      transition: { staggerChildren: 0.15, delayChildren: 0.1 },
     },
   };
-
   const cardVariants = {
     hidden: { opacity: 0, y: 30, scale: 0.95 },
     visible: {
@@ -299,7 +292,6 @@ export default function HasarDurumu() {
       transition: { duration: 0.4, ease: "easeOut" },
     },
   };
-
   const innerStateVariants = {
     hidden: { opacity: 0, scale: 0.95 },
     visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
@@ -316,18 +308,14 @@ export default function HasarDurumu() {
     let damageElements = [];
     for (const [side, damage] of Object.entries(predictions)) {
       if (damage && damage.toLowerCase() !== "clean") {
-        let hasarElement;
-        if (damage.toLowerCase().includes("scratch")) {
-          hasarElement = (
-            <span style={{ color: "#d97706", fontWeight: "600" }}>çizik</span>
-          );
-        } else if (damage.toLowerCase().includes("dent")) {
-          hasarElement = (
-            <span style={{ color: "#ea580c", fontWeight: "600" }}>göçük</span>
-          );
-        } else {
-          hasarElement = <span>hasar</span>;
-        }
+        let hasarElement = damage.toLowerCase().includes("scratch") ? (
+          <span style={{ color: "#d97706", fontWeight: "600" }}>çizik</span>
+        ) : damage.toLowerCase().includes("dent") ? (
+          <span style={{ color: "#ea580c", fontWeight: "600" }}>göçük</span>
+        ) : (
+          <span>hasar</span>
+        );
+
         damageElements.push(
           <span key={side}>
             {sidesTr[side]} kısmında {hasarElement}
@@ -335,38 +323,34 @@ export default function HasarDurumu() {
         );
       }
     }
-    if (damageElements.length === 0) {
+    if (damageElements.length === 0)
       return "Aracınızda herhangi bir hasar tespit edilmemiştir.";
-    }
-    const joinedDamages = damageElements.map((element, index) => (
-      <span key={`join-${index}`}>
-        {element}
-        {index < damageElements.length - 1 ? ", " : " "}
-      </span>
-    ));
 
     return (
       <span>
-        Yapay zekâ modelimiz aracınızın {joinedDamages} tespit etmiştir. Bu
-        durum fiyat teklifine yansıtılacaktır. Hata olduğunu düşünüyorsanız
-        destek hattımızla iletişime geçebilirsiniz.
+        Yapay zekâ modelimiz aracınızın{" "}
+        {damageElements.map((el, i) => (
+          <span key={i}>
+            {el}
+            {i < damageElements.length - 1 ? ", " : " "}
+          </span>
+        ))}{" "}
+        tespit etmiştir. Bu durum fiyat teklifine yansıtılacaktır.
       </span>
     );
   };
 
   return (
     <div className={styles.container}>
-      {
-        <ConfirmDialog
-          ref={dialogRef}
-          onConfirm={dialogConfirmHandler}
-          cancelRedirect="/"
-          title="Hasar Tespiti"
-          text={generateDamageText(damagePredictions)}
-          cancelButtonText="Ana Sayfaya Git"
-          logo={<AlertTriangle size={35} color="#ef4444" />}
-        />
-      }
+      <ConfirmDialog
+        ref={dialogRef}
+        onConfirm={dialogConfirmHandler}
+        cancelRedirect="/"
+        title="Hasar Tespiti"
+        text={generateDamageText(damagePredictions)}
+        cancelButtonText="Ana Sayfaya Git"
+        logo={<AlertTriangle size={35} color="#ef4444" />}
+      />
       {error && (
         <div
           style={{
@@ -382,6 +366,7 @@ export default function HasarDurumu() {
           ⚠️ {error}
         </div>
       )}
+
       <AnimatePresence>
         {isAllImagesUploaded && avarageSellPrediction && (
           <motion.div
@@ -391,11 +376,7 @@ export default function HasarDurumu() {
             exit={{ scale: 0, opacity: 0 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            transition={{
-              type: "spring",
-              stiffness: 400,
-              damping: 15,
-            }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
           >
             <span className={styles.bubbleTitle}>Tahmini Satış Süresi</span>
             <span className={styles.bubbleValue}>{avarageSellPrediction}</span>
@@ -403,6 +384,7 @@ export default function HasarDurumu() {
           </motion.div>
         )}
       </AnimatePresence>
+
       <motion.div
         className={styles.grid}
         variants={containerVariants}
@@ -416,7 +398,6 @@ export default function HasarDurumu() {
             variants={cardVariants}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            style={{ opacity: loading ? 0.7 : 1, transition: "opacity 0.3s" }}
           >
             <AnimatePresence mode="wait">
               {images[view.id] ? (
@@ -443,11 +424,7 @@ export default function HasarDurumu() {
                   <button
                     type="button"
                     className={styles.removeBtn}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      event.preventDefault();
-                      handleRemoveImage(view.id, event);
-                    }}
+                    onClick={(e) => handleRemoveImage(view.id, e)}
                   >
                     ✕
                   </button>
@@ -504,26 +481,23 @@ export default function HasarDurumu() {
                 </motion.label>
               )}
             </AnimatePresence>
-
             <input
               id={`file-upload-${view.id}`}
               type="file"
               className={styles.fileInput}
               style={{ display: "none" }}
               accept="image/*"
-              disabled={loading}
-              onChange={(event) => handleImageChange(view.id, event)}
+              onChange={(e) => handleImageChange(view.id, e)}
             />
           </motion.div>
         ))}
 
         <AnimatePresence>
-          {images.front && images.back && images.right && images.left && (
+          {isAllImagesUploaded && (
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.8 }}
-              transition={{ type: "spring", stiffness: 200, damping: 20 }}
               style={{
                 gridColumn: "1 / -1",
                 display: "flex",
@@ -534,7 +508,7 @@ export default function HasarDurumu() {
               <PrimaryButton
                 type="submit"
                 text="Fiyat teklifi al"
-                onClick={(event) => router.push("/fiyat-teklifi")}
+                onClick={() => router.push("/fiyat-teklifi")}
               />
             </motion.div>
           )}

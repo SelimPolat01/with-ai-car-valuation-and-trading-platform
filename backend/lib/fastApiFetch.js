@@ -1,4 +1,4 @@
-export async function Fetch(
+export async function FastApiFetch(
   token = null,
   param1 = null,
   param2 = null,
@@ -6,8 +6,8 @@ export async function Fetch(
   body = null,
 ) {
   const url = param2
-    ? `${process.env.NEXT_PUBLIC_URL}/${param1}/${param2}`
-    : `${process.env.NEXT_PUBLIC_URL}/${param1}`;
+    ? `${process.env.NEXT_PUBLIC_FAST_API_URL}/${param1}/${param2}`
+    : `${process.env.NEXT_PUBLIC_FAST_API_URL}/${param1}`;
 
   const isFormData = body instanceof FormData;
 

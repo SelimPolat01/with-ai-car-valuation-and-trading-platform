@@ -6,8 +6,6 @@ import { router as carsRoutes } from "./routes/cars.js";
 import { router as advertsRoutes } from "./routes/adverts.js";
 import { router as predictRoutes } from "./routes/predict.js";
 import { router as personalInfoRoutes } from "./routes/infos.js";
-import http from "http";
-import { db } from "./lib/db.js";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
 // import { dbInsertCars } from "./utils/dbInsertCars.js";

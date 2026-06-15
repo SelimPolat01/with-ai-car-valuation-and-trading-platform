@@ -147,7 +147,6 @@ export default function PriceOffer() {
               <span>{Math.floor(displayPrice).toLocaleString("tr-TR")} ₺</span>
             </h1>
 
-            {/* İkon şimdi TAM OLARAK yeşil yuvarlağın (.circle) içinde! */}
             {animationFinished && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

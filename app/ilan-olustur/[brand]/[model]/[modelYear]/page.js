@@ -9,15 +9,31 @@ import { setPrediction } from "@/store/predictionSlice";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import PrimaryButton from "@/app/components/PrimaryButton";
 import { AnimatePresence, motion } from "framer-motion";
+import { usePostCarValuePredict } from "@/hooks/POST/usePostCarValuePredict";
 
 export default function TahminYap() {
   useCheckAuth();
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const [token, setToken] = useState(null);
+  useEffect(() => {
+    const currentToken = localStorage.getItem("token");
+    setToken(currentToken);
+    if (!currentToken) {
+      router.replace("/login");
+      return;
+    }
+  }, [router]);
+  const {
+    mutate: carValuePredictMutate,
+    isPending: carValuePredictMutateIsPending,
+    isError: carValuePredictMutateIsError,
+    error: carValuePredictMutateError,
+  } = usePostCarValuePredict();
   const isFromImage = searchParams.get("fromImage") === "true";
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const [openDropdown, setOpenDropdown] = useState(null);
   const predictionCarValues = useSelector(
     (state) => state.prediction.prediction,
@@ -172,54 +188,35 @@ export default function TahminYap() {
       fuel_type: value.fuelType.toLowerCase(),
     };
 
-    try {
-      setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/predict`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+    carValuePredictMutate(
+      { token, body: payload },
+      {
+        onSuccess: (data) => {
+          const reduxData = {
+            brand: params.brand,
+            model: params.model,
+            modelYear: Number(params.modelYear),
+            trimLevel: payload.trim_level,
+            bodyType: payload.body_type,
+            engineCapacity: Number(payload.engine_capacity),
+            horsepower: Number(payload.horsepower),
+            transmission: payload.transmission,
+            kilometer: Number(payload.kilometer),
+            fuelType: payload.fuel_type,
+            price: Number(data.result.price),
+          };
+          console.log(data.result.price);
+          dispatch(setPrediction(reduxData));
+          router.push(
+            `/ilan-olustur/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/hasar-durumu`,
+          );
         },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.status === 401) {
-        localStorage.removeItem("token");
-        router.replace("/login");
-        return;
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message);
-        return;
-      }
-
-      const data = await response.json();
-      const reduxData = {
-        brand: params.brand,
-        model: params.model,
-        modelYear: Number(params.modelYear),
-        trimLevel: payload.trim_level,
-        bodyType: payload.body_type,
-        engineCapacity: Number(payload.engine_capacity),
-        horsepower: Number(payload.horsepower),
-        transmission: payload.transmission,
-        kilometer: Number(payload.kilometer),
-        fuelType: payload.fuel_type,
-        price: Number(data.price),
-      };
-      console.log(data.price);
-      dispatch(setPrediction(reduxData));
-      router.push(
-        `/ilan-olustur/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/hasar-durumu`,
-      );
-    } catch (err) {
-      console.log("Error: " + err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+        onError: (err) => {
+          setError(err.message);
+          return;
+        },
+      },
+    );
   }
 
   function formatModelForApi(modelParam) {
@@ -985,6 +982,10 @@ export default function TahminYap() {
                               setValue((prevValues) => ({
                                 ...prevValues,
                                 engineCapacity,
+                                fuelType: "Yakıt Tipi",
+                                horsepower: "Beygir Gücü",
+                                transmission: "Vites Tipi",
+                                trimLevel: "Paket",
                               }));
                               setErrors((prevError) => ({
                                 ...prevError,
@@ -1038,6 +1039,9 @@ export default function TahminYap() {
                             setValue((prevValues) => ({
                               ...prevValues,
                               fuelType,
+                              horsepower: "Beygir Gücü",
+                              transmission: "Vites Tipi",
+                              trimLevel: "Paket",
                             }));
                             fetchHorsepowers(value.engineCapacity, fuelType);
                             setOpenDropdown(null);
@@ -1089,7 +1093,12 @@ export default function TahminYap() {
                         <li
                           key={index}
                           onClick={() => {
-                            setValue((prev) => ({ ...prev, horsepower: hp }));
+                            setValue((prev) => ({
+                              ...prev,
+                              horsepower: hp,
+                              transmission: "Vites Tipi",
+                              trimLevel: "Paket",
+                            }));
                             fetchTransmissions(
                               value.engineCapacity,
                               value.fuelType,
@@ -1147,6 +1156,7 @@ export default function TahminYap() {
                             setValue((prev) => ({
                               ...prev,
                               transmission: trans,
+                              trimLevel: "Paket",
                             }));
                             fetchBodyTypes(
                               value.engineCapacity,
@@ -1310,7 +1320,15 @@ export default function TahminYap() {
                   width: "100%",
                 }}
               >
-                <PrimaryButton text="Hasar bilgilerini gir" type="submit" />
+                <PrimaryButton
+                  text={
+                    carValuePredictMutateIsPending
+                      ? "Yükleniyor..."
+                      : "Hasar bilgilerini gir"
+                  }
+                  disabled={carValuePredictMutateIsPending}
+                  type="submit"
+                />
               </motion.div>
             </motion.form>
           </div>

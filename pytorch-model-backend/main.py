@@ -2,14 +2,19 @@ import os
 import io
 import urllib
 import joblib
+import pandas as pd
+import numpy as np
+import xgboost as xgb
+
 from fastapi import FastAPI, UploadFile, File, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from car_data import CarData 
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from starlette.requests import Request
+
+from car_data import CarData 
 
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
@@ -17,18 +22,22 @@ app = FastAPI()
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+app.add_middleware(SlowAPIMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://localhost:3000", "http://127.0.0.1:3000", "https://with-ai-car-valuation-and-trading-sy9d.onrender.com"],
+    allow_origins=[
+        "http://localhost:3000", 
+        "https://localhost:3000", 
+        "http://127.0.0.1:3000", 
+        "https://with-ai-car-valuation-and-trading-sy9d.onrender.com"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
 )
-app.add_middleware(SlowAPIMiddleware)
 
 os.makedirs("uploads", exist_ok=True)
-
-premium_brands = ["audi", "bmw", "mercedes", "mercedes-benz"]
 
 PREMIUM_BRANDS = [
     "bmw", "mercedes-benz", "audi", "porsche", "land rover", 
@@ -42,6 +51,15 @@ luxury_models = [
     "a6", "a7", "a8", "q7", "q8", "x5", "x6", "x7"
 ]
 
+main_model = xgb.XGBRegressor()
+main_model.load_model("./models/price_prediction/xgboost_main_model_premium_son_son.json")
+
+days_to_sell_model = xgb.XGBRegressor()
+days_to_sell_model.load_model("./models/average_sell_time_prediction/days_to_sell_xgb_model.json")
+
+label_encoders = joblib.load("label_encoders.pkl")
+
+
 @app.get("/")
 def home():
     return {"message": "API çalışıyor"}
@@ -54,8 +72,8 @@ async def carDetectionUpload(request: Request, file: UploadFile = File(...)):
         import gc
         import torch
         import torchvision
-        from CNNs.car_detection_cnn import CarDetectionCNN
         from PIL import Image
+        from CNNs.car_detection_cnn import CarDetectionCNN
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -106,8 +124,8 @@ async def carDirectionDetectionUpload(request: Request, file: UploadFile = File(
         import gc
         import torch
         import torchvision
-        from CNNs.car_direction_detection_cnn import CarDirectionDetectionCNN
         from PIL import Image
+        from CNNs.car_direction_detection_cnn import CarDirectionDetectionCNN
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -157,8 +175,8 @@ async def carStrachDentDetectionUpload(request: Request, file: UploadFile = File
         import gc
         import torch
         import torchvision
-        from CNNs.car_scratch_dent_detection_cnn import CarScratchDentDetectionCNN
         from PIL import Image
+        from CNNs.car_scratch_dent_detection_cnn import CarScratchDentDetectionCNN
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -207,22 +225,13 @@ async def carStrachDentDetectionUpload(request: Request, file: UploadFile = File
 @app.post("/predict")
 @limiter.limit("50/minute")
 async def predict(request: Request, data: CarData):
-    import xgboost as xgb
-    import pandas as pd
-    import numpy as np
-
-    main_model = xgb.XGBRegressor()
-    try:
-        main_model.load_model("./models/price_prediction/xgboost_main_model_premium_son_son.json")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Model yukleme hatasi: {str(e)}")
-
     if data.brand: data.brand = urllib.parse.unquote(data.brand).lower().strip()
     if data.model: data.model = urllib.parse.unquote(data.model).lower().strip()
     if data.body_type: data.body_type = urllib.parse.unquote(data.body_type).lower().strip()
     if data.trim_level: data.trim_level = urllib.parse.unquote(data.trim_level).lower().strip()
     if data.transmission: data.transmission = urllib.parse.unquote(data.transmission).lower().strip()
     if data.fuel_type: data.fuel_type = urllib.parse.unquote(data.fuel_type).lower().strip()
+    
     if data.brand in ["mercedes", "mercedes benz"]:
         data.brand = "mercedes-benz"
 
@@ -257,16 +266,6 @@ async def predict(request: Request, data: CarData):
 @app.post("/predict-sell-time")
 @limiter.limit("50/minute")
 async def predict_sell_time(request: Request, data: CarData):
-    import xgboost as xgb
-    import pandas as pd
-
-    days_to_sell_model = xgb.XGBRegressor()
-    try:
-        days_to_sell_model.load_model("./models/average_sell_time_prediction/days_to_sell_xgb_model.json")
-        label_encoders = joblib.load("label_encoders.pkl")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Model yukleme hatasi: {str(e)}")
-
     if data.brand: data.brand = urllib.parse.unquote(data.brand).lower().strip()
     if data.model: data.model = urllib.parse.unquote(data.model).lower().strip()
     if data.body_type: data.body_type = urllib.parse.unquote(data.body_type).lower().strip()

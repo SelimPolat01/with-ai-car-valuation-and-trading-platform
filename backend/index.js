@@ -8,6 +8,7 @@ import { router as predictRoutes } from "./routes/predict.js";
 import { router as personalInfoRoutes } from "./routes/infos.js";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
+import { createTable } from "./lib/db.js";
 // import { dbInsertCars } from "./utils/dbInsertCars.js";
 
 const app = express();

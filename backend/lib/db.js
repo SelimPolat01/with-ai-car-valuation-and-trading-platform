@@ -14,7 +14,7 @@ db.query("SELECT NOW()")
   .then((res) => console.log("DB Bağlantısı başarılı:", res.rows))
   .catch((err) => console.log("DB bağlantı hatası:", err));
 
-async function createTable() {
+export async function createTable() {
   const query = `
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,

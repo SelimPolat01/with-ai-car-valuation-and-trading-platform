@@ -2,19 +2,14 @@ import os
 import io
 import urllib
 import joblib
-import pandas as pd
-import numpy as np
-import xgboost as xgb
-
 from fastapi import FastAPI, UploadFile, File, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from car_data import CarData 
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from starlette.requests import Request
-
-from car_data import CarData 
 
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
@@ -33,19 +28,19 @@ app.add_middleware(SlowAPIMiddleware)
 
 os.makedirs("uploads", exist_ok=True)
 
+premium_brands = ["audi", "bmw", "mercedes", "mercedes-benz"]
+
 PREMIUM_BRANDS = [
     "bmw", "mercedes-benz", "audi", "porsche", "land rover", 
     "volvo", "jaguar", "lexus", "mini", "jeep", "alfa romeo", "maserati"
 ]
 
-main_model = xgb.XGBRegressor()
-main_model.load_model("./models/price_prediction/xgboost_main_model_premium_son_son.json")
-
-days_to_sell_model = xgb.XGBRegressor()
-days_to_sell_model.load_model("./models/average_sell_time_prediction/days_to_sell_xgb_model.json")
-
-label_encoders = joblib.load("label_encoders.pkl")
-
+luxury_models = [
+    "5 series", "5 serisi", "5series", "5serisi", "5-series", "5-serisi",
+    "e series", "e serisi", "eseries", "eserisi", "e-series", "e-serisi",
+    "g class", "g-class", "g serisi", "7 series", "7 serisi", "7-series",
+    "a6", "a7", "a8", "q7", "q8", "x5", "x6", "x7"
+]
 
 @app.get("/")
 def home():
@@ -59,47 +54,46 @@ async def carDetectionUpload(request: Request, file: UploadFile = File(...)):
         import gc
         import torch
         import torchvision
-        from PIL import Image
         from CNNs.car_detection_cnn import CarDetectionCNN
+        from PIL import Image
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        
+
         transform = torchvision.transforms.Compose([
             torchvision.transforms.Resize(size=(224, 224)),
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
-        
-        car_detection_data = torchvision.datasets.ImageFolder(root="./class_names/cars/train", transform=transform)
-        class_names = car_detection_data.classes
 
-        model = CarDetectionCNN(
+        car_detection_data = torchvision.datasets.ImageFolder(root="./class_names/cars/train", transform=transform)
+        car_detection_class_names = car_detection_data.classes
+
+        carDetectionModel = CarDetectionCNN(
             input_shape=3, hidden_units_1=32, hidden_units_2=64, hidden_units_3=128,
             hidden_units_4=256, hidden_units_5=512, hidden_units_6=1024, output_shape=95
         ).to(device)
         
-        state_dict = torch.load("models/car_detection/car_detection_cnn_model_20_epoch100_acc89.pth", map_location=device, weights_only=True)
-        clean_state_dict = {k.replace("_orig_mod.", ""): v for k, v in state_dict.items()}
-        model.load_state_dict(clean_state_dict, strict=False)
-        model.eval()
+        car_detection_state_dict = torch.load("models/car_detection/car_detection_cnn_model_20_epoch100_acc89.pth", map_location=device, weights_only=True)
+        car_detection_clean_state_dict = {k.replace("_orig_mod.", ""): v for k, v in car_detection_state_dict.items()}
+        carDetectionModel.load_state_dict(car_detection_clean_state_dict, strict=False)
+        carDetectionModel.eval()
 
         contents = await file.read()
         img = Image.open(io.BytesIO(contents)).convert("RGB")
         img_tensor = transform(img).unsqueeze(0).to(device)
 
         with torch.inference_mode():
-            y_pred = model(img_tensor)
+            y_pred = carDetectionModel(img_tensor)
             y_logit = torch.argmax(y_pred, dim=1)
         
         result = {
-            "prediction": class_names[y_logit.item()],
+            "prediction": car_detection_class_names[y_logit.item()],
             "prediction_percent": round(torch.max(torch.softmax(y_pred, dim=1)).item() * 100)
         }
 
-        # İşlem bitince devasa PyTorch verilerini RAM'den anında siliyoruz
-        del model, state_dict, clean_state_dict, img_tensor, img, car_detection_data
+        del carDetectionModel, car_detection_data, car_detection_state_dict, car_detection_clean_state_dict, img_tensor, img, contents
         gc.collect()
-
+        
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -112,45 +106,45 @@ async def carDirectionDetectionUpload(request: Request, file: UploadFile = File(
         import gc
         import torch
         import torchvision
-        from PIL import Image
         from CNNs.car_direction_detection_cnn import CarDirectionDetectionCNN
+        from PIL import Image
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        
+
         transform = torchvision.transforms.Compose([
             torchvision.transforms.Resize(size=(224, 224)),
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
-        data = torchvision.datasets.ImageFolder(root="./class_names/directions/train", transform=transform)
-        class_names = data.classes
+        car_direction_detection_data = torchvision.datasets.ImageFolder(root="./class_names/directions/train", transform=transform)
+        car_direction_detection_class_names = car_direction_detection_data.classes
 
-        model = CarDirectionDetectionCNN(
+        carDirectionDetectionModel = CarDirectionDetectionCNN(
             input_shape=3, hidden_units_1=32, hidden_units_2=64, hidden_units_3=128, hidden_units_4=256, output_shape=4
         ).to(device)
         
-        state_dict = torch.load("models/car_direction_detection/car_direction_detection_cnn_model_1_epoch100_acc100.pth", map_location=device, weights_only=True)
-        clean_state_dict = {k.replace("_orig_mod.", ""): v for k, v in state_dict.items()}
-        model.load_state_dict(clean_state_dict, strict=False)
-        model.eval()
+        car_direction_detection_state_dict = torch.load("models/car_direction_detection/car_direction_detection_cnn_model_1_epoch100_acc100.pth", map_location=device, weights_only=True)
+        car_direction_detection_clean_state_dict = {k.replace("_orig_mod.", ""): v for k, v in car_direction_detection_state_dict.items()}
+        carDirectionDetectionModel.load_state_dict(car_direction_detection_clean_state_dict, strict=False)
+        carDirectionDetectionModel.eval()
 
         contents = await file.read()
         img = Image.open(io.BytesIO(contents)).convert("RGB")
         img_tensor = transform(img).unsqueeze(0).to(device)
 
         with torch.inference_mode():
-            y_pred = model(img_tensor)
+            y_pred = carDirectionDetectionModel(img_tensor)
             y_logit = torch.argmax(y_pred, dim=1)
 
         result = {
-            "prediction": class_names[y_logit.item()],
+            "prediction": car_direction_detection_class_names[y_logit.item()],
             "prediction_percent": round(torch.max(torch.softmax(y_pred, dim=1)).item() * 100)
         }
 
-        del model, state_dict, clean_state_dict, img_tensor, img, data
+        del carDirectionDetectionModel, car_direction_detection_data, car_direction_detection_state_dict, car_direction_detection_clean_state_dict, img_tensor, img, contents
         gc.collect()
-
+        
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -163,38 +157,38 @@ async def carStrachDentDetectionUpload(request: Request, file: UploadFile = File
         import gc
         import torch
         import torchvision
-        from PIL import Image
         from CNNs.car_scratch_dent_detection_cnn import CarScratchDentDetectionCNN
+        from PIL import Image
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        
-        transform = torchvision.transforms.Compose([
+
+        scratch_dent_transform = torchvision.transforms.Compose([
             torchvision.transforms.Resize(size=(256, 256)),
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
-        data = torchvision.datasets.ImageFolder(root="./class_names/damages/train", transform=transform)
-        class_names = data.classes
+        car_scratch_dent_detection_data = torchvision.datasets.ImageFolder(root="./class_names/damages/train", transform=scratch_dent_transform)
+        car_scratch_dent_detection_class_names = car_scratch_dent_detection_data.classes
 
-        model = CarScratchDentDetectionCNN(
+        carScratchDentDetectionModel = CarScratchDentDetectionCNN(
             input_shape=3, hidden_units_1=32, hidden_units_2=64, hidden_units_3=128, hidden_units_4=256, output_shape=3
         ).to(device)
         
-        state_dict = torch.load("models/car_scratch_dent_detection/car_scratch_dent_detection_cnn_model_7_epoch100_acc90.pth", map_location=device, weights_only=True)
-        clean_state_dict = {k.replace("_orig_mod.", ""): v for k, v in state_dict.items()}
-        model.load_state_dict(clean_state_dict, strict=False)
-        model.eval()
+        car_scratch_dent_detection_state_dict = torch.load("models/car_scratch_dent_detection/car_scratch_dent_detection_cnn_model_7_epoch100_acc90.pth", map_location=device, weights_only=True)
+        car_scratch_dent_detection_clean_state_dict = {k.replace("_orig_mod.", ""): v for k, v in car_scratch_dent_detection_state_dict.items()}
+        carScratchDentDetectionModel.load_state_dict(car_scratch_dent_detection_clean_state_dict, strict=False)
+        carScratchDentDetectionModel.eval()
 
         contents = await file.read()
         img = Image.open(io.BytesIO(contents)).convert("RGB")
-        img_tensor = transform(img).unsqueeze(0).to(device)
+        img_tensor = scratch_dent_transform(img).unsqueeze(0).to(device)
         
         with torch.inference_mode():
-            y_pred = model(img_tensor)
+            y_pred = carScratchDentDetectionModel(img_tensor)
             probs = torch.softmax(y_pred, dim=1)[0]
             pred_class_idx = torch.argmax(probs).item()
-            pred_class_name = class_names[pred_class_idx]
+            pred_class_name = car_scratch_dent_detection_class_names[pred_class_idx]
             pred_percent = round(probs[pred_class_idx].item() * 100)
 
         result = {
@@ -202,9 +196,9 @@ async def carStrachDentDetectionUpload(request: Request, file: UploadFile = File
             "prediction_percent": pred_percent
         }
 
-        del model, state_dict, clean_state_dict, img_tensor, img, data
+        del carScratchDentDetectionModel, car_scratch_dent_detection_data, car_scratch_dent_detection_state_dict, car_scratch_dent_detection_clean_state_dict, img_tensor, img, contents
         gc.collect()
-
+        
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -213,13 +207,22 @@ async def carStrachDentDetectionUpload(request: Request, file: UploadFile = File
 @app.post("/predict")
 @limiter.limit("50/minute")
 async def predict(request: Request, data: CarData):
+    import xgboost as xgb
+    import pandas as pd
+    import numpy as np
+
+    main_model = xgb.XGBRegressor()
+    try:
+        main_model.load_model("./models/price_prediction/xgboost_main_model_premium_son_son.json")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Model yukleme hatasi: {str(e)}")
+
     if data.brand: data.brand = urllib.parse.unquote(data.brand).lower().strip()
     if data.model: data.model = urllib.parse.unquote(data.model).lower().strip()
     if data.body_type: data.body_type = urllib.parse.unquote(data.body_type).lower().strip()
     if data.trim_level: data.trim_level = urllib.parse.unquote(data.trim_level).lower().strip()
     if data.transmission: data.transmission = urllib.parse.unquote(data.transmission).lower().strip()
     if data.fuel_type: data.fuel_type = urllib.parse.unquote(data.fuel_type).lower().strip()
-    
     if data.brand in ["mercedes", "mercedes benz"]:
         data.brand = "mercedes-benz"
 
@@ -254,6 +257,16 @@ async def predict(request: Request, data: CarData):
 @app.post("/predict-sell-time")
 @limiter.limit("50/minute")
 async def predict_sell_time(request: Request, data: CarData):
+    import xgboost as xgb
+    import pandas as pd
+
+    days_to_sell_model = xgb.XGBRegressor()
+    try:
+        days_to_sell_model.load_model("./models/average_sell_time_prediction/days_to_sell_xgb_model.json")
+        label_encoders = joblib.load("label_encoders.pkl")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Model yukleme hatasi: {str(e)}")
+
     if data.brand: data.brand = urllib.parse.unquote(data.brand).lower().strip()
     if data.model: data.model = urllib.parse.unquote(data.model).lower().strip()
     if data.body_type: data.body_type = urllib.parse.unquote(data.body_type).lower().strip()

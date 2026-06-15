@@ -1,5 +1,5 @@
 .advertWrapper {
-  background-color: white;
+  background-color: transparent;
   border-radius: 8px;
   height: 290px;
 }
@@ -11,16 +11,16 @@
     box-shadow 0.5s ease-out;
   display: inline-block;
   overflow: hidden;
-  background: linear-gradient(145deg, #1e1e24, #151518);
+  background: linear-gradient(145deg, #2a1b3d, #151518);
+  backdrop-filter: blur(10px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   position: relative;
-  border-radius: 8px;
   height: 100%;
 }
 
 .advert:hover {
   transform: scaleY(1.03) scaleX(1.03);
-  box-shadow: 0 0 10px 0 gray;
+  box-shadow: 0 0 12px 0 rgba(147, 75, 142, 0.6);
 }
 
 .overlay {
@@ -73,14 +73,14 @@
 }
 
 .price {
-  color: #ff6b6b;
+  color: #ff8fa3;
   font-weight: bold;
 }
 
 .modelYear,
 .city {
   font-weight: bold;
-  color: aquamarine;
+  color: #68ffed;
 }
 
 .brandModel,

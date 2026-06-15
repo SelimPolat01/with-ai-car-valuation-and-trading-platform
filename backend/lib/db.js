@@ -16,13 +16,7 @@ db.query("SELECT NOW()")
 
 export async function createTable() {
   const query = `
-   CREATE TABLE IF NOT EXISTS advert_images (
-          id SERIAL PRIMARY KEY,
-          advert_id INT NOT NULL,
-          image_url TEXT NOT NULL,
-          is_main BOOLEAN NOT NULL,
-          CONSTRAINT fk_advert FOREIGN KEY (advert_id) REFERENCES adverts (id) ON DELETE CASCADE
-      );
+   ALTER TABLE adverts ALTER COLUMN kilometer SET DEFAULT 0;
     `;
 
   try {

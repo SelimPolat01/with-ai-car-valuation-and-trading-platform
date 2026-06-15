@@ -116,7 +116,7 @@ export default function HasarDurumu() {
             return;
           }
 
-          if (carDirectionDetectionData.result?.prediction_percent >= 80) {
+          if (carDirectionDetectionData.result?.prediction_percent >= 96) {
             setImages((prev) => ({
               ...prev,
               [side]: URL.createObjectURL(file),

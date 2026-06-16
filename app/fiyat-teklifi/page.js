@@ -203,13 +203,13 @@ export default function PriceOffer() {
           className={classes.buttonDiv}
         >
           <CancelButton
-            text="Ana sayfaya dön"
+            text="Ana Sayfaya Dön"
             type="button"
             className={classes.cancelButton}
             onClick={() => router.replace("/")}
           />
           <SecondaryButton
-            text="Son detayları gir"
+            text="Son Detayları Gir"
             type="button"
             onClick={() => router.replace("/ilan-olustur/detaylar")}
             className={classes.button}

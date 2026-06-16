@@ -15,10 +15,11 @@ export default function FilterBrand({ brand, count }) {
     }
   }
 
-  function capitalize(text) {
-    if (typeof text !== "string") {
+  function brandFormatter(text) {
+    if (typeof text !== "string" || text === "") {
       return "";
     }
+    if (text === "bmw") return "BMW";
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   }
 
@@ -28,7 +29,7 @@ export default function FilterBrand({ brand, count }) {
         className={`${classes.button} ${isActive ? classes.active : ""}`}
         onClick={() => filterBrandHandler()}
       >
-        {capitalize(decodeURIComponent(brand))} ({count})
+        {brandFormatter(decodeURIComponent(brand))} ({count})
       </button>
     </li>
   );

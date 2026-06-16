@@ -80,3 +80,20 @@
   align-items: center;
   height: 75vh;
 }
+
+.notFoundAdvertDiv p {
+  color: whitesmoke;
+  font-family:
+    Lora,
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Helvetica Neue,
+    Arial,
+    sans-serif,
+    Apple Color Emoji,
+    Segoe UI Emoji,
+    Segoe UI Symbol,
+    Noto Color Emoji;
+}

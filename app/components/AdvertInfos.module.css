@@ -175,18 +175,20 @@
 }
 
 .price {
-  font-size: 20px !important;
-  color: #00f4ff !important;
-  text-shadow: 0 0 10px rgba(0, 244, 255, 0.3);
   padding-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
-.advertNo {
-  color: #642dda !important;
+.price span {
+  color: #00f4ff !important;
+  text-shadow: 0 0 10px rgba(0, 244, 255, 0.3);
 }
 
-CSS .defaultButton {
+.advertNo {
+  color: #1a1a1a !important;
+}
+
+.defaultButton {
   background: rgba(241, 239, 113, 0.1);
   color: #f1ef71;
   border: 1px solid rgba(241, 239, 113, 0.3);
@@ -294,4 +296,22 @@ CSS .defaultButton {
   margin: 0 !important;
   font-size: 16px;
   font-weight: bold;
+}
+
+.successMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  height: 80vh;
+}
+
+.successMessage button {
+  background: linear-gradient(to right, #a7b8d4, #934b8e, #2d1457) !important;
+  color: whitesmoke !important;
+  border: #2d1457 1px solid;
+}
+
+.successMessage button:hover {
+  transform: scale(1.05);
 }

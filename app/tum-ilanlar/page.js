@@ -117,7 +117,7 @@ export default function AllAdverts() {
   if (!allAdverts || allAdverts.length === 0)
     return (
       <div className={classes.notFoundAdvertDiv}>
-        <p>İlan Bulunamadı...</p>
+        <p>İlan Bulunmamaktadır</p>
       </div>
     );
 

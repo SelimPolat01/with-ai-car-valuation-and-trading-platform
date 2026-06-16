@@ -76,8 +76,24 @@ router.get("/adverts", verifyToken, async (req, res) => {
       "SELECT COUNT(*) FROM favorite_adverts WHERE user_id = $1";
     const favoritesResult = await db.query(favoritesQuery, [userId]);
     res.status(200).json({
-      adverts: advertsResult.rows,
-      favoriteAdverts: parseInt(favoritesResult.rows[0].count || 0, 10),
+      personalAdverts: advertsResult.rows,
+      personalFavoriteAdverts: parseInt(favoritesResult.rows[0].count || 0, 10),
+    });
+  } catch (err) {
+    console.error("Veritabanı hatası:", err);
+    res.status(500).json({ message: "Sunucu hatası: " + err.message });
+  }
+});
+
+router.get("/soldAdverts", verifyToken, async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const result = await db.query(
+      "SELECT * FROM sold_adverts WHERE user_id = $1",
+      [userId],
+    );
+    res.status(200).json({
+      personalSoldAdverts: result.rows,
     });
   } catch (err) {
     console.error("Veritabanı hatası:", err);
@@ -90,7 +106,6 @@ router.patch(
   verifyToken,
   upload.single("image"),
   async (req, res) => {
-    // BURASI ÇOK ÖNEMLİ: Terminalde ne geldiğini görelim
     console.log("--- PATCH İSTEĞİ GELDİ ---");
     console.log("GELEN METİNLER:", req.body);
     console.log("GELEN RESİM:", req.file);

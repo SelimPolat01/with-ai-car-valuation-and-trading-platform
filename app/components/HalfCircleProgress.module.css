@@ -68,6 +68,7 @@
 }
 
 .description {
+  text-align: center;
   text-align-last: center;
   color: rgb(111, 110, 110);
   word-break: break-word;
@@ -82,9 +83,19 @@
 
 .textDiv {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
+  justify-content: space-between;
   padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  border-top: 1px solid #e5e7eb;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
 }
 
 .changeContainer {
@@ -115,33 +126,36 @@
   font-weight: bold;
 }
 
-.moneyDiv {
-  display: flex;
-  gap: 2rem;
-}
-
 .money {
   font-size: 14px;
   margin: 0;
   padding: 0;
-  display: inline-block;
 }
 
 .changeUpIcon {
   color: green;
-  display: inline-block;
-  width: 24px;
-  height: 24px;
+  background-color: rgb(220, 255, 212);
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
 }
 
 .changeDownIcon {
   color: red;
-  display: inline-block;
-  width: 24px;
-  height: 24px;
+  background-color: rgb(254, 222, 222);
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
 }
 
 .cashIconContainer {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  gap: 2px;
 }

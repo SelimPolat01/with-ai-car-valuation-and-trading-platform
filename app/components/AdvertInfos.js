@@ -2,19 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { toggleFavorite } from "@/store/advertsSlice";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import classes from "./AdvertInfos.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import CancelButton from "./CancelButton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import PrimaryButton from "./PrimaryButton";
+import { usePatchSoldAdvert } from "@/hooks/PATCH/usePatchSoldAdvert";
+import SuccessMessage from "./SuccessMessage";
 
 export default function AdvertInfos() {
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    mutate: patchSoldAdvertMutate,
+    isPending: patchSoldAdvertIsPending,
+    isError: patchSoldAdvertIsError,
+    error: patchSoldAdvertError,
+  } = usePatchSoldAdvert();
   const params = useParams();
   const router = useRouter();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [advert, setAdvert] = useState(null);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
@@ -22,6 +30,17 @@ export default function AdvertInfos() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   useCheckAuth();
+
+  useEffect(() => {
+    let timer;
+    if (isSuccess) {
+      timer = setTimeout(() => {
+        setIsSuccess(false);
+        router.replace("/hesabim/garajim");
+      }, 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [router, isSuccess]);
 
   useEffect(() => {
     async function fetchAdvertInfos() {
@@ -104,6 +123,22 @@ export default function AdvertInfos() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function advertBuyHandler() {
+    const token = localStorage.getItem("token");
+    patchSoldAdvertMutate(
+      { token, body: { advertId: params.advertId } },
+      {
+        onSuccess: (soldAdvertData) => {
+          console.log(soldAdvertData?.result?.message);
+          setIsSuccess(true);
+        },
+        onError: (soldAdvertError) => {
+          setError(soldAdvertError?.message);
+        },
+      },
+    );
   }
 
   function formatBrandModel(text) {
@@ -251,118 +286,130 @@ export default function AdvertInfos() {
 
   return (
     <div className={classes.advertDiv}>
-      <div className={classes.advertInfoDiv}>
-        <div className={classes.titleFavoriteDiv}>
-          <h2>{advert.title}</h2>
-          {user && advert && Number(user.id) !== Number(advert.user_id) && (
-            <button
-              className={
-                isFavorite ? classes.favoriteButton : classes.defaultButton
-              }
-              type="button"
-              onClick={toggleFavoriteClick}
-            >
-              {isFavorite ? "Favorilerimden Çıkar" : "Favorilerime Ekle"}
-            </button>
-          )}
-        </div>
-
-        <div className={classes.advertInfoWrapper1}>
-          <div className={classes.imgDiv}>
-            <div
-              className={classes.sliderTrack}
-              style={{ transform: `translateX(-${currentImgIndex * 100}%)` }}
-            >
-              {advertImages.map((imgUrl, idx) => (
-                <img
-                  key={idx}
-                  className={classes.img}
-                  src={imgUrl}
-                  alt={`${advert.title} - ${idx + 1}`}
-                />
-              ))}
-            </div>
-
-            {advertImages.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  className={`${classes.sliderBtn} ${classes.prevBtn}`}
-                  onClick={prevImage}
-                >
-                  <ChevronLeft size={24} />
-                </button>
-
-                <button
-                  type="button"
-                  className={`${classes.sliderBtn} ${classes.nextBtn}`}
-                  onClick={nextImage}
-                >
-                  <ChevronRight size={24} />
-                </button>
-
-                <div className={classes.sliderDots}>
-                  {advertImages.map((_, idx) => (
-                    <span
-                      key={idx}
-                      className={`${classes.dot} ${idx === currentImgIndex ? classes.activeDot : ""}`}
-                      onClick={() => setCurrentImgIndex(idx)}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
-          <div className={classes.advertInfoWrapper2}>
-            <ul className={classes.ul}>
-              {advertDetails.map((detail) => (
-                <li
-                  key={detail.id}
-                  className={`${classes.li} ${detail.priceClassName || ""}`}
-                >
-                  <strong className={classes.strong}>{detail.label}</strong>
-                  <span className={detail.spanClassName || ""}>
-                    {detail.value}
-                  </span>
-                </li>
-              ))}
-            </ul>
+      {!isSuccess ? (
+        <div className={classes.advertInfoDiv}>
+          <div className={classes.titleFavoriteDiv}>
+            <h2>{advert.title}</h2>
             {user && advert && Number(user.id) !== Number(advert.user_id) && (
-              <div className={classes.buyButtonContainer}>
-                <PrimaryButton
-                  type="button"
-                  text="Satın Al"
-                  className={classes.buyButton}
-                  onClick={() => {
-                    console.log("Satın alma işlemi tetiklendi.");
-                  }}
-                />
+              <button
+                className={
+                  isFavorite ? classes.favoriteButton : classes.defaultButton
+                }
+                type="button"
+                onClick={toggleFavoriteClick}
+              >
+                {isFavorite ? "Favorilerimden Çıkar" : "Favorilerime Ekle"}
+              </button>
+            )}
+          </div>
+
+          <div className={classes.advertInfoWrapper1}>
+            <div className={classes.imgDiv}>
+              <div
+                className={classes.sliderTrack}
+                style={{ transform: `translateX(-${currentImgIndex * 100}%)` }}
+              >
+                {advertImages.map((imgUrl, idx) => (
+                  <img
+                    key={idx}
+                    className={classes.img}
+                    src={imgUrl}
+                    alt={`${advert.title} - ${idx + 1}`}
+                  />
+                ))}
+              </div>
+
+              {advertImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    className={`${classes.sliderBtn} ${classes.prevBtn}`}
+                    onClick={prevImage}
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`${classes.sliderBtn} ${classes.nextBtn}`}
+                    onClick={nextImage}
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+
+                  <div className={classes.sliderDots}>
+                    {advertImages.map((_, idx) => (
+                      <span
+                        key={idx}
+                        className={`${classes.dot} ${idx === currentImgIndex ? classes.activeDot : ""}`}
+                        onClick={() => setCurrentImgIndex(idx)}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className={classes.advertInfoWrapper2}>
+              <ul className={classes.ul}>
+                {advertDetails.map((detail) => (
+                  <li
+                    key={detail.id}
+                    className={`${classes.li} ${detail.priceClassName || ""}`}
+                  >
+                    <strong className={classes.strong}>{detail.label}</strong>
+                    <span className={detail.spanClassName || ""}>
+                      {detail.value}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {user && advert && Number(user.id) !== Number(advert.user_id) && (
+                <div className={classes.buyButtonContainer}>
+                  <PrimaryButton
+                    type="button"
+                    text={`${patchSoldAdvertIsPending ? "Satın alınıyor..." : "Satın Al"}`}
+                    className={classes.buyButton}
+                    onClick={advertBuyHandler}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className={classes.descriptionContainer}>
+            <div
+              onClick={() => setShowDescription((prevValue) => !prevValue)}
+              className={`${classes.descriptionTextDiv} ${
+                showDescription
+                  ? classes.semiBorderRadius
+                  : classes.fullBorderRadius
+              }`}
+            >
+              Açıklama
+            </div>
+            {showDescription && (
+              <div className={classes.descriptionDiv}>
+                <div className={classes.descriptionWrapper}>
+                  <p className={classes.description}>{advert.description}</p>
+                </div>
               </div>
             )}
           </div>
         </div>
-
-        <div className={classes.descriptionContainer}>
-          <div
-            onClick={() => setShowDescription((prevValue) => !prevValue)}
-            className={`${classes.descriptionTextDiv} ${
-              showDescription
-                ? classes.semiBorderRadius
-                : classes.fullBorderRadius
-            }`}
-          >
-            Açıklama
-          </div>
-          {showDescription && (
-            <div className={classes.descriptionDiv}>
-              <div className={classes.descriptionWrapper}>
-                <p className={classes.description}>{advert.description}</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      ) : (
+        <SuccessMessage
+          key="success-message"
+          onClick={() => {
+            setIsSuccess(false);
+            router.replace("/hesabim/garajim");
+          }}
+          title="Hayırlı Olsun! 🎉"
+          text="Araç başarıyla satın alındı. İşlem detaylarına garajınızdan ulaşabilirsiniz."
+          buttonText="Garajıma Git"
+          className={classes.successMessage}
+        />
+      )}
     </div>
   );
 }

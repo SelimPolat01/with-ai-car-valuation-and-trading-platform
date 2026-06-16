@@ -110,7 +110,6 @@ export default function FavoriIlanlar() {
     deleteDialogRef.current.showModal();
   }
 
-  // if (loading) return <LoadingSpinner />;
   if (error) return <p>{error}</p>;
 
   return (
@@ -147,7 +146,7 @@ export default function FavoriIlanlar() {
         </AnimatePresence>
         {favoriteAdverts.length === 0 && (
           <div className={classes.noFavoriteAdvertDiv}>
-            <h3>Favori ilanınız bulunmamaktadır.</h3>
+            <p>Favori ilanınız Bulunmamaktadır</p>
           </div>
         )}
       </div>

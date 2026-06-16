@@ -7,7 +7,6 @@ router.post("/", verifyToken, async (req, res) => {
   const carData = req.body;
   try {
     const fetchUrl = `${process.env.FAST_API_URL}/predict`;
-    console.log("👉 NODE.JS'IN ISTEK ATTIGI TAM ADRES:", fetchUrl);
 
     const response = await fetch(fetchUrl, {
       method: "POST",
@@ -19,7 +18,6 @@ router.post("/", verifyToken, async (req, res) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("🔴 GİDİLEN ADRESTEN DÖNEN HATA KODU:", response.status);
       console.error("🔴 DÖNEN GERÇEK HATA MESAJI:", errorText);
       throw new Error(`FastAPI'ye ulaşılamadı. Kod: ${response.status}`);
     }

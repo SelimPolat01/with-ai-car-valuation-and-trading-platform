@@ -3,10 +3,10 @@
 import {
   ArrowDown,
   ArrowUp,
-  DollarSign,
   Heart,
   Megaphone,
   MoreVertical,
+  TurkishLira,
 } from "lucide-react";
 import Frame from "../../components/Frame";
 import classes from "./Garajim.module.css";
@@ -15,11 +15,13 @@ import ChartBar from "../../components/ChartBar";
 import HalfCircleProgress from "../../components/HalfCircleProgress";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useGetAdverts } from "@/hooks/GET/useGetAdverts";
+import { useGetPersonalAdverts } from "@/hooks/GET/useGetPersonalAdverts";
+import { useGetPersonalSoldAdverts } from "@/hooks/GET/usePersonalSoldAdverts";
 
 export default function Garajim() {
   const router = useRouter();
   const [token, setToken] = useState(null);
+
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
     setToken(currentToken);
@@ -28,12 +30,14 @@ export default function Garajim() {
       return;
     }
   }, [router]);
+
+  const { data: personalAdvertsData, isLoading: personalAdvertsIsLoading } =
+    useGetPersonalAdverts(token);
+
   const {
-    data: advertsData,
-    isLoading: advertsIsLoading,
-    isError: advertsIsError,
-    error: advertsError,
-  } = useGetAdverts(token);
+    data: personalSoldAdvertsData,
+    isLoading: personalSoldAdvertsIsLoading,
+  } = useGetPersonalSoldAdverts(token);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -46,26 +50,30 @@ export default function Garajim() {
     },
   };
 
-  const ilanlarDizisi = advertsData?.result?.adverts || [];
-  const favoriIlanSayisi = advertsData?.result?.favoriteAdverts || 0;
+  const kisiselİlanlar = personalAdvertsData?.result?.personalAdverts || [];
+  const favoriIlanSayisi =
+    personalAdvertsData?.result?.personalFavoriteAdverts || 0;
+  const kisiselSatinAldigimIlanlar =
+    personalSoldAdvertsData?.result?.personalSoldAdverts || [];
 
-  const toplamCiro = ilanlarDizisi.reduce((toplam, ilan) => {
+  const kisiselMevcutİlanlar = kisiselİlanlar.filter(
+    (ilan) =>
+      ilan.is_sold === false || ilan.is_sold === "false" || !ilan.is_sold,
+  );
+
+  const satilanIlanlarim = kisiselİlanlar.filter(
+    (ilan) => ilan.is_sold === true || ilan.is_sold === "true",
+  );
+
+  const toplamGelir = satilanIlanlarim.reduce((toplam, ilan) => {
     return toplam + Number(ilan.price || 0);
   }, 0);
-  const aylar = [
-    "Ocak",
-    "Şubat",
-    "Mart",
-    "Nisan",
-    "Mayıs",
-    "Haziran",
-    "Temmuz",
-    "Ağustos",
-    "Eylül",
-    "Ekim",
-    "Kasım",
-    "Aralık",
-  ];
+
+  const toplamGider = kisiselSatinAldigimIlanlar.reduce((toplam, ilan) => {
+    return toplam + Number(ilan.price || 0);
+  }, 0);
+
+  const netKar = toplamGelir - toplamGider;
 
   const aylikIlanVerileri = useMemo(() => {
     const aylarDizisi = [
@@ -82,8 +90,8 @@ export default function Garajim() {
       "Kasım",
       "Aralık",
     ];
-    const sonuc = aylarDizisi.map((ay, indeks) => {
-      const ilanSayisi = ilanlarDizisi.filter((ilan) => {
+    return aylarDizisi.map((ay, indeks) => {
+      const ilanSayisi = kisiselİlanlar.filter((ilan) => {
         if (!ilan.created_at) return false;
         const ilanTarihi = new Date(ilan.created_at);
         if (isNaN(ilanTarihi.getTime())) return false;
@@ -94,39 +102,27 @@ export default function Garajim() {
         ilanSayisi: ilanSayisi,
       };
     });
-    console.log("Hesaplanan Aylık Grafik Verileri:", sonuc);
-    return sonuc;
-  }, [ilanlarDizisi]);
+  }, [kisiselİlanlar]);
 
   const formatMaliDeger = (deger) => {
-    if (deger >= 1000000) {
-      const milyon = deger / 1000000;
-      return milyon % 1 === 0
-        ? `${milyon} Milyon ₺`
-        : `${milyon.toFixed(1)} Milyon ₺`;
+    const mutlakDeger = Math.abs(deger);
+    let metin = "";
+
+    if (mutlakDeger >= 1000000) {
+      const milyon = mutlakDeger / 1000000;
+      metin =
+        milyon % 1 === 0
+          ? `${milyon} Milyon ₺`
+          : `${milyon.toFixed(1)} Milyon ₺`;
+    } else if (mutlakDeger >= 1000) {
+      const bin = mutlakDeger / 1000;
+      metin = bin % 1 === 0 ? `${bin} Bin ₺` : `${bin.toFixed(1)} Bin ₺`;
+    } else {
+      metin = `${mutlakDeger} ₺`;
     }
-    if (deger >= 1000) {
-      const bin = deger / 1000;
-      return bin % 1 === 0 ? `${bin} Bin ₺` : `${bin.toFixed(1)} Bin ₺`;
-    }
-    return `${deger} $`;
+
+    return deger < 0 ? `-${metin}` : metin;
   };
-
-  // if (isLoading || projectIsLoading) {
-  //   return (
-  //     <div className="loadingContainer">
-  //       <p>{texts[lang].loading}</p>
-  //     </div>
-  //   );
-  // }
-
-  // if (isError) {
-  //   return (
-  //     <div className="loadingContainer">
-  //       <p>{error?.message || "An error occured"}</p>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className={classes.div}>
@@ -141,29 +137,34 @@ export default function Garajim() {
             className={classes.frame}
             icon={<Megaphone />}
             text="Mevcut İlanlarım"
-            total={advertsIsLoading ? "..." : ilanlarDizisi.length}
+            total={
+              personalAdvertsIsLoading ? "..." : kisiselMevcutİlanlar.length
+            }
             change="11.46%"
             changeIcon={<ArrowUp />}
             upChange
           />
+
           <Frame
             className={classes.frame}
-            icon={<DollarSign />}
+            icon={<TurkishLira />}
             text="Satılan İlanlarım"
-            total="0"
+            total={personalAdvertsIsLoading ? "..." : satilanIlanlarim.length}
             change="32.63%"
             changeIcon={<ArrowDown />}
             downChange
           />
+
           <Frame
             className={classes.frame}
             icon={<Heart />}
             text={"Favori İlanlarım"}
-            total={advertsIsLoading ? "..." : favoriIlanSayisi}
+            total={personalAdvertsIsLoading ? "..." : favoriIlanSayisi}
             change="7.13%"
             changeIcon={<ArrowDown />}
             downChange
           />
+
           <ChartBar
             width="696"
             height="250"
@@ -171,18 +172,25 @@ export default function Garajim() {
             optionsIcon={<MoreVertical />}
             data={aylikIlanVerileri}
           />
+
           <HalfCircleProgress
             text="Aylık Gelir Hedefi"
-            subText="Her ay için belirlediğin hedefler"
-            percent={75}
+            subText="Her ay için belirlenen hedefler"
+            percent={netKar > 0 ? 75 : 0}
             change="21"
-            description={`Bu ay ${formatMaliDeger(toplamCiro)} kazandın. Geçen aya göre daha yüksek. Devam et!`}
+            description={
+              toplamGelir === 0 && toplamGider === 0
+                ? "Bu ay henüz hiçbir araç alım-satımı yapmadınız."
+                : netKar >= 0
+                  ? `Bu ay ${formatMaliDeger(netKar)} net kâr elde ettin. Harika gidiyorsun!`
+                  : `Bu ay ${formatMaliDeger(toplamGider)} harcama yaptın, henüz kârda değilsin.`
+            }
             upChange={<ArrowUp />}
             downChange={<ArrowDown />}
             optionsIcon={<MoreVertical />}
             targetValue="14.7 Milyon ₺"
-            revenueValue={formatMaliDeger(toplamCiro)}
-            netIncome="750 Bin ₺"
+            revenueValue={formatMaliDeger(toplamGelir)}
+            netIncome={formatMaliDeger(netKar)}
           />
         </motion.div>
       </div>

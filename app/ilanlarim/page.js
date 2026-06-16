@@ -110,7 +110,6 @@ export default function MyAdverts() {
     editDialogRef.current.showModal();
   }
 
-  // if (loading) return <LoadingSpinner />;
   if (error) return <p>{error}</p>;
 
   return (
@@ -152,7 +151,7 @@ export default function MyAdverts() {
         </div>
       ) : (
         <div className={classes.noAdvertDiv}>
-          <p>İlanınız bulunmamaktadır.</p>
+          <p>İlanınız Bulunmamaktadır</p>
         </div>
       )}
     </div>

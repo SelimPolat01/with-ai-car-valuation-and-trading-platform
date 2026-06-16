@@ -132,6 +132,7 @@ router.get("/:advertId", verifyToken, async (req, res) => {
         u.name AS user_name, 
         u.surname AS user_surname, 
         u.tel_number AS user_tel, 
+        u.city AS city,
         u.created_at AS user_created, 
         EXISTS (
           SELECT 1 FROM favorite_adverts AS fa 
@@ -164,23 +165,6 @@ router.get("/:advertId", verifyToken, async (req, res) => {
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error("SQL Hatası Detayı:", err.message);
-    res.status(500).json({ message: "Sunucu hatası!" });
-  }
-});
-
-router.delete("/:advertId", verifyToken, async (req, res) => {
-  const { advertId } = req.params;
-  const userId = Number(req.user.id);
-  try {
-    const result = await db.query(
-      "DELETE FROM adverts WHERE user_id = $1 AND id = $2",
-      [userId, advertId],
-    );
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: "İlan bulunamadı" });
-    }
-    res.status(200).json({ message: "İlan başarıyla kaldırıldı." });
-  } catch (err) {
     res.status(500).json({ message: "Sunucu hatası!" });
   }
 });
@@ -305,3 +289,95 @@ router.put(
     }
   },
 );
+
+router.patch("/soldAdvert", verifyToken, async (req, res) => {
+  const { advertId } = req.body;
+  try {
+    const checkStatus = await db.query(
+      `SELECT is_sold FROM adverts WHERE id = $1`,
+      [advertId],
+    );
+
+    if (checkStatus.rows.length === 0) {
+      return res.status(404).json({ message: "İlan bulunamadı." });
+    }
+
+    if (checkStatus.rows[0].is_sold === true) {
+      return res
+        .status(400)
+        .json({ message: "Bu araç zaten daha önce satın alınmış!" });
+    }
+
+    const soldAdvertDetailRaw = await db.query(
+      `UPDATE adverts SET is_sold = True WHERE id = $1 RETURNING *`,
+      [advertId],
+    );
+
+    const soldAdvertDetail = soldAdvertDetailRaw.rows[0];
+    const createdDate = new Date(soldAdvertDetail.created_at);
+    const currentDate = new Date();
+    const diffInMs = currentDate.getTime() - createdDate.getTime();
+    const daysToSell = Math.max(
+      0,
+      Math.floor(diffInMs / (1000 * 60 * 60 * 24)),
+    );
+
+    const result = await db.query(
+      `INSERT INTO sold_adverts (brand, model, model_year, body_type, engine_capacity, horsepower, transmission, kilometer, fuel_type, price, trim_level, days_to_sell, has_scratch, has_dent, user_id, advert_id, sold_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`,
+      [
+        soldAdvertDetail.brand,
+        soldAdvertDetail.model,
+        soldAdvertDetail.model_year,
+        soldAdvertDetail.body_type,
+        soldAdvertDetail.engine_capacity,
+        soldAdvertDetail.horsepower,
+        soldAdvertDetail.transmission,
+        soldAdvertDetail.kilometer,
+        soldAdvertDetail.fuel_type,
+        soldAdvertDetail.price,
+        soldAdvertDetail.trim_level,
+        daysToSell,
+        soldAdvertDetail.has_scratch,
+        soldAdvertDetail.has_dent,
+        req.user.id,
+        advertId,
+        currentDate,
+      ],
+    );
+
+    await db.query(`DELETE FROM favorite_adverts WHERE advert_id = $1`, [
+      advertId,
+    ]);
+
+    res.status(200).json({ message: "İlan başarıyla satın alınmıştır." });
+  } catch (err) {
+    console.error("Satış hatası detayı:", err);
+
+    if (err.code === "23505") {
+      return res.status(400).json({
+        message: "Bu araç aynı anda başka biri tarafından satın alındı.",
+      });
+    }
+
+    res
+      .status(500)
+      .json({ message: "İlan satın alınırken sunucu hatası meydana geldi." });
+  }
+});
+
+router.delete("/:advertId", verifyToken, async (req, res) => {
+  const { advertId } = req.params;
+  const userId = Number(req.user.id);
+  try {
+    const result = await db.query(
+      "DELETE FROM adverts WHERE user_id = $1 AND id = $2",
+      [userId, advertId],
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "İlan bulunamadı" });
+    }
+    res.status(200).json({ message: "İlan başarıyla kaldırıldı." });
+  } catch (err) {
+    res.status(500).json({ message: "Sunucu hatası!" });
+  }
+});

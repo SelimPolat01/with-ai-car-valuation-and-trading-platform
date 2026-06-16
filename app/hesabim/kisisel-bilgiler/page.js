@@ -231,7 +231,7 @@ export default function Hesabim() {
                   text={
                     patchPersonalInfosIsPending
                       ? "Kaydediliyor..."
-                      : "Save Changes"
+                      : "Bilgileri Güncelle"
                   }
                   className={classes.button}
                   disabled={patchPersonalInfosIsPending}

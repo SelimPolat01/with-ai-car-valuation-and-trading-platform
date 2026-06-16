@@ -394,7 +394,7 @@ export default function PriceOffer({ advertId }) {
         <motion.div variants={itemVariants}>
           <PrimaryButton
             type="submit"
-            text={loading ? "Yükleniyor..." : "İlanı yayınla"}
+            text={loading ? "Yükleniyor..." : "İlanı Yayınla"}
             className={classes.button}
             disabled={loading}
           />

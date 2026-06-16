@@ -168,6 +168,17 @@ export default function Register() {
         {!isEmailValid && input.email.isBlur && (
           <p className="error">Lütfen geçerli bir e-posta giriniz.</p>
         )}
+        {isConflict && (
+          <p className="error">
+            Bu E-posta zaten kayıtlı!{" "}
+            <Link
+              style={{ color: "blue", textDecoration: "underline" }}
+              href="/login"
+            >
+              Giriş yapmak için tıklayın.
+            </Link>
+          </p>
+        )}
         <Input
           type="password"
           identifier="password"
@@ -180,17 +191,6 @@ export default function Register() {
         {!isPasswordValid && input.password.isBlur && (
           <p className="error">
             Lütfen en az 6 karakterden oluşan parola giriniz.
-          </p>
-        )}
-        {isConflict && (
-          <p className="error">
-            Bu E-posta zaten kayıtlı!{" "}
-            <Link
-              style={{ color: "blue", textDecoration: "underline" }}
-              href="/login"
-            >
-              Giriş yapmak için tıklayın.
-            </Link>
           </p>
         )}
         <div className={classes.nameSurnameDiv}>

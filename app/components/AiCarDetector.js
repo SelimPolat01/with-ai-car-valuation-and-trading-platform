@@ -347,7 +347,7 @@ export default function AiCarDetector() {
                 className={`${classes.confirmButton} ${classes.primary}`}
                 disabled={!car.selectedYear}
               >
-                Evet, aracımı doğrula
+                Evet, Aracımı Doğrula
               </button>
 
               <button
@@ -363,7 +363,7 @@ export default function AiCarDetector() {
                 }}
                 className={`${classes.confirmButton} ${classes.secondary}`}
               >
-                Bilgileri elle düzenle
+                Bilgileri Elle Düzenle
               </button>
             </motion.div>
           </div>

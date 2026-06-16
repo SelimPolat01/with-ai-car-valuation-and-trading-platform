@@ -1324,7 +1324,7 @@ export default function TahminYap() {
                   text={
                     carValuePredictMutateIsPending
                       ? "Yükleniyor..."
-                      : "Hasar bilgilerini gir"
+                      : "Hasar Bilgilerini Gir"
                   }
                   disabled={carValuePredictMutateIsPending}
                   type="submit"

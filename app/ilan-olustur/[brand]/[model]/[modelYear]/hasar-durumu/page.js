@@ -507,7 +507,7 @@ export default function HasarDurumu() {
             >
               <PrimaryButton
                 type="submit"
-                text="Fiyat teklifi al"
+                text="Fiyat Teklifi Al"
                 onClick={() => router.push("/fiyat-teklifi")}
               />
             </motion.div>

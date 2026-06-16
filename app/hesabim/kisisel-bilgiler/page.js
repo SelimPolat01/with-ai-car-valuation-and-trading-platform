@@ -88,9 +88,12 @@ export default function Hesabim() {
       });
 
       if (data?.image_src) {
-        setImagePreview(
-          `${process.env.NEXT_PUBLIC_URL}${data.image_src}?v=${new Date().getTime()}`,
-        );
+        const baseUrl = (process.env.NEXT_PUBLIC_URL || "").replace(/\/$/, "");
+        const imagePath = data.image_src.startsWith("/")
+          ? data.image_src
+          : `/${data.image_src}`;
+
+        setImagePreview(`${baseUrl}${imagePath}?v=${new Date().getTime()}`);
       } else {
         setImagePreview(DEFAULT_BLANK_AVATAR);
       }
@@ -163,6 +166,9 @@ export default function Hesabim() {
                     src={imagePreview}
                     alt="profile"
                     className={classes.profileImg}
+                    onError={() => {
+                      setImagePreview(DEFAULT_BLANK_AVATAR);
+                    }}
                     style={{
                       width: "180px",
                       height: "180px",

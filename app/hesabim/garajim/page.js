@@ -150,7 +150,7 @@ export default function Garajim() {
             className={classes.frame}
             icon={<DollarSign />}
             text="Satılan İlanlarım"
-            total="1"
+            total="0"
             change="32.63%"
             changeIcon={<ArrowDown />}
             downChange
@@ -167,7 +167,7 @@ export default function Garajim() {
           <ChartBar
             width="696"
             height="250"
-            text="Aylık İlanlar"
+            text="Aylık İlanlarım"
             optionsIcon={<MoreVertical />}
             data={aylikIlanVerileri}
           />

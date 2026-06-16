@@ -18,7 +18,7 @@ export default function Hesabim() {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const DEFAULT_BLANK_AVATAR =
-    "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Cpath%20d%3D%22M50%2050c11.046%200%2020-8.954%2020-20s-8.954-20-20-20-20%208.954-20%2020%208.954%2020%2020%2020zm0%2010c-15.012%200-45%207.525-45%2022.5V100h90V82.5C95%2067.525%2065.012%2060%2050%2060z%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E";
+    "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iI2UwZTBlMCIvPjxwYXRoIGQ9Ik01MCA1MGMxMS4wNDYgMCAyMC04Ljk1NCAyMC0yMHMtOC45NTQtMjAtMjAtMjAtMjAtMjAgOC45NTQtMjAgMjAgOC45NTQgMjAgMjAgMjB6bTAgMTBjLTE1LjAxMiAwLTQ1IDcuNTI1LTQ1IDIyLjVWMTAwaDkwVjgyLjVDOTUgNjcuNTI1IDY1LjAxMiA2MCA1MCA2MHoiIGZpbGw9IiM5ZTllOWUiLz48L3N2Zz4=";
 
   const [imagePreview, setImagePreview] = useState(DEFAULT_BLANK_AVATAR);
 
@@ -162,6 +162,7 @@ export default function Hesabim() {
                   <img
                     src={imagePreview}
                     alt="profile"
+                    className={classes.profileImg}
                     style={{
                       width: "180px",
                       height: "180px",

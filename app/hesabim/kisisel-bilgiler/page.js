@@ -16,7 +16,10 @@ export default function Hesabim() {
   const [token, setToken] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState("/pp.png");
+
+  const DEFAULT_ROBOT_AVATAR =
+    "https://api.dicebear.com/8.x/bottts/svg?seed=Anonymous&baseColor=adb5bd";
+  const [imagePreview, setImagePreview] = useState(DEFAULT_ROBOT_AVATAR);
 
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
@@ -82,10 +85,13 @@ export default function Hesabim() {
           isBlur: false,
         },
       });
+
       if (data?.image_src) {
         setImagePreview(
           `${process.env.NEXT_PUBLIC_URL}${data.image_src}?v=${new Date().getTime()}`,
         );
+      } else {
+        setImagePreview(DEFAULT_ROBOT_AVATAR);
       }
     }
   }, [getPersonalInfosData]);

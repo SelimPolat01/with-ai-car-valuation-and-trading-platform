@@ -91,7 +91,7 @@ export default function Hesabim() {
           `${process.env.NEXT_PUBLIC_URL}${data.image_src}?v=${new Date().getTime()}`,
         );
       } else {
-        setImagePreview(DEFAULT_ROBOT_AVATAR);
+        setImagePreview(DEFAULT_BLANK_AVATAR);
       }
     }
   }, [getPersonalInfosData]);

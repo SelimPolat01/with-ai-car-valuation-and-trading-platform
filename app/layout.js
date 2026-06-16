@@ -87,9 +87,9 @@ export default function RootLayout({ children }) {
                   x2="100%"
                   y2="100%"
                 >
-                  <stop offset="36.01%" stopColor="#9867ff" />
-                  <stop offset="66.76%" stopColor="#573996" />
-                  <stop offset="86.39%" stopColor="#291b47" />
+                  <stop offset="16.01%" stopColor="#dcb3ff" />
+                  <stop offset="46.76%" stopColor="#9867ff" />
+                  <stop offset="86.39%" stopColor="#68ffed" />
                 </linearGradient>
               </defs>
             </svg>

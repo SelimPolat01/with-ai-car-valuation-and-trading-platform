@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import styles from "./HasarDurumu.module.css";
+import classes from "./HasarDurumu.module.css";
 import { useRouter } from "next/navigation";
 import PrimaryButton from "@/app/components/PrimaryButton";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,11 +18,9 @@ export default function HasarDurumu() {
   const dispatch = useDispatch();
   const prediction = useSelector((state) => state.prediction.prediction);
   const dialogRef = useRef();
-
   const [token, setToken] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const [images, setImages] = useState({
     front: null,
     back: null,
@@ -341,7 +339,7 @@ export default function HasarDurumu() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={classes.container}>
       <ConfirmDialog
         ref={dialogRef}
         onConfirm={dialogConfirmHandler}
@@ -370,7 +368,7 @@ export default function HasarDurumu() {
       <AnimatePresence>
         {isAllImagesUploaded && avarageSellPrediction && (
           <motion.div
-            className={styles.sellTimeBubble}
+            className={classes.sellTimeBubble}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
@@ -378,15 +376,15 @@ export default function HasarDurumu() {
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 15 }}
           >
-            <span className={styles.bubbleTitle}>Tahmini Satış Süresi</span>
-            <span className={styles.bubbleValue}>{avarageSellPrediction}</span>
-            <span className={styles.bubbleSubtitle}>GÜN</span>
+            <span className={classes.bubbleTitle}>Tahmini Satış Süresi</span>
+            <span className={classes.bubbleValue}>{avarageSellPrediction}</span>
+            <span className={classes.bubbleSubtitle}>GÜN</span>
           </motion.div>
         )}
       </AnimatePresence>
 
       <motion.div
-        className={styles.grid}
+        className={classes.grid}
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -394,7 +392,7 @@ export default function HasarDurumu() {
         {views.map((view) => (
           <motion.div
             key={view.id}
-            className={styles.card}
+            className={classes.card}
             variants={cardVariants}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
@@ -418,12 +416,12 @@ export default function HasarDurumu() {
                 >
                   <img
                     src={images[view.id]}
-                    className={styles.imagePreview}
+                    className={classes.imagePreview}
                     alt="Araç"
                   />
                   <button
                     type="button"
-                    className={styles.removeBtn}
+                    className={classes.removeBtn}
                     onClick={(e) => handleRemoveImage(view.id, e)}
                   >
                     ✕
@@ -444,12 +442,12 @@ export default function HasarDurumu() {
                     display: "block",
                   }}
                 >
-                  <div className={styles.overlayMask}>
-                    <div className={styles.targetCross}>+</div>
-                    <p className={styles.overlayMessage}>
+                  <div className={classes.overlayMask}>
+                    <div className={classes.targetCross}>+</div>
+                    <p className={classes.overlayMessage}>
                       {cardErrors[view.id]}
                     </p>
-                    <span className={styles.clickToTry}>
+                    <span className={classes.clickToTry}>
                       Yeniden denemek için tıklayın
                     </span>
                   </div>
@@ -474,17 +472,17 @@ export default function HasarDurumu() {
                 >
                   <img
                     src={view.icon}
-                    className={styles.icon}
+                    className={classes.icon}
                     alt={view.label}
                   />
-                  <span className={styles.label}>{view.label}</span>
+                  <span className={classes.label}>{view.label}</span>
                 </motion.label>
               )}
             </AnimatePresence>
             <input
               id={`file-upload-${view.id}`}
               type="file"
-              className={styles.fileInput}
+              className={classes.fileInput}
               style={{ display: "none" }}
               accept="image/*"
               onChange={(e) => handleImageChange(view.id, e)}

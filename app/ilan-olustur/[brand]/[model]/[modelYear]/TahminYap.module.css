@@ -6,6 +6,13 @@
   );
 }
 
+.rootMain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+}
+
 .title h1 {
   margin: 0;
   padding: 0;

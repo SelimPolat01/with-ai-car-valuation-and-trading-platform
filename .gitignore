@@ -64,6 +64,12 @@ pytorch-model-backend/.venv/
 **/node_modules/
 
 # uploads/
+screenshots/
+car-buy-sell-web-app/
+package.json
+jsconfig.json
+next.config.mjs
+package-lock.json
 
 pytorch-model-backend/train_models/
 pytorch-model-backend/Dockerfile

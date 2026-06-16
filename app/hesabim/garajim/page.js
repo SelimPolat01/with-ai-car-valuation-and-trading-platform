@@ -176,7 +176,7 @@ export default function Garajim() {
             subText="Her ay için belirlediğin hedefler"
             percent={75}
             change="21"
-            description="Bu ay 10.2 milyon ₺ kazandın. Geçen aya göre daha yüksek. Devam et!"
+            description={`Bu ay ${formatMaliDeger(toplamCiro)} kazandın. Geçen aya göre daha yüksek. Devam et!`}
             upChange={<ArrowUp />}
             downChange={<ArrowDown />}
             optionsIcon={<MoreVertical />}

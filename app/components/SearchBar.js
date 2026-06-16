@@ -17,10 +17,10 @@ export default function SearchBar() {
   const filteredData = allAdverts.filter((advert) =>
     `${advert.brand} ${advert.model}`
       .toLowerCase()
-      .startsWith(query.toLowerCase())
+      .startsWith(query.toLowerCase()),
   );
   const uniqueBrands = Array.from(
-    new Set(filteredData.map((advert) => advert.brand))
+    new Set(filteredData.map((advert) => advert.brand)),
   );
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function SearchBar() {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
 
           if (response.status === 401) {

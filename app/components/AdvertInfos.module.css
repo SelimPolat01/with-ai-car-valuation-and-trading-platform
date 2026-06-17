@@ -361,3 +361,7 @@
   align-items: center;
   min-height: 80vh;
 }
+
+.loadingTextDiv p {
+  color: whitesmoke;
+}

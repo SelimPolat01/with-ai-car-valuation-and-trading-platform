@@ -47,6 +47,8 @@ next-env.d.ts
 .env.production.local
 *.pem
 *.key
+.vscode/
+*.sql
 
 # --- Debug & Logs ---
 npm-debug.log*

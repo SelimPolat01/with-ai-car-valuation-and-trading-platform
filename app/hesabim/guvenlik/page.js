@@ -322,7 +322,7 @@ export default function Guvenlik() {
                 <SecondaryButton
                   type="submit"
                   text={
-                    patchEmailIsPending ? "Güncelleniyor" : "E-Posta Güncelle"
+                    patchEmailIsPending ? "Güncelleniyor" : "E-Postayı Güncelle"
                   }
                   className={classes.button}
                   disabled={patchEmailIsPending}
@@ -392,7 +392,9 @@ export default function Guvenlik() {
                 <SecondaryButton
                   type="submit"
                   text={
-                    patchPasswordIsPending ? "Güncelleniyor" : "Parola Güncelle"
+                    patchPasswordIsPending
+                      ? "Güncelleniyor"
+                      : "Parolayı Güncelle"
                   }
                   className={classes.button}
                   disabled={patchPasswordIsPending}

@@ -413,7 +413,7 @@ export default function AdvertInfos() {
             >
               {showSimilarAdverts
                 ? "Benzer Araçları Gizle"
-                : "Yapay Zeka Önerisi Benzer Araçları Gör ✨"}
+                : "Yapay Zekâ Önerisi Benzer Araçları Gör ✨"}
             </button>
 
             <AnimatePresence>

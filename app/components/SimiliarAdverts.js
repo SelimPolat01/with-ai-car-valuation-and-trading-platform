@@ -37,7 +37,7 @@ export default function SimilarAdverts({ currentAdvertId }) {
   if (loading)
     return (
       <p className={classes.loadingText}>
-        Benzer yapay zeka önerileri yükleniyor...
+        Benzer Yapay Zekâ Önerileri Yükleniyor...
       </p>
     );
 
@@ -65,7 +65,7 @@ export default function SimilarAdverts({ currentAdvertId }) {
   return (
     <div className={classes.container}>
       <h3 className={classes.title}>
-        Görsel Olarak Benzer Araçlar (Yapay Zeka Önerisi)
+        Görsel Olarak Benzer Araçlar (Yapay Zekâ Önerisi)
       </h3>
 
       <div className={classes.scrollContainer}>

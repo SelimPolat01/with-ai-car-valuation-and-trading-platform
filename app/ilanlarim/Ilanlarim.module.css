@@ -9,8 +9,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  max-width: 922px;
-  margin: 0 0 0 2rem;
+  margin: 0 0 2rem 5rem;
 }
 
 .noAdvertDiv {

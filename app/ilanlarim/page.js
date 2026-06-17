@@ -129,24 +129,35 @@ export default function MyAdverts() {
       {myAdverts && myAdverts.length > 0 ? (
         <div className={classes.div}>
           <AnimatePresence>
-            {myAdverts.map((myAdvert) => (
-              <AdvertItem
-                id={myAdvert.id}
-                key={myAdvert.id}
-                userId={myAdvert.user_id}
-                imgSrc={myAdvert.image_data}
-                brand={myAdvert.brand}
-                model={myAdvert.model}
-                engineCapacity={myAdvert.engine_capacity}
-                modelYear={myAdvert.model_year}
-                price={myAdvert.price}
-                city={myAdvert.city}
-                onDeleteDialog={() => openDeleteModal(myAdvert.id)}
-                onEditDialog={() => openEditModal(myAdvert.id)}
-                showDeleteButton={true}
-                showEditButton={true}
-              />
-            ))}
+            {myAdverts.map((myAdvert) => {
+              const mainImgObj = myAdvert.images
+                ? myAdvert.images.find((img) => img.is_main) ||
+                  myAdvert.images[0]
+                : null;
+
+              const coverImage = mainImgObj
+                ? mainImgObj.image_data || mainImgObj.image_url
+                : myAdvert.image_data || myAdvert.image_src;
+
+              return (
+                <AdvertItem
+                  id={myAdvert.id}
+                  key={myAdvert.id}
+                  userId={myAdvert.user_id}
+                  imgSrc={coverImage}
+                  brand={myAdvert.brand}
+                  model={myAdvert.model}
+                  engineCapacity={myAdvert.engine_capacity}
+                  modelYear={myAdvert.model_year}
+                  price={myAdvert.price}
+                  city={myAdvert.city}
+                  onDeleteDialog={() => openDeleteModal(myAdvert.id)}
+                  onEditDialog={() => openEditModal(myAdvert.id)}
+                  showDeleteButton={true}
+                  showEditButton={true}
+                />
+              );
+            })}
           </AnimatePresence>
         </div>
       ) : (

@@ -10,6 +10,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import PrimaryButton from "./PrimaryButton";
 import { usePatchSoldAdvert } from "@/hooks/PATCH/usePatchSoldAdvert";
 import SuccessMessage from "./SuccessMessage";
+import SimilarAdverts from "./SimiliarAdverts";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdvertInfos() {
   const {
@@ -27,6 +29,7 @@ export default function AdvertInfos() {
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showSimilarAdverts, setShowSimilarAdverts] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   useCheckAuth();
@@ -368,7 +371,7 @@ export default function AdvertInfos() {
                 <div className={classes.buyButtonContainer}>
                   <PrimaryButton
                     type="button"
-                    text={`${patchSoldAdvertIsPending ? "Satın alınıyor..." : "Satın Al"}`}
+                    text={`${patchSoldAdvertIsPending ? "Satın alınıyor..." : "Bu Aracı Satın Al"}`}
                     className={classes.buyButton}
                     onClick={advertBuyHandler}
                   />
@@ -395,6 +398,32 @@ export default function AdvertInfos() {
                 </div>
               </div>
             )}
+          </div>
+
+          <div className={classes.similarAdvertsContainer}>
+            <button
+              type="button"
+              className={classes.toggleSimilarBtn}
+              onClick={() => setShowSimilarAdverts((prev) => !prev)}
+            >
+              {showSimilarAdverts
+                ? "Benzer Araçları Gizle"
+                : "Yapay Zeka Önerisi Benzer Araçları Gör ✨"}
+            </button>
+
+            <AnimatePresence>
+              {showSimilarAdverts && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, y: -20 }}
+                  animate={{ opacity: 1, height: "auto", y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  style={{ width: "100%", overflow: "hidden" }}
+                >
+                  <SimilarAdverts currentAdvertId={advert.id} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       ) : (

@@ -70,6 +70,13 @@ export default function PriceOffer({ advertId }) {
       return;
     }
 
+    if (!images[0]) {
+      setError(
+        "Lütfen ilk kutucuğa bir Kapak Fotoğrafı eklediğinizden emin olun.",
+      );
+      return;
+    }
+
     const formData = new FormData();
 
     formData.append("title", inputTextareValue.title);
@@ -95,6 +102,14 @@ export default function PriceOffer({ advertId }) {
       formData.append("hasDent", hasDent);
     }
 
+    if (images[0].file) {
+      formData.append("coverImageIdentifier", images[0].file.name);
+      formData.append("coverImageType", "new_file");
+    } else if (images[0].preview) {
+      formData.append("coverImageIdentifier", images[0].preview);
+      formData.append("coverImageType", "existing_url");
+    }
+
     const existingImageUrls = [];
 
     uploadedFiles.forEach((img) => {
@@ -106,6 +121,36 @@ export default function PriceOffer({ advertId }) {
     });
 
     formData.append("existingImages", JSON.stringify(existingImageUrls));
+
+    if (images[0] && images[0].file) {
+      try {
+        setLoading(true);
+        const pyFormData = new FormData();
+        pyFormData.append("file", images[0].file);
+
+        const pyResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_FAST_API_URL}/car-detection-upload`,
+          {
+            method: "POST",
+            body: pyFormData,
+          },
+        );
+
+        if (pyResponse.ok) {
+          const pyData = await pyResponse.json();
+          const embeddingVector = pyData.image_embedding;
+
+          formData.append("image_embedding", JSON.stringify(embeddingVector));
+          console.log("Kapak fotoğrafı embedding vektörü başarıyla alındı!");
+        } else {
+          console.warn(
+            "Python API'den embedding alınamadı, ilan vektörsüz kaydedilebilir.",
+          );
+        }
+      } catch (err) {
+        console.error("Yapay Zeka API bağlantı hatası:", err);
+      }
+    }
 
     try {
       setLoading(true);
@@ -180,11 +225,17 @@ export default function PriceOffer({ advertId }) {
           const loadedImages = Array(10).fill(null);
 
           if (data.images && Array.isArray(data.images)) {
-            data.images.forEach((imgObj, idx) => {
+            const sortedImages = [...data.images].sort((a, b) => {
+              if (a.is_main) return -1;
+              if (b.is_main) return 1;
+              return 0;
+            });
+
+            sortedImages.forEach((imgObj, idx) => {
               if (idx < 10) {
                 loadedImages[idx] = {
                   file: null,
-                  preview: imgObj.image_data,
+                  preview: imgObj.image_data || imgObj.image_url,
                 };
               }
             });

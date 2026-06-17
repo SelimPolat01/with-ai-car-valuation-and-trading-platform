@@ -14,21 +14,18 @@ db.query("SELECT NOW()")
   .then((res) => console.log("DB Bağlantısı başarılı:", res.rows))
   .catch((err) => console.log("DB bağlantı hatası:", err));
 
-// export async function createTable() {
-//   const query = `
-//    ALTER TABLE users ADD COLUMN IF NOT EXISTS name VARCHAR(100);
-//     ALTER TABLE users ADD COLUMN IF NOT EXISTS surname VARCHAR(100);
-//     ALTER TABLE users ADD COLUMN IF NOT EXISTS city VARCHAR(100);
-//     ALTER TABLE users ADD COLUMN IF NOT EXISTS iban VARCHAR(50);
-//     ALTER TABLE users ADD COLUMN IF NOT EXISTS image_src TEXT;
-//     `;
+export async function createTable() {
+  const query = `
+    CREATE EXTENSION IF NOT EXISTS vector;
+    ALTER TABLE adverts ADD COLUMN IF NOT EXISTS image_embedding vector(512);
+  `;
 
-//   try {
-//     await db.query(query);
-//     console.log(
-//       "Veritabanı tabloları başarıyla oluşturuldu veya kontrol edildi.",
-//     );
-//   } catch (error) {
-//     console.error("Tablolar oluşturulurken hata oluştu:", error);
-//   }
-// }
+  try {
+    await db.query(query);
+    console.log(
+      "Veritabanı tabloları başarıyla oluşturuldu veya kontrol edildi.",
+    );
+  } catch (error) {
+    console.error("Tablolar oluşturulurken hata oluştu:", error);
+  }
+}

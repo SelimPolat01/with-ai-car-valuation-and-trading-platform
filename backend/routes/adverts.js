@@ -16,7 +16,7 @@ router.get("/", verifyToken, async (req, res) => {
         SELECT 
           advert_id, 
           image_url,
-          ROW_NUMBER() OVER (PARTITION BY advert_id ORDER BY id ASC) as rn
+          ROW_NUMBER() OVER (PARTITION BY advert_id ORDER BY is_main DESC, id ASC) as rn
         FROM advert_images
       ) i ON a.id = i.advert_id AND i.rn = 1
       WHERE a.is_sold = false
@@ -38,6 +38,7 @@ router.get("/favoriteAdverts", verifyToken, async (req, res) => {
               (SELECT image_url 
                FROM advert_images 
                WHERE advert_id = a.id 
+               ORDER BY is_main DESC, id ASC
                LIMIT 1) AS image_data
        FROM adverts AS a 
        INNER JOIN favorite_adverts AS f ON a.id = f.advert_id 
@@ -61,6 +62,7 @@ router.get("/myAdverts", verifyToken, async (req, res) => {
               (SELECT image_url 
                FROM advert_images 
                WHERE advert_id = a.id 
+               ORDER BY is_main DESC, id ASC
                LIMIT 1) AS image_data
        FROM adverts AS a 
        WHERE a.user_id = $1 AND a.is_sold = false
@@ -145,7 +147,7 @@ router.get("/:advertId", verifyToken, async (req, res) => {
                 'id', ai.id, 
                 'image_data', ai.image_url, 
                 'is_main', ai.is_main
-              )
+              ) ORDER BY ai.is_main DESC, ai.id ASC
             ), 
             '[]'
           )
@@ -186,13 +188,27 @@ router.post(
     const isScratched = data.hasScratch === "true" || data.hasScratch === true;
     const hasDent = data.hasDent === "true" || data.hasDent === true;
     const trimLevel = data.trimLevel;
+    const { coverImageIdentifier } = data;
+
+    let imageEmbedding = null;
+    if (data.image_embedding) {
+      try {
+        const parsedArray = JSON.parse(data.image_embedding);
+        if (Array.isArray(parsedArray)) {
+          imageEmbedding = JSON.stringify(parsedArray);
+        }
+      } catch (e) {
+        console.error("Embedding parse hatası:", e);
+      }
+    }
+
     try {
       const advertResult = await db.query(
         `INSERT INTO adverts (
           user_id, brand, model, model_year, body_type, 
           engine_capacity, horsepower, transmission, kilometer, 
-          fuel_type, price, title, description, has_scratch, has_dent, trim_level
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id`,
+          fuel_type, price, title, description, has_scratch, has_dent, trim_level, image_embedding
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING id`,
         [
           Number(user.id),
           data.brand,
@@ -210,9 +226,12 @@ router.post(
           isScratched,
           hasDent,
           trimLevel,
+          imageEmbedding,
         ],
       );
+
       const newAdvertId = advertResult.rows[0].id;
+
       if (req.files && Array.isArray(req.files) && req.files.length > 0) {
         const valuesQueryParts = [];
         const queryArgs = [newAdvertId];
@@ -221,8 +240,19 @@ router.post(
           const mainParamIndex = index * 2 + 3;
           valuesQueryParts.push(`($1, $${imgParamIndex}, $${mainParamIndex})`);
           const base64Str = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+
+          let isMain = false;
+          if (
+            coverImageIdentifier &&
+            file.originalname === coverImageIdentifier
+          ) {
+            isMain = true;
+          } else if (!coverImageIdentifier && index === 0) {
+            isMain = true;
+          }
+
           queryArgs.push(base64Str);
-          queryArgs.push(index === 0);
+          queryArgs.push(isMain);
         });
         const imagesInsertQuery = `
           INSERT INTO advert_images (advert_id, image_url, is_main) 
@@ -246,24 +276,66 @@ router.put(
   verifyToken,
   upload.array("images", 10),
   async (req, res) => {
-    const { id, title, description, existingImages } = req.body;
+    const {
+      id,
+      title,
+      description,
+      existingImages,
+      image_embedding,
+      coverImageIdentifier,
+      coverImageType,
+    } = req.body;
     const user = req.user;
     const newFiles = req.files;
+
+    let imageEmbeddingObj = null;
+    if (image_embedding) {
+      try {
+        const parsedArray = JSON.parse(image_embedding);
+        if (Array.isArray(parsedArray)) {
+          imageEmbeddingObj = JSON.stringify(parsedArray);
+        }
+      } catch (e) {
+        console.error("Embedding parse hatası:", e);
+      }
+    }
+
     try {
-      await db.query(
-        "UPDATE adverts SET title = $1, description = $2 WHERE user_id = $3 AND id = $4",
-        [title, description, Number(user.id), id],
-      );
+      if (imageEmbeddingObj) {
+        await db.query(
+          "UPDATE adverts SET title = $1, description = $2, image_embedding = $3 WHERE user_id = $4 AND id = $5",
+          [title, description, imageEmbeddingObj, Number(user.id), id],
+        );
+      } else {
+        await db.query(
+          "UPDATE adverts SET title = $1, description = $2 WHERE user_id = $3 AND id = $4",
+          [title, description, Number(user.id), id],
+        );
+      }
+
       await db.query("DELETE FROM advert_images WHERE advert_id = $1", [id]);
+
+      let isMainAssigned = false;
+
       if (existingImages) {
         try {
           const imagesToKeep = JSON.parse(existingImages);
           if (Array.isArray(imagesToKeep)) {
             for (const url of imagesToKeep) {
               if (url && url !== "null" && url !== "") {
+                let isMain = false;
+
+                if (
+                  coverImageType === "existing_url" &&
+                  url === coverImageIdentifier
+                ) {
+                  isMain = true;
+                  isMainAssigned = true;
+                }
+
                 await db.query(
                   "INSERT INTO advert_images (advert_id, image_url, is_main) VALUES ($1, $2, $3)",
-                  [id, url, false],
+                  [id, url, isMain],
                 );
               }
             }
@@ -276,12 +348,34 @@ router.put(
       if (newFiles && newFiles.length > 0) {
         for (const file of newFiles) {
           const base64Str = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+
+          let isMain = false;
+          if (
+            coverImageType === "new_file" &&
+            file.originalname === coverImageIdentifier
+          ) {
+            isMain = true;
+            isMainAssigned = true;
+          }
+
           await db.query(
             "INSERT INTO advert_images (advert_id, image_url, is_main) VALUES ($1, $2, $3)",
-            [id, base64Str, false],
+            [id, base64Str, isMain],
           );
         }
       }
+
+      if (!isMainAssigned) {
+        await db.query(
+          `UPDATE advert_images 
+           SET is_main = true 
+           WHERE id = (
+             SELECT id FROM advert_images WHERE advert_id = $1 ORDER BY id ASC LIMIT 1
+           )`,
+          [id],
+        );
+      }
+
       res.status(200).json({ message: "İlan başarıyla güncellendi." });
     } catch (err) {
       console.error("Güncelleme Hatası:", err);
@@ -362,6 +456,27 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
     res
       .status(500)
       .json({ message: "İlan satın alınırken sunucu hatası meydana geldi." });
+  }
+});
+
+router.get("/similar-by-ai/:advertId", verifyToken, async (req, res) => {
+  const { advertId } = req.params;
+
+  try {
+    const similarAdverts = await db.query(
+      `SELECT a.id, a.brand, a.model, a.price, a.model_year, a.kilometer,
+        (SELECT image_url FROM advert_images WHERE advert_id = a.id ORDER BY is_main DESC LIMIT 1) as image_data
+       FROM adverts a
+       WHERE a.id != $1 AND a.is_sold = false
+       ORDER BY a.image_embedding <=> (SELECT image_embedding FROM adverts WHERE id = $1)
+       LIMIT 5`,
+      [advertId],
+    );
+
+    res.status(200).json(similarAdverts.rows);
+  } catch (err) {
+    console.error("Yapay Zeka Benzer İlan Hatası:", err);
+    res.status(500).json({ message: "Benzer araçlar getirilemedi." });
   }
 });
 

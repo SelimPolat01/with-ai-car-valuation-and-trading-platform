@@ -8,6 +8,7 @@ import { router as predictRoutes } from "./routes/predict.js";
 import { router as personalInfoRoutes } from "./routes/infos.js";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
+import { createTable } from "./lib/db.js";
 // import { dbInsertCars } from "./utils/dbInsertCars.js";
 
 const app = express();
@@ -16,7 +17,7 @@ app.set("trust proxy", 1);
 
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 200,
   message: {
     status: 429,
     error: "Çok fazla istek atıldı. Lütfen 15 dakika sonra tekrar deneyin.",
@@ -53,7 +54,7 @@ app.use("/adverts", globalLimiter, advertsRoutes);
 app.use("/predict", globalLimiter, predictRoutes);
 app.use("/infos", personalInfoRoutes);
 
-// await createTable();
+await createTable();
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server ${PORT} portunda başarıyla çalışıyor.`);

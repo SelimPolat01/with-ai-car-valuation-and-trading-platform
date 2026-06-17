@@ -157,7 +157,13 @@ export default function AllAdverts() {
         <div className={classes.div}>
           <AnimatePresence>
             {displayAdverts.map((advert) => {
-              const coverImage = advert.image_src;
+              const mainImgObj = advert.images
+                ? advert.images.find((img) => img.is_main) || advert.images[0]
+                : null;
+
+              const coverImage = mainImgObj
+                ? mainImgObj.image_data || mainImgObj.image_url
+                : advert.image_src;
 
               return (
                 <AdvertItem

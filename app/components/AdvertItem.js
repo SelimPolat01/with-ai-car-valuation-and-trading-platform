@@ -64,7 +64,7 @@ export default function AdvertItem({
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.35 }}
       onClick={() => {
-        router.replace(`/ilan/${brand}-${model}-${modelYear}/${id}`);
+        router.push(`/ilan/${brand}-${model}-${modelYear}/${id}`);
       }}
     >
       <div className={classes.advert}>

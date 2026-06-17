@@ -79,10 +79,10 @@ export default function Header({ className }) {
         <Link href="/">
           <Image
             className={classes.logo}
-            src="/images/logo1.png"
+            src="/images/logo.svg"
             alt="logo"
-            width={75}
-            height={60}
+            width={65}
+            height={65}
             priority
           />
         </Link>

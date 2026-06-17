@@ -284,7 +284,12 @@ export default function AdvertInfos() {
     );
   };
 
-  if (!advert) return <p>İlan yükleniyor...</p>;
+  if (!advert)
+    return (
+      <div className={classes.loadingTextDiv}>
+        <p>İlan yükleniyor...</p>
+      </div>
+    );
   if (error) return <p>{error}</p>;
 
   return (

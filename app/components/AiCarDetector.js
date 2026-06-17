@@ -128,6 +128,7 @@ export default function AiCarDetector() {
       if (preview) URL.revokeObjectURL(preview);
       setPreview(URL.createObjectURL(selectedFile));
     }
+    event.target.value = "";
   }
 
   async function handleUpload() {
@@ -224,14 +225,9 @@ export default function AiCarDetector() {
           ref={fileInputRef}
           onChange={handleChange}
         />
-        <div className={classes.photoContainer} onClick={handleClick}>
+        <div className={classes.photoContainer}>
           <div className={classes.photoUploadTextContainer}>
-            <span
-              onClick={(event) => event.stopPropagation()}
-              className={classes.customUpload}
-            >
-              Fotoğraf Yükle
-            </span>
+            <span className={classes.customUpload}>Fotoğraf Yükle</span>
             <Camera size={32} stroke="url(#custom-text-stroke)" />
           </div>
           {preview ? (
@@ -241,9 +237,10 @@ export default function AiCarDetector() {
               src={preview}
               alt="preview"
               className={classes.preview}
+              onClick={handleClick}
             />
           ) : (
-            <div className={classes.emptyBox}></div>
+            <div className={classes.emptyBox} onClick={handleClick}></div>
           )}
         </div>
 

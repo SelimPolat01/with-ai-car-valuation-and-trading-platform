@@ -224,6 +224,7 @@
 @media (max-width: 768px) {
   .div {
     padding: 2rem 1rem;
+    height: auto;
   }
 
   .pageTitle {

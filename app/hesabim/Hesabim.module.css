@@ -1,6 +1,6 @@
 .main {
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;

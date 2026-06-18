@@ -124,8 +124,8 @@
 
 @media (max-width: 768px) {
   .div {
-    margin-left: 12px;
     height: 28px;
+    margin: 0 1rem 0 1rem;
   }
 
   .input {

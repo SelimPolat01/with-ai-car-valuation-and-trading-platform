@@ -151,9 +151,9 @@
 
 @media (max-width: 768px) {
   .nav {
-    margin: 0;
-    padding: 0 0.5rem;
-    height: 55px;
+    margin: 0 0 1rem 0;
+    padding: 0 0.5rem 0 0;
+    height: 28px;
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -163,10 +163,9 @@
   }
 
   .logo {
-    margin: 0;
     height: 45px;
     min-width: 45px;
-    margin: 0 0 1.25rem 0;
+    margin: 0.6rem 0 0 0;
   }
 
   .searchBar {
@@ -181,7 +180,7 @@
     gap: 0.5rem;
     height: 100%;
     align-items: flex-start;
-    margin: 0;
+    margin: 0.25rem 0 0 0;
     padding: 0;
     flex: 1;
     min-width: 0;
@@ -195,6 +194,7 @@
     align-items: flex-start;
     justify-content: center;
     flex-shrink: 0;
+    height: 28px;
   }
 
   .homeLink,

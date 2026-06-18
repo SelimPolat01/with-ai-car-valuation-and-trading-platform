@@ -224,26 +224,17 @@
 @media (max-width: 768px) {
   .div {
     padding: 2rem 1rem;
-    height: auto !important;
-    min-height: unset !important;
-    overflow: visible !important;
-    display: block;
   }
 
   .pageTitle {
     font-size: 24px;
     margin-left: 0;
     margin-bottom: 24px;
-    display: block;
   }
 
   .formWrapper {
     padding: 1.5rem;
     border-radius: 12px;
-    height: auto !important;
-    min-height: unset !important;
-    overflow: visible !important;
-    display: block;
   }
 
   .gridContainer {

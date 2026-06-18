@@ -124,93 +124,97 @@ export default function Header({ className }) {
             ))}
           {isLogin && (
             <>
-              <Link
-                className={`${classes.allAdvertsLink}${
-                  className ? ` ${className}` : ""
-                }`}
-                title="Tüm İlanlar"
-                href="/tum-ilanlar"
-              >
-                <LayoutGrid
-                  className={classes.icon}
-                  size={30}
-                  stroke="url(#header-icon-gold)"
-                />
-              </Link>
-              <li className={classes.account}>
+              {isLogin && !path.startsWith("/tum-ilanlar") && (
                 <Link
-                  className={`${classes.accountLink}${
+                  className={`${classes.allAdvertsLink}${
                     className ? ` ${className}` : ""
                   }`}
-                  title="Hesabım"
-                  href="/hesabim"
+                  title="Tüm İlanlar"
+                  href="/tum-ilanlar"
                 >
-                  <User
+                  <LayoutGrid
                     className={classes.icon}
                     size={30}
                     stroke="url(#header-icon-gold)"
                   />
                 </Link>
-                <ul className={classes.accountMenu}>
-                  <li>
-                    <Link
-                      href="/ilanlarim"
-                      className={classes.myAdvertsLink}
-                      title="İlanlarım"
-                    >
-                      <Tags
-                        className={classes.juniorIcon}
-                        size={20}
-                        stroke="url(#header-icon-gold))"
-                      />
-                      İlanlarım
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/favori-ilanlar"
-                      className={classes.favoriteAdvertsLink}
-                      title="Favori İlanlarım"
-                    >
-                      <FolderHeart
-                        className={classes.juniorIcon}
-                        size={20}
-                        stroke="url(#header-icon-gold)"
-                      />
-                      Favorilerim
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/hesabim"
-                      className={classes.juniorAccountLink}
-                      title="Hesabım"
-                    >
-                      <User
-                        className={classes.juniorIcon}
-                        size={20}
-                        stroke="url(#header-icon-gold)"
-                      />
-                      Hesabım
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/login"
-                      onClick={logoutHandler}
-                      className={classes.favoriteAdvertsLink}
-                      title="Çıkış Yap"
-                    >
-                      <LogOut
-                        className={classes.juniorIcon}
-                        size={20}
-                        stroke="url(#header-icon-gold)"
-                      />
-                      Çıkış Yap
-                    </Link>
-                  </li>
-                </ul>
-              </li>
+              )}
+              {isLogin && !path.startsWith("/hesabim") && (
+                <li className={classes.account}>
+                  <Link
+                    className={`${classes.accountLink}${
+                      className ? ` ${className}` : ""
+                    }`}
+                    title="Hesabım"
+                    href="/hesabim"
+                  >
+                    <User
+                      className={classes.icon}
+                      size={30}
+                      stroke="url(#header-icon-gold)"
+                    />
+                  </Link>
+                  <ul className={classes.accountMenu}>
+                    <li>
+                      <Link
+                        href="/ilanlarim"
+                        className={classes.myAdvertsLink}
+                        title="İlanlarım"
+                      >
+                        <Tags
+                          className={classes.juniorIcon}
+                          size={20}
+                          stroke="url(#header-icon-gold))"
+                        />
+                        İlanlarım
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/favori-ilanlar"
+                        className={classes.favoriteAdvertsLink}
+                        title="Favori İlanlarım"
+                      >
+                        <FolderHeart
+                          className={classes.juniorIcon}
+                          size={20}
+                          stroke="url(#header-icon-gold)"
+                        />
+                        Favorilerim
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/hesabim"
+                        className={classes.juniorAccountLink}
+                        title="Hesabım"
+                      >
+                        <User
+                          className={classes.juniorIcon}
+                          size={20}
+                          stroke="url(#header-icon-gold)"
+                        />
+                        Hesabım
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/login"
+                        onClick={logoutHandler}
+                        className={classes.favoriteAdvertsLink}
+                        title="Çıkış Yap"
+                      >
+                        <LogOut
+                          className={classes.juniorIcon}
+                          size={20}
+                          stroke="url(#header-icon-gold)"
+                        />
+                        Çıkış Yap
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
+              )}
             </>
           )}
         </ul>

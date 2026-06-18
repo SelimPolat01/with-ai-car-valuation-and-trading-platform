@@ -202,16 +202,23 @@
   }
 
   .form {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    /* Mobilde içerik uzun olsa dahi iki dropdown'ı tam eşit 50/50 genişlikte tutar */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
     padding: 20px;
     width: 100%;
     max-width: 350px;
     box-sizing: border-box;
   }
 
+  /* Formun grid içindeki elemanlarının taşmasını tamamen önler */
+  .form > div {
+    min-width: 0;
+    width: 100%;
+  }
+
   .engineCapacityWrapper {
-    grid-column: span 1;
+    grid-column: span 2;
   }
 
   .form input {

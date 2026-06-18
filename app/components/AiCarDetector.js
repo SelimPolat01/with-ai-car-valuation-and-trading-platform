@@ -228,7 +228,11 @@ export default function AiCarDetector() {
         <div className={classes.photoContainer}>
           <div className={classes.photoUploadTextContainer}>
             <span className={classes.customUpload}>Fotoğraf Yükle</span>
-            <Camera size={32} stroke="url(#custom-text-stroke)" />
+            <Camera
+              className={classes.cameraIcon}
+              size={32}
+              stroke="url(#custom-text-stroke)"
+            />
           </div>
           {preview ? (
             <Image

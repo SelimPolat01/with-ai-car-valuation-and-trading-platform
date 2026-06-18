@@ -345,6 +345,7 @@
     width: 100% !important;
     height: auto !important;
     aspect-ratio: 16 / 10 !important;
+    object-fit: cover !important;
     display: block !important;
     box-sizing: border-box;
   }
@@ -372,13 +373,22 @@
     padding: 16px 12px;
   }
 
-  .customUpload {
-    font-size: 26px;
+  .photoUploadTextContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
     margin-bottom: 10px;
+    width: 100%;
   }
 
-  .photoUploadTextContainer {
-    flex-wrap: wrap;
-    justify-content: center;
+  .customUpload {
+    font-size: 26px;
+    margin: 0 0.5rem 0 0 !important;
+  }
+
+  .cameraIcon {
+    width: 26px;
+    height: 26px;
   }
 }

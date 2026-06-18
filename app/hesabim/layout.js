@@ -30,20 +30,6 @@ export default function SettingsLayout({ children }) {
     { href: "/hesabim/guvenlik", text: "Güvenlik" },
   ];
 
-  //   async function logoutHandler() {
-  //     mutate(
-  //       { token: token },
-  //       {
-  //         onSuccess: () => {
-  //           router.replace("/login");
-  //           localStorage.removeItem("token");
-  //           localStorage.removeItem("refreshToken");
-  //         },
-  //         onError: (err) => console.error(err),
-  //       },
-  //     );
-  //   }
-
   function logoutHandler() {
     dispatch(logout());
     localStorage.removeItem("token");
@@ -80,7 +66,7 @@ export default function SettingsLayout({ children }) {
                   onClick={logoutHandler}
                   className={classes.logoutLink}
                 >
-                  Logout
+                  Çıkış Yap
                 </Link>
               </li>
             </ul>

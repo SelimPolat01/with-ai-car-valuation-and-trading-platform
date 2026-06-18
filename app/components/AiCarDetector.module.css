@@ -327,6 +327,12 @@
     padding: 2rem 1rem;
     gap: 2rem;
     box-sizing: border-box;
+    width: 100%;
+  }
+
+  .photoDiv {
+    width: 100%;
+    max-width: 400px;
   }
 
   .photoContainer {
@@ -339,7 +345,6 @@
     width: 100% !important;
     height: auto !important;
     aspect-ratio: 16 / 10 !important;
-    object-fit: cover !important;
     display: block !important;
     box-sizing: border-box;
   }

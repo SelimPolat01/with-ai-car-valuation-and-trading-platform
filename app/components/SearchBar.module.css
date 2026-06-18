@@ -121,3 +121,17 @@
   color: #ff6b6b;
   background-color: #f3f7f7;
 }
+
+@media (max-width: 768px) {
+  .div {
+    margin-left: 12px;
+  }
+
+  .input {
+    width: 130px;
+  }
+
+  .ul {
+    width: 158px;
+  }
+}

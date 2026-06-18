@@ -51,7 +51,6 @@
 }
 
 .priceOfferText {
-  color: #ffffff;
   margin: 0;
   font-size: 28px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
@@ -59,10 +58,11 @@
 
 .priceOfferText strong {
   font-weight: 500;
+  color: #ffffff;
 }
 
 .priceOfferText span {
-  color: #ffffff;
+  color: #ffe600;
   font-weight: 800;
   letter-spacing: 1px;
 }
@@ -71,7 +71,7 @@
   color: #ff6b6b !important;
   border: 1px solid rgba(255, 107, 107, 0.3) !important;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 20px !important;
   background: rgba(0, 0, 0, 0.6) !important;
   height: 50px !important;
   padding: 0 24px !important;
@@ -337,15 +337,22 @@
   }
 
   .buttonDiv {
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
-    max-width: 340px;
-    gap: 1.2rem;
+    max-width: 100%;
+    gap: 0.5rem;
   }
 
   .cancelButton,
   .button {
-    width: 100% !important;
+    width: 50% !important;
+    flex: 1;
+    height: 50px !important;
+    padding: 0 4px !important;
+    font-size: 13px !important;
+    text-align: center !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
   }
 
   .techParams,

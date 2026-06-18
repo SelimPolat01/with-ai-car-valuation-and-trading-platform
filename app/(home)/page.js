@@ -22,17 +22,6 @@ export default function Home() {
       ) : (
         <AiCarDetector />
       )}
-      {/* <div>
-          <h1>
-            Aracın değerini biliyor musun ?
-            <p>
-              Senden istenilen formları eksiksiz doldur,
-              <br />
-              aracın değeri, senin için <span>saniyeler içinde</span>
-              hesaplansın! <br />
-            </p>
-          </h1>
-        </div> */}
     </main>
   );
 }

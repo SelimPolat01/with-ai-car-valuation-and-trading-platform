@@ -20,6 +20,7 @@
   display: flex;
   justify-content: center;
   margin: 0;
+  width: 100%;
 }
 
 .biggerFrame {
@@ -30,4 +31,24 @@
 .frame {
   width: 350px;
   min-height: 160px;
+}
+
+@media (max-width: 768px) {
+  .div {
+    padding: 1.5rem 1rem;
+    box-sizing: border-box;
+  }
+  .frameDiv {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+  .frame {
+    width: 100%;
+    max-width: 400px;
+  }
+  .biggerFrame {
+    width: 100%;
+    max-width: 400px;
+  }
 }

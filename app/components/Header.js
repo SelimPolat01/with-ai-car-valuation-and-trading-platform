@@ -85,8 +85,8 @@ export default function Header({ className }) {
             className={classes.logo}
             src="/images/logo.svg"
             alt="logo"
-            width={65}
-            height={65}
+            width={50}
+            height={50}
             priority
           />
         </Link>

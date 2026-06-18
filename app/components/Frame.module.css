@@ -84,3 +84,9 @@
   width: 24px;
   height: 24px;
 }
+
+@media (max-width: 768px) {
+  .total {
+    font-size: 30px;
+  }
+}

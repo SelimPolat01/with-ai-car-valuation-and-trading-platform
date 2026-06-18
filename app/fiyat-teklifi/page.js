@@ -14,8 +14,6 @@ export default function PriceOffer() {
 
   const [displayPrice, setDisplayPrice] = useState(0);
   const [animationFinished, setAnimationFinished] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const dispatch = useDispatch();
   const prediction = useSelector((state) => state.prediction.prediction);
   const router = useRouter();
   const today = new Date();

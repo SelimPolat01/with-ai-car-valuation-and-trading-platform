@@ -200,3 +200,59 @@
 .emailSuccessMessage button:hover {
   transform: scale(1.05);
 }
+
+/* MOBİL TASARIM EKLENTİSİ */
+@media (max-width: 768px) {
+  .div {
+    padding: 1rem;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  .settingsContainer {
+    padding: 1.5rem;
+  }
+
+  .settingBlock {
+    grid-template-columns: 1fr; /* 300px sınırı iptal edildi, dikey düzene geçildi */
+    gap: 1.5rem;
+    padding: 2rem 0;
+  }
+
+  .row {
+    flex-direction: column; /* Yan yana duran inputlar alt alta sıralandı */
+    gap: 1rem;
+  }
+
+  .dangerZone {
+    padding: 1.5rem;
+  }
+
+  .dangerBox {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .dangerBtn {
+    width: 100%; /* Silme butonu tam genişlikte kullanılsın */
+  }
+
+  .submitContainer {
+    justify-content: stretch;
+  }
+
+  .submitContainer button {
+    width: 100%;
+  }
+
+  .emailSuccessMessage,
+  .passwordSuccessMessage,
+  .tokenDurationSuccessMessage {
+    height: auto !important;
+    padding: 1.5rem 0;
+  }
+}

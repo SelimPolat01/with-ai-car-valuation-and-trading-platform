@@ -97,3 +97,43 @@
     Segoe UI Symbol,
     Noto Color Emoji;
 }
+
+@media (max-width: 768px) {
+  .main {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .advertsContainer {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .filterDiv {
+    width: 100%;
+  }
+
+  .filterWrapper1 {
+    max-height: 200px;
+  }
+
+  .headerDiv {
+    text-align: center;
+    padding: 12px 1rem;
+  }
+
+  .headerDiv h1 {
+    font-size: 20px;
+  }
+
+  .div {
+    margin: 0;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .notFoundAdvertDiv {
+    height: 50vh;
+  }
+}

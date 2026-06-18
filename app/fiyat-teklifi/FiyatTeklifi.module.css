@@ -282,3 +282,75 @@
 .svg:hover {
   transform: scale(1.15);
 }
+
+@media (max-width: 768px) {
+  .wrapperDiv {
+    height: auto;
+    min-height: 80vh;
+    padding: 3rem 1rem;
+    gap: 2rem;
+    box-sizing: border-box;
+  }
+
+  .carModel {
+    padding: 12px 16px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+
+  .carModel h2 {
+    font-size: 20px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .circle {
+    padding: 1.5rem 1.25rem;
+    border-radius: 24px;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .priceOfferText {
+    font-size: 24px;
+  }
+
+  .validatyDateDiv {
+    padding: 12px 16px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .validatyDate {
+    font-size: 14px;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .buttonDiv {
+    flex-direction: column;
+    width: 100%;
+    max-width: 340px;
+    gap: 1.2rem;
+  }
+
+  .cancelButton,
+  .button {
+    width: 100% !important;
+  }
+
+  .techParams,
+  .priceParams {
+    width: 260px;
+    max-width: 85vw;
+  }
+}

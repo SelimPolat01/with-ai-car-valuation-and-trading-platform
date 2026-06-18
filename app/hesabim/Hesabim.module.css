@@ -120,3 +120,47 @@
 .mainContent::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
+
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .linkDiv {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-top-right-radius: 0;
+  }
+
+  .linkMenu {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .linkMenu li:last-child {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .list {
+    padding: 8px 12px;
+    font-size: 14px;
+    flex: 1;
+    min-width: 140px;
+    justify-content: center;
+  }
+
+  .list:hover:not(.active) {
+    transform: translateY(-2px);
+  }
+
+  .mainContent {
+    padding: 1rem;
+  }
+}

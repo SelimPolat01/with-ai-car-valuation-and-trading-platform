@@ -119,3 +119,39 @@
   border-color: #fca5a5;
   transform: scale(1.1);
 }
+
+@media (max-width: 768px) {
+  .advertDiv {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .imageDiv {
+    width: 100%;
+    height: 180px;
+    padding-right: 0;
+    margin-bottom: 12px;
+  }
+
+  .imageDiv img {
+    width: 100%;
+  }
+
+  .titleBrandModelDiv {
+    width: 100%;
+    padding-right: 0;
+    margin-bottom: 8px;
+  }
+
+  .priceDiv {
+    width: 100%;
+    padding: 0;
+    justify-content: flex-start;
+  }
+
+  .deleteAdvertButton {
+    opacity: 1;
+    top: 8px;
+    right: 8px;
+  }
+}

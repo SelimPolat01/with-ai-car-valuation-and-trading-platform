@@ -230,3 +230,74 @@
     margin: 0;
   }
 }
+
+@media (max-width: 768px) {
+  .container {
+    margin: 1rem auto;
+    padding: 0 0.75rem;
+  }
+
+  .sellTimeBubble {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1rem auto;
+    border-width: 3px;
+  }
+
+  .bubbleTitle {
+    font-size: 0.55rem;
+  }
+
+  .bubbleValue {
+    font-size: 1.75rem;
+  }
+
+  .bubbleSubtitle {
+    font-size: 0.7rem;
+  }
+
+  .grid {
+    gap: 10px;
+  }
+
+  .card {
+    border-width: 1.5px;
+  }
+
+  .icon {
+    width: 45%;
+    height: 45%;
+    margin-bottom: 6px;
+  }
+
+  .label {
+    font-size: 0.8rem;
+  }
+
+  .removeBtn {
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+    top: 6px;
+    right: 6px;
+  }
+
+  .overlayMask {
+    padding: 6px;
+  }
+
+  .targetCross {
+    font-size: 1.25rem;
+  }
+
+  .overlayMessage {
+    font-size: 10px;
+    line-height: 1.2;
+    margin: 2px 0;
+  }
+
+  .clickToTry {
+    font-size: 0.6rem;
+    margin-top: 2px;
+  }
+}

@@ -25,6 +25,8 @@
   flex-direction: column;
   padding: 1rem;
   gap: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .textOptionsContainer {
@@ -38,4 +40,15 @@
   display: inline-block;
   font-size: 20px;
   color: black;
+}
+
+@media (max-width: 768px) {
+  .div {
+    width: 100%;
+    max-width: 400px;
+  }
+  .divContainer {
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+  }
 }

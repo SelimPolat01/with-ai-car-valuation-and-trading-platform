@@ -61,3 +61,41 @@
 .managementNav {
   padding: 0 0 0 20rem;
 }
+
+@media (max-width: 768px) {
+  .main {
+    padding: 1rem;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .listWrapper {
+    width: 100%;
+  }
+
+  .myFavoriteAdvertsTextDiv {
+    width: 100%;
+    text-align: center;
+  }
+
+  .myFavoriteAdvertsTextDiv hr {
+    width: 100% !important;
+  }
+
+  .listHeader {
+    display: none;
+  }
+
+  .managementNav {
+    padding: 1rem 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .noFavoriteAdvertDiv {
+    height: 50vh;
+  }
+}

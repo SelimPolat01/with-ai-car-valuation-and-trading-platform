@@ -365,3 +365,74 @@
 .loadingTextDiv p {
   color: whitesmoke;
 }
+
+@media (max-width: 768px) {
+  .advertDiv {
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+
+  .advertInfoDiv {
+    width: 100%;
+    padding: 1.5rem 1rem;
+    box-sizing: border-box;
+  }
+
+  .titleFavoriteDiv {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .titleFavoriteDiv h2 {
+    font-size: 22px;
+  }
+
+  .advertInfoWrapper1 {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .imgDiv {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .advertInfoWrapper2 {
+    width: 100%;
+  }
+
+  .sliderBtn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .sliderDots {
+    bottom: 10px;
+    padding: 4px 8px;
+  }
+
+  .strong {
+    width: 110px;
+  }
+
+  .buyButtonContainer {
+    margin-top: 1.5rem;
+  }
+
+  .description {
+    font-size: 15px;
+  }
+
+  .descriptionWrapper {
+    padding: 1rem;
+  }
+
+  .toggleSimilarBtn {
+    width: 100%;
+    text-align: center;
+    padding: 0.85rem 1rem;
+  }
+}

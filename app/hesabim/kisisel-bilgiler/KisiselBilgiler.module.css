@@ -223,14 +223,13 @@
 
 @media (max-width: 768px) {
   .div {
-    padding: 2rem 1rem;
+    padding: 1rem 1rem;
     height: auto;
   }
 
   .pageTitle {
     font-size: 24px;
-    margin-left: 0;
-    margin-bottom: 24px;
+    margin: 0 0 16px 10px;
   }
 
   .formWrapper {

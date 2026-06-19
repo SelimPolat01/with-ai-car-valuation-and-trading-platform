@@ -44,3 +44,15 @@
 .buttonWrapper button:hover {
   transform: scale(1.05);
 }
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.6rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .text {
+    font-size: 0.95rem;
+    max-width: 95%;
+  }
+}

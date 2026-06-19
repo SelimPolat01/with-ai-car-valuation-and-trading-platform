@@ -3,20 +3,19 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible !important;
 }
 
 .wrapper {
   display: flex;
   width: 100%;
   flex: 1;
-  height: calc(100vh - 76px);
   margin: 0;
+  overflow: visible !important;
 }
 
 .linkDiv {
   width: 250px;
-  height: 100%;
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(16px);
@@ -25,18 +24,34 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-top-right-radius: 12px;
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+
+  /* STICKY İÇİN GEREKLİ KODLAR */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: flex-start; /* Flexbox içinde sündürmeyi engeller ve çakılı kalmasını sağlar */
+
+  display: flex;
+  flex-direction: column;
 }
 
 .linkContainer {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.linkContainer::-webkit-scrollbar {
+  display: none;
 }
 
 .linkMenu {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
   gap: 0.5rem;
   padding: 24px 16px;
   margin: 0;
@@ -48,6 +63,7 @@
   margin-top: auto;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 16px;
+  margin-bottom: 24px;
 }
 
 .list {
@@ -86,10 +102,8 @@
 
 .mainContent {
   flex: 1;
-  height: 100%;
   padding: 0 2rem 2rem 2rem;
   color: #f8f8f8;
-  overflow-y: auto;
 }
 
 .logoutBtn {
@@ -106,21 +120,6 @@
   margin: 0;
 }
 
-.mainContent::-webkit-scrollbar {
-  width: 8px;
-}
-.mainContent::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-}
-.mainContent::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-}
-.mainContent::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
 @media (max-width: 768px) {
   .wrapper {
     flex-direction: column;
@@ -129,9 +128,19 @@
   .linkDiv {
     width: 100%;
     height: auto;
+    display: block;
+    align-self: auto; /* Mobilde normal hizalamaya döner */
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     border-top-right-radius: 0;
+    position: relative; /* Mobilde yapışkanlığı iptal eder */
+  }
+
+  .linkContainer {
+    position: relative;
+    top: auto;
+    height: auto;
+    overflow-y: visible;
   }
 
   .linkMenu {
@@ -146,6 +155,7 @@
     margin-top: 0;
     border-top: none;
     padding-top: 0;
+    margin-bottom: 0;
   }
 
   .list {

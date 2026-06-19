@@ -479,7 +479,7 @@ export default function Guvenlik() {
             className={classes.blockForm}
           >
             <div className={classes.dangerBox}>
-              <div>
+              <div className={classes.dangerBoxText}>
                 <h4>Hesabı Sil</h4>
                 <p>
                   Hesabınızı ve ilanlarınızı kalıcı olarak silin. Bu işlem geri

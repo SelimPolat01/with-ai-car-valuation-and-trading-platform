@@ -5,35 +5,51 @@
   justify-content: center;
   align-items: center;
   min-height: 280px;
+  width: 100%;
+}
+
+.form {
+  margin: 0.5rem 0 1.5rem 0;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.inputColumn {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.25rem;
 }
 
 .input {
-  width: 40rem;
+  width: 100%;
 }
 
-.button:hover {
-  transform: scale(1.05);
+.error {
+  color: #ef4444;
+  font-size: 13px;
+  margin: 0 0 0 0.2rem;
+  font-family: inherit;
 }
 
 @media (max-width: 768px) {
   .div {
     padding: 0 1.5rem;
-    width: 100%;
     box-sizing: border-box;
-  }
-
-  .div form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .input {
     width: 100%;
   }
 
-  .div button {
+  .form {
     width: 100%;
+    max-width: 100%;
+    gap: 1rem;
+  }
+
+  .form button {
+    width: 100%;
+    margin-top: 0.5rem;
   }
 }

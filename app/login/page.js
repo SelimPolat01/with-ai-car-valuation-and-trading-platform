@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import Input from "@/app/components/Input";
 import classes from "./Login.module.css";
@@ -119,38 +118,54 @@ export default function Login() {
 
   return (
     <div className={classes.div}>
-      <form onSubmit={submitHandler}>
-        <Input
-          className={classes.input}
-          type="text"
-          identifier="email"
-          onChange={inputChangeHandler}
-          onBlur={inputBlurHandler}
-          value={input.email.value}
-          label="E-posta"
-          autoFocus
-          autoComplete="email"
-        />
-        {!isEmailValid && input.email.isBlur && (
-          <p className="error">Lütfen geçerli bir e-posta girin.</p>
-        )}
-        {error === "Girilen e-postaya ait kullanıcı bulunamadı." && (
-          <p className="error">{error}</p>
-        )}
-        <Input
-          type="password"
-          identifier="password"
-          onChange={inputChangeHandler}
-          onBlur={inputBlurHandler}
-          value={input.password.value}
-          label="Parola"
-          className={classes.input}
-          autoComplete="current-password"
-        />
-        {!isPasswordValid && input.password.isBlur && (
-          <p className="error">Parola en az 6 karakterden oluşmalı.</p>
-        )}
-        {error === "Girilen parola hatalı." && <p className="error">{error}</p>}
+      <form className={classes.form} onSubmit={submitHandler}>
+        <div className={classes.inputColumn}>
+          <Input
+            className={classes.input}
+            type="text"
+            identifier="email"
+            onChange={inputChangeHandler}
+            onBlur={inputBlurHandler}
+            value={input.email.value}
+            label="E-posta"
+            autoFocus
+            autoComplete="email"
+          />
+          {!isEmailValid && input.email.isBlur && (
+            <p className={classes.error}>Lütfen geçerli bir e-posta girin.</p>
+          )}
+          {error === "Girilen e-postaya ait kullanıcı bulunamadı." && (
+            <p className={classes.error}>{error}</p>
+          )}
+        </div>
+
+        <div className={classes.inputColumn}>
+          <Input
+            type="password"
+            identifier="password"
+            onChange={inputChangeHandler}
+            onBlur={inputBlurHandler}
+            value={input.password.value}
+            label="Parola"
+            className={classes.input}
+            autoComplete="current-password"
+          />
+          {!isPasswordValid && input.password.isBlur && (
+            <p className={classes.error}>
+              Parola en az 6 karakterden oluşmalı.
+            </p>
+          )}
+          {error === "Girilen parola hatalı." && (
+            <p className={classes.error}>{error}</p>
+          )}
+        </div>
+
+        {error &&
+          error !== "Girilen e-postaya ait kullanıcı bulunamadı." &&
+          error !== "Girilen parola hatalı." && (
+            <p className={classes.error}>{error}</p>
+          )}
+
         <SecondaryButton
           type="submit"
           text={loading ? "Yükleniyor..." : "Giriş Yap"}

@@ -5,69 +5,62 @@
   justify-content: center;
   align-items: center;
   height: auto;
+  width: 100%;
 }
 
 .form {
   margin: 0.5rem 0 1.5rem 0;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.nameSurnameDiv {
+.nameSurnameDiv,
+.telCityDiv {
   display: flex;
   flex-direction: row;
-  gap: 2.5rem;
-  width: 40rem;
+  gap: 1.5rem;
 }
 
 .inputColumn {
   display: flex;
   flex-direction: column;
-  flex: 1;
   width: 100%;
+  gap: 0.25rem;
 }
 
 .halfInput {
-  flex: 1;
   width: 100%;
 }
 
-.input {
-  width: 40rem;
-}
-
-.button:hover {
-  transform: scale(1.05);
+.error {
+  color: #ef4444;
+  font-size: 13px;
+  margin: 0 0 0 0.2rem;
+  font-family: inherit;
 }
 
 @media (max-width: 768px) {
   .div {
     padding: 0 1.5rem;
-    width: 100%;
     box-sizing: border-box;
   }
 
   .form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+    max-width: 100%;
+    gap: 1rem;
   }
 
-  .form > div,
-  .input,
-  .halfInput,
-  .inputColumn {
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .nameSurnameDiv {
+  .nameSurnameDiv,
+  .telCityDiv {
     flex-direction: column;
-    width: 100% !important;
     gap: 1rem;
   }
 
   .form button {
     width: 100%;
-    box-sizing: border-box;
     margin-top: 0.5rem;
   }
 }

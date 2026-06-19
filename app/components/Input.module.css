@@ -6,9 +6,9 @@
 }
 
 .inputDiv label {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
-  margin: 1rem 0 0 0;
+  margin: 0.5rem 0 0 0;
   font-family:
     "Lora",
     -apple-system,
@@ -25,17 +25,20 @@
 }
 
 .inputDiv input {
-  padding: 3px 6px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
   margin: 0 0 0.1rem 0;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 1.5;
-  color: #212529;
-  background-color: #fff;
-  border: 1px solid #ced4da;
-  transition:
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
+  color: #150a29;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
   font-family:
     "Lora",
     -apple-system,
@@ -52,13 +55,12 @@
 }
 
 .inputDiv input:focus {
-  color: #212529;
-  background-color: #fff;
-  border-color: #80c2d0;
+  background-color: #ffffff;
+  border-color: #00f4ff;
   outline: 0;
-  box-shadow: 0 0 0 0.15rem rgba(0, 133, 161, 0.25);
+  box-shadow: 0 0 0 3px rgba(0, 244, 255, 0.15);
 }
 
 .inputDiv input::placeholder {
-  color: #6c757d;
+  color: #94a3b8;
 }

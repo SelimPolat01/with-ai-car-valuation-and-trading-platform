@@ -14,34 +14,13 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const [isConflict, setIsConflict] = useState(false);
   const [input, setInput] = useState({
-    email: {
-      value: "",
-      isBlur: false,
-    },
-    password: {
-      value: "",
-      isBlur: false,
-    },
-    name: {
-      value: "",
-      isBlur: false,
-    },
-    surname: {
-      value: "",
-      isBlur: false,
-    },
-    tel_number: {
-      value: "",
-      isBlur: false,
-    },
-    city: {
-      value: "",
-      isBlur: false,
-    },
-    iban: {
-      value: "",
-      isBlur: false,
-    },
+    email: { value: "", isBlur: false },
+    password: { value: "", isBlur: false },
+    name: { value: "", isBlur: false },
+    surname: { value: "", isBlur: false },
+    tel_number: { value: "", isBlur: false },
+    city: { value: "", isBlur: false },
+    iban: { value: "", isBlur: false },
   });
 
   const dispatch = useDispatch();
@@ -154,45 +133,52 @@ export default function Register() {
   return (
     <div className={classes.div}>
       <form className={classes.form} onSubmit={submitHandler}>
-        <Input
-          className={classes.input}
-          type="text"
-          identifier="email"
-          onChange={inputChangeHandler}
-          onBlur={inputBlurHandler}
-          value={input.email.value}
-          label="E-posta"
-          autoFocus
-          autoComplete="email"
-        />
-        {!isEmailValid && input.email.isBlur && (
-          <p className="error">Lütfen geçerli bir e-posta giriniz.</p>
-        )}
-        {isConflict && (
-          <p className="error">
-            Bu E-posta zaten kayıtlı!{" "}
-            <Link
-              style={{ color: "blue", textDecoration: "underline" }}
-              href="/login"
-            >
-              Giriş yapmak için tıklayın.
-            </Link>
-          </p>
-        )}
-        <Input
-          type="password"
-          identifier="password"
-          onChange={inputChangeHandler}
-          onBlur={inputBlurHandler}
-          value={input.password.value}
-          label="Parola"
-          autoComplete="new-password"
-        />
-        {!isPasswordValid && input.password.isBlur && (
-          <p className="error">
-            Lütfen en az 6 karakterden oluşan parola giriniz.
-          </p>
-        )}
+        <div className={classes.inputColumn}>
+          <Input
+            className={classes.input}
+            type="text"
+            identifier="email"
+            onChange={inputChangeHandler}
+            onBlur={inputBlurHandler}
+            value={input.email.value}
+            label="E-posta"
+            autoFocus
+            autoComplete="email"
+          />
+          {!isEmailValid && input.email.isBlur && (
+            <p className={classes.error}>Lütfen geçerli bir e-posta giriniz.</p>
+          )}
+          {isConflict && (
+            <p className={classes.error}>
+              Bu E-posta zaten kayıtlı!{" "}
+              <Link
+                style={{ color: "blue", textDecoration: "underline" }}
+                href="/login"
+              >
+                Giriş yapmak için tıklayın.
+              </Link>
+            </p>
+          )}
+        </div>
+
+        <div className={classes.inputColumn}>
+          <Input
+            type="password"
+            identifier="password"
+            className={classes.input}
+            onChange={inputChangeHandler}
+            onBlur={inputBlurHandler}
+            value={input.password.value}
+            label="Parola"
+            autoComplete="new-password"
+          />
+          {!isPasswordValid && input.password.isBlur && (
+            <p className={classes.error}>
+              Lütfen en az 6 karakterden oluşan parola giriniz.
+            </p>
+          )}
+        </div>
+
         <div className={classes.nameSurnameDiv}>
           <div className={classes.inputColumn}>
             <Input
@@ -205,7 +191,7 @@ export default function Register() {
               label="İsim"
             />
             {!isNameValid && input.name.isBlur && (
-              <p className="error">Lütfen geçerli bir isim giriniz.</p>
+              <p className={classes.error}>Lütfen geçerli bir isim giriniz.</p>
             )}
           </div>
           <div className={classes.inputColumn}>
@@ -219,24 +205,31 @@ export default function Register() {
               label="Soyisim"
             />
             {!isSurnameValid && input.surname.isBlur && (
-              <p className="error" style={{ margin: "5px 0 0 0" }}>
+              <p className={classes.error}>
                 Lütfen geçerli bir soyisim giriniz.
               </p>
             )}
           </div>
         </div>
-        <Input
-          type="text"
-          identifier="iban"
-          onChange={inputChangeHandler}
-          onBlur={inputBlurHandler}
-          value={input.iban.value}
-          label="IBAN"
-        />
-        {!isIbanValid && input.iban.isBlur && (
-          <p className="error">Lütfen 26 karakterden oluşan IBAN giriniz.</p>
-        )}
-        <div className={classes.nameSurnameDiv}>
+
+        <div className={classes.inputColumn}>
+          <Input
+            type="text"
+            identifier="iban"
+            className={classes.input}
+            onChange={inputChangeHandler}
+            onBlur={inputBlurHandler}
+            value={input.iban.value}
+            label="IBAN"
+          />
+          {!isIbanValid && input.iban.isBlur && (
+            <p className={classes.error}>
+              Lütfen 26 karakterden oluşan IBAN giriniz.
+            </p>
+          )}
+        </div>
+
+        <div className={classes.telCityDiv}>
           <div className={classes.inputColumn}>
             <Input
               type="tel"
@@ -248,8 +241,8 @@ export default function Register() {
               label="Telefon"
             />
             {!isTelNumberValid && input.tel_number.isBlur && (
-              <p className="error">
-                Lütfen geçerli bir telefon numarası giriniz.
+              <p className={classes.error}>
+                Lütfen geçerli bir telefon giriniz.
               </p>
             )}
           </div>
@@ -264,11 +257,13 @@ export default function Register() {
               label="Şehir"
             />
             {!isCityValid && input.city.isBlur && (
-              <p className="error">Lütfen geçerli bir şehir giriniz.</p>
+              <p className={classes.error}>Lütfen geçerli bir şehir giriniz.</p>
             )}
           </div>
         </div>
-        {error && <p className="error">{error}</p>}
+
+        {error && <p className={classes.error}>{error}</p>}
+
         <SecondaryButton
           type="submit"
           text={isLoading ? "Yükleniyor..." : "Kayıt ol"}

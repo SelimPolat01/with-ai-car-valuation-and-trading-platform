@@ -155,6 +155,7 @@
   background: linear-gradient(to right, #a7b8d4, #934b8e, #2d1457) !important;
   color: whitesmoke !important;
   border: #2d1457 1px solid;
+  margin: 0 !important;
 }
 
 .emailSuccessMessage,

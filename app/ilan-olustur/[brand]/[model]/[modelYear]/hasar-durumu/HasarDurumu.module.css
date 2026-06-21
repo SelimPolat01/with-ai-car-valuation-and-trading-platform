@@ -76,6 +76,7 @@
 .card:hover {
   border-color: #4a90e2;
   background-color: #eff6ff;
+  color: #0000;
 }
 
 .icon {

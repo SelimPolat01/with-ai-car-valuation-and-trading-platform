@@ -307,7 +307,7 @@ export default function Header({ className }) {
                     <Tags
                       className={classes.juniorIcon}
                       size={20}
-                      stroke="url(#header-icon-gold)"
+                      stroke="currentColor"
                     />
                     İlanlarım
                   </Link>
@@ -321,7 +321,7 @@ export default function Header({ className }) {
                     <FolderHeart
                       className={classes.juniorIcon}
                       size={20}
-                      stroke="url(#header-icon-gold)"
+                      stroke="currentColor"
                     />
                     Favorilerim
                   </Link>
@@ -335,7 +335,7 @@ export default function Header({ className }) {
                     <User
                       className={classes.juniorIcon}
                       size={20}
-                      stroke="url(#header-icon-gold)"
+                      stroke="currentColor"
                     />
                     Hesabım
                   </Link>
@@ -344,13 +344,13 @@ export default function Header({ className }) {
                   <Link
                     href="/login"
                     onClick={logoutHandler}
-                    className={classes.favoriteAdvertsLink}
+                    className={classes.logoutLink}
                     title="Çıkış Yap"
                   >
                     <LogOut
                       className={classes.juniorIcon}
                       size={20}
-                      stroke="url(#header-icon-gold)"
+                      stroke="currentColor"
                     />
                     Çıkış Yap
                   </Link>

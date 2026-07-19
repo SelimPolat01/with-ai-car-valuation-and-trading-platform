@@ -18,7 +18,7 @@ export default function HalfCircleProgress({
   revenueValue,
   netIncome,
 }) {
-  const COLORS = ["#3b82f6", "#e5e7eb"];
+  const COLORS = ["#00f4ff", "rgba(169, 163, 176, 0.2)"];
   const data = [
     { name: "Full", value: percent },
     { name: "Boş", value: 100 - percent },

@@ -1,8 +1,8 @@
 .div {
   border: 1px solid transparent;
   background:
-    linear-gradient(#f8f8f8) padding-box,
-    linear-gradient(45deg, black, #00c6ff) border-box;
+    linear-gradient(#241442, #241442) padding-box,
+    linear-gradient(45deg, #9867ff, #00f4ff) border-box;
   border-radius: 12px;
   transition: transform 0.25s ease-in;
 }
@@ -39,7 +39,11 @@
   padding: 0;
   display: inline-block;
   font-size: 20px;
-  color: black;
+  color: #ffffff;
+}
+
+.optionsIcon {
+  color: #a9a3b0;
 }
 
 @media (max-width: 768px) {

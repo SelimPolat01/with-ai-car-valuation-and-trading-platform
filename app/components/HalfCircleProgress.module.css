@@ -1,12 +1,12 @@
 .div {
   border: 1px solid transparent;
   background:
-    linear-gradient(#f8f8f8) padding-box,
-    linear-gradient(45deg, black, #00c6ff) border-box;
+    linear-gradient(#241442, #241442) padding-box,
+    linear-gradient(45deg, #9867ff, #00f4ff) border-box;
   border-radius: 12px;
   width: 350px;
   transition: transform 0.25s ease-in;
-  color: #333;
+  color: #ffffff;
 }
 
 .divContainer {
@@ -34,6 +34,7 @@
 
 .infoContainer h1 {
   font-size: 35px;
+  color: #ffffff;
 }
 
 .textContainer {
@@ -45,6 +46,11 @@
   font-size: 20px;
   margin: 0;
   padding: 0;
+  color: #ffffff;
+}
+
+.optionsIcon {
+  color: #a9a3b0;
 }
 
 .subText,
@@ -57,7 +63,7 @@
 }
 
 .subText {
-  color: rgb(111, 110, 110);
+  color: #a9a3b0;
   font-size: 16px;
 }
 
@@ -68,7 +74,7 @@
 .description {
   text-align: center;
   text-align-last: center;
-  color: rgb(111, 110, 110);
+  color: #a9a3b0;
   word-break: break-word;
   line-height: 1.2;
 }
@@ -85,7 +91,7 @@
   padding: 1rem;
   width: 100%;
   box-sizing: border-box;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #4b336b;
 }
 
 .infoItem {
@@ -101,26 +107,26 @@
 }
 
 .greenBg {
-  background-color: rgb(220, 255, 212);
+  background-color: rgba(34, 197, 94, 0.2);
 }
 
 .redBg {
-  background-color: rgb(254, 222, 222);
+  background-color: rgba(239, 68, 68, 0.2);
 }
 
 .upChange {
-  color: green;
+  color: #4ade80;
   padding: 4px 8px;
 }
 
 .downChange {
-  color: red;
+  color: #f87171;
   padding: 4px 8px;
 }
 
 .textCash {
   font-size: 14px;
-  color: rgb(111, 110, 110);
+  color: #a9a3b0;
   font-weight: bold;
 }
 
@@ -128,11 +134,12 @@
   font-size: 14px;
   margin: 0;
   padding: 0;
+  color: #ffffff;
 }
 
 .changeUpIcon {
-  color: green;
-  background-color: rgb(220, 255, 212);
+  color: #4ade80;
+  background-color: rgba(34, 197, 94, 0.2);
   border-radius: 4px;
   display: inline-flex;
   align-items: center;
@@ -142,8 +149,8 @@
 }
 
 .changeDownIcon {
-  color: red;
-  background-color: rgb(254, 222, 222);
+  color: #f87171;
+  background-color: rgba(239, 68, 68, 0.2);
   border-radius: 4px;
   display: inline-flex;
   align-items: center;

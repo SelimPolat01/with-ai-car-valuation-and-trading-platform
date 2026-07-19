@@ -1,3 +1,4 @@
+"use client";
 import { motion } from "framer-motion";
 import classes from "./Frame.module.css";
 import { frameVariants } from "@/app/lib/variants";

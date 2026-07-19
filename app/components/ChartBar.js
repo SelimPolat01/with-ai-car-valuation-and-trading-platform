@@ -1,5 +1,4 @@
 "use client";
-
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 import classes from "./ChartBar.module.css";
 import { useEffect, useMemo, useState } from "react";
@@ -10,6 +9,7 @@ import { chartVariants } from "@/app/lib/variants";
 export default function ChartBar({ text, optionsIcon, width, height, data }) {
   const router = useRouter();
   const [token, setToken] = useState(null);
+
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
     setToken(currentToken);
@@ -43,13 +43,6 @@ export default function ChartBar({ text, optionsIcon, width, height, data }) {
     }));
   }, [data]);
 
-  // if (isLoading) {
-  //   return <p>Loading...</p>;
-  // }
-  // if (isError) {
-  //   <p>{error?.message}</p>;
-  // }
-
   return (
     <motion.div
       variants={chartVariants}
@@ -60,7 +53,7 @@ export default function ChartBar({ text, optionsIcon, width, height, data }) {
       <div className={classes.divContainer}>
         <div className={classes.textOptionsContainer}>
           <h1 className={classes.text}>{text}</h1>
-          <span>{optionsIcon}</span>
+          <span className={classes.optionsIcon}>{optionsIcon}</span>
         </div>
         <div>
           <BarChart
@@ -69,12 +62,20 @@ export default function ChartBar({ text, optionsIcon, width, height, data }) {
             data={chartData}
             className={classes.chartBar}
           >
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
+            <XAxis dataKey="month" stroke="#a9a3b0" />
+            <YAxis stroke="#a9a3b0" />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#241442",
+                borderColor: "#4b336b",
+                color: "#ffffff",
+                borderRadius: "8px",
+              }}
+              itemStyle={{ color: "#00f4ff" }}
+            />
             <Bar
               dataKey="count"
-              fill="url(#gold-stroke)"
+              fill="#00f4ff"
               barSize={20}
               radius={[8, 8, 0, 0]}
             />

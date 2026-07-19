@@ -8,24 +8,13 @@ export const db = new Pool({
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
   port: Number(process.env.DB_PORT),
+
+  ssl: {
+    require: true,
+    rejectUnauthorized: false,
+  },
 });
 
 db.query("SELECT NOW()")
   .then((res) => console.log("DB Bağlantısı başarılı:", res.rows))
   .catch((err) => console.log("DB bağlantı hatası:", err));
-
-// export async function createTable() {
-//   const query = `
-//     CREATE EXTENSION IF NOT EXISTS vector;
-//     ALTER TABLE adverts ADD COLUMN IF NOT EXISTS image_embedding vector(512);
-//   `;
-
-//   try {
-//     await db.query(query);
-//     console.log(
-//       "Veritabanı tabloları başarıyla oluşturuldu veya kontrol edildi.",
-//     );
-//   } catch (error) {
-//     console.error("Tablolar oluşturulurken hata oluştu:", error);
-//   }
-// }

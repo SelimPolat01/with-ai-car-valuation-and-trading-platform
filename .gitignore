@@ -1,4 +1,6 @@
-# --- Dependencies & Environments ---
+# =========================================================================
+# 1. BAĞAMLILIKLAR VE SANAL ORTAMLAR (Dependencies & Environments)
+# =========================================================================
 node_modules/
 **/node_modules/
 .venv/
@@ -9,7 +11,9 @@ ENV/
 bin/
 lib64/
 
-# --- Python / Machine Learning ---
+# =========================================================================
+# 2. PYTHON / MACHINE LEARNING GENEL FİLTRELERİ
+# =========================================================================
 __pycache__/
 **/__pycache__/
 *.py[cod]
@@ -17,8 +21,11 @@ __pycache__/
 *.so
 .Python
 .ipynb_checkpoints
+**/.pytest_cache/
 
-# --- Next.js / React (Frontend) ---
+# =========================================================================
+# 3. NEXT.JS / REACT (Frontend)
+# =========================================================================
 .next/
 **/.next/
 out/
@@ -28,16 +35,9 @@ dist/
 *.tsbuildinfo
 next-env.d.ts
 
-# --- Package Managers ---
-.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# --- Environment & Secrets ---
+# =========================================================================
+# 4. SİSTEM, EDİTÖR VE GİZLİ DOSYALAR (IDE, Secrets & OS)
+# =========================================================================
 .env*
 .env.local
 .env.development.local
@@ -46,36 +46,38 @@ next-env.d.ts
 *.pem
 *.key
 .vscode/
+.idea/
+**/.idea/
 *.sql
+.DS_Store
+Thumbs.db
 
-# --- Debug & Logs ---
+# =========================================================================
+# 5. LOGLAR VE KULLANICI YÜKLEMELERİ (Logs & Uploads)
+# =========================================================================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 logs
 *.log
-
-# --- OS Specific ---
-.DS_Store
-Thumbs.db
-
-# --- Kullanıcı Yüklemeleri ---
-# uploads/ (Kapatılmış, eğer açmak istersen başındaki # işaretini kaldır)
 screenshots/
+# uploads/ (Eğer yüklemeleri kapatmak istersen başındaki # işaretini kaldır)
 
-# --- Projeye Özel Filtrelenen Eğitim Kodları ve Verisetleri (GİTMESİNE GEREK OLMAYANLAR) ---
+# =========================================================================
+# 6. PYTORCH-MODEL-BACKEND KLASÖRÜNE ÖZEL FİLTRELER (Eğitim & Verisetleri)
+# =========================================================================
 pytorch-model-backend/train_models/
 pytorch-model-backend/nlp_summary_train.py
 pytorch-model-backend/train.py
 pytorch-model-backend/train_step.py
 pytorch-model-backend/test_step.py
 pytorch-model-backend/description_summary.csv
-
-# Ortam ve test klasörleri
 pytorch-model-backend/ortam_1/
 
-# NOT: Büyük dil modelleri GitHub'ın 100MB sınırına takılabilir. 
-# Eğer hata alırsan bu modelleri Git LFS ile yüklemeli veya klasörleri aşağıdaki gibi ignore etmelisin.
+# =========================================================================
+# 7. KRİTİK: BÜYÜK MODELLER (GitHub 100MB sınırına takılanlar)
+# =========================================================================
+pytorch-model-backend/oto_ozet_modeli/
 pytorch-model-backend/benim_oto_ozet_modelim/
 pytorch-model-backend/mt5-oto-ekspertiz-ozet/

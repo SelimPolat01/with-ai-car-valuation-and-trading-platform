@@ -22,6 +22,12 @@ train_models/
 train.py
 train_step.py
 test_step.py
+nlp_summary_train.py
+description_summary.csv
 
-# Kullanıcı yüklemeleri (Modeller GİTMELİ, sadece yüklemeler kalmalı)
+# Kullanıcı yüklemeleri 
 uploads/
+screenshots/
+
+# --- KRİTİK: BÜYÜK MODELLER (Space repo'suna gitmemeli, Model repo'suna manuel yüklendi!) ---
+oto_ozet_modeli/

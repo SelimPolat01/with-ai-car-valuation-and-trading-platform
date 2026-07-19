@@ -134,8 +134,8 @@ except Exception as e:
 logging.set_verbosity_error()
 text_summarizer = pipeline(
     "summarization",
-    model="./benim_oto_ozet_modelim",      
-    tokenizer="./benim_oto_ozet_modelim",  
+    model="SSERPENT1NEE/oto-ekspertiz-ozet-modeli", 
+    tokenizer="SSERPENT1NEE/oto-ekspertiz-ozet-modeli",  
     device=0 if torch.cuda.is_available() else -1
 )
 

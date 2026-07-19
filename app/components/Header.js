@@ -37,7 +37,6 @@ export default function Header({ className }) {
 
   const [clickNotificationIcon, setClickNotificationIcon] = useState(false);
   const { isInitialized, isLogin } = useSelector((state) => state.auth);
-  if (!isInitialized) return null;
 
   const {
     data: getPersonalNotificationsData,
@@ -53,16 +52,17 @@ export default function Header({ className }) {
     error: patchPersonalNotificationError,
   } = usePatchNotificationRead();
 
+  if (!isInitialized) return null;
+
   const personalNotifications = Array.isArray(getPersonalNotificationsData)
     ? getPersonalNotificationsData
     : getPersonalNotificationsData?.result || [];
 
   function notificationClickHandler(notification) {
     setClickNotificationIcon(false);
-    const token = localStorage.getItem("token");
+    const currentToken = localStorage.getItem("token");
 
     if (!notification.is_read) {
-      const currentToken = localStorage.getItem("token");
       patchPersonalNotificationRead({
         token: currentToken,
         notificationId: notification.id,
@@ -149,11 +149,17 @@ export default function Header({ className }) {
         </Link>
         <ul className={classes.ul}>
           {isLogin && <SearchBar />}
-          {links.notLoginlinks
-            .filter((notLoginlink) => notLoginlink.hideOn !== path)
-            .filter(() => !isLogin)
-            .map((notLoginlink, index) => (
-              <li className={classes.li} key={index}>
+
+          {!isLogin &&
+            links.notLoginlinks.map((notLoginlink, index) => (
+              <li
+                className={classes.li}
+                key={index}
+                style={{
+                  visibility:
+                    notLoginlink.hideOn === path ? "hidden" : "visible",
+                }}
+              >
                 <Link
                   title={notLoginlink.title}
                   className={classes[notLoginlink.className]}
@@ -164,11 +170,15 @@ export default function Header({ className }) {
               </li>
             ))}
 
-          {links.loginLinks
-            .filter(() => isLogin)
-            .filter((loginLinks) => loginLinks.hideOn !== path)
-            .map((loginLink, index) => (
-              <li className={classes.li} key={index}>
+          {isLogin &&
+            links.loginLinks.map((loginLink, index) => (
+              <li
+                className={classes.li}
+                key={index}
+                style={{
+                  visibility: loginLink.hideOn === path ? "hidden" : "visible",
+                }}
+              >
                 <Link
                   title={loginLink.title}
                   className={`${classes[loginLink.className]}${
@@ -181,8 +191,15 @@ export default function Header({ className }) {
               </li>
             ))}
 
-          {isLogin && !path.startsWith("/hesabim/bildirimler") && (
-            <div className={classes.notificationContainer}>
+          {isLogin && (
+            <div
+              className={classes.notificationContainer}
+              style={{
+                visibility: path.startsWith("/hesabim/bildirimler")
+                  ? "hidden"
+                  : "visible",
+              }}
+            >
               <button
                 className={`${classes.notificationButton}${className ? ` ${className}` : ""}`}
                 title="Bildirimler"
@@ -209,7 +226,9 @@ export default function Header({ className }) {
                       personalNotifications.map((notification) => (
                         <div
                           key={notification.id}
-                          className={`${classes.notificationItem} ${!notification.is_read ? classes.unread : ""}`}
+                          className={`${classes.notificationItem} ${
+                            !notification.is_read ? classes.unread : ""
+                          }`}
                           onClick={() => notificationClickHandler(notification)}
                         >
                           <div className={classes.notificationTitle}>
@@ -243,100 +262,101 @@ export default function Header({ className }) {
           )}
 
           {isLogin && (
-            <>
-              {isLogin && !path.startsWith("/tum-ilanlar") && (
-                <Link
-                  className={`${classes.allAdvertsLink}${
-                    className ? ` ${className}` : ""
-                  }`}
-                  title="Tüm İlanlar"
-                  href="/tum-ilanlar"
-                >
-                  <LayoutGrid
-                    className={classes.icon}
-                    size={30}
-                    stroke="url(#header-icon-gold)"
-                  />
-                </Link>
-              )}
+            <Link
+              className={`${classes.allAdvertsLink}${
+                className ? ` ${className}` : ""
+              }`}
+              title="Tüm İlanlar"
+              href="/tum-ilanlar"
+              style={{
+                visibility: path.startsWith("/tum-ilanlar")
+                  ? "hidden"
+                  : "visible",
+              }}
+            >
+              <LayoutGrid
+                className={classes.icon}
+                size={30}
+                stroke="url(#header-icon-gold)"
+              />
+            </Link>
+          )}
 
-              {isLogin && !path.startsWith("/hesabim") && (
-                <li className={classes.account}>
+          {isLogin && (
+            <li className={classes.account}>
+              <Link
+                className={`${classes.accountLink}${
+                  className ? ` ${className}` : ""
+                }`}
+                title="Hesabım"
+                href="/hesabim"
+              >
+                <User
+                  className={classes.icon}
+                  size={30}
+                  stroke="url(#header-icon-gold)"
+                />
+              </Link>
+              <ul className={classes.accountMenu}>
+                <li>
                   <Link
-                    className={`${classes.accountLink}${
-                      className ? ` ${className}` : ""
-                    }`}
-                    title="Hesabım"
-                    href="/hesabim"
+                    href="/ilanlarim"
+                    className={classes.myAdvertsLink}
+                    title="İlanlarım"
                   >
-                    <User
-                      className={classes.icon}
-                      size={30}
+                    <Tags
+                      className={classes.juniorIcon}
+                      size={20}
                       stroke="url(#header-icon-gold)"
                     />
+                    İlanlarım
                   </Link>
-                  <ul className={classes.accountMenu}>
-                    <li>
-                      <Link
-                        href="/ilanlarim"
-                        className={classes.myAdvertsLink}
-                        title="İlanlarım"
-                      >
-                        <Tags
-                          className={classes.juniorIcon}
-                          size={20}
-                          stroke="url(#header-icon-gold))"
-                        />
-                        İlanlarım
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/favori-ilanlar"
-                        className={classes.favoriteAdvertsLink}
-                        title="Favori İlanlarım"
-                      >
-                        <FolderHeart
-                          className={classes.juniorIcon}
-                          size={20}
-                          stroke="url(#header-icon-gold)"
-                        />
-                        Favorilerim
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/hesabim"
-                        className={classes.juniorAccountLink}
-                        title="Hesabım"
-                      >
-                        <User
-                          className={classes.juniorIcon}
-                          size={20}
-                          stroke="url(#header-icon-gold)"
-                        />
-                        Hesabım
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/login"
-                        onClick={logoutHandler}
-                        className={classes.favoriteAdvertsLink}
-                        title="Çıkış Yap"
-                      >
-                        <LogOut
-                          className={classes.juniorIcon}
-                          size={20}
-                          stroke="url(#header-icon-gold)"
-                        />
-                        Çıkış Yap
-                      </Link>
-                    </li>
-                  </ul>
                 </li>
-              )}
-            </>
+                <li>
+                  <Link
+                    href="/favori-ilanlar"
+                    className={classes.favoriteAdvertsLink}
+                    title="Favori İlanlarım"
+                  >
+                    <FolderHeart
+                      className={classes.juniorIcon}
+                      size={20}
+                      stroke="url(#header-icon-gold)"
+                    />
+                    Favorilerim
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/hesabim"
+                    className={classes.juniorAccountLink}
+                    title="Hesabım"
+                  >
+                    <User
+                      className={classes.juniorIcon}
+                      size={20}
+                      stroke="url(#header-icon-gold)"
+                    />
+                    Hesabım
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/login"
+                    onClick={logoutHandler}
+                    className={classes.favoriteAdvertsLink}
+                    title="Çıkış Yap"
+                  >
+                    <LogOut
+                      className={classes.juniorIcon}
+                      size={20}
+                      stroke="url(#header-icon-gold)"
+                    />
+                    Çıkış Yap
+                  </Link>
+                </li>
+              </ul>
+            </li>
           )}
         </ul>
       </nav>

@@ -158,13 +158,12 @@ export default function Login() {
           {error === "Girilen parola hatalı." && (
             <p className={classes.error}>{error}</p>
           )}
+          {error &&
+            error !== "Girilen e-postaya ait kullanıcı bulunamadı." &&
+            error !== "Girilen parola hatalı." && (
+              <p className={classes.error}>{error}</p>
+            )}
         </div>
-
-        {error &&
-          error !== "Girilen e-postaya ait kullanıcı bulunamadı." &&
-          error !== "Girilen parola hatalı." && (
-            <p className={classes.error}>{error}</p>
-          )}
 
         <SecondaryButton
           type="submit"

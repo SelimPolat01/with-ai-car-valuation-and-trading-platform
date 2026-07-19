@@ -9,10 +9,13 @@ export const db = new Pool({
   password: process.env.DB_PASSWORD,
   port: Number(process.env.DB_PORT),
 
-  ssl: {
-    require: true,
-    rejectUnauthorized: false,
-  },
+  ssl:
+    process.env.DB_HOST === "localhost"
+      ? false
+      : {
+          require: true,
+          rejectUnauthorized: false,
+        },
 });
 
 db.query("SELECT NOW()")

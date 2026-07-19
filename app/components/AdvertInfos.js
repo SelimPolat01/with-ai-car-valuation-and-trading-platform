@@ -371,7 +371,9 @@ export default function AdvertInfos() {
             </div>
 
             <div className={classes.advertInfoWrapper2}>
-              <ul className={classes.ul}>
+              <ul
+                className={`${classes.ul} ${user && advert && Number(user.id) == Number(advert.user_id) ? classes.expandedLi : ""}`}
+              >
                 {advertDetails.map((detail) => (
                   <li
                     key={detail.id}

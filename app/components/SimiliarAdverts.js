@@ -26,7 +26,7 @@ export default function SimilarAdverts({ currentAdvertId }) {
           setSimilarCars(data);
         }
       } catch (error) {
-        console.error("Benzer araçlar çekilirken hata:", error);
+        console.error(error);
       } finally {
         setLoading(false);
       }

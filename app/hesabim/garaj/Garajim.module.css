@@ -1,0 +1,53 @@
+.div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 0 2rem 0;
+  padding: 2.5rem 0 0 0;
+}
+
+.frameDiv {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  max-width: 1110px;
+  padding: 2px;
+}
+
+.divContainer {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  width: 100%;
+}
+
+.biggerFrame {
+  width: 740px;
+  height: 200px;
+}
+
+.frame {
+  width: 350px;
+  min-height: 160px;
+}
+
+@media (max-width: 768px) {
+  .div {
+    padding: 1.5rem 1rem;
+    box-sizing: border-box;
+  }
+  .frameDiv {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+  .frame {
+    width: 100%;
+    max-width: 400px;
+  }
+  .biggerFrame {
+    width: 100%;
+    max-width: 400px;
+  }
+}

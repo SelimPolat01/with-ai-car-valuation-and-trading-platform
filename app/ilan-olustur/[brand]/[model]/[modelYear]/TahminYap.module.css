@@ -9,7 +9,6 @@
   margin: 0;
   padding: 0;
   font-size: 30px;
-  font-family: "Oswald", sans-serif;
   font-weight: bolder;
   font-style: normal;
 }
@@ -68,7 +67,6 @@
   border-radius: 8px;
   text-indent: 3px;
   height: 40px;
-  font-family: "Oswald", sans-serif;
   font-style: normal;
   border: 1px solid #ccc;
 }
@@ -124,7 +122,6 @@
   padding: 0;
   margin: 10px 0 0 0;
   color: #303030;
-  font-family: "Oswald", sans-serif;
   font-weight: bolder;
   font-style: normal;
   font-size: 18px;

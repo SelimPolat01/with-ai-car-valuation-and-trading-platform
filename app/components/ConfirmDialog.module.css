@@ -3,7 +3,6 @@
   background: transparent;
   border-radius: 16px;
   margin: auto;
-  font-family: "Josefin Sans", sans-serif;
 }
 
 .dialog::backdrop {
@@ -68,7 +67,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   width: 200px;
-  font-size: 16px;
+  font-size: 18px;
   box-sizing: border-box;
 }
 
@@ -86,9 +85,8 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: "Josefin Sans", sans-serif;
   width: 200px;
-  font-size: 16px;
+  font-size: 18px;
   box-sizing: border-box;
 }
 

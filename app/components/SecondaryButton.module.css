@@ -19,19 +19,6 @@
   white-space: nowrap;
   backface-visibility: hidden;
   -webkit-font-smoothing: subpixel-antialiased;
-  font-family:
-    Lora,
-    -apple-system,
-    BlinkMacSystemFont,
-    Segoe UI,
-    Roboto,
-    Helvetica Neue,
-    Arial,
-    sans-serif,
-    Apple Color Emoji,
-    Segoe UI Emoji,
-    Segoe UI Symbol,
-    Noto Color Emoji;
 }
 
 .button:hover {

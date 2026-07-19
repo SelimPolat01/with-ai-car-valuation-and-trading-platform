@@ -2,24 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { toggleFavorite } from "@/store/advertsSlice";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import classes from "./AdvertInfos.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import PrimaryButton from "./PrimaryButton";
-import { usePatchSoldAdvert } from "@/hooks/PATCH/usePatchSoldAdvert";
 import SuccessMessage from "./SuccessMessage";
 import SimilarAdverts from "./SimiliarAdverts";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdvertInfos() {
-  const {
-    mutate: patchSoldAdvertMutate,
-    isPending: patchSoldAdvertIsPending,
-    isError: patchSoldAdvertIsError,
-    error: patchSoldAdvertError,
-  } = usePatchSoldAdvert();
   const params = useParams();
   const router = useRouter();
   const [isSuccess, setIsSuccess] = useState(false);
@@ -28,6 +21,9 @@ export default function AdvertInfos() {
   const [advert, setAdvert] = useState(null);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
+  const [summaryText, setSummaryText] = useState(null);
+  const [isShowingSummary, setIsShowingSummary] = useState(false);
+  const [isSummarizing, setIsSummarizing] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showSimilarAdverts, setShowSimilarAdverts] = useState(false);
   const dispatch = useDispatch();
@@ -84,6 +80,42 @@ export default function AdvertInfos() {
     fetchAdvertInfos();
   }, [params.advertId, router]);
 
+  async function handleToggleSummary() {
+    if (isShowingSummary) {
+      setIsShowingSummary(false);
+      return;
+    }
+
+    if (summaryText) {
+      setIsShowingSummary(true);
+      return;
+    }
+
+    try {
+      setIsSummarizing(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_FAST_API_URL}/description-summarization`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ description: advert.description }),
+        },
+      );
+
+      if (!response.ok) throw new Error("Özet çıkarılamadı.");
+
+      const data = await response.json();
+      setSummaryText(data.summarizated_description);
+      setIsShowingSummary(true);
+    } catch (err) {
+      console.error(err.message);
+    } finally {
+      setIsSummarizing(false);
+    }
+  }
+
   async function toggleFavoriteClick() {
     if (!advert || !advert.id) return;
     const token = localStorage.getItem("token");
@@ -129,35 +161,15 @@ export default function AdvertInfos() {
   }
 
   function advertBuyHandler() {
-    const token = localStorage.getItem("token");
-    patchSoldAdvertMutate(
-      { token, body: { advertId: params.advertId } },
-      {
-        onSuccess: (soldAdvertData) => {
-          console.log(soldAdvertData?.result?.message);
-          setIsSuccess(true);
-        },
-        onError: (soldAdvertError) => {
-          setError(soldAdvertError?.message);
-        },
-      },
+    router.push(
+      `/ilan/${params["brand-model-modelYear"]}/${params.advertId}/randevu`,
     );
   }
 
   function formatBrandModel(text) {
     if (!text) return "";
     if (text === "bmw") return "BMW";
-    if (text === "i10") return "i10";
     if (text === "i20") return "i20";
-    if (text === "i30") return "i30";
-    if (text === "ix35") return "ix35";
-    if (text === "gla 180") return "GLA 180";
-    if (text === "glb 200") return "GLB 200";
-    if (text === "glc 180") return "GLC 180";
-    if (text === "c-hr") return "C-HR";
-    if (text === "xc40") return "XC40";
-    if (text === "xc60") return "XC60";
-
     return text
       .split(" ")
       .map((word) =>
@@ -297,7 +309,7 @@ export default function AdvertInfos() {
       {!isSuccess ? (
         <div className={classes.advertInfoDiv}>
           <div className={classes.titleFavoriteDiv}>
-            <h2>{advert.title}</h2>
+            <h2 className={classes.title}>{advert.title.toUpperCase()}</h2>
             {user && advert && Number(user.id) !== Number(advert.user_id) && (
               <button
                 className={
@@ -376,7 +388,7 @@ export default function AdvertInfos() {
                 <div className={classes.buyButtonContainer}>
                   <PrimaryButton
                     type="button"
-                    text={`${patchSoldAdvertIsPending ? "Satın alınıyor..." : "Bu Aracı Satın Al"}`}
+                    text="Bu Aracı Satın Al"
                     className={classes.buyButton}
                     onClick={advertBuyHandler}
                   />
@@ -398,8 +410,23 @@ export default function AdvertInfos() {
             </div>
             {showDescription && (
               <div className={classes.descriptionDiv}>
+                <div className={classes.summaryButtonDiv}>
+                  <button
+                    onClick={handleToggleSummary}
+                    disabled={isSummarizing}
+                    className={classes.aiSummaryBtn}
+                  >
+                    {isSummarizing
+                      ? "✨ Özet Çıkarılıyor..."
+                      : isShowingSummary
+                        ? "Orijinal Açıklamayı Göster"
+                        : "✨ Yapay Zekâ ile Özetle"}
+                  </button>
+                </div>
                 <div className={classes.descriptionWrapper}>
-                  <p className={classes.description}>{advert.description}</p>
+                  <p className={classes.description}>
+                    {isShowingSummary ? summaryText : advert.description}
+                  </p>
                 </div>
               </div>
             )}

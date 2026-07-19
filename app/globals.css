@@ -3,19 +3,23 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family:
-    "Lora",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji";
+  font-family: var(--font-josefin), sans-serif;
+  input,
+  label,
+  button,
+  textarea,
+  select {
+    font-family: inherit;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-inter), sans-serif;
+    font-weight: 600;
+  }
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -27,6 +31,7 @@ body {
   flex: 1 0 auto;
   margin: 0;
   padding-bottom: 2rem;
+  min-height: 91.3vh;
 }
 
 .mainBg {
@@ -41,7 +46,6 @@ p {
   margin-top: 10px;
   font-size: 18px;
   color: #262626;
-  font-family: "Oswald", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
 }
@@ -50,7 +54,6 @@ h2 {
   margin: 10px 0 0 0;
   padding: 0;
   font-size: 25px;
-  font-family: "Oswald", sans-serif;
   font-optical-sizing: auto;
   font-weight: bolder;
   font-style: normal;
@@ -67,7 +70,6 @@ a {
   align-items: center;
   min-height: 85vh;
   gap: 0px;
-  font-family: sans-serif;
   padding: 2rem 0;
 }
 
@@ -75,9 +77,8 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 85vh;
+  min-height: 92vh;
   gap: 0px;
-  font-family: sans-serif;
   padding: 0 0 2rem 0;
 }
 
@@ -114,19 +115,8 @@ a {
   margin: 0 0 0.1rem 0;
   padding: 0;
   width: 100%;
-  font-family:
-    "Lora",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji";
+  text-align: center;
+  font-weight: bold;
 }
 
 .bi.bi-person-plus,
@@ -170,7 +160,6 @@ a {
 .dropdown {
   border: 1px solid #ccc;
   padding: 12px 0 12px 0;
-  font-family: "Geomanist", sans-serif;
   font-weight: bolder;
   font-size: 15px;
   text-indent: 10px;
@@ -222,7 +211,6 @@ a {
   background-color: white;
   color: rgba(0, 0, 0, 0.778);
   cursor: pointer;
-  font-family: "Geomanist", sans-serif;
 }
 
 .dropdownList li:hover {
@@ -250,19 +238,6 @@ a {
   font-weight: 300;
   line-height: 1.1;
   display: block;
-  font-family:
-    "Open Sans",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji";
 }
 
 .pageHeading h1 {
@@ -384,7 +359,6 @@ a {
   font-size: 16px;
   cursor: pointer;
   padding: 0;
-  font-family: "Oswald", sans-serif;
 }
 
 .cancelButton:hover {

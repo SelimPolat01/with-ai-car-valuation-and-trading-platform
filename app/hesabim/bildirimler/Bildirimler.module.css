@@ -1,0 +1,342 @@
+.div {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin: 0 0 2rem 0;
+  font-family: "Josefin Sans", sans-serif;
+  padding: 0 2rem 2rem 2rem;
+  min-height: 60vh;
+}
+
+.divContainer {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  width: 100%;
+}
+
+.frameDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1110px;
+  padding: 2px;
+  align-items: center;
+}
+
+.headerSection {
+  width: 100%;
+  max-width: 740px;
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 0;
+}
+
+.pageTitle {
+  margin: 0 0 24px 10px;
+  align-self: flex-start;
+  padding: 0;
+  font-size: 32px;
+  width: max-content;
+  background: linear-gradient(
+    105.66deg,
+    #00f4ff 16.76%,
+    #68ffed 46.39%,
+    #9867ff 76.01%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.controlsSection {
+  width: 100%;
+  max-width: 740px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  background: rgba(20, 10, 30, 0.8);
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-sizing: border-box;
+}
+
+.leftControls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tabButton {
+  background: transparent;
+  color: #a1a1aa;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabButton:hover {
+  color: #ffffff;
+}
+
+.activeTab {
+  background: rgba(168, 85, 247, 0.2);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
+}
+
+.filterDropdownContainer {
+  position: relative;
+}
+
+.filterButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.filterButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.activeFilter {
+  border-color: #a855f7;
+  background: rgba(168, 85, 247, 0.1);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: #2a1b38;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.dropdownItem {
+  padding: 12px 16px;
+  color: #e4e4e7;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdownItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.activeDropdownItem {
+  background: rgba(168, 85, 247, 0.15);
+  color: #ffffff;
+  font-weight: 600;
+  border-left: 3px solid #a855f7;
+}
+
+.markAllButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(168, 85, 247, 0.2);
+  color: #ffffff;
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.markAllButton:hover:not(:disabled) {
+  background: rgba(168, 85, 247, 0.4);
+  transform: scale(1.02);
+}
+
+.markAllButton:disabled {
+  background: rgba(255, 255, 255, 0.05);
+  color: #71717a;
+  border-color: rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
+}
+
+.biggerFrame {
+  width: 740px;
+  min-height: 140px;
+  background: rgba(25, 15, 40, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  display: flex;
+  padding: 24px;
+  box-sizing: border-box;
+  gap: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.biggerFrame:hover {
+  background: rgba(40, 25, 60, 0.95);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+.unread {
+  background: rgba(168, 85, 247, 0.15);
+  border-left: 5px solid #a855f7;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2px;
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.notificationTitle {
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.notificationMessage {
+  color: #f4f4f5;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.notificationTime {
+  color: #d4d4d8;
+  font-size: 13px;
+  margin-top: auto;
+  padding-top: 12px;
+  font-weight: 500;
+}
+
+.emptyText,
+.loadingText {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .div {
+    padding: 1rem 1rem;
+    box-sizing: border-box;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+    margin: 0 0 16px 10px;
+  }
+
+  .frameDiv {
+    width: 100%;
+    align-items: center;
+  }
+
+  .headerSection,
+  .controlsSection {
+    max-width: 400px;
+  }
+
+  .controlsSection {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .leftControls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .tabs {
+    justify-content: center;
+  }
+
+  .tabButton {
+    flex: 1;
+  }
+
+  .filterDropdownContainer {
+    width: 100%;
+  }
+
+  .filterButton {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .dropdownMenu {
+    width: 100%;
+  }
+
+  .markAllButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .biggerFrame {
+    width: 100%;
+    max-width: 400px;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    height: auto;
+  }
+}

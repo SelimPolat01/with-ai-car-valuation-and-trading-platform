@@ -1,0 +1,232 @@
+.div {
+  width: calc(100% - 2rem);
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background: rgba(20, 20, 22, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.div * {
+  box-sizing: border-box;
+}
+
+.title,
+.subtitle {
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #a1a1aa;
+  margin: 0 0 1.5rem 0;
+  word-break: break-word;
+}
+
+.title {
+  font-size: 18px;
+}
+
+.subtitle {
+  font-size: 16px;
+  margin-top: 1.5rem;
+}
+
+.daysWrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.dayCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 85px;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  width: 100%;
+}
+
+.dayCard:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.fullDay {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.fullDay .dayNumber,
+.fullDay .dayMonth,
+.fullDay .dayName {
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: line-through;
+}
+
+.activeDay {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.activeDay span {
+  color: #3b0764 !important;
+}
+
+.dayName {
+  font-size: 12px;
+  color: #8e8e93;
+}
+
+.dayNumber {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 4px 0;
+}
+
+.dayMonth {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.hoursGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.hourCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  width: 100%;
+}
+
+.hourTime {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.hourStatus {
+  font-size: 11px;
+  margin-top: 4px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.emptyHour {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.emptyHour:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.activeHour {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: #a855f7;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+}
+
+.fullHour {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 1.5rem 0;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .div {
+    width: calc(100% - 3rem);
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+
+  .daysWrapper {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .hoursGrid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .div {
+    width: calc(100% - 2rem);
+    padding: 1rem;
+    margin: 1rem auto;
+    border-radius: 12px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .daysWrapper {
+    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .dayCard {
+    min-width: 65px;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .dayNumber {
+    font-size: 20px;
+  }
+
+  .hoursGrid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .hourCard {
+    padding: 1rem 0.5rem;
+  }
+
+  .hourTime {
+    font-size: 16px;
+  }
+}

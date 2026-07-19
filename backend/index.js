@@ -6,8 +6,12 @@ import { router as carsRoutes } from "./routes/cars.js";
 import { router as advertsRoutes } from "./routes/adverts.js";
 import { router as predictRoutes } from "./routes/predict.js";
 import { router as personalInfoRoutes } from "./routes/infos.js";
+import { router as slotsRoutes } from "./routes/slots.js";
+import { router as appointmentsRoutes } from "./routes/appointments.js";
+import { router as notificationsRoutes } from "./routes/notifications.js";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
+import verifyToken from "./middlewares/verifyToken.js";
 // import { createTable } from "./lib/db.js";
 // import { dbInsertCars } from "./utils/dbInsertCars.js";
 
@@ -53,6 +57,9 @@ app.use("/cars", globalLimiter, carsRoutes);
 app.use("/adverts", globalLimiter, advertsRoutes);
 app.use("/predict", globalLimiter, predictRoutes);
 app.use("/infos", personalInfoRoutes);
+app.use("/slots", globalLimiter, slotsRoutes);
+app.use("/appointments", appointmentsRoutes);
+app.use("/notifications", notificationsRoutes);
 
 // await createTable();
 

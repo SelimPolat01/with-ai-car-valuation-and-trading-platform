@@ -1,0 +1,257 @@
+.cardDiv {
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 800 / 506;
+  border-radius: 2cqi;
+  background: linear-gradient(135deg, #383838 0%, #111111 100%);
+  box-shadow: 0 2.5cqi 5cqi rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  container-type: inline-size;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.cardContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 6cqi;
+  height: 100%;
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+
+.cardTypeDiv {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardTypeText {
+  font-size: 3.5cqi;
+  color: #ffffff;
+  margin: 0;
+}
+
+.cardTypeImageDiv {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cardLogo {
+  width: 9.375cqi;
+  height: auto;
+}
+
+.cardIcon {
+  width: 9.375cqi;
+  height: 9.375cqi;
+}
+
+.cardDiv h2 {
+  font-family: "Space Mono", monospace;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.cardTemplateDiv {
+  margin: 0;
+}
+
+.numberTextDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 2cqi;
+  margin: 0;
+}
+
+.cardNumberContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 2cqi;
+  width: 100%;
+  max-width: 62.5cqi;
+}
+
+.cardNumberText,
+.exprireDateText,
+.nameText {
+  color: #8e8e93;
+  font-size: 2.25cqi;
+  letter-spacing: 0.25cqi;
+  margin: 0;
+}
+
+.dateText {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 2.75cqi;
+  font-weight: 400;
+  margin: 0;
+  padding-bottom: 0.5cqi;
+}
+
+.cardNumberStarDiv {
+  width: 100%;
+  max-width: 12.5cqi;
+  position: relative;
+}
+
+.cardNumberStarContainer {
+  display: flex;
+  justify-content: center;
+  gap: 0.6cqi;
+}
+
+.cardNumberInput {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 2.5cqi;
+  font-family: "Space Mono", monospace;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.5cqi;
+  outline: none;
+  text-shadow: 0 0 0.25cqi rgba(255, 255, 255, 0.2);
+}
+
+.cardNameInput {
+  text-transform: uppercase;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: #ffffff;
+  font-size: 2.5cqi;
+  font-family: "Space Mono", monospace;
+  font-weight: 600;
+  width: 100%;
+  letter-spacing: 0.5cqi;
+  padding: 0;
+  text-shadow: 0 0 0.25cqi rgba(255, 255, 255, 0.2);
+}
+
+.cardExpireDateInput {
+  border: none;
+  background: transparent;
+  outline: none;
+  color: #ffffff;
+  font-size: 2.5cqi;
+  font-family: "Space Mono", monospace;
+  font-weight: 600;
+  width: 5.625cqi;
+  padding: 0;
+  text-align: center;
+  text-shadow: 0 0 0.25cqi rgba(255, 255, 255, 0.2);
+}
+
+.cardNumberStarContainer span {
+  color: #ffffff;
+}
+
+.expireDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4cqi;
+  flex-shrink: 0;
+}
+
+.expireDateWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.65cqi;
+}
+
+.expireDateContainer {
+  width: fit-content;
+  position: relative;
+}
+
+.exprireDateTextDiv {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.nameExpireDateDiv {
+  display: flex;
+  justify-content: space-between;
+  gap: 2cqi;
+  width: 100%;
+}
+
+.nameUserNameDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5cqi;
+  flex: 1;
+  min-width: 0;
+}
+
+.userNameDiv {
+  width: 100%;
+  position: relative;
+}
+
+.userNameText {
+  color: #ffffff;
+  font-size: 2.5cqi;
+  margin: 0;
+}
+
+.expireDateDiv {
+  display: flex;
+  justify-content: space-between;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 1.75cqi;
+  margin-top: 0.5cqi;
+  position: absolute;
+  white-space: nowrap;
+}
+
+.hr {
+  border: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  margin: 0;
+}
+
+.nameHr {
+  border: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  margin: 0;
+}
+
+.expireDatehr {
+  border: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  margin: 0;
+}
+
+.paymentButton {
+  width: 100%;
+  max-width: 300px;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .paymentButton {
+    max-width: 100%;
+    padding: 1.2rem;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .paymentButton {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+}

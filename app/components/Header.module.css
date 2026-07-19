@@ -3,7 +3,7 @@
 }
 
 .nav {
-  margin: 0 4.5rem 0 0;
+  margin: 0 8.5rem 0 0;
   display: flex;
   justify-content: space-between;
   height: 35px;
@@ -106,6 +106,18 @@
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+.accountMenu::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent rgba(20, 10, 30, 0.85) transparent;
+  pointer-events: none;
+}
+
 .account:hover .accountMenu {
   opacity: 1;
   visibility: visible;
@@ -154,6 +166,181 @@
 .juniorIcon {
   margin: 0 0.5rem 0 0;
   stroke: currentColor;
+}
+
+.notificationContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.notificationButton {
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.notificationBadge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  border: 2px solid #141416;
+}
+
+.notificationDropdown {
+  position: absolute;
+  top: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  background: rgba(20, 10, 30, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: visible;
+}
+
+.notificationDropdown::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent rgba(20, 10, 30, 0.85) transparent;
+  pointer-events: none;
+}
+
+.notificationHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.notificationHeader h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.notificationList {
+  max-height: 350px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.notificationList::-webkit-scrollbar {
+  width: 6px;
+}
+.notificationList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.notificationItem {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.notificationItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.unread {
+  background: rgba(168, 85, 247, 0.1);
+  border-left: 3px solid #a855f7;
+}
+
+.notificationTitle {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.notificationMessage {
+  color: #a1a1aa;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.notificationTime {
+  color: #71717a;
+  font-size: 11px;
+  align-self: flex-end;
+}
+
+.emptyNotification {
+  padding: 30px 20px;
+  text-align: center;
+  color: #a1a1aa;
+  font-size: 14px;
+}
+
+.viewAllButton {
+  padding: 12px;
+  text-align: center;
+  color: #a855f7;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  transition: background 0.2s;
+}
+
+.viewAllButton:hover {
+  background: rgba(168, 85, 247, 0.1);
+}
+
+@media (max-width: 1024px) {
+  .notificationDropdown {
+    left: auto;
+    right: -45px;
+    transform: none;
+  }
+
+  .notificationDropdown::before {
+    left: auto;
+    right: 55px;
+    transform: none;
+  }
+
+  .accountMenu {
+    left: auto;
+    right: 0;
+    transform: translateY(15px);
+  }
+
+  .account:hover .accountMenu,
+  .account:active .accountMenu {
+    transform: translateY(0);
+  }
+
+  .accountMenu::before {
+    left: auto;
+    right: 15px;
+    transform: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -248,8 +435,43 @@
     min-width: 180px;
   }
 
+  .accountMenu::before {
+    left: auto;
+    right: 15px;
+    transform: none;
+  }
+
   .account:hover .accountMenu,
   .account:active .accountMenu {
     transform: translateY(0);
+  }
+
+  .notificationDropdown {
+    width: 300px;
+    max-width: 90vw;
+    left: auto;
+    right: -45px;
+    transform: none;
+  }
+
+  .notificationDropdown::before {
+    left: auto;
+    right: 55px;
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .notificationDropdown {
+    width: 280px;
+    right: -40px;
+  }
+
+  .notificationDropdown::before {
+    right: 50px;
+  }
+
+  .accountMenu {
+    min-width: 160px;
   }
 }

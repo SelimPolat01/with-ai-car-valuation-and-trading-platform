@@ -3,7 +3,17 @@
 import Link from "next/link";
 import classes from "./Hesabim.module.css";
 import { useEffect, useState } from "react";
-import { User, Settings, CarFront, LogOut } from "lucide-react";
+import {
+  User,
+  Settings,
+  CarFront,
+  LogOut,
+  CalendarClock,
+  BellDot,
+  ArrowLeftRight,
+  Shuffle,
+  Handshake,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 import Header from "../components/Header";
 import { logout } from "@/store/authSlice";
@@ -23,10 +33,13 @@ export default function SettingsLayout({ children }) {
     }
   }, []);
 
-  const icons = [User, CarFront, Settings];
+  const icons = [Handshake, CalendarClock, BellDot, CarFront, User, Settings];
   const links = [
+    { href: "/hesabim/alis-satis-islemleri", text: "Alış-Satış İşlemleri" },
+    { href: "/hesabim/randevular", text: "Randevular" },
+    { href: "/hesabim/bildirimler", text: "Bildirimler" },
+    { href: "/hesabim/garaj", text: "Garaj" },
     { href: "/hesabim/kisisel-bilgiler", text: "Kişisel Bilgiler" },
-    { href: "/hesabim/garajim", text: "Garajım" },
     { href: "/hesabim/guvenlik", text: "Güvenlik" },
   ];
 
@@ -52,20 +65,20 @@ export default function SettingsLayout({ children }) {
                     className={`${classes.list} ${pathName.startsWith(link.href) ? classes.active : ""}`}
                     key={index}
                   >
-                    <Icon />
                     <Link className={classes.link} href={link.href}>
+                      <Icon />
                       {link.text}
                     </Link>
                   </li>
                 );
               })}
               <li className={classes.list}>
-                <LogOut />
                 <Link
                   href="/login"
                   onClick={logoutHandler}
                   className={classes.logoutLink}
                 >
+                  <LogOut />
                   Çıkış Yap
                 </Link>
               </li>

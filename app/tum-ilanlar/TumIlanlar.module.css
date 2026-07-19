@@ -20,7 +20,6 @@
 
 .headerDiv h1 {
   margin: 0;
-  font-family: "Oswald", sans-serif;
   font-size: 24px;
   color: #ffffff;
   letter-spacing: 1.5px;
@@ -41,7 +40,6 @@
 }
 
 .filterTextDiv h2 {
-  font-family: "Oswald", sans-serif;
   font-size: 22px;
   padding: 0 0 12px 0;
   margin: 0;
@@ -83,19 +81,6 @@
 
 .notFoundAdvertDiv p {
   color: whitesmoke;
-  font-family:
-    Lora,
-    -apple-system,
-    BlinkMacSystemFont,
-    Segoe UI,
-    Roboto,
-    Helvetica Neue,
-    Arial,
-    sans-serif,
-    Apple Color Emoji,
-    Segoe UI Emoji,
-    Segoe UI Symbol,
-    Noto Color Emoji;
 }
 
 @media (max-width: 768px) {

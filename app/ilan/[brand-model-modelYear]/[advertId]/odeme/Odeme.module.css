@@ -1,0 +1,52 @@
+.div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 91.5vh;
+  padding: 1rem;
+}
+
+.paymentDiv {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  min-height: 506px;
+}
+
+.paymentButton {
+  width: 100%;
+  max-width: fit-content;
+  align-self: flex-end;
+  margin-top: 1rem;
+}
+
+.successMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  height: 80vh;
+}
+
+.successMessage button {
+  background: linear-gradient(to right, #a7b8d4, #934b8e, #2d1457) !important;
+  color: whitesmoke !important;
+  border: #2d1457 1px solid;
+}
+
+.successMessage button:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .paymentDiv {
+    min-height: auto;
+    gap: 1.5rem;
+  }
+
+  .paymentButton {
+    max-width: 100%;
+    align-self: center;
+  }
+}

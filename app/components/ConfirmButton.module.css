@@ -6,6 +6,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 18px;
 }
 
 .button:hover {

@@ -8,6 +8,7 @@ import { logout } from "@/store/authSlice";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
 import {
+  BellDot,
   FolderHeart,
   Home,
   LayoutGrid,
@@ -17,13 +18,69 @@ import {
   User,
   UserPlus,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useGetPersonalNotifications } from "@/hooks/GET/useGetPersonalNotifications";
+import { usePatchNotificationRead } from "@/hooks/PATCH/usePatchNotificationRead";
 
 export default function Header({ className }) {
   const path = usePathname();
   const dispatch = useDispatch();
   const router = useRouter();
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const currentToken = localStorage.getItem("token");
+    if (currentToken) {
+      setToken(currentToken);
+    }
+  }, []);
+
+  const [clickNotificationIcon, setClickNotificationIcon] = useState(false);
   const { isInitialized, isLogin } = useSelector((state) => state.auth);
   if (!isInitialized) return null;
+
+  const {
+    data: getPersonalNotificationsData,
+    isLoading: getPersonalNotificationsIsLoading,
+    isError: getPersonalNotificationsIsError,
+    error: getPersonalNotificationsError,
+  } = useGetPersonalNotifications(token);
+
+  const {
+    mutate: patchPersonalNotificationRead,
+    isPending: patchPersonalNotificationPending,
+    isError: patchPersonalNotificationIsError,
+    error: patchPersonalNotificationError,
+  } = usePatchNotificationRead();
+
+  const personalNotifications = Array.isArray(getPersonalNotificationsData)
+    ? getPersonalNotificationsData
+    : getPersonalNotificationsData?.result || [];
+
+  function notificationClickHandler(notification) {
+    setClickNotificationIcon(false);
+    const token = localStorage.getItem("token");
+
+    if (!notification.is_read) {
+      const currentToken = localStorage.getItem("token");
+      patchPersonalNotificationRead({
+        token: currentToken,
+        notificationId: notification.id,
+      });
+    }
+
+    if (notification.type === "sold") {
+      router.push(`/hesabim/alis-satis-islemleri`);
+    } else if (notification.type === "appointment") {
+      router.push(`/hesabim/randevular`);
+    } else {
+      router.push(`/hesabim/bildirimler`);
+    }
+  }
+
+  function notificationIconClickHandler() {
+    setClickNotificationIcon((prev) => !prev);
+  }
 
   function logoutHandler() {
     dispatch(logout());
@@ -106,6 +163,7 @@ export default function Header({ className }) {
                 </Link>
               </li>
             ))}
+
           {links.loginLinks
             .filter(() => isLogin)
             .filter((loginLinks) => loginLinks.hideOn !== path)
@@ -122,6 +180,68 @@ export default function Header({ className }) {
                 </Link>
               </li>
             ))}
+
+          {isLogin && !path.startsWith("/hesabim/bildirimler") && (
+            <div className={classes.notificationContainer}>
+              <button
+                className={`${classes.notificationButton}${className ? ` ${className}` : ""}`}
+                title="Bildirimler"
+                type="button"
+                onClick={notificationIconClickHandler}
+              >
+                <BellDot
+                  className={classes.icon}
+                  size={30}
+                  stroke="url(#header-icon-gold)"
+                />
+                {personalNotifications?.some((n) => !n.is_read) && (
+                  <span className={classes.notificationBadge}></span>
+                )}
+              </button>
+
+              {clickNotificationIcon && (
+                <div className={classes.notificationDropdown}>
+                  <div className={classes.notificationHeader}>
+                    <h4>Bildirimler</h4>
+                  </div>
+                  <div className={classes.notificationList}>
+                    {personalNotifications?.length > 0 ? (
+                      personalNotifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`${classes.notificationItem} ${!notification.is_read ? classes.unread : ""}`}
+                          onClick={() => notificationClickHandler(notification)}
+                        >
+                          <div className={classes.notificationTitle}>
+                            {notification.title}
+                          </div>
+                          <div className={classes.notificationMessage}>
+                            {notification.message}
+                          </div>
+                          <div className={classes.notificationTime}>
+                            {new Date(
+                              notification.created_at,
+                            ).toLocaleDateString("tr-TR")}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className={classes.emptyNotification}>
+                        Henüz bildiriminiz yok.
+                      </div>
+                    )}
+                  </div>
+                  <Link
+                    href="/hesabim/bildirimler"
+                    className={classes.viewAllButton}
+                  >
+                    Tümünü Gör
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
           {isLogin && (
             <>
               {isLogin && !path.startsWith("/tum-ilanlar") && (
@@ -139,6 +259,7 @@ export default function Header({ className }) {
                   />
                 </Link>
               )}
+
               {isLogin && !path.startsWith("/hesabim") && (
                 <li className={classes.account}>
                   <Link

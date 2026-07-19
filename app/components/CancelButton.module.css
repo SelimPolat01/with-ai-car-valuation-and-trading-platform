@@ -1,8 +1,7 @@
 .button {
   background: none;
-  font-family: inherit;
   outline: none;
-  font-size: 16px;
+  font-size: 18px;
   transition: transform 0.25s ease-in;
   padding: 0;
 }

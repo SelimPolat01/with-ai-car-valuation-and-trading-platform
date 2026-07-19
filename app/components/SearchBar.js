@@ -108,7 +108,7 @@ export default function SearchBar() {
           </svg>
         </button>
       </form>
-      {query && (
+      {/* {query && (
         <ul className={classes.ul}>
           {uniqueBrands.map((brand, index) => (
             <li className={classes.li} onClick={() => setQuery("")} key={index}>
@@ -118,7 +118,7 @@ export default function SearchBar() {
             </li>
           ))}
         </ul>
-      )}
+      )} */}
     </div>
   );
 }

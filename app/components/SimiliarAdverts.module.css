@@ -1,6 +1,7 @@
 .container {
   margin-top: 3rem;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .title {
@@ -20,10 +21,12 @@
 .scrollContainer {
   display: flex;
   gap: 1rem;
+  width: 100%;
   overflow-x: auto;
   padding-bottom: 1rem;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
+  box-sizing: border-box;
 }
 
 .scrollContainer::-webkit-scrollbar {
@@ -43,6 +46,7 @@
   cursor: pointer;
   transition: box-shadow 0.3s ease;
   background-color: #ffffff;
+  box-sizing: border-box;
 }
 
 .card:hover {
@@ -56,6 +60,7 @@
   height: 8rem;
   border-radius: 0.375rem;
   margin-bottom: 0.5rem;
+  object-fit: cover;
 }
 
 .carName {
@@ -75,4 +80,24 @@
   color: #2563eb;
   font-weight: 700;
   margin: 0.25rem 0 0 0;
+}
+
+@media (max-width: 1024px) {
+  .scrollContainer {
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: visible;
+    padding-bottom: 0;
+  }
+
+  .card {
+    width: 100%;
+    min-width: unset;
+    margin: 0;
+  }
+
+  .image {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
 }

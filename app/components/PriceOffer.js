@@ -19,6 +19,10 @@ export default function PriceOffer({ advertId }) {
   const [images, setImages] = useState(Array(10).fill(null));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({
+    title: null,
+    description: null,
+  });
   const router = useRouter();
   const reduxData = useSelector((state) => state.prediction.prediction);
   const fileInputRefs = useRef([]);
@@ -77,10 +81,106 @@ export default function PriceOffer({ advertId }) {
       return;
     }
 
+    try {
+      setLoading(true);
+      setFieldErrors({ title: null, description: null });
+
+      const validationResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_FAST_API_URL}/validate-content`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: inputTextareValue.title,
+            description: inputTextareValue.description,
+          }),
+        },
+      );
+
+      if (validationResponse.ok) {
+        const validationData = await validationResponse.json();
+
+        const generateErrorMessage = (errors) => {
+          let messages = [];
+          if (errors.phones && errors.phones.length > 0)
+            messages.push(`Telefon (${errors.phones.join(", ")})`);
+          if (errors.persons && errors.persons.length > 0)
+            messages.push(`İsim (${errors.persons.join(", ")})`);
+          if (errors.locations && errors.locations.length > 0)
+            messages.push(`Adres/Konum (${errors.locations.join(", ")})`);
+
+          return messages.length > 0
+            ? `Yasaklı içerik tespit edildi: ${messages.join(" | ")}`
+            : null;
+        };
+
+        const titleErrorMsg = generateErrorMessage(validationData.title_errors);
+        const descErrorMsg = generateErrorMessage(
+          validationData.description_errors,
+        );
+
+        if (titleErrorMsg || descErrorMsg) {
+          setFieldErrors({ title: titleErrorMsg, description: descErrorMsg });
+          setLoading(false);
+          return;
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    let descriptionVector = null;
+    let summaryVector = null;
+    let summarizedDescription = null;
+
+    try {
+      const embeddingResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_FAST_API_URL}/description-summarization`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            description: inputTextareValue.description,
+          }),
+        },
+      );
+
+      if (embeddingResponse.ok) {
+        const embeddingData = await embeddingResponse.json();
+        summarizedDescription = embeddingData.summarizated_description;
+        descriptionVector = embeddingData.description_embedding;
+        summaryVector = embeddingData.description_summary_embedding;
+      } else {
+        console.warn("Vektörler alınamadı, API hata döndürdü.");
+      }
+    } catch (err) {
+      console.error("Vektör API'sine ulaşılamadı:", err);
+    }
+
     const formData = new FormData();
 
     formData.append("title", inputTextareValue.title);
     formData.append("description", inputTextareValue.description);
+
+    if (summarizedDescription) {
+      formData.append("summary", JSON.stringify(summarizedDescription));
+    }
+
+    if (descriptionVector) {
+      formData.append(
+        "description_embedding",
+        JSON.stringify(descriptionVector),
+      );
+    }
+
+    if (summaryVector) {
+      formData.append(
+        "description_summary_embedding",
+        JSON.stringify(summaryVector),
+      );
+    }
 
     if (isEdit) {
       formData.append("id", advertId);
@@ -124,7 +224,6 @@ export default function PriceOffer({ advertId }) {
 
     if (images[0] && images[0].file) {
       try {
-        setLoading(true);
         const pyFormData = new FormData();
         pyFormData.append("file", images[0].file);
 
@@ -139,21 +238,14 @@ export default function PriceOffer({ advertId }) {
         if (pyResponse.ok) {
           const pyData = await pyResponse.json();
           const embeddingVector = pyData.image_embedding;
-
           formData.append("image_embedding", JSON.stringify(embeddingVector));
-          console.log("Kapak fotoğrafı embedding vektörü başarıyla alındı!");
-        } else {
-          console.warn(
-            "Python API'den embedding alınamadı, ilan vektörsüz kaydedilebilir.",
-          );
         }
       } catch (err) {
-        console.error("Yapay Zeka API bağlantı hatası:", err);
+        console.error(err);
       }
     }
 
     try {
-      setLoading(true);
       setError(null);
       const URL = isEdit
         ? `${process.env.NEXT_PUBLIC_URL}/adverts/edit`
@@ -182,7 +274,7 @@ export default function PriceOffer({ advertId }) {
 
       router.replace("/ilanlarim");
     } catch (err) {
-      console.log("Error: " + err);
+      console.log(err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -215,8 +307,6 @@ export default function PriceOffer({ advertId }) {
           }
 
           const data = await response.json();
-          console.log("Gelen veri:", data);
-          console.log("Resimler:", data.images);
           setInputTextareaValue({
             title: data.title || "",
             description: data.description || "",
@@ -246,7 +336,7 @@ export default function PriceOffer({ advertId }) {
             setImages(loadedImages);
           }
         } catch (err) {
-          console.log("Error: " + err);
+          console.log(err);
           setError(err.message);
         } finally {
           setLoading(false);
@@ -333,6 +423,22 @@ export default function PriceOffer({ advertId }) {
             onChange={inputTextareaChangeHandler}
             autoFocus
           />
+          <AnimatePresence>
+            {fieldErrors.title && (
+              <motion.p
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                style={{
+                  color: "#ff4d4d",
+                  fontSize: "0.85rem",
+                  marginTop: "0.2rem",
+                }}
+              >
+                {fieldErrors.title}
+              </motion.p>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         <motion.div
@@ -350,6 +456,22 @@ export default function PriceOffer({ advertId }) {
             onChange={inputTextareaChangeHandler}
             rows={6}
           />
+          <AnimatePresence>
+            {fieldErrors.description && (
+              <motion.p
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                style={{
+                  color: "#ff4d4d",
+                  fontSize: "0.85rem",
+                  marginTop: "0.2rem",
+                }}
+              >
+                {fieldErrors.description}
+              </motion.p>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         <motion.div variants={itemVariants} className={classes.imageSection}>

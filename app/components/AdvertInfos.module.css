@@ -192,12 +192,14 @@
   color: #f1ef71;
   border: 1px solid rgba(241, 239, 113, 0.3);
   border-radius: 8px;
-  padding: 4px 8px;
+  padding: 6px 16px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(4px);
   font-size: 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .defaultButton:hover {
@@ -211,12 +213,14 @@
   color: #1a1a1a;
   border: 1px solid #c2c047;
   border-radius: 8px;
-  padding: 4px 8px;
+  padding: 6px 16px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 14px;
   box-shadow: 0 0 10px rgba(194, 192, 71, 0.5);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .favoriteButton:hover {
@@ -248,11 +252,54 @@
 }
 
 .descriptionDiv {
+  display: flex;
+  flex-direction: column;
   background-color: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-top: none;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
+}
+
+.summaryButtonDiv {
+  align-self: flex-end;
+}
+
+.aiSummaryBtn {
+  background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-bottom-left-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.aiSummaryBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 198, 255, 0.6);
+  filter: brightness(1.15);
+}
+
+.aiSummaryBtn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(0, 198, 255, 0.3);
+}
+
+.aiSummaryBtn:disabled {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .descriptionWrapper {
@@ -366,6 +413,39 @@
   color: whitesmoke;
 }
 
+@media (max-width: 1024px) {
+  .advertInfoDiv {
+    width: 95%;
+  }
+
+  .advertInfoWrapper1 {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .imgDiv {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .advertInfoWrapper2 {
+    width: 100%;
+  }
+
+  .summaryButtonDiv {
+    width: 100%;
+    display: flex;
+  }
+
+  .aiSummaryBtn {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 0;
+  }
+}
+
 @media (max-width: 768px) {
   .advertDiv {
     padding: 1rem;
@@ -386,6 +466,14 @@
 
   .titleFavoriteDiv h2 {
     font-size: 22px;
+    width: 100%;
+  }
+
+  .defaultButton,
+  .favoriteButton {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
   }
 
   .advertInfoWrapper1 {
@@ -430,9 +518,22 @@
     padding: 1rem;
   }
 
+  .summaryButtonDiv {
+    width: 100%;
+    display: flex;
+  }
+
+  .aiSummaryBtn {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 0;
+  }
+
   .toggleSimilarBtn {
     width: 100%;
     text-align: center;
-    padding: 0.85rem 1rem;
+    padding: 12px;
+    font-size: 14px;
   }
 }

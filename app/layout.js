@@ -1,39 +1,26 @@
+import { Inter, Josefin_Sans } from "next/font/google";
 import Footer from "@/app/components/Footer";
 import "./globals.css";
 import Providers from "./components/Providers";
 import ReactQuery from "./lib/reactQuery";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  variable: "--font-josefin",
+});
+
 export default function RootLayout({ children }) {
   return (
     <html lang="tr">
       <head>
-        {/* Google Fonts için Preconnect (Performans ve CORS hatalarını önler) */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Dancing+Script:wght@400..700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@200..700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Quicksand:wght@300..700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap"
-          rel="stylesheet"
         />
         <link
           rel="stylesheet"
@@ -45,7 +32,7 @@ export default function RootLayout({ children }) {
         />
         <title>Araç Fiyat Teklif Al / Sat</title>
       </head>
-      <body className="rootBody">
+      <body className={`rootBody ${inter.variable} ${josefin.variable}`}>
         <Providers>
           <ReactQuery>
             <svg width="0" height="0" style={{ position: "absolute" }}>

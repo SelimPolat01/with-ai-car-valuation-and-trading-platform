@@ -202,13 +202,37 @@ router.post(
       }
     }
 
+    let descEmbedding = null;
+    if (data.description_embedding) {
+      try {
+        const parsedArray = JSON.parse(data.description_embedding);
+        if (Array.isArray(parsedArray)) {
+          descEmbedding = JSON.stringify(parsedArray);
+        }
+      } catch (error) {
+        console.error("Description Embedding parse hatası:", error);
+      }
+    }
+
+    let sumEmbedding = null;
+    if (data.description_summary_embedding) {
+      try {
+        const parsedArray = JSON.parse(data.description_summary_embedding);
+        if (Array.isArray(parsedArray)) {
+          sumEmbedding = JSON.stringify(parsedArray);
+        }
+      } catch (error) {
+        console.error("Summary Embedding parse hatası:", error);
+      }
+    }
+
     try {
       const advertResult = await db.query(
         `INSERT INTO adverts (
           user_id, brand, model, model_year, body_type, 
           engine_capacity, horsepower, transmission, kilometer, 
-          fuel_type, price, title, description, has_scratch, has_dent, trim_level, image_embedding
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING id`,
+          fuel_type, price, title, description, summary, has_scratch, has_dent, trim_level, image_embedding, description_embedding, description_summary_embedding
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $16, $16, $17, $18, $19, $20) RETURNING id`,
         [
           Number(user.id),
           data.brand,
@@ -223,10 +247,13 @@ router.post(
           data.price ? Math.round(Number(data.price)) : null,
           data.title,
           data.description,
+          data.summary,
           isScratched,
           hasDent,
           trimLevel,
           imageEmbedding,
+          descEmbedding,
+          sumEmbedding,
         ],
       );
 
@@ -280,8 +307,11 @@ router.put(
       id,
       title,
       description,
+      summary,
       existingImages,
       image_embedding,
+      description_embedding,
+      description_summary_embedding,
       coverImageIdentifier,
       coverImageType,
     } = req.body;
@@ -300,16 +330,57 @@ router.put(
       }
     }
 
+    let descEmbedding = null;
+    if (description_embedding) {
+      try {
+        const parsedArray = JSON.parse(description_embedding);
+        if (Array.isArray(parsedArray)) {
+          descEmbedding = JSON.stringify(parsedArray);
+        }
+      } catch (error) {
+        console.error("Description Embedding parse hatası:", error);
+      }
+    }
+
+    let sumEmbedding = null;
+    if (description_summary_embedding) {
+      try {
+        const parsedArray = JSON.parse(description_summary_embedding);
+        if (Array.isArray(parsedArray)) {
+          sumEmbedding = JSON.stringify(parsedArray);
+        }
+      } catch (error) {
+        console.error("Summary Embedding parse hatası:", error);
+      }
+    }
+
     try {
       if (imageEmbeddingObj) {
         await db.query(
-          "UPDATE adverts SET title = $1, description = $2, image_embedding = $3 WHERE user_id = $4 AND id = $5",
-          [title, description, imageEmbeddingObj, Number(user.id), id],
+          "UPDATE adverts SET title = $1, description = $2, summary = $3, image_embedding = $4, description_embedding = $5, description_summary_embedding = $6 WHERE user_id = $7 AND id = $8",
+          [
+            title,
+            description,
+            summary,
+            imageEmbeddingObj,
+            descEmbedding,
+            sumEmbedding,
+            Number(user.id),
+            id,
+          ],
         );
       } else {
         await db.query(
-          "UPDATE adverts SET title = $1, description = $2 WHERE user_id = $3 AND id = $4",
-          [title, description, Number(user.id), id],
+          "UPDATE adverts SET title = $1, description = $2, summary = $3, description_embedding = $4, description_summary_embedding = $5 WHERE user_id = $6 AND id = $7",
+          [
+            title,
+            description,
+            summary,
+            descEmbedding,
+            sumEmbedding,
+            Number(user.id),
+            id,
+          ],
         );
       }
 
@@ -385,8 +456,10 @@ router.put(
 );
 
 router.patch("/soldAdvert", verifyToken, async (req, res) => {
-  const { advertId } = req.body;
+  const { advertId, slot_date, slot_time } = req.body;
   try {
+    await db.query("BEGIN");
+
     const checkStatus = await db.query(
       `SELECT is_sold FROM adverts WHERE id = $1`,
       [advertId],
@@ -416,7 +489,7 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
       Math.floor(diffInMs / (1000 * 60 * 60 * 24)),
     );
 
-    const result = await db.query(
+    await db.query(
       `INSERT INTO sold_adverts (brand, model, model_year, body_type, engine_capacity, horsepower, transmission, kilometer, fuel_type, price, trim_level, days_to_sell, has_scratch, has_dent, user_id, advert_id, sold_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`,
       [
         soldAdvertDetail.brand,
@@ -443,13 +516,40 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
       advertId,
     ]);
 
-    res.status(200).json({ message: "İlan başarıyla satın alınmıştır." });
+    await db.query(
+      `INSERT INTO appointments (user_id, advert_id, slot_date, slot_time, location) VALUES ($1, $2, $3, $4, $5)`,
+      [req.user.id, advertId, slot_date, slot_time, "Üsküdar Merkez Şube"],
+    );
+
+    await db.query(
+      `UPDATE available_slots SET is_booked = true WHERE slot_date = $1 AND slot_time = $2`,
+      [slot_date, slot_time],
+    );
+
+    await db.query(
+      `INSERT INTO notifications (user_id, title, message, type, related_entity_id) VALUES ($1, $2, $3, $4, $5)`,
+      [
+        soldAdvertDetail.user_id,
+        "İlanınız Satıldı! 🎉",
+        `${soldAdvertDetail.brand} ${soldAdvertDetail.model} aracınız satın alındı. Alıcı ${slot_date} saat ${slot_time} için randevu oluşturdu.`,
+        "sold",
+        advertId,
+      ],
+    );
+
+    await db.query("COMMIT");
+
+    res.status(200).json({
+      message: "İlan başarıyla satın alınmış ve randevu oluşturulmuştur.",
+    });
   } catch (err) {
+    await db.query("ROLLBACK");
     console.error("Satış hatası detayı:", err);
 
     if (err.code === "23505") {
       return res.status(400).json({
-        message: "Bu araç aynı anda başka biri tarafından satın alındı.",
+        message:
+          "Bu araç aynı anda başka biri tarafından satın alındı veya bu saat dolu.",
       });
     }
 

@@ -1,0 +1,27 @@
+# Sanal Ortamlar (Virtual Environments)
+venv/
+env/
+.venv/
+ENV/
+
+# Python Önbellek Dosyaları
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Geliştirme Ortamı ve Gizli Dosyalar
+.env
+.vscode/
+.idea/
+*.log
+
+# Projeye Özel Filtrelenen Eğitim/Test Kodları ve Klasörleri
+train_models/
+train.py
+train_step.py
+test_step.py
+
+# Kullanıcı yüklemeleri (Modeller GİTMELİ, sadece yüklemeler kalmalı)
+uploads/

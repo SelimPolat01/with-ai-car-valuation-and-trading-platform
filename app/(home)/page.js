@@ -7,6 +7,7 @@ import AiCarDetector from "@/app/components/AiCarDetector";
 export default function Home() {
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
+
   return (
     <main className="homeContainer">
       {mode === "form" ? (

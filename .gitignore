@@ -9,7 +9,6 @@ ENV/
 bin/
 lib64/
 
-
 # --- Python / Machine Learning ---
 __pycache__/
 **/__pycache__/
@@ -19,8 +18,7 @@ __pycache__/
 .Python
 .ipynb_checkpoints
 
-
-# --- Next.js / React ---
+# --- Next.js / React (Frontend) ---
 .next/
 **/.next/
 out/
@@ -62,25 +60,22 @@ logs
 .DS_Store
 Thumbs.db
 
-pytorch-model-backend/.venv/
-**/node_modules/
-
-# uploads/
+# --- Kullanıcı Yüklemeleri ---
+# uploads/ (Kapatılmış, eğer açmak istersen başındaki # işaretini kaldır)
 screenshots/
-car-buy-sell-web-app/
 
+# --- Projeye Özel Filtrelenen Eğitim Kodları ve Verisetleri (GİTMESİNE GEREK OLMAYANLAR) ---
 pytorch-model-backend/train_models/
-pytorch-model-backend/Dockerfile
-pytorch-model-backend/requirements.txt
-pytorch-model-backend/README.md
 pytorch-model-backend/nlp_summary_train.py
 pytorch-model-backend/train.py
 pytorch-model-backend/train_step.py
 pytorch-model-backend/test_step.py
-pytorch-model-backend/.gitignore
-pytorch-model-backend/.gitattributes
+pytorch-model-backend/description_summary.csv
 
+# Ortam ve test klasörleri
+pytorch-model-backend/ortam_1/
+
+# NOT: Büyük dil modelleri GitHub'ın 100MB sınırına takılabilir. 
+# Eğer hata alırsan bu modelleri Git LFS ile yüklemeli veya klasörleri aşağıdaki gibi ignore etmelisin.
 pytorch-model-backend/benim_oto_ozet_modelim/
 pytorch-model-backend/mt5-oto-ekspertiz-ozet/
-pytorch-model-backend/ortam_1/
-pytorch-model-backend/description_summary.csv

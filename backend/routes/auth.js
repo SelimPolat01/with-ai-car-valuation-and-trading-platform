@@ -107,6 +107,6 @@ router.get("/me", verifyToken, async (req, res) => {
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Sunucu hatası" });
+    res.status(500).json({ message: "Sunucu hatası." });
   }
 });

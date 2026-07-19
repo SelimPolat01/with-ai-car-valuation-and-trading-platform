@@ -24,6 +24,9 @@ from car_data import CarData
 from CNNs.car_detection_cnn import CarDetectionCNN
 from CNNs.car_direction_detection_cnn import CarDirectionDetectionCNN
 from CNNs.car_scratch_dent_detection_cnn import CarScratchDentDetectionCNN
+from dotenv import load_dotenv
+
+load_dotenv()
 
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
@@ -131,7 +134,7 @@ except Exception as e:
 logging.set_verbosity_error()
 text_summarizer = pipeline(
     "summarization",
-    model="./benim_oto_ozet_modelim",       
+    model="./benim_oto_ozet_modelim",      
     tokenizer="./benim_oto_ozet_modelim",  
     device=0 if torch.cuda.is_available() else -1
 )
@@ -145,13 +148,7 @@ ner_pipeline = pipeline(
     device=0 if torch.cuda.is_available() else -1
 )
 
-DB_CONFIG = {
-    "dbname": "postgres",
-    "user": "postgres",
-    "password": "gumushane34",
-    "host": "172.20.0.1",
-    "port": "5432"
-}
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 class SummaryRequest(BaseModel):
     description: str
@@ -441,7 +438,10 @@ def search_similar_advert(request: Request, body: searchRequest):
     
     conn = None
     try:
-        conn = psycopg2.connect(**DB_CONFIG)
+        if not DATABASE_URL:
+            raise ValueError("DATABASE_URL ayarlanmamış! Lütfen .env dosyanı kontrol et.")
+            
+        conn = psycopg2.connect(DATABASE_URL)
         register_vector(conn)
         cur = conn.cursor()
         query = """
@@ -473,7 +473,7 @@ def search_similar_advert(request: Request, body: searchRequest):
 
     except Exception as e:
         print("Vektör Arama Hatası:", e)
-        return {"success": False, "message": "Arama sırasında bir hata oluştu."}
+        return {"success": False, "message": f"Arama sırasında bir hata oluştu: {str(e)}"}
         
     finally:
         if conn is not None:

@@ -84,136 +84,121 @@ export default function Bildirimler() {
   }
 
   if (isLoading) {
-    return (
-      <div className={classes.div}>
-        <div className={classes.divContainer}>
-          <p className={classes.loadingText}>Yükleniyor...</p>
-        </div>
-      </div>
-    );
+    return <div className={classes.container}>Yükleniyor...</div>;
   }
 
   return (
-    <div className={classes.div}>
-      <div className={classes.divContainer}>
-        <div className={classes.frameDiv}>
-          <div className={classes.headerSection}>
-            <h2 className={classes.pageTitle}>Bildirimleriniz</h2>
-          </div>
+    <div className={classes.container}>
+      <h1 className={classes.pageTitle}>Bildirimleriniz</h1>
 
-          <div className={classes.controlsSection}>
-            <div className={classes.leftControls}>
-              <div className={classes.tabs}>
-                <button
-                  className={`${classes.tabButton} ${
-                    readFilter === "all" ? classes.activeTab : ""
-                  }`}
-                  onClick={() => setReadFilter("all")}
-                >
-                  Tümü
-                </button>
-                <button
-                  className={`${classes.tabButton} ${
-                    readFilter === "unread" ? classes.activeTab : ""
-                  }`}
-                  onClick={() => setReadFilter("unread")}
-                >
-                  Okunmamış
-                </button>
-              </div>
-
-              <div className={classes.filterDropdownContainer}>
-                <button
-                  className={`${classes.filterButton} ${
-                    typeFilter !== "all" ? classes.activeFilter : ""
-                  }`}
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                >
-                  <Filter size={16} />
-                  Filtrele
-                  <ChevronDown size={16} />
-                </button>
-
-                {isFilterOpen && (
-                  <div className={classes.dropdownMenu}>
-                    {uniqueTypes.map((type, index) => (
-                      <div
-                        key={index}
-                        className={`${classes.dropdownItem} ${
-                          typeFilter === type ? classes.activeDropdownItem : ""
-                        }`}
-                        onClick={() => {
-                          setTypeFilter(type);
-                          setIsFilterOpen(false);
-                        }}
-                      >
-                        {typeLabels[type] || type}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
+      <div className={classes.controlsSection}>
+        <div className={classes.leftControls}>
+          <div className={classes.tabs}>
             <button
-              className={classes.markAllButton}
-              onClick={markAllAsReadHandler}
-              disabled={!personalNotifications.some((n) => !n.is_read)}
+              className={`${classes.tabButton} ${
+                readFilter === "all" ? classes.activeTab : ""
+              }`}
+              onClick={() => setReadFilter("all")}
             >
-              <CheckCheck size={18} />
-              Tümünü Okundu İşaretle
+              Tümü
+            </button>
+            <button
+              className={`${classes.tabButton} ${
+                readFilter === "unread" ? classes.activeTab : ""
+              }`}
+              onClick={() => setReadFilter("unread")}
+            >
+              Okunmamış
             </button>
           </div>
 
-          {filteredNotifications.length > 0 ? (
-            filteredNotifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`${classes.biggerFrame} ${
-                  !notification.is_read ? classes.unread : ""
-                }`}
-                onClick={() => notificationClickHandler(notification)}
-              >
-                <div className={classes.iconContainer}>
-                  {!notification.is_read ? (
-                    <Bell size={26} color="#ffffff" fill="#a855f7" />
-                  ) : (
-                    <CheckCircle2 size={26} color="#10b981" />
+          <div className={classes.filterDropdownContainer}>
+            <button
+              className={`${classes.filterButton} ${
+                typeFilter !== "all" ? classes.activeFilter : ""
+              }`}
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+            >
+              <Filter size={16} />
+              Filtrele
+              <ChevronDown size={16} />
+            </button>
+
+            {isFilterOpen && (
+              <div className={classes.dropdownMenu}>
+                {uniqueTypes.map((type, index) => (
+                  <div
+                    key={index}
+                    className={`${classes.dropdownItem} ${
+                      typeFilter === type ? classes.activeDropdownItem : ""
+                    }`}
+                    onClick={() => {
+                      setTypeFilter(type);
+                      setIsFilterOpen(false);
+                    }}
+                  >
+                    {typeLabels[type] || type}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <button
+          className={classes.markAllButton}
+          onClick={markAllAsReadHandler}
+          disabled={!personalNotifications.some((n) => !n.is_read)}
+        >
+          <CheckCheck size={18} />
+          Tümünü Okundu İşaretle
+        </button>
+      </div>
+
+      <div className={classes.listContainer}>
+        {filteredNotifications.length > 0 ? (
+          filteredNotifications.map((notification) => (
+            <div
+              key={notification.id}
+              className={`${classes.notificationCard} ${
+                !notification.is_read ? classes.unread : ""
+              }`}
+              onClick={() => notificationClickHandler(notification)}
+            >
+              <div className={classes.iconContainer}>
+                {!notification.is_read ? (
+                  <Bell size={26} color="#ffffff" fill="#a855f7" />
+                ) : (
+                  <CheckCircle2 size={26} color="#10b981" />
+                )}
+              </div>
+              <div className={classes.contentContainer}>
+                <div className={classes.notificationTitle}>
+                  {notification.title}
+                </div>
+                <div className={classes.notificationMessage}>
+                  {notification.message}
+                </div>
+                <div className={classes.notificationTime}>
+                  {new Date(notification.created_at).toLocaleDateString(
+                    "tr-TR",
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    },
                   )}
                 </div>
-                <div className={classes.contentContainer}>
-                  <div className={classes.notificationTitle}>
-                    {notification.title}
-                  </div>
-                  <div className={classes.notificationMessage}>
-                    {notification.message}
-                  </div>
-                  <div className={classes.notificationTime}>
-                    {new Date(notification.created_at).toLocaleDateString(
-                      "tr-TR",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      },
-                    )}
-                  </div>
-                </div>
               </div>
-            ))
-          ) : (
-            <div
-              className={classes.biggerFrame}
-              style={{ justifyContent: "center", alignItems: "center" }}
-            >
-              <p className={classes.emptyText}>
-                Bu filtreye uygun bildirim bulunamadı.
-              </p>
             </div>
-          )}
-        </div>
+          ))
+        ) : (
+          <div className={classes.emptyState}>
+            Bu filtreye uygun bildirim bulunamadı.
+          </div>
+        )}
       </div>
     </div>
   );

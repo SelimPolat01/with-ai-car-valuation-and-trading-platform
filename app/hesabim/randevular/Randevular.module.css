@@ -35,22 +35,23 @@
 .tabButton {
   background: none;
   border: none;
-  color: #a1a1aa;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
   padding: 0.5rem 1rem;
   position: relative;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .tabButton:hover {
   color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
 }
 
 .activeTab {
   color: #ffffff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 0 10px rgba(152, 103, 255, 0.8);
 }
 
 .activeTab::after {
@@ -59,10 +60,10 @@
   bottom: -9px;
   left: 0;
   width: 100%;
-  height: 2px;
-  background-color: #ffffff;
-  border-radius: 2px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  height: 3px;
+  background: linear-gradient(90deg, #00f4ff, #9867ff);
+  border-radius: 3px;
+  box-shadow: 0 0 12px rgba(152, 103, 255, 0.6);
 }
 
 .listContainer {

@@ -1,44 +1,16 @@
-.div {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100%;
-  margin: 0 0 2rem 0;
-  font-family: "Josefin Sans", sans-serif;
-  padding: 0 2rem 2rem 2rem;
-  min-height: 60vh;
-}
-
-.divContainer {
-  display: flex;
-  justify-content: center;
-  margin: 0;
-  width: 100%;
-}
-
-.frameDiv {
+.container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
   width: 100%;
-  max-width: 1110px;
-  padding: 2px;
-  align-items: center;
-}
-
-.headerSection {
-  width: 100%;
-  max-width: 740px;
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 0;
 }
 
 .pageTitle {
-  margin: 0 0 24px 10px;
+  font-size: 32px;
+  color: #ffffff;
+  margin: 0;
   align-self: flex-start;
   padding: 0;
-  font-size: 32px;
   width: max-content;
   background: linear-gradient(
     105.66deg,
@@ -49,28 +21,28 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  color: transparent;
   display: inline-block;
 }
 
 .controlsSection {
   width: 100%;
-  max-width: 740px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
   background: rgba(20, 10, 30, 0.8);
   padding: 12px 24px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .leftControls {
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .tabs {
@@ -196,8 +168,15 @@
   cursor: not-allowed;
 }
 
-.biggerFrame {
-  width: 740px;
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.notificationCard {
+  width: 100%;
   min-height: 140px;
   background: rgba(25, 15, 40, 0.85);
   backdrop-filter: blur(20px);
@@ -215,7 +194,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-.biggerFrame:hover {
+.notificationCard:hover {
   background: rgba(40, 25, 60, 0.95);
   transform: translateY(-3px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
@@ -264,33 +243,26 @@
   font-weight: 500;
 }
 
-.emptyText,
-.loadingText {
+.emptyState {
   color: #ffffff;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  padding: 3rem;
+  background: rgba(20, 20, 22, 0.4);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
-  .div {
-    padding: 1rem 1rem;
-    box-sizing: border-box;
+  .container {
+    gap: 1.5rem;
   }
 
   .pageTitle {
     font-size: 24px;
-    margin: 0 0 16px 10px;
-  }
-
-  .frameDiv {
-    width: 100%;
-    align-items: center;
-  }
-
-  .headerSection,
-  .controlsSection {
-    max-width: 400px;
   }
 
   .controlsSection {
@@ -331,12 +303,17 @@
     justify-content: center;
   }
 
-  .biggerFrame {
-    width: 100%;
-    max-width: 400px;
+  .notificationCard {
     flex-direction: column;
     gap: 16px;
     padding: 20px;
     height: auto;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .tabButton {
+    font-size: 13px;
+    padding: 0.4rem 0.5rem;
   }
 }

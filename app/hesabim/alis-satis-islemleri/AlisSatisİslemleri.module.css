@@ -255,8 +255,13 @@
   min-width: 20px;
 }
 
+.completedLine {
+  background: #00f4ff;
+}
+
+/* YENİ EKLENEN SINIF */
 .activeLine {
-  background: linear-gradient(90deg, #00f4ff, #a855f7);
+  background: #a855f7;
 }
 
 .gridTwoColumn {
@@ -414,6 +419,19 @@ button:disabled {
   cursor: pointer;
   font-size: 12px;
   text-decoration: underline;
+}
+
+.emptyState {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  padding: 3rem;
+  background: rgba(20, 20, 22, 0.4);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .dangerCard {

@@ -202,11 +202,9 @@ export default function AlisSatisİslemleri() {
       </div>
 
       {!activeTransaction ? (
-        <div className={classes.card}>
-          <p style={{ textAlign: "center", padding: "2rem", color: "#666" }}>
-            Şu anda {role === "buyer" ? "alıcı" : "satıcı"} olduğunuz aktif bir
-            işlem bulunmamaktadır.
-          </p>
+        <div className={classes.emptyState}>
+          Şu anda {role === "buyer" ? "alıcı" : "satıcı"} olduğunuz aktif bir
+          işlem bulunmamaktadır.
         </div>
       ) : (
         <>
@@ -273,7 +271,7 @@ export default function AlisSatisİslemleri() {
             <h3 className={classes.sectionTitle}>Süreç Adımları</h3>
             <div className={classes.stepper}>
               <div
-                className={`${classes.step} ${currentStep >= 1 ? classes.completedStep : ""}`}
+                className={`${classes.step} ${currentStep > 1 ? classes.completedStep : currentStep === 1 ? classes.activeStep : ""}`}
               >
                 <div className={classes.stepCircle}>
                   {currentStep > 1 ? "✓" : "1"}
@@ -283,11 +281,11 @@ export default function AlisSatisİslemleri() {
               </div>
 
               <div
-                className={`${classes.stepLine} ${currentStep >= 2 ? classes.activeLine : ""}`}
+                className={`${classes.stepLine} ${currentStep > 1 ? classes.completedLine : currentStep === 2 ? classes.activeLine : ""}`}
               ></div>
 
               <div
-                className={`${classes.step} ${currentStep >= 2 ? classes.activeStep : ""}`}
+                className={`${classes.step} ${currentStep > 2 ? classes.completedStep : currentStep === 2 ? classes.activeStep : ""}`}
               >
                 <div className={classes.stepCircle}>
                   {currentStep > 2 ? "✓" : "2"}
@@ -302,11 +300,11 @@ export default function AlisSatisİslemleri() {
               </div>
 
               <div
-                className={`${classes.stepLine} ${currentStep >= 3 ? classes.activeLine : ""}`}
+                className={`${classes.stepLine} ${currentStep > 2 ? classes.completedLine : currentStep === 3 ? classes.activeLine : ""}`}
               ></div>
 
               <div
-                className={`${classes.step} ${currentStep >= 3 ? classes.activeStep : ""}`}
+                className={`${classes.step} ${currentStep > 3 ? classes.completedStep : currentStep === 3 ? classes.activeStep : ""}`}
               >
                 <div className={classes.stepCircle}>
                   {currentStep > 3 ? "✓" : "3"}
@@ -316,11 +314,11 @@ export default function AlisSatisİslemleri() {
               </div>
 
               <div
-                className={`${classes.stepLine} ${currentStep >= 4 ? classes.activeLine : ""}`}
+                className={`${classes.stepLine} ${currentStep > 3 ? classes.completedLine : currentStep === 4 ? classes.activeLine : ""}`}
               ></div>
 
               <div
-                className={`${classes.step} ${currentStep >= 4 ? classes.activeStep : ""}`}
+                className={`${classes.step} ${currentStep > 4 ? classes.completedStep : currentStep === 4 ? classes.activeStep : ""}`}
               >
                 <div className={classes.stepCircle}>
                   {currentStep > 4 ? "✓" : "4"}
@@ -330,11 +328,11 @@ export default function AlisSatisİslemleri() {
               </div>
 
               <div
-                className={`${classes.stepLine} ${currentStep >= 5 ? classes.activeLine : ""}`}
+                className={`${classes.stepLine} ${currentStep > 4 ? classes.completedLine : currentStep === 5 ? classes.activeLine : ""}`}
               ></div>
 
               <div
-                className={`${classes.step} ${currentStep >= 5 ? classes.activeStep : ""}`}
+                className={`${classes.step} ${currentStep > 5 ? classes.completedStep : currentStep === 5 ? classes.activeStep : ""}`}
               >
                 <div className={classes.stepCircle}>
                   {currentStep > 5 ? "✓" : "5"}

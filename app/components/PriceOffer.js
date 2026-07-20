@@ -196,6 +196,8 @@ export default function PriceOffer({ advertId }) {
       formData.append("fuelType", reduxData.fuelType);
       formData.append("trimLevel", reduxData.trimLevel);
       formData.append("price", reduxData.price);
+      formData.append("plate", reduxData.plate);
+
       const hasScratch = reduxData.hasScratch || reduxData.has_scratch || false;
       const hasDent = reduxData.hasDent || reduxData.has_dent || false;
       formData.append("hasScratch", hasScratch);

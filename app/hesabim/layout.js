@@ -40,7 +40,7 @@ export default function SettingsLayout({ children }) {
     { href: "/hesabim/bildirimler", text: "Bildirimler" },
     { href: "/hesabim/garaj", text: "Garaj" },
     { href: "/hesabim/kisisel-bilgiler", text: "Kişisel Bilgiler" },
-    { href: "/hesabim/guvenlik", text: "Güvenlik" },
+    { href: "/hesabim/guvenlik", text: "Güvenlik Ayarları" },
   ];
 
   function logoutHandler() {

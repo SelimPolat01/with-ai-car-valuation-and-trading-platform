@@ -70,13 +70,13 @@ export default function Randevu() {
   };
 
   function appointmentClickHandler() {
-    const randevuVerisi = {
+    const appointmentData = {
       date: formatForDB(selectedDate),
       hour: selectedHour,
       advertId: params.advertId,
     };
 
-    sessionStorage.setItem("randevuVerisi", JSON.stringify(randevuVerisi));
+    sessionStorage.setItem("appointmentData", JSON.stringify(appointmentData));
     router.replace(
       `/ilan/${params["brand-model-modelYear"]}/${params.advertId}/odeme`,
     );

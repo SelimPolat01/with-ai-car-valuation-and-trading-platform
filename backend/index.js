@@ -9,9 +9,9 @@ import { router as personalInfoRoutes } from "./routes/infos.js";
 import { router as slotsRoutes } from "./routes/slots.js";
 import { router as appointmentsRoutes } from "./routes/appointments.js";
 import { router as notificationsRoutes } from "./routes/notifications.js";
+import { router as transactionRoutes } from "./routes/transactions.js";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
-import verifyToken from "./middlewares/verifyToken.js";
 // import { createTable } from "./lib/db.js";
 // import { dbInsertCars } from "./utils/dbInsertCars.js";
 
@@ -60,6 +60,7 @@ app.use("/infos", personalInfoRoutes);
 app.use("/slots", globalLimiter, slotsRoutes);
 app.use("/appointments", appointmentsRoutes);
 app.use("/notifications", notificationsRoutes);
+app.use("/transactions", transactionRoutes);
 
 // await createTable();
 

@@ -178,6 +178,7 @@ export default function RandevuDetaylar() {
   const getStatusData = (status) => {
     switch (status) {
       case "completed":
+      case "success":
         return { text: "Tamamlandı", className: classes.badgeCompleted };
       case "canceled":
         return { text: "İptal Edildi", className: classes.badgeCanceled };

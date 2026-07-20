@@ -17,8 +17,8 @@ export default function Odeme() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const randevuVerisi = sessionStorage.getItem("randevuVerisi");
-    if (!randevuVerisi)
+    const appointmentData = sessionStorage.getItem("appointmentData");
+    if (!appointmentData)
       router.replace(
         `/ilan/${params["brand-model-modelYear"]}/${params.advertId}`,
       );
@@ -46,24 +46,24 @@ export default function Odeme() {
   function advertBuyHandler() {
     const isFormValid = creditCardRef.current.validateForm();
     if (!isFormValid) return;
-    const randevuVerisiStr = sessionStorage.getItem("randevuVerisi");
-    if (!randevuVerisiStr) return;
-    const randevuVerisi = JSON.parse(randevuVerisiStr);
+    const appointmentDataStr = sessionStorage.getItem("appointmentData");
+    if (!appointmentDataStr) return;
+    const appointmentData = JSON.parse(appointmentDataStr);
     const token = localStorage.getItem("token");
     patchSoldAdvertMutate(
       {
         token,
         body: {
           advertId: params.advertId,
-          slot_date: randevuVerisi.date,
-          slot_time: randevuVerisi.hour,
+          slot_date: appointmentData.date,
+          slot_time: appointmentData.hour,
         },
       },
       {
         onSuccess: (soldAdvertData) => {
           console.log(soldAdvertData?.result?.message);
           setIsSuccess(true);
-          sessionStorage.removeItem("randevuVerisi");
+          sessionStorage.removeItem("appointmentData");
         },
         onError: (soldAdvertError) => {
           setError(soldAdvertError?.message);

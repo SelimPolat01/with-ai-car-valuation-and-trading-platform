@@ -20,8 +20,8 @@ export default function RandevularPage() {
   const router = useRouter();
   const pathName = usePathname();
   const [token, setToken] = useState(null);
-  const [roleTab, setRoleTab] = useState("alici");
-  const [activeTab, setActiveTab] = useState("aktif");
+  const [roleTab, setRoleTab] = useState("buyer");
+  const [activeTab, setActiveTab] = useState("active");
 
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
@@ -56,15 +56,15 @@ export default function RandevularPage() {
     : getPersonalAppointmentsData?.result || [];
 
   const roleFilteredData = appointments.filter((appointment) =>
-    roleTab === "alici"
+    roleTab === "buyer"
       ? appointment.role === "buyer"
       : appointment.role === "seller",
   );
 
   const currentData = roleFilteredData.filter((appointment) => {
-    if (activeTab === "aktif") {
+    if (activeTab === "active") {
       return appointment.appointment_status === "pending";
-    } else if (activeTab === "gecmis") {
+    } else if (activeTab === "past") {
       return appointment.appointment_status === "completed";
     } else {
       return appointment.appointment_status === "canceled";
@@ -127,18 +127,18 @@ export default function RandevularPage() {
 
   return (
     <div className={classes.container}>
-      <h1 className={classes.pageTitle}>Randevularım</h1>
+      <h1 className={classes.pageTitle}>Randevular</h1>
 
       <div className={classes.tabs} style={{ marginBottom: "0.5rem" }}>
         <button
-          className={`${classes.tabButton} ${roleTab === "alici" ? classes.activeTab : ""}`}
-          onClick={() => setRoleTab("alici")}
+          className={`${classes.tabButton} ${roleTab === "buyer" ? classes.activeTab : ""}`}
+          onClick={() => setRoleTab("buyer")}
         >
           Alıcı Olduğum
         </button>
         <button
-          className={`${classes.tabButton} ${roleTab === "satici" ? classes.activeTab : ""}`}
-          onClick={() => setRoleTab("satici")}
+          className={`${classes.tabButton} ${roleTab === "seller" ? classes.activeTab : ""}`}
+          onClick={() => setRoleTab("seller")}
         >
           Satıcı Olduğum
         </button>
@@ -146,20 +146,20 @@ export default function RandevularPage() {
 
       <div className={classes.tabs}>
         <button
-          className={`${classes.tabButton} ${activeTab === "aktif" ? classes.activeTab : ""}`}
-          onClick={() => setActiveTab("aktif")}
+          className={`${classes.tabButton} ${activeTab === "active" ? classes.activeTab : ""}`}
+          onClick={() => setActiveTab("active")}
         >
           Aktif Randevularım
         </button>
         <button
-          className={`${classes.tabButton} ${activeTab === "gecmis" ? classes.activeTab : ""}`}
-          onClick={() => setActiveTab("gecmis")}
+          className={`${classes.tabButton} ${activeTab === "past" ? classes.activeTab : ""}`}
+          onClick={() => setActiveTab("past")}
         >
           Geçmiş Randevularım
         </button>
         <button
-          className={`${classes.tabButton} ${activeTab === "iptal" ? classes.activeTab : ""}`}
-          onClick={() => setActiveTab("iptal")}
+          className={`${classes.tabButton} ${activeTab === "cancel" ? classes.activeTab : ""}`}
+          onClick={() => setActiveTab("cancel")}
         >
           İptal Edilen Randevularım
         </button>
@@ -234,7 +234,7 @@ export default function RandevularPage() {
                     }
                     className={classes.actionButton}
                   >
-                    {activeTab === "aktif" ? "Detayları Gör" : "Raporu İncele"}
+                    {activeTab === "active" ? "Detayları Gör" : "Raporu İncele"}
                     <ChevronRight size={16} />
                   </button>
                 )}

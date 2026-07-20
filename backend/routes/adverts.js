@@ -188,7 +188,7 @@ router.post(
     const isScratched = data.hasScratch === "true" || data.hasScratch === true;
     const hasDent = data.hasDent === "true" || data.hasDent === true;
     const trimLevel = data.trimLevel;
-    const { coverImageIdentifier } = data;
+    const { coverImageIdentifier, plate } = data;
 
     let imageEmbedding = null;
     if (data.image_embedding) {
@@ -231,8 +231,8 @@ router.post(
         `INSERT INTO adverts (
           user_id, brand, model, model_year, body_type, 
           engine_capacity, horsepower, transmission, kilometer, 
-          fuel_type, price, title, description, summary, has_scratch, has_dent, trim_level, image_embedding, description_embedding, description_summary_embedding
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $16, $16, $17, $18, $19, $20) RETURNING id`,
+          fuel_type, price, title, description, summary, has_scratch, has_dent, trim_level, image_embedding, description_embedding, description_summary_embedding, plate
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) RETURNING id`,
         [
           Number(user.id),
           data.brand,
@@ -254,6 +254,7 @@ router.post(
           imageEmbedding,
           descEmbedding,
           sumEmbedding,
+          plate,
         ],
       );
 
@@ -516,8 +517,8 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
       advertId,
     ]);
 
-    await db.query(
-      `INSERT INTO appointments (user_id, advert_id, slot_date, slot_time, location) VALUES ($1, $2, $3, $4, $5)`,
+    const appointment = await db.query(
+      `INSERT INTO appointments (user_id, advert_id, slot_date, slot_time, location) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
       [req.user.id, advertId, slot_date, slot_time, "Üsküdar Merkez Şube"],
     );
 
@@ -534,6 +535,27 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
         `${soldAdvertDetail.brand} ${soldAdvertDetail.model} aracınız satın alındı. Alıcı ${slot_date} saat ${slot_time} için randevu oluşturdu.`,
         "sold",
         advertId,
+      ],
+    );
+
+    const carPrice = Number(soldAdvertDetail.price);
+    const depositAmount = carPrice <= 1000000 ? 10000 : 25000;
+    const transactionRef = `TXN-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+    await db.query(
+      `INSERT INTO advert_payments 
+   (advert_id, buyer_id, seller_id, appointment_id, total_price, deposit_amount, payment_status, payment_method, transaction_reference) 
+   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      [
+        advertId,
+        req.user.id,
+        soldAdvertDetail.user_id,
+        appointment.rows[0].id,
+        soldAdvertDetail.price,
+        depositAmount,
+        "completed",
+        "credit_card",
+        transactionRef,
       ],
     );
 

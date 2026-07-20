@@ -66,8 +66,7 @@
 .form input {
   border-radius: 8px;
   text-indent: 3px;
-  height: 40px;
-  font-style: normal;
+  max-height: 40.8px;
   border: 1px solid #ccc;
 }
 
@@ -82,11 +81,13 @@
 .kmInput {
   font-size: 15px;
   font-weight: bold;
+  box-sizing: border-box;
 }
 
 .kmInput:focus {
   box-shadow: 0 0 15px #acacac;
   border-radius: 8px;
+  outline: none;
 }
 
 .title {

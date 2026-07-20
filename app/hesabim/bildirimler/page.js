@@ -89,7 +89,7 @@ export default function Bildirimler() {
 
   return (
     <div className={classes.container}>
-      <h1 className={classes.pageTitle}>Bildirimleriniz</h1>
+      <h1 className={classes.pageTitle}>Bildirimler</h1>
 
       <div className={classes.controlsSection}>
         <div className={classes.leftControls}>

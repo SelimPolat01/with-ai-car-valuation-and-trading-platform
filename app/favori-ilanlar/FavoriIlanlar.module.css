@@ -20,7 +20,8 @@
   text-align: center;
   font-weight: bold;
   margin: 0 0 6px 0;
-  color: whitesmoke;
+  color: #e6ddff;
+  letter-spacing: 0.5px;
 }
 
 .myFavoriteAdvertsTextDiv {
@@ -29,7 +30,8 @@
 
 .myFavoriteAdvertsTextDiv h3 {
   margin: 12px 0;
-  color: whitesmoke;
+  color: #ffffff;
+  letter-spacing: 1px;
 }
 
 .noFavoriteAdvertDiv {
@@ -42,7 +44,8 @@
 .noFavoriteAdvertDiv p {
   margin: 0;
   padding: 0;
-  color: whitesmoke;
+  color: #e6ddff;
+  font-size: 1.1rem;
 }
 
 .managementNav {
@@ -68,6 +71,7 @@
 
   .myFavoriteAdvertsTextDiv hr {
     width: 100% !important;
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   .listHeader {

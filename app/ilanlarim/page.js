@@ -9,7 +9,7 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import { AnimatePresence } from "framer-motion";
 import ManagementNav from "../components/ManagementNav";
 import { useGetPersonalAdverts } from "@/hooks/GET/useGetPersonalAdverts";
-import useDeleteAdvert from "@/hooks/DELETE/useDeleteAdvert";
+import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function MyAdverts() {

@@ -11,7 +11,7 @@ import ConfirmDialog from "../components/ConfirmDialog.js";
 import { AnimatePresence } from "framer-motion";
 import FilterBrand from "../components/FilterBrand.js";
 import { useGetAdverts } from "@/hooks/GET/useGetAdverts";
-import useDeleteAdvert from "@/hooks/DELETE/useDeleteAdvert";
+import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function AllAdverts() {

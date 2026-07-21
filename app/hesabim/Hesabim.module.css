@@ -16,9 +16,6 @@
 .linkDiv {
   width: 250px;
   flex-shrink: 0;
-  /* KRİTİK NOKTA 2: Arka plan renklerini ve sınırları buraya veriyoruz.
-     Sayfa ne kadar uzun olursa olsun arka plan asla bitmez, aşağı kadar iner. 
-     Buradan 'position: sticky' ve 'height: 100vh' özelliklerini KALDIRDIK! */
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -139,7 +136,7 @@
   }
 
   .linkContainer {
-    position: relative; /* Mobilde çakılı kalmayı iptal ediyoruz ki içerik düzgün aksın */
+    position: relative;
     top: auto;
     height: auto;
     overflow-y: visible;

@@ -201,7 +201,9 @@ export default function Header({ className }) {
               }}
             >
               <button
-                className={`${classes.notificationButton}${className ? ` ${className}` : ""}`}
+                className={`${classes.notificationButton}${
+                  className ? ` ${className}` : ""
+                }`}
                 title="Bildirimler"
                 type="button"
                 onClick={notificationIconClickHandler}

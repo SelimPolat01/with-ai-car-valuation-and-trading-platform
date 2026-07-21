@@ -10,7 +10,7 @@ import FavoriteAdvertItem from "../components/FavoriteAdvertItem";
 import ManagementNav from "../components/ManagementNav";
 import { AnimatePresence } from "framer-motion";
 import { useGetFavoriteAdverts } from "@/hooks/GET/useGetFavoriteAdverts";
-import usePostFavoriteAdvert from "@/hooks/POST/usePostFavoriteAdvert";
+import { usePostFavoriteAdvert } from "@/hooks/POST/usePostFavoriteAdvert";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function FavoriIlanlar() {

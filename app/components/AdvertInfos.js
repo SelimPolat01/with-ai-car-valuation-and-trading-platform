@@ -17,7 +17,7 @@ import SuccessMessage from "./SuccessMessage";
 import SimilarAdverts from "./SimiliarAdverts";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetAdvert } from "@/hooks/GET/useGetAdvert";
-import usePostFavoriteAdvert from "@/hooks/POST/usePostFavoriteAdvert";
+import { usePostFavoriteAdvert } from "@/hooks/POST/usePostFavoriteAdvert";
 
 export default function AdvertInfos() {
   const params = useParams();

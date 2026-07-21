@@ -51,7 +51,7 @@ router.get("/trading-values", verifyToken, async (req, res) => {
   } catch (err) {
     res.status(500).json({
       success: false,
-      message: "İşlemler getirilirken sunucu hatası oluştu.",
+      message: `İşlemler getirilirken sunucu hatası oluştu: ${err.message}`,
     });
   }
 });

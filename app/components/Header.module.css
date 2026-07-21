@@ -95,9 +95,7 @@
   margin: 0;
   padding: 8px;
   min-width: 160px;
-  background: rgba(20, 10, 30, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: #140a1e;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -113,7 +111,7 @@
   transform: translateX(-50%);
   border-width: 8px;
   border-style: solid;
-  border-color: transparent transparent rgba(20, 10, 30, 0.85) transparent;
+  border-color: transparent transparent #140a1e transparent;
   pointer-events: none;
 }
 
@@ -200,9 +198,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 320px;
-  background: rgba(20, 10, 30, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: #140a1e;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
@@ -220,7 +216,7 @@
   transform: translateX(-50%);
   border-width: 8px;
   border-style: solid;
-  border-color: transparent transparent rgba(20, 10, 30, 0.85) transparent;
+  border-color: transparent transparent #140a1e transparent;
   pointer-events: none;
 }
 
@@ -246,6 +242,7 @@
 .notificationList::-webkit-scrollbar {
   width: 6px;
 }
+
 .notificationList::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
@@ -312,16 +309,8 @@
 }
 
 @media (max-width: 1024px) {
-  .notificationDropdown {
-    left: auto;
-    right: -45px;
-    transform: none;
-  }
-
-  .notificationDropdown::before {
-    left: auto;
-    right: 55px;
-    transform: none;
+  .nav {
+    padding: 0 1.5rem;
   }
 
   .account:hover .accountMenu,
@@ -332,40 +321,43 @@
 
 @media (max-width: 768px) {
   .nav {
-    margin: 0 0 1rem 0;
-    padding: 0 1rem;
+    margin: 0;
+    padding: 0 10px;
     min-height: 60px;
     width: 100%;
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
+    gap: 10px;
+    flex-wrap: nowrap;
   }
 
   .logo {
-    height: 45px;
-    min-width: 45px;
+    height: 38px !important;
+    width: 38px !important;
+    min-width: 38px !important;
     margin: 0;
   }
 
   .searchBar {
-    height: 26px !important;
-    flex: 1;
-    min-width: 0;
+    flex: 1 1 auto;
+    min-width: 80px;
+    max-width: 180px;
+    height: 32px !important;
     margin: 0;
-    max-width: 116px;
   }
 
   .ul {
-    gap: 0.5rem;
+    gap: 12px;
     height: 100%;
     align-items: center;
-    margin: 0.5rem 0 0 0;
+    margin: 0;
     padding: 0;
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
     justify-content: flex-end;
+    flex-wrap: nowrap;
   }
 
   .li {
@@ -374,7 +366,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    height: 28px;
+    height: 30px;
   }
 
   .homeLink,
@@ -396,8 +388,8 @@
   .allAdvertsLink i,
   .accountLink i,
   .icon {
-    width: 26px !important;
-    height: 26px !important;
+    width: 24px !important;
+    height: 24px !important;
     margin: 0 !important;
     padding: 0 !important;
     display: flex !important;
@@ -407,57 +399,116 @@
 
   .account {
     padding-bottom: 0;
-    height: 28px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin: 0 25px 0 0;
+    margin: 0 5px 0 0;
   }
 
   .accountMenu {
-    top: 45px;
-    left: 50%;
-    transform: translateX(-50%) translateY(15px);
+    top: 35px;
+    left: auto;
+    right: -10px;
+    transform: translateY(10px);
     min-width: 180px;
   }
 
   .accountMenu::before {
-    left: 50%;
-    transform: translateX(-50%);
+    left: auto;
+    right: 17px;
+    transform: none;
   }
 
   .account:hover .accountMenu,
   .account:active .accountMenu {
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 
   .notificationDropdown {
-    width: 300px;
-    max-width: 90vw;
+    width: 290px;
+    max-width: calc(100vw - 20px);
     left: auto;
-    right: -45px;
+    right: -10px;
     transform: none;
   }
 
   .notificationDropdown::before {
     left: auto;
-    right: 55px;
+    right: 14px;
     transform: none;
   }
 }
 
 @media (max-width: 480px) {
+  .nav {
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  .logo {
+    height: 42px !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    margin: 8px 0 0 0;
+  }
+
+  .icon {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .ul {
+    gap: 8px;
+  }
+
   .notificationDropdown {
-    width: 280px;
-    right: -40px;
+    width: 260px;
+    max-width: calc(100vw - 16px);
+    right: -15px;
   }
 
   .notificationDropdown::before {
-    right: 50px;
+    right: 17px;
+  }
+
+  .notificationHeader h4 {
+    font-size: 14px;
+  }
+
+  .notificationTitle {
+    font-size: 13px;
+  }
+
+  .notificationMessage {
+    font-size: 12px;
+  }
+
+  .notificationTime {
+    font-size: 10px;
+  }
+
+  .notificationItem {
+    padding: 12px;
+    gap: 4px;
   }
 
   .accountMenu {
-    min-width: 160px;
+    min-width: 150px;
+    right: -15px;
+  }
+
+  .accountMenu::before {
+    right: 21px;
+  }
+
+  .accountMenu a {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .account {
+    margin: 0;
   }
 }

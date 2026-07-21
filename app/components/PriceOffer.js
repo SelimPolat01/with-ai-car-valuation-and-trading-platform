@@ -81,23 +81,20 @@ export default function PriceOffer({ advertId }) {
     const token = localStorage.getItem("token");
     const uploadedFiles = images.filter((img) => img !== null);
 
-    setError(null);
-    setFieldErrors({ title: null, description: null });
+    let hasValidationErrors = false;
+    let newErrorState = null;
+    let newFieldErrors = { title: null, description: null };
 
     if (uploadedFiles.length === 0 || !images[0]) {
-      setError(
-        "Lütfen ilk kutucuğa bir Kapak Fotoğrafı eklediğinizden emin olun.",
-      );
-      return;
+      newErrorState =
+        "Lütfen ilk kutucuğa bir kapak fotoğrafı eklediğinizden emin olun.";
+      hasValidationErrors = true;
     }
 
     const titleText = inputTextareValue.title.trim();
     if (titleText.length < 15 || titleText.length > 70) {
-      setFieldErrors((prev) => ({
-        ...prev,
-        title: "İlan başlığı en az 15, en fazla 70 karakter olmalıdır.",
-      }));
-      return;
+      newFieldErrors.title = `İlan başlığı en az 15, en fazla 70 karakter olmalıdır.\n(Şu anki karakter sayısı: ${titleText.length})`;
+      hasValidationErrors = true;
     }
 
     const descriptionText = inputTextareValue.description.trim();
@@ -105,16 +102,19 @@ export default function PriceOffer({ advertId }) {
       descriptionText.length > 0 ? descriptionText.split(/\s+/).length : 0;
 
     if (wordCount < 50) {
-      setFieldErrors((prev) => ({
-        ...prev,
-        description: `İlan açıklaması en az 50 kelime olmalıdır. (Şu anki kelime sayısı: ${wordCount})`,
-      }));
+      newFieldErrors.description = `İlan açıklaması en az 50 kelime olmalıdır.\n(Şu anki kelime sayısı: ${wordCount})`;
+      hasValidationErrors = true;
+    }
+
+    setError(newErrorState);
+    setFieldErrors(newFieldErrors);
+
+    if (hasValidationErrors) {
       return;
     }
 
     try {
       setLoading(true);
-      setFieldErrors({ title: null, description: null });
 
       const validationData = await postAdvertValidateContentMutateAsync({
         token,
@@ -135,7 +135,7 @@ export default function PriceOffer({ advertId }) {
           messages.push(`Adres/Konum (${errors.locations.join(", ")})`);
 
         return messages.length > 0
-          ? `Yasaklı içerik tespit edildi: ${messages.join(" | ")}`
+          ? `Yasaklı içerik tespit edildi:\n${messages.join(" | ")}`
           : null;
       };
 

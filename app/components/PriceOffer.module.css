@@ -175,6 +175,7 @@
   text-align: center;
   font-weight: 500;
   border: 1px solid rgba(255, 77, 77, 0.2);
+  white-space: pre-line;
 }
 
 .fieldErrorText {
@@ -183,6 +184,7 @@
   margin-top: 0.4rem;
   font-weight: 500;
   margin-bottom: 0;
+  white-space: pre-line;
 }
 
 @media (max-width: 768px) {

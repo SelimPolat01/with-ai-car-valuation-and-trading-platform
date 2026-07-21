@@ -553,8 +553,8 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
         appointment.rows[0].id,
         soldAdvertDetail.price,
         depositAmount,
-        "completed",
-        "credit_card",
+        "pending",
+        "credit card",
         transactionRef,
       ],
     );

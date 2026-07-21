@@ -3,7 +3,7 @@
 }
 
 .nav {
-  padding: 0 2rem;
+  padding: 0 2.5rem;
   display: flex;
   justify-content: space-between;
   min-height: 65px;
@@ -73,7 +73,7 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  margin: 0;
+  margin: 0 40px 0 0;
 }
 
 .account::after {
@@ -324,21 +324,9 @@
     transform: none;
   }
 
-  .accountMenu {
-    left: auto;
-    right: 0;
-    transform: translateY(15px);
-  }
-
   .account:hover .accountMenu,
   .account:active .accountMenu {
-    transform: translateY(0);
-  }
-
-  .accountMenu::before {
-    left: auto;
-    right: 15px;
-    transform: none;
+    transform: translateX(-50%) translateY(0);
   }
 }
 
@@ -424,25 +412,24 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    margin: 0 25px 0 0;
   }
 
   .accountMenu {
     top: 45px;
-    left: auto;
-    right: 0;
-    transform: translateY(15px);
+    left: 50%;
+    transform: translateX(-50%) translateY(15px);
     min-width: 180px;
   }
 
   .accountMenu::before {
-    left: auto;
-    right: 15px;
-    transform: none;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .account:hover .accountMenu,
   .account:active .accountMenu {
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
   }
 
   .notificationDropdown {

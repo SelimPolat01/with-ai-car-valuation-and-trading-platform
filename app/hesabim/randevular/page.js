@@ -40,7 +40,11 @@ export default function RandevularPage() {
   } = useGetPersonalAppointments(token);
 
   if (!token || getPersonalAppointmentsIsLoading) {
-    return <div className={classes.container}>Randevular yükleniyor...</div>;
+    return (
+      <div className="loadingContainer">
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
   if (getPersonalAppointmentsIsError) {

@@ -124,6 +124,14 @@ export default function Garajim() {
     return deger < 0 ? `-${metin}` : metin;
   };
 
+  if (!token || personalSoldAdvertsIsLoading) {
+    return (
+      <div className="loadingContainer">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
   return (
     <div className={classes.div}>
       <div className={classes.divContainer}>

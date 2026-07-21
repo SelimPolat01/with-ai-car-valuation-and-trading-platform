@@ -83,8 +83,12 @@ export default function Bildirimler() {
     });
   }
 
-  if (isLoading) {
-    return <div className={classes.container}>Yükleniyor...</div>;
+  if (!token || isLoading) {
+    return (
+      <div className="loadingContainer">
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
   return (

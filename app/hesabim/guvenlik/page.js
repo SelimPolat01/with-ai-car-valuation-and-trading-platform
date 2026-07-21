@@ -264,6 +264,14 @@ export default function Guvenlik() {
     );
   }
 
+  if (!token || getEmailInfoIsLoading || getTokenDurationIsLoading) {
+    return (
+      <div className="loadingContainer">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
   return (
     <div className={classes.div}>
       <AnimatePresence>

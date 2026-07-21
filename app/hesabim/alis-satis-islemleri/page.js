@@ -41,8 +41,8 @@ export default function AlisSatisİslemleri() {
 
   if (!token || getTradingValuesIsLoading) {
     return (
-      <div className={classes.container}>
-        <h2>İşlemler Yükleniyor...</h2>
+      <div className="loadingContainer">
+        <div className="spinner"></div>
       </div>
     );
   }

@@ -150,6 +150,14 @@ export default function Hesabim() {
     );
   }
 
+  if (!token || getPersonalInfosIsLoading) {
+    return (
+      <div className="loadingContainer">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
   return (
     <div className={classes.div}>
       <h1 className={classes.pageTitle}>Kişisel Bilgiler</h1>

@@ -52,9 +52,8 @@ export default function RandevuDetaylar() {
 
   if (!token || getPersonalAppointmentsIsLoading) {
     return (
-      <div className={classes.loadingContainer}>
-        <div className={classes.spinner}></div>
-        <p>Randevu detayları yükleniyor...</p>
+      <div className="loadingContainer">
+        <div className="spinner"></div>
       </div>
     );
   }

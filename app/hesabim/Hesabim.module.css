@@ -3,20 +3,22 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: visible !important;
 }
 
 .wrapper {
   display: flex;
   width: 100%;
   flex: 1;
+  align-items: stretch;
   margin: 0;
-  overflow: visible !important;
 }
 
 .linkDiv {
   width: 250px;
   flex-shrink: 0;
+  /* KRİTİK NOKTA 2: Arka plan renklerini ve sınırları buraya veriyoruz.
+     Sayfa ne kadar uzun olursa olsun arka plan asla bitmez, aşağı kadar iner. 
+     Buradan 'position: sticky' ve 'height: 100vh' özelliklerini KALDIRDIK! */
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -24,18 +26,14 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-top-right-radius: 12px;
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  align-self: flex-start;
-  display: flex;
-  flex-direction: column;
 }
 
 .linkContainer {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  flex: 1;
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -135,17 +133,13 @@
 
   .linkDiv {
     width: 100%;
-    height: auto;
-    display: block;
-    align-self: auto;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     border-top-right-radius: 0;
-    position: relative;
   }
 
   .linkContainer {
-    position: relative;
+    position: relative; /* Mobilde çakılı kalmayı iptal ediyoruz ki içerik düzgün aksın */
     top: auto;
     height: auto;
     overflow-y: visible;

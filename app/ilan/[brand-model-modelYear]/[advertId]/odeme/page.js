@@ -9,8 +9,19 @@ import { useEffect, useRef, useState } from "react";
 import SuccessMessage from "@/app/components/SuccessMessage";
 
 export default function Odeme() {
-  const params = useParams();
   const router = useRouter();
+  const params = useParams();
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const currentToken = localStorage.getItem("token");
+    setToken(currentToken);
+    if (!currentToken) {
+      router.replace("/admin/login");
+      return;
+    }
+  }, [router]);
+
   const creditCardRef = useRef();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);

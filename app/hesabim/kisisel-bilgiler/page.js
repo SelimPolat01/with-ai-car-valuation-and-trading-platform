@@ -2,7 +2,7 @@
 
 import classes from "./KisiselBilgiler.module.css";
 import Input from "@/app/components/Input";
-import { UploadCloud } from "lucide-react";
+import { AlertCircle, ArrowLeft, UploadCloud } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import SecondaryButton from "@/app/components/SecondaryButton";
@@ -154,6 +154,19 @@ export default function Hesabim() {
     return (
       <div className="loadingContainer">
         <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (getPersonalInfosIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getPersonalInfosError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
       </div>
     );
   }

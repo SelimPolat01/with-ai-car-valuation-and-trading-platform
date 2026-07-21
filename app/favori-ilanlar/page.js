@@ -3,128 +3,125 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
-import { useDispatch, useSelector } from "react-redux";
-import { setFavorites } from "@/store/advertsSlice";
+import { useSelector } from "react-redux";
 import classes from "./FavoriIlanlar.module.css";
 import ConfirmDialog from "../components/ConfirmDialog";
 import FavoriteAdvertItem from "../components/FavoriteAdvertItem";
 import ManagementNav from "../components/ManagementNav";
 import { AnimatePresence } from "framer-motion";
+import { useGetFavoriteAdverts } from "@/hooks/GET/useGetFavoriteAdverts";
+import usePostFavoriteAdvert from "@/hooks/POST/usePostFavoriteAdvert";
+import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function FavoriIlanlar() {
   const router = useRouter();
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const deleteDialogRef = useRef(null);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
-  const dispatch = useDispatch();
-  const favoriteAdverts = useSelector((state) => state.adverts.favoriteAdverts);
+  const [token, setToken] = useState(null);
+
   const user = useSelector((state) => state.auth.user);
   useCheckAuth();
 
   useEffect(() => {
-    async function fetchFavoriteAdverts() {
-      const token = localStorage.getItem("token");
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/adverts/favoriteAdverts`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (response.status === 401) {
-          localStorage.removeItem("token");
-          router.replace("/login");
-          return;
-        }
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.log(errorData.message);
-          setError(errorData.message);
-          return;
-        }
-
-        const favoriteAdvertsData = await response.json();
-        dispatch(setFavorites(favoriteAdvertsData));
-      } catch (err) {
-        console.log("Error: " + err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    const currentToken = localStorage.getItem("token");
+    if (!currentToken) {
+      router.replace("/login");
+      return;
     }
-
-    fetchFavoriteAdverts();
+    setToken(currentToken);
   }, [router]);
 
-  async function removeFavoriteAdvert(id) {
-    const token = localStorage.getItem("token");
-    try {
-      setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/adverts/favoriteAdverts/${id}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+  const {
+    data: getFavoriteAdvertsData,
+    isLoading: getFavoriteAdvertsIsLoading,
+    isError: getFavoriteAdvertsIsError,
+    error: getFavoriteAdvertsError,
+  } = useGetFavoriteAdverts(token);
+
+  const {
+    mutate: deleteFavoriteAdvertMutate,
+    isPending: deleteFavoriteAdvertMutateIsPending,
+    isError: deleteFavoriteAdvertMutateIsError,
+    error: deleteFavoriteAdvertMutateError,
+    reset: resetRemoveMutation,
+  } = usePostFavoriteAdvert();
+
+  function removeFavoriteAdvertHandler(id) {
+    if (!token) return;
+
+    deleteFavoriteAdvertMutate(
+      { token, advertId: id },
+      {
+        onSuccess: () => {
+          setSelectedAdvertId(null);
+          deleteDialogRef.current?.close();
         },
-      );
-
-      if (response.status === 401) {
-        localStorage.removeItem("token");
-        router.replace("/login");
-        return;
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message);
-        return;
-      }
-
-      const data = await response.json();
-
-      dispatch(
-        setFavorites(
-          favoriteAdverts.filter((favoriteAdvert) => favoriteAdvert.id !== id),
-        ),
-      );
-    } catch (err) {
-      console.log("Error: " + err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+        onError: () => {
+          setSelectedAdvertId(null);
+          deleteDialogRef.current?.close();
+        },
+      },
+    );
   }
 
   function openDeleteModal(id) {
+    resetRemoveMutation();
     setSelectedAdvertId(id);
     deleteDialogRef.current.showModal();
   }
 
-  if (error) return <p>{error}</p>;
+  if (!token || getFavoriteAdvertsIsLoading) {
+    return (
+      <div className="loadingContainer">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (getFavoriteAdvertsIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getFavoriteAdvertsError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
+      </div>
+    );
+  }
+
+  const favoriteAdverts = Array.isArray(getFavoriteAdvertsData)
+    ? getFavoriteAdvertsData
+    : getFavoriteAdvertsData?.result || getFavoriteAdvertsData?.data || [];
 
   return (
     <main className={classes.main}>
       <ConfirmDialog
         ref={deleteDialogRef}
-        onConfirm={() => removeFavoriteAdvert(selectedAdvertId)}
-        text="Bunu yapmak istediğinizden emin misiniz?"
+        onConfirm={() => removeFavoriteAdvertHandler(selectedAdvertId)}
+        text={
+          deleteFavoriteAdvertMutateIsPending
+            ? "Kaldırılıyor..."
+            : "Bunu yapmak istediğinizden emin misiniz?"
+        }
         title="Kaldır"
       />
       <ManagementNav className={classes.managementNav} />
+
       <div className={classes.myFavoriteAdvertsTextDiv}>
         <h3>Favori İlanlarım</h3>
         <hr style={{ width: "845px" }} />
       </div>
+
       <div className={classes.listWrapper}>
+        {deleteFavoriteAdvertMutateIsError && (
+          <p style={{ color: "#ff6363", marginBottom: "1rem" }}>
+            {deleteFavoriteAdvertMutateError?.message ||
+              "İlan favorilerden kaldırılırken bir hata oluştu."}
+          </p>
+        )}
+
         {favoriteAdverts.length > 0 && (
           <div className={classes.listHeader}>
             <span>Fotoğraf</span>
@@ -132,6 +129,7 @@ export default function FavoriIlanlar() {
             <span>Fiyat</span>
           </div>
         )}
+
         <AnimatePresence>
           {favoriteAdverts &&
             favoriteAdverts.map((favoriteAdvert) => (
@@ -143,6 +141,7 @@ export default function FavoriIlanlar() {
               />
             ))}
         </AnimatePresence>
+
         {favoriteAdverts.length === 0 && (
           <div className={classes.noFavoriteAdvertDiv}>
             <p>Favori ilanınız Bulunmamaktadır</p>

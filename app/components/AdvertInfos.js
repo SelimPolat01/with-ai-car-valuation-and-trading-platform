@@ -6,19 +6,34 @@ import { useParams, useRouter } from "next/navigation";
 import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import classes from "./AdvertInfos.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import PrimaryButton from "./PrimaryButton";
 import SuccessMessage from "./SuccessMessage";
 import SimilarAdverts from "./SimiliarAdverts";
 import { motion, AnimatePresence } from "framer-motion";
+import { useGetAdvert } from "@/hooks/GET/useGetAdvert";
+import usePostFavoriteAdvert from "@/hooks/POST/usePostFavoriteAdvert";
 
 export default function AdvertInfos() {
   const params = useParams();
   const router = useRouter();
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const currentToken = localStorage.getItem("token");
+    if (!currentToken) {
+      router.replace("/admin/login");
+      return;
+    }
+    setToken(currentToken);
+  }, [router]);
+
   const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [advert, setAdvert] = useState(null);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
   const [summaryText, setSummaryText] = useState(null);
@@ -28,7 +43,27 @@ export default function AdvertInfos() {
   const [showSimilarAdverts, setShowSimilarAdverts] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+
+  const {
+    data: getAdvertData,
+    isLoading: getAdvertIsLoading,
+    isError: getAdvertIsError,
+    error: getAdvertError,
+  } = useGetAdvert(token, params.advertId);
+
+  const { mutateAsync: postFavorite } = usePostFavoriteAdvert();
+
+  const advert = Array.isArray(getAdvertData?.result)
+    ? getAdvertData.result[0]
+    : getAdvertData?.result;
+
   useCheckAuth();
+
+  useEffect(() => {
+    if (advert && advert.isFavorite !== undefined) {
+      setIsFavorite(advert.isFavorite);
+    }
+  }, [advert]);
 
   useEffect(() => {
     let timer;
@@ -40,45 +75,6 @@ export default function AdvertInfos() {
     }
     return () => clearTimeout(timer);
   }, [router, isSuccess]);
-
-  useEffect(() => {
-    async function fetchAdvertInfos() {
-      const token = localStorage.getItem("token");
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/adverts/${params.advertId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (response.status === 401) {
-          localStorage.removeItem("token");
-          router.replace("/login");
-          return;
-        }
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          setError(errorData.message);
-          return;
-        }
-
-        const advertData = await response.json();
-        setAdvert(advertData);
-        setIsFavorite(advertData.isFavorite);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchAdvertInfos();
-  }, [params.advertId, router]);
 
   async function handleToggleSummary() {
     if (isShowingSummary) {
@@ -100,7 +96,7 @@ export default function AdvertInfos() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ description: advert.description }),
+          body: JSON.stringify({ description: advert?.description }),
         },
       );
 
@@ -117,46 +113,26 @@ export default function AdvertInfos() {
   }
 
   async function toggleFavoriteClick() {
-    if (!advert || !advert.id) return;
-    const token = localStorage.getItem("token");
+    if (!advert || !advert.id || !token) return;
+
+    const previousFavoriteState = isFavorite;
+    setIsFavorite(!previousFavoriteState);
+
     try {
-      setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/adverts/favoriteAdverts/${advert.id}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const data = await postFavorite({ token, advertId: advert.id });
 
-      if (response.status === 401) {
-        localStorage.removeItem("token");
-        router.replace("/login");
-        return;
+      if (data && data.isFavorite !== undefined) {
+        setIsFavorite(data.isFavorite);
+        dispatch(
+          toggleFavorite({
+            advert: advert,
+            isFavorite: data.isFavorite,
+          }),
+        );
       }
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message);
-        return;
-      }
-
-      const data = await response.json();
-      setIsFavorite(data.isFavorite);
-
-      dispatch(
-        toggleFavorite({
-          advert: advert,
-          isFavorite: data.isFavorite,
-        }),
-      );
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      setIsFavorite(previousFavoriteState);
+      console.error(err);
     }
   }
 
@@ -221,7 +197,7 @@ export default function AdvertInfos() {
         {
           id: 1,
           label: "Fiyat",
-          value: `${advert.price.toLocaleString("tr-TR")} ₺`,
+          value: `${advert.price?.toLocaleString("tr-TR") || 0} ₺`,
           priceClassName: classes.price,
         },
         { id: 2, label: "Şehir", value: capitalize(advert.city) },
@@ -234,7 +210,9 @@ export default function AdvertInfos() {
         {
           id: 4,
           label: "İlan Tarihi",
-          value: new Date(advert.created_at).toLocaleDateString("tr-TR"),
+          value: advert.created_at
+            ? new Date(advert.created_at).toLocaleDateString("tr-TR")
+            : "",
         },
         { id: 5, label: "Marka", value: formatBrandModel(advert.brand) },
         { id: 6, label: "Seri", value: formatBrandModel(advert.model) },
@@ -249,18 +227,18 @@ export default function AdvertInfos() {
         {
           id: 9,
           label: "Yakıt Tipi",
-          value: carTypeMap.fuelTypeMap[advert.fuel_type],
+          value: carTypeMap.fuelTypeMap[advert.fuel_type] || "",
         },
         {
           id: 10,
           label: "Vites Tipi",
-          value: carTypeMap.transmissionTypeMap[advert.transmission],
+          value: carTypeMap.transmissionTypeMap[advert.transmission] || "",
         },
         { id: 11, label: "Araç Durumu", value: "İkinci El" },
         {
           id: 12,
           label: "Kilometre",
-          value: advert.kilometer.toLocaleString("tr-Tr"),
+          value: advert.kilometer?.toLocaleString("tr-TR") || 0,
         },
         { id: 13, label: "Kasa Tipi", value: capitalize(advert.body_type) },
         { id: 14, label: "Motor Gücü", value: `${advert.horsepower} hp` },
@@ -296,20 +274,49 @@ export default function AdvertInfos() {
     );
   };
 
-  if (!advert)
+  if (!token || getAdvertIsLoading) {
     return (
-      <div className={classes.loadingTextDiv}>
-        <p>İlan yükleniyor...</p>
+      <div className="loadingContainer">
+        <div className="spinner"></div>
       </div>
     );
-  if (error) return <p>{error}</p>;
+  }
+
+  if (getAdvertIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getAdvertError?.message || "Sunucu hatası oluştu."}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
+      </div>
+    );
+  }
+
+  if (!advert) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>İlan Bulunamadı</h2>
+        <p>Aradığınız ilan yayından kaldırılmış veya bulunamıyor.</p>
+        <button
+          onClick={() => router.push("/hesabim/garajim")}
+          className="backButton"
+        >
+          <ArrowLeft size={20} /> Garajıma Dön
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className={classes.advertDiv}>
       {!isSuccess ? (
         <div className={classes.advertInfoDiv}>
           <div className={classes.titleFavoriteDiv}>
-            <h2 className={classes.title}>{advert.title.toUpperCase()}</h2>
+            <h2 className={classes.title}>{advert.title?.toUpperCase()}</h2>
             {user && advert && Number(user.id) !== Number(advert.user_id) && (
               <button
                 className={

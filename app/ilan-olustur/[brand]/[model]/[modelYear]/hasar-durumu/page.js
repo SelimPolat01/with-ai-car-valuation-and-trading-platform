@@ -20,7 +20,6 @@ export default function HasarDurumu() {
   const dialogRef = useRef();
   const [token, setToken] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [images, setImages] = useState({
     front: null,
     back: null,
@@ -57,11 +56,31 @@ export default function HasarDurumu() {
     }
   }, [router]);
 
-  const { mutate: carDirectionDetectionMutate } =
-    usePostCarDirectionDetection();
-  const { mutate: carScratchDentDetectionMutate } =
-    usePostCarScratchDentDection();
-  const { mutate: carSellTimePredictMutate } = usePostCarSellTimePredict();
+  const {
+    mutate: carDirectionDetectionMutate,
+    isPending: carDirectionDetectionIsPending,
+    isError: carDirectionDetectionIsError,
+    error: carDirectionDetectionError,
+  } = usePostCarDirectionDetection();
+
+  const {
+    mutate: carScratchDentDetectionMutate,
+    isPending: carScratchDentDetectionIsPending,
+    isError: carScratchDentDetectionIsError,
+    error: carScratchDentDetectionError,
+  } = usePostCarScratchDentDection();
+
+  const {
+    mutate: carSellTimePredictMutate,
+    isPending: carSellTimePredictIsPending,
+    isError: carSellTimePredictIsError,
+    error: carSellTimePredictError,
+  } = usePostCarSellTimePredict();
+
+  const isAnyPending =
+    carDirectionDetectionIsPending ||
+    carScratchDentDetectionIsPending ||
+    carSellTimePredictIsPending;
 
   const isAllImagesUploaded =
     images.front && images.back && images.right && images.left;
@@ -199,7 +218,7 @@ export default function HasarDurumu() {
                           );
                           calculateFinalPriceAndShowDialog(updatedDamages);
                         },
-                        onError: (carSellPredictError) => {
+                        onError: () => {
                           setError(
                             "Tüm fotoğraflar eklendi ancak araç bilgileri eksik olduğu için satış süresi hesaplanamadı.",
                           );
@@ -231,8 +250,8 @@ export default function HasarDurumu() {
             event.target.value = "";
           }
         },
-        onError: (carDirectionDetectionError) => {
-          setError(`Yön API Hatası: ${carDirectionDetectionError.message}`);
+        onError: (err) => {
+          setError(`Yön API Hatası: ${err.message}`);
         },
       },
     );
@@ -349,7 +368,11 @@ export default function HasarDurumu() {
         cancelButtonText="Ana Sayfaya Git"
         logo={<AlertTriangle size={35} color="#ef4444" />}
       />
-      {error && (
+
+      {(error ||
+        carDirectionDetectionIsError ||
+        carScratchDentDetectionIsError ||
+        carSellTimePredictIsError) && (
         <div
           style={{
             backgroundColor: "#fee2e2",
@@ -359,9 +382,27 @@ export default function HasarDurumu() {
             marginBottom: "16px",
             textAlign: "center",
             fontWeight: "600",
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
           }}
         >
-          ⚠️ {error}
+          {error && <span>⚠️ {error}</span>}
+          {carDirectionDetectionIsError && (
+            <span>
+              ⚠️ Yön Tespiti Hatası: {carDirectionDetectionError?.message}
+            </span>
+          )}
+          {carScratchDentDetectionIsError && (
+            <span>
+              ⚠️ Hasar Tespiti Hatası: {carScratchDentDetectionError?.message}
+            </span>
+          )}
+          {carSellTimePredictIsError && (
+            <span>
+              ⚠️ Satış Tahmin Hatası: {carSellTimePredictError?.message}
+            </span>
+          )}
         </div>
       )}
 
@@ -410,7 +451,7 @@ export default function HasarDurumu() {
                     width: "100%",
                     height: "100%",
                     position: "relative",
-                    cursor: "pointer",
+                    cursor: isAnyPending ? "not-allowed" : "pointer",
                     display: "block",
                   }}
                 >
@@ -423,6 +464,7 @@ export default function HasarDurumu() {
                     type="button"
                     className={classes.removeBtn}
                     onClick={(e) => handleRemoveImage(view.id, e)}
+                    disabled={isAnyPending}
                   >
                     ✕
                   </button>
@@ -438,7 +480,7 @@ export default function HasarDurumu() {
                   style={{
                     width: "100%",
                     height: "100%",
-                    cursor: "pointer",
+                    cursor: isAnyPending ? "not-allowed" : "pointer",
                     display: "block",
                   }}
                 >
@@ -467,7 +509,7 @@ export default function HasarDurumu() {
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    cursor: "pointer",
+                    cursor: isAnyPending ? "not-allowed" : "pointer",
                   }}
                 >
                   <img
@@ -486,6 +528,7 @@ export default function HasarDurumu() {
               style={{ display: "none" }}
               accept="image/*"
               onChange={(e) => handleImageChange(view.id, e)}
+              disabled={isAnyPending}
             />
           </motion.div>
         ))}
@@ -507,6 +550,7 @@ export default function HasarDurumu() {
                 type="submit"
                 text="Fiyat Teklifi Al"
                 onClick={() => router.push("/fiyat-teklifi")}
+                disabled={isAnyPending}
               />
             </motion.div>
           )}

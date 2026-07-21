@@ -11,6 +11,8 @@ import {
   CheckCheck,
   Filter,
   ChevronDown,
+  AlertCircle,
+  ArrowLeft,
 } from "lucide-react";
 
 export default function Bildirimler() {
@@ -27,8 +29,12 @@ export default function Bildirimler() {
     }
   }, []);
 
-  const { data: getPersonalNotificationsData, isLoading } =
-    useGetPersonalNotifications(token);
+  const {
+    data: getPersonalNotificationsData,
+    isLoading: getPersonalNotificationsIsLoading,
+    isError: getPersonalNotificationsIsError,
+    error: getPersonalNotificationsError,
+  } = useGetPersonalNotifications(token);
 
   const { mutate: patchPersonalNotificationRead } = usePatchNotificationRead();
 
@@ -83,10 +89,23 @@ export default function Bildirimler() {
     });
   }
 
-  if (!token || isLoading) {
+  if (!token || getPersonalNotificationsIsLoading) {
     return (
       <div className="loadingContainer">
         <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (getPersonalNotificationsIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getPersonalNotificationsError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
       </div>
     );
   }

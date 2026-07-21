@@ -9,6 +9,7 @@ import Input from "@/app/components/Input";
 import PrimaryButton from "@/app/components/PrimaryButton";
 import { Camera, Trash2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { usePostAdvertValidateContent } from "@/hooks/POST/usePostAdvertValidateContent";
 
 export default function PriceOffer({ advertId }) {
   const isEdit = !!advertId;
@@ -29,9 +30,17 @@ export default function PriceOffer({ advertId }) {
 
   useCheckAuth();
 
+  const {
+    mutateAsync: postAdvertValidateContentMutateAsync,
+    isPending: postAdvertValidateContentIsPending,
+    isError: postAdvertValidateContentIsError,
+    error: postAdvertValidateContentError,
+  } = usePostAdvertValidateContent();
+
   function inputTextareaChangeHandler(event) {
     const { name, value } = event.target;
     setInputTextareaValue((prevValue) => ({ ...prevValue, [name]: value }));
+    setFieldErrors((prev) => ({ ...prev, [name]: null }));
   }
 
   const handleImageChange = (index, event) => {
@@ -47,6 +56,9 @@ export default function PriceOffer({ advertId }) {
           };
           return newImages;
         });
+        if (index === 0) {
+          setError(null);
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -69,15 +81,34 @@ export default function PriceOffer({ advertId }) {
     const token = localStorage.getItem("token");
     const uploadedFiles = images.filter((img) => img !== null);
 
-    if (uploadedFiles.length === 0) {
-      setError("Lütfen en az bir (Kapak) fotoğrafı yükleyin.");
-      return;
-    }
+    setError(null);
+    setFieldErrors({ title: null, description: null });
 
-    if (!images[0]) {
+    if (uploadedFiles.length === 0 || !images[0]) {
       setError(
         "Lütfen ilk kutucuğa bir Kapak Fotoğrafı eklediğinizden emin olun.",
       );
+      return;
+    }
+
+    const titleText = inputTextareValue.title.trim();
+    if (titleText.length < 15 || titleText.length > 70) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        title: "İlan başlığı en az 15, en fazla 70 karakter olmalıdır.",
+      }));
+      return;
+    }
+
+    const descriptionText = inputTextareValue.description.trim();
+    const wordCount =
+      descriptionText.length > 0 ? descriptionText.split(/\s+/).length : 0;
+
+    if (wordCount < 50) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        description: `İlan açıklaması en az 50 kelime olmalıdır. (Şu anki kelime sayısı: ${wordCount})`,
+      }));
       return;
     }
 
@@ -85,48 +116,44 @@ export default function PriceOffer({ advertId }) {
       setLoading(true);
       setFieldErrors({ title: null, description: null });
 
-      const validationResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_FAST_API_URL}/validate-content`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: inputTextareValue.title,
-            description: inputTextareValue.description,
-          }),
+      const validationData = await postAdvertValidateContentMutateAsync({
+        token,
+        body: {
+          title: inputTextareValue.title,
+          description: inputTextareValue.description,
         },
+      });
+
+      const generateErrorMessage = (errors) => {
+        if (!errors) return null;
+        let messages = [];
+        if (errors.phones && errors.phones.length > 0)
+          messages.push(`Telefon (${errors.phones.join(", ")})`);
+        if (errors.persons && errors.persons.length > 0)
+          messages.push(`İsim (${errors.persons.join(", ")})`);
+        if (errors.locations && errors.locations.length > 0)
+          messages.push(`Adres/Konum (${errors.locations.join(", ")})`);
+
+        return messages.length > 0
+          ? `Yasaklı içerik tespit edildi: ${messages.join(" | ")}`
+          : null;
+      };
+
+      const titleErrorMsg = generateErrorMessage(validationData?.title_errors);
+      const descErrorMsg = generateErrorMessage(
+        validationData?.description_errors,
       );
 
-      if (validationResponse.ok) {
-        const validationData = await validationResponse.json();
-
-        const generateErrorMessage = (errors) => {
-          let messages = [];
-          if (errors.phones && errors.phones.length > 0)
-            messages.push(`Telefon (${errors.phones.join(", ")})`);
-          if (errors.persons && errors.persons.length > 0)
-            messages.push(`İsim (${errors.persons.join(", ")})`);
-          if (errors.locations && errors.locations.length > 0)
-            messages.push(`Adres/Konum (${errors.locations.join(", ")})`);
-
-          return messages.length > 0
-            ? `Yasaklı içerik tespit edildi: ${messages.join(" | ")}`
-            : null;
-        };
-
-        const titleErrorMsg = generateErrorMessage(validationData.title_errors);
-        const descErrorMsg = generateErrorMessage(
-          validationData.description_errors,
-        );
-
-        if (titleErrorMsg || descErrorMsg) {
-          setFieldErrors({ title: titleErrorMsg, description: descErrorMsg });
-          setLoading(false);
-          return;
-        }
+      if (titleErrorMsg || descErrorMsg) {
+        setFieldErrors({ title: titleErrorMsg, description: descErrorMsg });
+        setLoading(false);
+        return;
       }
     } catch (err) {
       console.error(err);
+      setError("İçerik doğrulaması sırasında bir hata oluştu.");
+      setLoading(false);
+      return;
     }
 
     let descriptionVector = null;
@@ -152,11 +179,9 @@ export default function PriceOffer({ advertId }) {
         summarizedDescription = embeddingData.summarizated_description;
         descriptionVector = embeddingData.description_embedding;
         summaryVector = embeddingData.description_summary_embedding;
-      } else {
-        console.warn("Vektörler alınamadı, API hata döndürdü.");
       }
     } catch (err) {
-      console.error("Vektör API'sine ulaşılamadı:", err);
+      console.error(err);
     }
 
     const formData = new FormData();
@@ -276,7 +301,7 @@ export default function PriceOffer({ advertId }) {
 
       router.replace("/ilanlarim");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -333,12 +358,11 @@ export default function PriceOffer({ advertId }) {
             });
             setImages(loadedImages);
           } else if (data.image_src) {
-            const loadedImages = Array(10).fill(null);
             loadedImages[0] = { file: null, preview: data.image_src };
             setImages(loadedImages);
           }
         } catch (err) {
-          console.log(err);
+          console.error(err);
           setError(err.message);
         } finally {
           setLoading(false);
@@ -346,7 +370,7 @@ export default function PriceOffer({ advertId }) {
       }
       fetchAdvertData();
     }
-  }, [advertId]);
+  }, [advertId, router]);
 
   const formContainerVariants = {
     hidden: { opacity: 0 },
@@ -403,14 +427,16 @@ export default function PriceOffer({ advertId }) {
         animate="visible"
       >
         <AnimatePresence>
-          {error && (
+          {(error || postAdvertValidateContentIsError) && (
             <motion.p
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               className={classes.errorText}
             >
-              {error}
+              {error ||
+                postAdvertValidateContentError?.message ||
+                "Doğrulama sırasında bir hata oluştu."}
             </motion.p>
           )}
         </AnimatePresence>
@@ -421,6 +447,7 @@ export default function PriceOffer({ advertId }) {
             type="text"
             identifier="title"
             label="İlan Başlığı"
+            name="title"
             value={inputTextareValue.title}
             onChange={inputTextareaChangeHandler}
             autoFocus
@@ -431,11 +458,7 @@ export default function PriceOffer({ advertId }) {
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
-                style={{
-                  color: "#ff4d4d",
-                  fontSize: "0.85rem",
-                  marginTop: "0.2rem",
-                }}
+                className={classes.fieldErrorText}
               >
                 {fieldErrors.title}
               </motion.p>
@@ -464,11 +487,7 @@ export default function PriceOffer({ advertId }) {
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
-                style={{
-                  color: "#ff4d4d",
-                  fontSize: "0.85rem",
-                  marginTop: "0.2rem",
-                }}
+                className={classes.fieldErrorText}
               >
                 {fieldErrors.description}
               </motion.p>
@@ -569,9 +588,13 @@ export default function PriceOffer({ advertId }) {
         <motion.div variants={itemVariants}>
           <PrimaryButton
             type="submit"
-            text={loading ? "Yükleniyor..." : "İlanı Yayınla"}
+            text={
+              loading || postAdvertValidateContentIsPending
+                ? "Yükleniyor..."
+                : "İlanı Yayınla"
+            }
             className={classes.button}
-            disabled={loading}
+            disabled={loading || postAdvertValidateContentIsPending}
           />
         </motion.div>
       </motion.form>

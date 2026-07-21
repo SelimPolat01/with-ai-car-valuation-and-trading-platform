@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import classes from "./AlisSatisİslemleri.module.css";
 import useGetTradingValues from "@/hooks/GET/useGetTradingValues";
 import { useRouter } from "next/navigation";
+import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function AlisSatisİslemleri() {
   const router = useRouter();
@@ -20,8 +21,12 @@ export default function AlisSatisİslemleri() {
     setToken(currentToken);
   }, [router]);
 
-  const { data: getTradingValuesData, isLoading: getTradingValuesIsLoading } =
-    useGetTradingValues(token);
+  const {
+    data: getTradingValuesData,
+    isLoading: getTradingValuesIsLoading,
+    isError: getTradingValuesIsError,
+    error: getTradingValuesError,
+  } = useGetTradingValues(token);
 
   const activeTransaction = useMemo(() => {
     if (!getTradingValuesData) return null;
@@ -43,6 +48,19 @@ export default function AlisSatisİslemleri() {
     return (
       <div className="loadingContainer">
         <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (getTradingValuesIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getTradingValuesError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
       </div>
     );
   }

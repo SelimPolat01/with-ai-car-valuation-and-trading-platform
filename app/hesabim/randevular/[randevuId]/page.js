@@ -60,11 +60,11 @@ export default function RandevuDetaylar() {
 
   if (getPersonalAppointmentsIsError) {
     return (
-      <div className={classes.errorContainer}>
-        <AlertCircle size={48} className={classes.iconSecondary} />
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
         <p>{getPersonalAppointmentsError?.message}</p>
-        <button onClick={() => router.back()} className={classes.backButton}>
+        <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
       </div>

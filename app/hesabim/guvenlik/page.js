@@ -2,7 +2,14 @@
 
 import Input from "@/app/components/Input";
 import classes from "./Guvenlik.module.css";
-import { AlertTriangle, Clock, KeyRound, Mail } from "lucide-react";
+import {
+  AlertCircle,
+  AlertTriangle,
+  ArrowLeft,
+  Clock,
+  KeyRound,
+  Mail,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
@@ -268,6 +275,19 @@ export default function Guvenlik() {
     return (
       <div className="loadingContainer">
         <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (getEmailInfoIsError || getTokenDurationIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getEmailInfoError?.message || getTokenDurationError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
       </div>
     );
   }

@@ -8,92 +8,59 @@ import { useRouter } from "next/navigation";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { AnimatePresence } from "framer-motion";
 import ManagementNav from "../components/ManagementNav";
+import { useGetPersonalAdverts } from "@/hooks/GET/useGetPersonalAdverts";
+import useDeleteAdvert from "@/hooks/DELETE/useDeleteAdvert";
+import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function MyAdverts() {
-  const [myAdverts, setMyAdverts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const router = useRouter();
   const deleteDialogRef = useRef(null);
   const editDialogRef = useRef(null);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
+  const [token, setToken] = useState(null);
+
   useCheckAuth();
 
   useEffect(() => {
-    async function fetchMyAdverts() {
-      const token = localStorage.getItem("token");
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/adverts/myAdverts`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (response.status === 401) {
-          localStorage.removeItem("token");
-          router.replace("/login");
-          return;
-        }
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.log(errorData.message);
-          setError(errorData.message);
-          return;
-        }
-
-        const data = await response.json();
-        setMyAdverts(data);
-      } catch (err) {
-        console.log("Error: " + err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    const currentToken = localStorage.getItem("token");
+    setToken(currentToken);
+    if (!currentToken) {
+      router.replace("/login");
+      return;
     }
-    fetchMyAdverts();
   }, [router]);
 
-  async function advertDeleteHandler(id) {
-    const token = localStorage.getItem("token");
-    try {
-      setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/adverts/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+  const {
+    data: getPersonalAdvertsData,
+    isLoading: getPersonalAdvertsIsLoading,
+    isError: getPersonalAdvertsIsError,
+    error: getPersonalAdvertsError,
+  } = useGetPersonalAdverts(token);
+
+  const {
+    mutate: deleteAdvertMutate,
+    isPending: deleteAdvertIsPending,
+    isError: deleteAdvertIsError,
+    error: deleteAdvertError,
+    reset: resetDeleteMutation,
+  } = useDeleteAdvert();
+
+  function advertDeleteHandler(id) {
+    if (!token) return;
+
+    deleteAdvertMutate(
+      { token, advertId: id },
+      {
+        onSuccess: () => {
+          setSelectedAdvertId(null);
+          deleteDialogRef.current?.close();
         },
-      );
-
-      if (response.status === 401) {
-        localStorage.removeItem("token");
-        router.replace("/login");
-        return;
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message);
-        return;
-      }
-
-      setMyAdverts((prevAdverts) =>
-        prevAdverts.filter((prevAdvert) => prevAdvert.id !== id),
-      );
-    } catch (err) {
-      console.log("Error: " + err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+        onError: () => {
+          setSelectedAdvertId(null);
+          deleteDialogRef.current?.close();
+        },
+      },
+    );
   }
 
   function editAdvertHandler(id) {
@@ -101,6 +68,7 @@ export default function MyAdverts() {
   }
 
   function openDeleteModal(id) {
+    resetDeleteMutation();
     setSelectedAdvertId(id);
     deleteDialogRef.current.showModal();
   }
@@ -110,14 +78,41 @@ export default function MyAdverts() {
     editDialogRef.current.showModal();
   }
 
-  if (error) return <p>{error}</p>;
+  if (!token || getPersonalAdvertsIsLoading) {
+    return (
+      <div className="loadingContainer">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (getPersonalAdvertsIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getPersonalAdvertsError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
+      </div>
+    );
+  }
+
+  const advertsList = Array.isArray(getPersonalAdvertsData)
+    ? getPersonalAdvertsData
+    : getPersonalAdvertsData?.result || [];
 
   return (
     <div className={classes.mainDiv}>
       <ConfirmDialog
         ref={deleteDialogRef}
         onConfirm={() => advertDeleteHandler(selectedAdvertId)}
-        text="Bunu yapmak istediğinizden emin misiniz?"
+        text={
+          deleteAdvertIsPending
+            ? "Siliniyor..."
+            : "Bunu yapmak istediğinizden emin misiniz?"
+        }
         title="Kaldır"
       />
       <ConfirmDialog
@@ -126,10 +121,17 @@ export default function MyAdverts() {
         text="Bu ilanı düzenlemek"
       />
       <ManagementNav className={classes.managementNav} />
-      {myAdverts && myAdverts.length > 0 ? (
+
+      {deleteAdvertIsError && (
+        <p className={classes.errorText}>
+          {deleteAdvertError?.message || "İlan silinirken bir hata oluştu."}
+        </p>
+      )}
+
+      {advertsList && advertsList.length > 0 ? (
         <div className={classes.div}>
           <AnimatePresence>
-            {myAdverts.map((myAdvert) => {
+            {advertsList.map((myAdvert) => {
               const mainImgObj = myAdvert.images
                 ? myAdvert.images.find((img) => img.is_main) ||
                   myAdvert.images[0]

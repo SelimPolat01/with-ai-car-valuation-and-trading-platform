@@ -6,6 +6,7 @@ import SecondaryButton from "@/app/components/SecondaryButton";
 import { useParams, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useGetAvailableSlots } from "@/hooks/GET/useGetSlots";
+import { AlertCircle, ArrowLeft } from "lucide-react";
 
 const ALL_HOURS = [
   "09:00",
@@ -22,6 +23,8 @@ const ALL_HOURS = [
 
 export default function Randevu() {
   const router = useRouter();
+  const params = useParams();
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
@@ -32,8 +35,6 @@ export default function Randevu() {
     }
   }, [router]);
 
-  const params = useParams();
-  const [token, setToken] = useState(null);
   const days = Array.from({ length: 17 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() + 1 + i);
@@ -88,6 +89,19 @@ export default function Randevu() {
     return (
       <div className="loadingContainer">
         <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (getAvailableSlotsIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getAvailableSlotsError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
       </div>
     );
   }

@@ -10,14 +10,18 @@ import { useCheckAuth } from "@/backend/utils/useCheckAuth.js";
 import ConfirmDialog from "../components/ConfirmDialog.js";
 import { AnimatePresence } from "framer-motion";
 import FilterBrand from "../components/FilterBrand.js";
+import { useGetAdverts } from "@/hooks/GET/useGetAdverts";
+import useDeleteAdvert from "@/hooks/DELETE/useDeleteAdvert";
+import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function AllAdverts() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const deleteDialogRef = useRef(null);
+
+  const [token, setToken] = useState(null);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
+
   const allAdverts = useSelector((state) => state.adverts.allAdverts);
   const user = useSelector((state) => state.auth.user);
   const filteredAdverts = useSelector(
@@ -25,6 +29,33 @@ export default function AllAdverts() {
   );
   const displayAdverts =
     filteredAdverts.length > 0 ? filteredAdverts : allAdverts;
+
+  useCheckAuth();
+
+  useEffect(() => {
+    const currentToken = localStorage.getItem("token");
+    setToken(currentToken);
+  }, []);
+
+  const {
+    data: getAdvertsData,
+    isLoading: getAdvertsIsLoading,
+    isError: getAdvertsDataIsError,
+    error: getAdvertsDataError,
+  } = useGetAdverts(token);
+
+  const {
+    mutate: deleteAdvertMutate,
+    isPending: deleteAdvertIsPending,
+    isError: deleteAdvertIsError,
+    error: deleteAdvertError,
+  } = useDeleteAdvert();
+
+  useEffect(() => {
+    if (getAdvertsData) {
+      dispatch(setAdverts(getAdvertsData?.result || getAdvertsData));
+    }
+  }, [getAdvertsData, dispatch]);
 
   const { uniqueBrands, brandCounts } = useMemo(() => {
     const counts = {};
@@ -39,73 +70,19 @@ export default function AllAdverts() {
     };
   }, [allAdverts]);
 
-  useCheckAuth();
+  function advertDeleteHandler(id) {
+    if (!token) return;
 
-  useEffect(() => {
-    const fetchAdverts = async () => {
-      const token = localStorage.getItem("token");
-      setLoading(true);
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/adverts`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.status === 401) {
-          localStorage.removeItem("token");
-          router.replace("/login");
-          return;
-        }
-        if (!response.ok) {
-          const errorData = await response.json();
-          setError(errorData.message);
-          return;
-        }
-        const advertData = await response.json();
-        dispatch(setAdverts(advertData));
-      } catch (err) {
-        console.log("Error: " + err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAdverts();
-  }, [dispatch, router]);
-
-  async function advertDeleteHandler(id) {
-    const token = localStorage.getItem("token");
-    try {
-      setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/adverts/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+    deleteAdvertMutate(
+      { token, advertId: id },
+      {
+        onSuccess: () => {
+          dispatch(
+            setAdverts(allAdverts.filter((prevAdvert) => prevAdvert.id !== id)),
+          );
         },
-      );
-      if (response.status === 401) {
-        localStorage.removeItem("token");
-        router.replace("/login");
-        return;
-      }
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message);
-        return;
-      }
-      dispatch(
-        setAdverts(allAdverts.filter((prevAdvert) => prevAdvert.id !== id)),
-      );
-    } catch (err) {
-      console.log("Error: " + err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+      },
+    );
   }
 
   function openDeleteModal(id) {
@@ -113,11 +90,33 @@ export default function AllAdverts() {
     deleteDialogRef.current.showModal();
   }
 
-  if (error) return <p>{error}</p>;
+  if (!token || getAdvertsIsLoading || deleteAdvertIsPending) {
+    return (
+      <div className="loadingContainer">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (getAdvertsDataIsError || deleteAdvertIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p className="error">
+          {getAdvertsDataError?.message || deleteAdvertError?.message}
+        </p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
+      </div>
+    );
+  }
+
   if (!allAdverts || allAdverts.length === 0)
     return (
       <div className={classes.notFoundAdvertDiv}>
-        <p>İlan Bulunmamaktadır</p>
+        <p>İlan Bulunmamaktadır...</p>
       </div>
     );
 

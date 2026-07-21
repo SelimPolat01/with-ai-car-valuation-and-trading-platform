@@ -17,6 +17,7 @@ export default function TahminYap() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [token, setToken] = useState(null);
+
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
     setToken(currentToken);
@@ -25,12 +26,15 @@ export default function TahminYap() {
       return;
     }
   }, [router]);
+
   const {
     mutate: carValuePredictMutate,
     isPending: carValuePredictMutateIsPending,
     isError: carValuePredictMutateIsError,
     error: carValuePredictMutateError,
+    reset,
   } = usePostCarValuePredict();
+
   const isFromImage = searchParams.get("fromImage") === "true";
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -205,15 +209,11 @@ export default function TahminYap() {
             fuelType: payload.fuel_type,
             price: Number(data.result.price),
           };
-          console.log(data.result.price);
           dispatch(setPrediction(reduxData));
           router.push(
             `/ilan-olustur/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/hasar-durumu`,
           );
-        },
-        onError: (err) => {
-          setError(err.message);
-          return;
+          reset();
         },
       },
     );
@@ -273,7 +273,6 @@ export default function TahminYap() {
           engineCapacities: engines.engine_capacities || [],
         }));
       } catch (err) {
-        console.log("Error: " + err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -320,7 +319,6 @@ export default function TahminYap() {
         fuelTypes: fuels.fuel_types || [],
       }));
     } catch (err) {
-      console.log("Error: " + err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -362,7 +360,6 @@ export default function TahminYap() {
         horsepowers: hps.horsepowers || [],
       }));
     } catch (err) {
-      console.log("Error: " + err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -409,7 +406,6 @@ export default function TahminYap() {
         transmissions: gears.transmissions || [],
       }));
     } catch (err) {
-      console.log("Error: " + err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -458,7 +454,6 @@ export default function TahminYap() {
         bodyTypes: bodies.body_types || [],
       }));
     } catch (err) {
-      console.log("Error: " + err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -509,7 +504,6 @@ export default function TahminYap() {
         trimLevels: trims.trim_levels || [],
       }));
     } catch (err) {
-      console.log("Error: " + err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -666,7 +660,7 @@ export default function TahminYap() {
       },
     },
     honda: {
-      civic: {
+      civ: {
         sedan: [
           { start: 2006, end: 2011, interval: "2006-2011" },
           { start: 2011, end: 2016, interval: "2011-2016" },
@@ -1330,6 +1324,20 @@ export default function TahminYap() {
                   type="submit"
                 />
               </motion.div>
+              {carValuePredictMutateIsError && (
+                <motion.div
+                  variants={itemVariants}
+                  style={{
+                    gridColumn: "span 2",
+                    color: "#ff6363",
+                    textAlign: "center",
+                    fontSize: "14px",
+                  }}
+                >
+                  {carValuePredictMutateError?.message ||
+                    "Tahmin işlemi sırasında bir hata oluştu."}
+                </motion.div>
+              )}
             </motion.form>
           </div>
         </motion.div>

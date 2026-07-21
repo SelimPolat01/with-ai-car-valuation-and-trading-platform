@@ -6,38 +6,27 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import SecondaryButton from "./SecondaryButton";
 import { Camera } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setPrediction as setPredictionAction } from "@/store/predictionSlice";
 import { motion } from "framer-motion";
 import { usePostCarDetection } from "@/hooks/POST/usePostCarDetection";
 
 export default function AiCarDetector() {
   const router = useRouter();
+  const dispatch = useDispatch();
+
   const [token, setToken] = useState(null);
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-  }, [router]);
-  const {
-    mutate: carDetectionMutate,
-    isPending: carDetectionIsPending,
-    isError: carDetectionIsError,
-    error: carDetectionError,
-  } = usePostCarDetection();
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
-  const predictionCarValues = useSelector(
-    (state) => state.prediction.prediction,
-  );
-  const dispatch = useDispatch();
+  const [error, setError] = useState(null);
+  const [showYearInterval, setShowYearInterval] = useState(false);
+  const fileInputRef = useRef(null);
+
   const [prediction, setPrediction] = useState({
     prediction: [],
     predictionPercent: null,
   });
+
   const [car, setCar] = useState({
     brand: "",
     model: "",
@@ -45,10 +34,21 @@ export default function AiCarDetector() {
     yearInterval: "",
     selectedYear: null,
   });
-  const [showYearInterval, setShowYearInterval] = useState(false);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const fileInputRef = useRef(null);
+
+  const {
+    mutate: postCarDetectionMutate,
+    isPending: postCarDetectionIsPending,
+    isError: postCarDetectionIsError,
+    error: postCarDetectionError,
+  } = usePostCarDetection();
+
+  useEffect(() => {
+    const currentToken = localStorage.getItem("token");
+    setToken(currentToken);
+    if (!currentToken) {
+      router.replace("/login");
+    }
+  }, [router]);
 
   useEffect(() => {
     return () => {
@@ -59,40 +59,40 @@ export default function AiCarDetector() {
   function brandParser(brand) {
     if (!brand) return;
     const normalizedBrand = brand.toLowerCase();
-    if (normalizedBrand == "bmw") return "BMW";
-    else return brand;
+    if (normalizedBrand === "bmw") return "BMW";
+    return brand;
   }
 
   function modelParser(model, choice) {
     if (!model) return;
     const normalizedModel = model.toLowerCase();
     const parsedModel = {
-      celysee: choice == "url" ? "c-elysee" : "C-Elysee",
-      cseries: choice == "url" ? "c series" : "C Serisi",
-      eseries: choice == "url" ? "e series" : "E Serisi",
-      "1series": choice == "url" ? "1 series" : "1 Serisi",
-      "3series": choice == "url" ? "3 series" : "3 Serisi",
-      "5series": choice == "url" ? "5 series" : "5 Serisi",
-      troc: choice == "url" ? "t-roc" : "T-Roc",
-      megane: choice == "url" ? "megane" : "Megane",
-      civic: choice == "url" ? "civic" : "Civic",
-      egea: choice == "url" ? "egea" : "Egea",
-      clio: choice == "url" ? "clio" : "Clio",
-      corolla: choice == "url" ? "corolla" : "Corolla",
-      passat: choice == "url" ? "passat" : "Passat",
-      polo: choice == "url" ? "polo" : "Polo",
+      celysee: choice === "url" ? "c-elysee" : "C-Elysee",
+      cseries: choice === "url" ? "c series" : "C Serisi",
+      eseries: choice === "url" ? "e series" : "E Serisi",
+      "1series": choice === "url" ? "1 series" : "1 Serisi",
+      "3series": choice === "url" ? "3 series" : "3 Serisi",
+      "5series": choice === "url" ? "5 series" : "5 Serisi",
+      troc: choice === "url" ? "t-roc" : "T-Roc",
+      megane: choice === "url" ? "megane" : "Megane",
+      civic: choice === "url" ? "civic" : "Civic",
+      egea: choice === "url" ? "egea" : "Egea",
+      clio: choice === "url" ? "clio" : "Clio",
+      corolla: choice === "url" ? "corolla" : "Corolla",
+      passat: choice === "url" ? "passat" : "Passat",
+      polo: choice === "url" ? "polo" : "Polo",
       i20: "i20",
-      duster: choice == "url" ? "duster" : "Duster",
-      tiguan: choice == "url" ? "tiguan" : "Tiguan",
-      focus: choice == "url" ? "focus" : "Focus",
-      fiesta: choice == "url" ? "fiesta" : "Fiesta",
-      golf: choice == "url" ? "golf" : "Golf",
-      a3: choice == "url" ? "a3" : "A3",
-      jetta: choice == "url" ? "jetta" : "Jetta",
-      c3: choice == "url" ? "c3" : "C3",
-      a4: choice == "url" ? "a4" : "A4",
-      cruze: choice == "url" ? "cruze" : "Cruze",
-      c4: choice == "url" ? "c4" : "C4",
+      duster: choice === "url" ? "duster" : "Duster",
+      tiguan: choice === "url" ? "tiguan" : "Tiguan",
+      focus: choice === "url" ? "focus" : "Focus",
+      fiesta: choice === "url" ? "fiesta" : "Fiesta",
+      golf: choice === "url" ? "golf" : "Golf",
+      a3: choice === "url" ? "a3" : "A3",
+      jetta: choice === "url" ? "jetta" : "Jetta",
+      c3: choice === "url" ? "c3" : "C3",
+      a4: choice === "url" ? "a4" : "A4",
+      cruze: choice === "url" ? "cruze" : "Cruze",
+      c4: choice === "url" ? "c4" : "C4",
     };
     return parsedModel[normalizedModel] || model;
   }
@@ -100,8 +100,8 @@ export default function AiCarDetector() {
   function bodyTypeParser(bodyType) {
     if (!bodyType) return;
     const normalizedBodyType = bodyType.toLowerCase();
-    if (normalizedBodyType == "suv") return "SUV";
-    else return bodyType;
+    if (normalizedBodyType === "suv") return "SUV";
+    return bodyType;
   }
 
   function handleClick() {
@@ -131,13 +131,15 @@ export default function AiCarDetector() {
     event.target.value = "";
   }
 
-  async function handleUpload() {
-    if (!file || loading) return;
+  function handleUpload() {
+    if (!file || postCarDetectionIsPending || !token) return;
+    setError(null);
+
     const formData = new FormData();
     formData.append("file", file);
-    const token = localStorage.getItem("token");
-    carDetectionMutate(
-      { token: token, body: formData },
+
+    postCarDetectionMutate(
+      { token, body: formData },
       {
         onSuccess: (data) => {
           const parsedPrediction = data.result.prediction.split("-");
@@ -174,11 +176,6 @@ export default function AiCarDetector() {
             setError("API'den gelen veri formatı geçersiz (Eksik parametre).");
           }
         },
-        onError: (err) => {
-          console.log(err.message);
-          setError(err.message);
-          return;
-        },
       },
     );
   }
@@ -209,6 +206,9 @@ export default function AiCarDetector() {
     hidden: { opacity: 0, x: 50 },
     visible: { opacity: 1, x: 0 },
   };
+
+  const activeError =
+    error || (postCarDetectionIsError ? postCarDetectionError?.message : null);
 
   return (
     <motion.div
@@ -250,17 +250,17 @@ export default function AiCarDetector() {
 
         <SecondaryButton
           type="button"
-          text={carDetectionIsPending ? "Yükleniyor..." : "Gönder"}
+          text={postCarDetectionIsPending ? "Yükleniyor..." : "Gönder"}
           onClick={handleUpload}
-          disabled={carDetectionIsPending}
+          disabled={postCarDetectionIsPending || !file}
           className={classes.uploadButton}
         />
-        {error && (
+        {activeError && (
           <p
             className={classes.errorText}
-            style={{ color: "red", marginTop: "10px" }}
+            style={{ color: "#ff6b6b", marginTop: "10px" }}
           >
-            {error}
+            {activeError}
           </p>
         )}
       </div>
@@ -342,7 +342,9 @@ export default function AiCarDetector() {
                     }),
                   );
                   router.push(
-                    `/ilan-olustur/${car.brand.toLowerCase()}/${encodeURIComponent(modelParser(car.model.toLowerCase(), "url"))}/${car.selectedYear}?fromImage=true`,
+                    `/ilan-olustur/${car.brand.toLowerCase()}/${encodeURIComponent(
+                      modelParser(car.model.toLowerCase(), "url"),
+                    )}/${car.selectedYear}?fromImage=true`,
                   );
                 }}
                 className={`${classes.confirmButton} ${classes.primary}`}

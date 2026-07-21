@@ -13,6 +13,8 @@ import {
   CheckCircle2,
   XCircle,
   ChevronRight,
+  AlertCircle,
+  ArrowLeft,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -49,8 +51,13 @@ export default function RandevularPage() {
 
   if (getPersonalAppointmentsIsError) {
     return (
-      <div className={classes.container}>
-        Hata: {getPersonalAppointmentsError?.message}
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getPersonalAppointmentsError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
       </div>
     );
   }

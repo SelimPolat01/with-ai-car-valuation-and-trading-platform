@@ -31,7 +31,7 @@ body {
   flex: 1 0 auto;
   margin: 0;
   padding-bottom: 2rem;
-  min-height: 91.3vh;
+  min-height: 85vh;
 }
 
 .mainBg {
@@ -77,9 +77,8 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 92vh;
-  gap: 0px;
-  padding: 0 0 2rem 0;
+  min-height: 85vh;
+  padding: 0;
 }
 
 .main {
@@ -111,12 +110,35 @@ a {
 }
 
 .error {
-  color: red;
+  color: #ef4444;
   margin: 0 0 0.1rem 0;
   padding: 0;
   width: 100%;
   text-align: center;
   font-weight: bold;
+}
+
+.iconSecondary {
+  color: #f87171;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  color: black;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 0;
+  width: fit-content;
+}
+
+.backButton:hover {
+  color: #ffffff;
 }
 
 .bi.bi-person-plus,
@@ -365,7 +387,7 @@ a {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 90vh;
+  min-height: 78vh;
   gap: 1rem;
   color: #ffffff;
   text-align: center;

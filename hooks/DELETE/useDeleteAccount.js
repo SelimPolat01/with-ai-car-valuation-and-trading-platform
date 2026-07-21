@@ -7,6 +7,6 @@ async function deleteAccount(token) {
 
 export function useDeleteAccount() {
   return useMutation({
-    mutationFn: ({ token, body }) => deleteAccount(token),
+    mutationFn: ({ token }) => deleteAccount(token),
   });
 }

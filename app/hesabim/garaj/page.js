@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  AlertCircle,
   ArrowDown,
+  ArrowLeft,
   ArrowUp,
   Heart,
   Megaphone,
@@ -15,7 +17,7 @@ import ChartBar from "../../components/ChartBar";
 import HalfCircleProgress from "../../components/HalfCircleProgress";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useGetPersonalAdverts } from "@/hooks/GET/useGetPersonalAdverts";
+import { useGetPersonalAdvertsInfos } from "@/hooks/GET/useGetPersonalAdvertsInfos";
 import { useGetPersonalSoldAdverts } from "@/hooks/GET/usePersonalSoldAdverts";
 
 export default function Garajim() {
@@ -31,8 +33,12 @@ export default function Garajim() {
     }
   }, [router]);
 
-  const { data: personalAdvertsData, isLoading: personalAdvertsIsLoading } =
-    useGetPersonalAdverts(token);
+  const {
+    data: getPersonalAdvertsData,
+    isLoading: getPersonalAdvertsIsLoading,
+    isError: getPersonalAdvertsIsError,
+    error: getPersonalAdvertsError,
+  } = useGetPersonalAdvertsInfos(token);
 
   const {
     data: personalSoldAdvertsData,
@@ -50,9 +56,9 @@ export default function Garajim() {
     },
   };
 
-  const kisiselİlanlar = personalAdvertsData?.result?.personalAdverts || [];
+  const kisiselİlanlar = getPersonalAdvertsData?.result?.personalAdverts || [];
   const favoriIlanSayisi =
-    personalAdvertsData?.result?.personalFavoriteAdverts || 0;
+    getPersonalAdvertsData?.result?.personalFavoriteAdverts || 0;
   const kisiselSatinAldigimIlanlar =
     personalSoldAdvertsData?.result?.personalSoldAdverts || [];
 
@@ -132,6 +138,19 @@ export default function Garajim() {
     );
   }
 
+  if (getPersonalAdvertsIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getPersonalAdvertsError?.message}</p>
+        <button get={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className={classes.div}>
       <div className={classes.divContainer}>
@@ -146,7 +165,7 @@ export default function Garajim() {
             icon={<Megaphone />}
             text="Mevcut İlanlarım"
             total={
-              personalAdvertsIsLoading ? "..." : kisiselMevcutİlanlar.length
+              getPersonalAdvertsIsLoading ? "..." : kisiselMevcutİlanlar.length
             }
             change="11.46%"
             changeIcon={<ArrowUp />}
@@ -157,7 +176,9 @@ export default function Garajim() {
             className={classes.frame}
             icon={<TurkishLira />}
             text="Satılan İlanlarım"
-            total={personalAdvertsIsLoading ? "..." : satilanIlanlarim.length}
+            total={
+              getPersonalAdvertsIsLoading ? "..." : satilanIlanlarim.length
+            }
             change="32.63%"
             changeIcon={<ArrowDown />}
             downChange
@@ -167,7 +188,7 @@ export default function Garajim() {
             className={classes.frame}
             icon={<Heart />}
             text={"Favori İlanlarım"}
-            total={personalAdvertsIsLoading ? "..." : favoriIlanSayisi}
+            total={getPersonalAdvertsIsLoading ? "..." : favoriIlanSayisi}
             change="7.13%"
             changeIcon={<ArrowDown />}
             downChange

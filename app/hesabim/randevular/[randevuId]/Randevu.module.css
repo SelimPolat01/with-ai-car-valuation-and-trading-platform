@@ -481,6 +481,25 @@
   color: #a1a1aa;
 }
 
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  color: #ffffffb3;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 0;
+  width: fit-content;
+}
+
+.backButton:hover {
+  color: #ffffff;
+}
+
 @media (max-width: 1024px) {
   .contentWrapper {
     grid-template-columns: 1fr;

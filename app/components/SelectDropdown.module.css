@@ -1,0 +1,88 @@
+.dropdownWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  box-sizing: border-box;
+  height: 40.8px;
+}
+
+.selected {
+  color: black;
+  font-size: 15px;
+  font-weight: bold;
+  border: 1px solid #ccc;
+}
+
+.boxShadow {
+  box-shadow: 0 0 15px #acacac;
+  border-radius: 8px;
+}
+
+.notSelected {
+  border: 1px solid #ff6363;
+}
+
+.notSelectedAnimation {
+  animation: shake 0.4s ease-in-out;
+  border: 1px solid #ff6363;
+}
+
+.disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  color: #999;
+}
+
+.dropdownList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  z-index: 10;
+  margin: 5px 0 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dropdownList li {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdownList li:hover {
+  background-color: #f0f0f0;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

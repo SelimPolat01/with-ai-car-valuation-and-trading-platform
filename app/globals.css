@@ -285,6 +285,17 @@ a {
   font-size: 17.5px;
 }
 
+.priceOfferBg {
+  flex: 1;
+  background: url("/images/price-offer-bg.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  min-height: 90vh;
+}
+
 .bgForm {
   background-image: url("/images/bg.png");
   background-size: cover;
@@ -331,7 +342,7 @@ a {
 
 .bgGetPriceOffer {
   position: relative;
-  min-height: 100vh;
+  min-height: 85vh;
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
   display: flex;
   flex-direction: column;
@@ -361,11 +372,6 @@ a {
 
 .cancelButton:hover {
   text-decoration: underline;
-}
-
-.blackColorLink i,
-.purpleColorLink i {
-  color: black !important;
 }
 
 .overlay {

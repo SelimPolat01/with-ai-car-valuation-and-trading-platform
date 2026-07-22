@@ -1,5 +1,6 @@
 import Header from "@/app/components/Header";
 import classes from "./TahminYap.module.css";
+import BackgroundWrapper from "@/app/components/BackgroundWrapper";
 
 export const metadata = {
   title: "Fiyat Teklif Alma",
@@ -8,9 +9,9 @@ export const metadata = {
 
 export default function GetPriceOfferLayout({ children }) {
   return (
-    <div className="bgGetPriceOffer">
-      <Header className="blackColorLink" />
+    <BackgroundWrapper>
+      <Header />
       <main className={classes.rootMain}>{children}</main>
-    </div>
+    </BackgroundWrapper>
   );
 }

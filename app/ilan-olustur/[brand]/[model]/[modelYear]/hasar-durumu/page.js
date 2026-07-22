@@ -525,7 +525,6 @@ export default function HasarDurumu() {
               id={`file-upload-${view.id}`}
               type="file"
               className={classes.fileInput}
-              style={{ display: "none" }}
               accept="image/*"
               onChange={(e) => handleImageChange(view.id, e)}
               disabled={isAnyPending}
@@ -549,7 +548,7 @@ export default function HasarDurumu() {
               <PrimaryButton
                 type="submit"
                 text="Fiyat Teklifi Al"
-                onClick={() => router.push("/fiyat-teklifi")}
+                onClick={() => router.push("fiyat-teklifi")}
                 disabled={isAnyPending}
               />
             </motion.div>

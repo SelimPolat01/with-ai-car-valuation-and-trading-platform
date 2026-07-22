@@ -384,7 +384,7 @@ export default function AlisSatisİslemleri() {
                       className={classes.primaryBtn}
                       disabled={currentStep < 3}
                     >
-                      Kalan Bakiyeyi Gönder (Escrow)
+                      Kalan Bakiyeyi Gönder
                     </button>
                     <button
                       className={classes.secondaryBtn}

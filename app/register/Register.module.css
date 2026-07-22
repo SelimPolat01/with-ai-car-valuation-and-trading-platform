@@ -30,6 +30,12 @@
   gap: 0.25rem;
 }
 
+.input {
+  width: 100% !important;
+  height: 40px !important;
+  box-sizing: border-box !important;
+}
+
 .halfInput {
   width: 100%;
 }

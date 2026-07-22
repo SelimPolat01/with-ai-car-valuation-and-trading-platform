@@ -4,8 +4,8 @@ import classes from "./ChartBar.module.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { chartVariants } from "@/app/lib/variants";
-import { generateChartData } from "../utils/helpers";
+import { chartVariants } from "@/app/utils/animations";
+import { generateChartData } from "@/app/utils/helpers";
 
 export default function ChartBar({ text, optionsIcon, width, height, data }) {
   const router = useRouter();

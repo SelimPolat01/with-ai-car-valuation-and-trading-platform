@@ -3,7 +3,7 @@ import React from "react";
 import { PieChart, Pie, Cell } from "recharts";
 import classes from "./HalfCircleProgress.module.css";
 import { motion } from "framer-motion";
-import { chartVariants } from "@/app/lib/variants";
+import { chartVariants } from "@/app/utils/animations";
 
 export default function HalfCircleProgress({
   text,

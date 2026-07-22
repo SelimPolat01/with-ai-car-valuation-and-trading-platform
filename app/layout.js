@@ -1,8 +1,8 @@
 import { Inter, Josefin_Sans } from "next/font/google";
 import Footer from "@/app/components/Footer";
 import "./globals.css";
-import Providers from "./components/Providers";
 import ReactQuery from "./lib/reactQuery";
+import Providers from "./lib/Providers";
 
 const inter = Inter({
   subsets: ["latin"],

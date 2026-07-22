@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import classes from "./SuccessMessage.module.css";
 import { CheckCircle } from "lucide-react";
-import { iconVariants, successMessageVariants } from "../lib/variants";
+import { iconVariants, successMessageVariants } from "@/app/utils/animations";
 import SecondaryButton from "./SecondaryButton";
 
 export default function SuccessMessage({

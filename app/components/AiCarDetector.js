@@ -347,7 +347,7 @@ export default function AiCarDetector() {
                     )}/${car.selectedYear}?fromImage=true`,
                   );
                 }}
-                className={`${classes.confirmButton} ${classes.primary}`}
+                className={`${classes.confirmButton} ${classes.primary} ${!car.selectedYear ? classes.notAllowed : ""}`}
                 disabled={!car.selectedYear}
               >
                 Evet, Aracımı Doğrula

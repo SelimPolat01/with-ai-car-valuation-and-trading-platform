@@ -1,6 +1,6 @@
 import Header from "@/app/components/Header";
 import classes from "./TahminYap.module.css";
-import BackgroundWrapper from "../../../../components/BackgroundWrapper.js";
+import { BackgroundWrapper } from "@/app/components/BackgroundWrapper";
 
 export const metadata = {
   title: "Fiyat Teklif Alma",

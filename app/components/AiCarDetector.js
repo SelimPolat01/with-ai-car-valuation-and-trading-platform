@@ -10,18 +10,27 @@ import { useDispatch } from "react-redux";
 import { setPrediction as setPredictionAction } from "@/store/predictionSlice";
 import { motion } from "framer-motion";
 import { usePostCarDetection } from "@/hooks/POST/usePostCarDetection";
+import {
+  brandParser,
+  modelParser,
+  bodyTypeParser,
+  capitalizeWords,
+} from "@/app/utils/helpers";
+import {
+  aiDetectorPageVariants,
+  aiDetectorPredictionContainerVariants,
+  aiDetectorPredictionItemVariants,
+} from "@/app/utils/animations";
 
 export default function AiCarDetector() {
   const router = useRouter();
   const dispatch = useDispatch();
-
   const [token, setToken] = useState(null);
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
   const [showYearInterval, setShowYearInterval] = useState(false);
   const fileInputRef = useRef(null);
-
   const [prediction, setPrediction] = useState({
     prediction: [],
     predictionPercent: null,
@@ -56,54 +65,6 @@ export default function AiCarDetector() {
     };
   }, [preview]);
 
-  function brandParser(brand) {
-    if (!brand) return;
-    const normalizedBrand = brand.toLowerCase();
-    if (normalizedBrand === "bmw") return "BMW";
-    return brand;
-  }
-
-  function modelParser(model, choice) {
-    if (!model) return;
-    const normalizedModel = model.toLowerCase();
-    const parsedModel = {
-      celysee: choice === "url" ? "c-elysee" : "C-Elysee",
-      cseries: choice === "url" ? "c series" : "C Serisi",
-      eseries: choice === "url" ? "e series" : "E Serisi",
-      "1series": choice === "url" ? "1 series" : "1 Serisi",
-      "3series": choice === "url" ? "3 series" : "3 Serisi",
-      "5series": choice === "url" ? "5 series" : "5 Serisi",
-      troc: choice === "url" ? "t-roc" : "T-Roc",
-      megane: choice === "url" ? "megane" : "Megane",
-      civic: choice === "url" ? "civic" : "Civic",
-      egea: choice === "url" ? "egea" : "Egea",
-      clio: choice === "url" ? "clio" : "Clio",
-      corolla: choice === "url" ? "corolla" : "Corolla",
-      passat: choice === "url" ? "passat" : "Passat",
-      polo: choice === "url" ? "polo" : "Polo",
-      i20: "i20",
-      duster: choice === "url" ? "duster" : "Duster",
-      tiguan: choice === "url" ? "tiguan" : "Tiguan",
-      focus: choice === "url" ? "focus" : "Focus",
-      fiesta: choice === "url" ? "fiesta" : "Fiesta",
-      golf: choice === "url" ? "golf" : "Golf",
-      a3: choice === "url" ? "a3" : "A3",
-      jetta: choice === "url" ? "jetta" : "Jetta",
-      c3: choice === "url" ? "c3" : "C3",
-      a4: choice === "url" ? "a4" : "A4",
-      cruze: choice === "url" ? "cruze" : "Cruze",
-      c4: choice === "url" ? "c4" : "C4",
-    };
-    return parsedModel[normalizedModel] || model;
-  }
-
-  function bodyTypeParser(bodyType) {
-    if (!bodyType) return;
-    const normalizedBodyType = bodyType.toLowerCase();
-    if (normalizedBodyType === "suv") return "SUV";
-    return bodyType;
-  }
-
   function handleClick() {
     fileInputRef.current.click();
   }
@@ -134,10 +95,8 @@ export default function AiCarDetector() {
   function handleUpload() {
     if (!file || postCarDetectionIsPending || !token) return;
     setError(null);
-
     const formData = new FormData();
     formData.append("file", file);
-
     postCarDetectionMutate(
       { token, body: formData },
       {
@@ -149,11 +108,6 @@ export default function AiCarDetector() {
           });
 
           if (parsedPrediction && parsedPrediction.length >= 4) {
-            const capitalize = (str) => {
-              if (!str) return "";
-              return str.charAt(0).toUpperCase() + str.slice(1);
-            };
-
             const startYearShort = parsedPrediction[3];
             const endYearShort =
               parsedPrediction[4] && parsedPrediction[4].trim() !== ""
@@ -164,9 +118,9 @@ export default function AiCarDetector() {
             const isSingleYear = startYearShort === endYearShort;
 
             setCar({
-              brand: capitalize(parsedPrediction[0]),
-              model: capitalize(parsedPrediction[1]),
-              bodyType: capitalize(parsedPrediction[2]),
+              brand: capitalizeWords(parsedPrediction[0]),
+              model: capitalizeWords(parsedPrediction[1]),
+              bodyType: capitalizeWords(parsedPrediction[2]),
               yearInterval: isSingleYear
                 ? `20${startYearShort}`
                 : `20${startYearShort}-20${endYearShort}`,
@@ -192,29 +146,14 @@ export default function AiCarDetector() {
 
   const yearsArray = generateYearList();
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: 50 },
-    visible: { opacity: 1, x: 0 },
-  };
-
   const activeError =
     error || (postCarDetectionIsError ? postCarDetectionError?.message : null);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      initial={aiDetectorPageVariants.initial}
+      animate={aiDetectorPageVariants.animate}
+      transition={aiDetectorPageVariants.transition}
       className={classes.div}
     >
       <div className={classes.photoDiv}>
@@ -267,13 +206,16 @@ export default function AiCarDetector() {
 
       <motion.div
         key={prediction.prediction.length > 0 ? "visible" : "hidden"}
-        variants={containerVariants}
+        variants={aiDetectorPredictionContainerVariants}
         initial="hidden"
         animate="visible"
       >
         {prediction.prediction && prediction.prediction.length > 0 && (
           <div className={classes.buttonGroup}>
-            <motion.div variants={itemVariants} className={classes.infoText}>
+            <motion.div
+              variants={aiDetectorPredictionItemVariants}
+              className={classes.infoText}
+            >
               <span>Tespit Edilen Araç:</span>
               <strong>
                 {brandParser(car.brand)} {modelParser(car.model, "label")}{" "}
@@ -329,7 +271,7 @@ export default function AiCarDetector() {
             </motion.div>
 
             <motion.div
-              variants={itemVariants}
+              variants={aiDetectorPredictionItemVariants}
               className={classes.buttonContainer}
             >
               <button

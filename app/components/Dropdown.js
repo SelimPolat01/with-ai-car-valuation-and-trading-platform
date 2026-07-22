@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import classes from "./Dropdown.module.css";
 import PrimaryButton from "./PrimaryButton";
 import { AnimatePresence, motion } from "framer-motion";
+import { formatAndCleanBrand, formatBrandModel } from "../utils/helpers";
+import {
+  dropdownItemVariants,
+  dropdownVariants,
+  formContainerVariants,
+} from "../utils/animations";
 
 export default function Dropdown() {
   const [value, setValue] = useState({
@@ -29,12 +35,6 @@ export default function Dropdown() {
     shakeModelYear: false,
   });
   const router = useRouter();
-
-  function formatBrand(brand) {
-    if (!brand) return;
-    if (brand == "mercedes-benz") return "mercedes";
-    return brand;
-  }
 
   function submitHandler(event) {
     event.preventDefault();
@@ -61,7 +61,7 @@ export default function Dropdown() {
     }
     router.push(
       `/ilan-olustur/${encodeURIComponent(
-        formatBrand(value.brandValue),
+        formatAndCleanBrand(value.brandValue),
       ).toLowerCase()}/${encodeURIComponent(
         value.modelValue,
       ).toLowerCase()}/${value.modelYearValue}`,
@@ -129,56 +129,6 @@ export default function Dropdown() {
     });
   }, []);
 
-  function formatBrandModel(text) {
-    if (!text) return "";
-    if (text === "bmw") return "BMW";
-    if (text === "i20") return "i20";
-
-    return text
-      .split(" ")
-      .map((word) =>
-        word
-          .split("-")
-          .map(
-            (part) =>
-              part.charAt(0).toUpperCase() + part.slice(1).toLowerCase(),
-          )
-          .join("-"),
-      )
-      .join(" ");
-  }
-
-  const formContainerVariants = {
-    hidden: { opacity: 1 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const dropdownVariants = {
-    hidden: { opacity: 0, y: -8, scale: 0.98 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.18 } },
-    exit: { opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.15 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 16, scale: 0.98 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 260,
-        damping: 20,
-      },
-    },
-  };
-
   return (
     <motion.form
       variants={formContainerVariants}
@@ -188,7 +138,7 @@ export default function Dropdown() {
       onSubmit={submitHandler}
     >
       <motion.div
-        variants={itemVariants}
+        variants={dropdownItemVariants}
         className={`${classes.brandWrapper} dropdownWrapper `}
       >
         <div

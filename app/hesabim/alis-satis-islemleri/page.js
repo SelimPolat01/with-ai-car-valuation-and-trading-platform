@@ -5,6 +5,20 @@ import classes from "./AlisSatisİslemleri.module.css";
 import useGetTradingValues from "@/hooks/GET/useGetTradingValues";
 import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowLeft } from "lucide-react";
+import {
+  capitalizeWords,
+  engineCapacityFormat,
+  formatAppointmentDateTime,
+  formatBrandModel,
+  formatDate,
+  formatLpgStatus,
+  formatPrice,
+  formatTireCondition,
+  formatTireType,
+  getExpertiseStatusText,
+  getStatusBadgeText,
+  getStepFromStatus,
+} from "@/app/utils/helpers";
 
 export default function AlisSatisİslemleri() {
   const router = useRouter();
@@ -65,185 +79,9 @@ export default function AlisSatisİslemleri() {
     );
   }
 
-  const getStepFromStatus = (status) => {
-    if (!status) return 1;
-    const s = String(status).toLowerCase();
-
-    if (s === "1" || s === "pending") return 1;
-    if (s === "2" || s === "appointment") return 2;
-    if (s === "3" || s === "expertise" || s === "control") return 3;
-    if (s === "4" || s === "escrow" || s === "payment") return 4;
-    if (s === "5" || s === "notary") return 5;
-    if (s === "success" || s === "completed") return 6;
-
-    return 1;
-  };
-
-  const getStatusBadgeText = (status) => {
-    if (!status) return "Satın Alma Sürecinde";
-    const s = String(status).toLowerCase();
-
-    if (s === "success") return "İlan Alım Satım Tamamlandı";
-    if (s === "5") return "Noter Sürecinde";
-    if (s === "4") return "Ödeme Sürecinde";
-    if (s === "3") return "Ekspertiz Kontrolünde";
-    if (s === "2") return "Yetkili Randevu Sürecinde";
-    if (s === "1") return "Satın Alma Sürecinde";
-
-    return "Satın Alma Sürecinde";
-  };
-
   const currentStep = activeTransaction
     ? getStepFromStatus(activeTransaction.payment_status)
     : 1;
-
-  const getExpertiseStatusText = (step) => {
-    if (step === 2) return "Randevu Alındı";
-    if (step >= 3) return "Tamamlandı";
-    return "Bekleniyor";
-  };
-
-  const formatPrice = (price) => {
-    if (price === null || price === undefined || price === "") return "0 TL";
-    return Number(price).toLocaleString("tr-TR") + " TL";
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("tr-TR", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  const formatBrand = (brand) => {
-    if (!brand) return "";
-    const b = brand.trim().toLowerCase();
-    const specialBrands = {
-      bmw: "BMW",
-      "mercedes-benz": "Mercedes-Benz",
-    };
-    if (specialBrands[b]) return specialBrands[b];
-    return b
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  const formatModel = (model) => {
-    if (!model) return "";
-    const m = model.trim().toLowerCase();
-    const specialModels = {
-      "a series": "A Serisi",
-      "e series": "E Serisi",
-      "1 series": "1 Series",
-      "3 series": "3 Series",
-      "5 series": "5 Series",
-      "c-elysee": "C-Elysee",
-      i20: "i20",
-      "t-roc": "T-Roc",
-    };
-    if (specialModels[m]) return specialModels[m];
-    return m
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  const engineCapacityFormat = (engineCapacity) => {
-    if (!engineCapacity) return "";
-    return (+engineCapacity / 1000).toFixed(1);
-  };
-
-  const capitalizeWords = (text) => {
-    if (typeof text !== "string" || !text) return "";
-
-    return text
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
-  };
-
-  const formatLpgStatus = (status) => {
-    if (!status) return "Yok / Takılmadı";
-    const map = {
-      none: "Yok (Benzin/Dizel/Elektrik)",
-      "registered license": "Var - Ruhsata İşli",
-      "not registered license": "Var - Ruhsata İşli Değil",
-    };
-    return map[status.toLowerCase()] || status;
-  };
-
-  const formatTireType = (type) => {
-    if (!type) return "Belirtilmedi";
-    const map = {
-      summery: "Yazlık",
-      winter: "Kışlık",
-      "four seasons": "Dört Mevsim",
-    };
-    return map[type.toLowerCase()] || type;
-  };
-
-  const formatTireCondition = (condition) => {
-    if (!condition) return "";
-    const map = {
-      "like new": "Sıfır Ayarında",
-      good: "İyi",
-      "change has come": "Değişim Vakti Gelmiş",
-    };
-    return map[condition.toLowerCase()] || condition;
-  };
-
-  const formatAppointmentDateTime = (dateStr, timeStr) => {
-    if (!dateStr || !timeStr) return "";
-
-    let cleanDateStr = dateStr;
-    if (typeof dateStr === "string" && dateStr.includes("T")) {
-      cleanDateStr = dateStr.split("T")[0];
-    }
-
-    let day, month, year;
-    if (cleanDateStr.includes("-")) {
-      const parts = cleanDateStr.split("-");
-      if (parts[0].length === 4) {
-        year = parts[0];
-        month = parts[1];
-        day = parts[2];
-      } else {
-        day = parts[0];
-        month = parts[1];
-        year = parts[2];
-      }
-    } else if (cleanDateStr.includes(".")) {
-      const parts = cleanDateStr.split(".");
-      day = parts[0];
-      month = parts[1];
-      year = parts[2];
-    } else if (cleanDateStr.includes("/")) {
-      const parts = cleanDateStr.split("/");
-      if (parts[0].length === 4) {
-        year = parts[0];
-        month = parts[1];
-        day = parts[2];
-      } else {
-        day = parts[0];
-        month = parts[1];
-        year = parts[2];
-      }
-    } else {
-      return `${cleanDateStr} ${timeStr}`;
-    }
-
-    const formattedDate = `${day}-${month}-${year}`;
-
-    const timeParts = timeStr.split(":");
-    const formattedTime =
-      timeParts.length >= 2 ? `${timeParts[0]}:${timeParts[1]}` : timeStr;
-
-    return `${formattedDate} ${formattedTime}`;
-  };
 
   const canViewRuhsat = role === "seller" || ruhsatVisible;
 
@@ -296,8 +134,8 @@ export default function AlisSatisİslemleri() {
                     </span>
                   </div>
                   <h2 className={classes.vehicleTitle}>
-                    {formatBrand(activeTransaction.brand)}{" "}
-                    {formatModel(activeTransaction.model)}{" "}
+                    {formatBrandModel(activeTransaction.brand)}{" "}
+                    {formatBrandModel(activeTransaction.model)}{" "}
                     {activeTransaction.model_year}{" "}
                     {engineCapacityFormat(activeTransaction.engine_capacity)}L{" "}
                     {capitalizeWords(activeTransaction.trim_level)}

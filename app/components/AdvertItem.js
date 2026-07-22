@@ -1,6 +1,14 @@
 import { useRouter } from "next/navigation";
 import classes from "./AdvertItem.module.css";
 import { motion } from "framer-motion";
+import {
+  modelParser,
+  brandParser,
+  engineCapacityFormat,
+  formatPrice,
+  capitalizeWords,
+} from "@/app/utils/helpers";
+import { advertItemVariants } from "@/app/utils/animations";
 
 export default function AdvertItem({
   id,
@@ -17,40 +25,6 @@ export default function AdvertItem({
 }) {
   const router = useRouter();
 
-  function modelParser(model) {
-    if (!model) return;
-    if (model === "1 series") return "1 Series";
-    if (model === "3 series") return "3 Series";
-    if (model === "5 series") return "5 Series";
-    if (model === "c series") return "C Series";
-    if (model === "e series") return "E Series";
-    return model.charAt(0).toUpperCase() + model.slice(1).toLowerCase();
-  }
-
-  function capitalizeText(text) {
-    if (!text) return;
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-  }
-
-  function brandParser(brand) {
-    if (!brand) return;
-    if (brand === "bmw") return "BMW";
-    return brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
-  }
-
-  function engineCapacityFormat(engineCapacity) {
-    if (!engineCapacity) return;
-    return (+engineCapacity / 1000).toFixed(1);
-  }
-
-  function priceFormat(price) {
-    if (!price) return;
-    return Number(price).toLocaleString("tr-TR", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    });
-  }
-
   function editAdvertHandler() {
     router.replace(`/ilani-duzenle/${id}`);
   }
@@ -59,10 +33,10 @@ export default function AdvertItem({
     <motion.div
       layout
       className={classes.advertWrapper}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.35 }}
+      initial={advertItemVariants.initial}
+      animate={advertItemVariants.animate}
+      exit={advertItemVariants.exit}
+      transition={advertItemVariants.transition}
       onClick={() => {
         router.push(`/ilan/${brand}-${model}-${modelYear}/${id}`);
       }}
@@ -101,7 +75,7 @@ export default function AdvertItem({
           <img className={classes.img} src={imgSrc} />
         </div>
         <div className={classes.modelYearDiv}>
-          <p className={classes.city}>{capitalizeText(city)}</p>
+          <p className={classes.city}>{capitalizeWords(city)}</p>
           <p className={classes.modelYear}>{modelYear}</p>
         </div>
         <div className={classes.brandModelEngineCapacityDiv}>
@@ -115,7 +89,7 @@ export default function AdvertItem({
         </div>
 
         <div className={classes.priceDiv}>
-          <p className={classes.price}>{priceFormat(price)} ₺</p>
+          <p className={classes.price}>{formatPrice(price)} ₺</p>
         </div>
       </div>
     </motion.div>

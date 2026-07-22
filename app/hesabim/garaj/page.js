@@ -12,13 +12,14 @@ import {
 } from "lucide-react";
 import Frame from "../../components/Frame";
 import classes from "./Garajim.module.css";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import ChartBar from "../../components/ChartBar";
 import HalfCircleProgress from "../../components/HalfCircleProgress";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useGetPersonalAdvertsInfos } from "@/hooks/GET/useGetPersonalAdvertsInfos";
 import { useGetPersonalSoldAdverts } from "@/hooks/GET/usePersonalSoldAdverts";
+import { formatMaliDeger, getAylikIlanVerileri } from "@/app/utils/helpers";
 
 export default function Garajim() {
   const router = useRouter();
@@ -81,54 +82,7 @@ export default function Garajim() {
 
   const netKar = toplamGelir - toplamGider;
 
-  const aylikIlanVerileri = useMemo(() => {
-    const aylarDizisi = [
-      "Ocak",
-      "Şubat",
-      "Mart",
-      "Nisan",
-      "Mayıs",
-      "Haziran",
-      "Temmuz",
-      "Ağustos",
-      "Eylül",
-      "Ekim",
-      "Kasım",
-      "Aralık",
-    ];
-    return aylarDizisi.map((ay, indeks) => {
-      const ilanSayisi = kisiselİlanlar.filter((ilan) => {
-        if (!ilan.created_at) return false;
-        const ilanTarihi = new Date(ilan.created_at);
-        if (isNaN(ilanTarihi.getTime())) return false;
-        return ilanTarihi.getMonth() === indeks;
-      }).length;
-      return {
-        name: ay,
-        ilanSayisi: ilanSayisi,
-      };
-    });
-  }, [kisiselİlanlar]);
-
-  const formatMaliDeger = (deger) => {
-    const mutlakDeger = Math.abs(deger);
-    let metin = "";
-
-    if (mutlakDeger >= 1000000) {
-      const milyon = mutlakDeger / 1000000;
-      metin =
-        milyon % 1 === 0
-          ? `${milyon} Milyon ₺`
-          : `${milyon.toFixed(1)} Milyon ₺`;
-    } else if (mutlakDeger >= 1000) {
-      const bin = mutlakDeger / 1000;
-      metin = bin % 1 === 0 ? `${bin} Bin ₺` : `${bin.toFixed(1)} Bin ₺`;
-    } else {
-      metin = `${mutlakDeger} ₺`;
-    }
-
-    return deger < 0 ? `-${metin}` : metin;
-  };
+  const aylikIlanVerileri = getAylikIlanVerileri(kisiselİlanlar);
 
   if (!token || personalSoldAdvertsIsLoading) {
     return (

@@ -32,7 +32,7 @@ export default function Footer() {
         </li>
       </ul>
       <div className={classes.copyright}>
-        Copyright &copy; 2025-2026 Selim POLAT
+        {`Copyright © 2025 - ${currentYear} Selim POLAT`}{" "}
       </div>
     </footer>
   );

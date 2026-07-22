@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  useGetAppointments,
-  useGetPersonalAppointments,
-} from "@/hooks/GET/useGetPersonalAppointments";
+import { useGetPersonalAppointments } from "@/hooks/GET/useGetPersonalAppointments";
 import classes from "./Randevular.module.css";
 import {
   CalendarClock,
@@ -17,6 +14,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { formatBrandModel, formatDate } from "@/app/utils/helpers";
 
 export default function RandevularPage() {
   const router = useRouter();
@@ -81,60 +79,6 @@ export default function RandevularPage() {
       return appointment.appointment_status === "canceled";
     }
   });
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("tr-TR", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  const formatBrand = (brand) => {
-    if (!brand) return "";
-    const b = brand.trim().toLowerCase();
-
-    const specialBrands = {
-      bmw: "BMW",
-      "mercedes-benz": "Mercedes-Benz",
-    };
-
-    if (specialBrands[b]) {
-      return specialBrands[b];
-    }
-
-    return b
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  const formatModel = (model) => {
-    if (!model) return "";
-    const m = model.trim().toLowerCase();
-
-    const specialModels = {
-      "a series": "A Serisi",
-      "e series": "E Serisi",
-      "1 series": "1 Series",
-      "3 series": "3 Series",
-      "5 series": "5 Series",
-      "c-elysee": "C-Elysee",
-      i20: "i20",
-      "t-roc": "T-Roc",
-    };
-
-    if (specialModels[m]) {
-      return specialModels[m];
-    }
-
-    return m
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
 
   return (
     <div className={classes.container}>
@@ -223,8 +167,8 @@ export default function RandevularPage() {
                 <div className={classes.infoRow}>
                   <CarFront size={18} className={classes.iconSecondary} />
                   <span>
-                    {formatBrand(appointment.brand)}{" "}
-                    {formatModel(appointment.model)} {appointment.year}
+                    {formatBrandModel(appointment.brand)}{" "}
+                    {formatBrandModel(appointment.model)} {appointment.year}
                   </span>
                 </div>
                 <div className={classes.infoRow}>

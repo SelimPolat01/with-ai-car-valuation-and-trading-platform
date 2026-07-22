@@ -8,6 +8,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { setPrediction } from "@/store/predictionSlice";
+import {
+  aracGecmisiContainerVariants,
+  aracGecmisiItemVariants,
+} from "@/app/utils/animations";
 
 export default function AracGecmisi() {
   const router = useRouter();
@@ -165,31 +169,6 @@ export default function AracGecmisi() {
     { id: "permit-1", label: "Ruhsat Fotoğrafı (Gizli)" },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 24,
-      },
-    },
-  };
-
   const CustomDropdown = ({ label, name, options }) => {
     const isOpen = openDropdown === name;
     const currentValue = carDetails[name];
@@ -253,9 +232,12 @@ export default function AracGecmisi() {
       className={classes.container}
       initial="hidden"
       animate="visible"
-      variants={containerVariants}
+      variants={aracGecmisiContainerVariants}
     >
-      <motion.div variants={itemVariants} className={classes.section}>
+      <motion.div
+        variants={aracGecmisiItemVariants}
+        className={classes.section}
+      >
         <h3 className={classes.sectionTitle}>Resmi ve Temel Bilgiler</h3>
         <div className={classes.inputGrid}>
           <div className={classes.inputWrapper}>
@@ -336,7 +318,10 @@ export default function AracGecmisi() {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className={classes.section}>
+      <motion.div
+        variants={aracGecmisiItemVariants}
+        className={classes.section}
+      >
         <h3 className={classes.sectionTitle}>Bakım ve Geçmiş Bilgileri</h3>
         <div className={classes.inputGrid}>
           <div className={classes.inputWrapper}>
@@ -380,7 +365,10 @@ export default function AracGecmisi() {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className={classes.section}>
+      <motion.div
+        variants={aracGecmisiItemVariants}
+        className={classes.section}
+      >
         <h3 className={classes.sectionTitle}>Donanım ve Ekstralar</h3>
         <div className={classes.inputGrid}>
           <CustomDropdown
@@ -415,7 +403,10 @@ export default function AracGecmisi() {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className={classes.section}>
+      <motion.div
+        variants={aracGecmisiItemVariants}
+        className={classes.section}
+      >
         <h3 className={classes.sectionTitle}>Ekspertiz ve Ruhsat Belgeleri</h3>
         <div className={classes.fileContainer}>
           {views.map((view) => {
@@ -491,7 +482,10 @@ export default function AracGecmisi() {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className={classes.buttonContainer}>
+      <motion.div
+        variants={aracGecmisiItemVariants}
+        className={classes.buttonContainer}
+      >
         <SecondaryButton
           type="button"
           text="Fotoğraf ve Detaylar İçin Devam Et"

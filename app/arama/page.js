@@ -10,7 +10,6 @@ export default function SearchCar() {
   const [error, setError] = useState(null);
   const [similarAdverts, setSimilarAdverts] = useState([]);
   const searchParams = useSearchParams();
-  const router = useRouter();
   const searchText = searchParams.get("q") || "";
 
   useEffect(() => {

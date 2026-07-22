@@ -4,7 +4,6 @@ import { useParams, usePathname } from "next/navigation";
 
 export default function ManagementNav({ className }) {
   const path = usePathname();
-  const params = useParams;
 
   return (
     <nav className={`${classes.nav} ${className ? className : ""}`}>

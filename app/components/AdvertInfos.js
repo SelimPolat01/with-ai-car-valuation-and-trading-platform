@@ -18,6 +18,12 @@ import SimilarAdverts from "./SimiliarAdverts";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetAdvert } from "@/hooks/GET/useGetAdvert";
 import { usePostFavoriteAdvert } from "@/hooks/POST/usePostFavoriteAdvert";
+import {
+  formatBrandModel,
+  engineCapacityFormat,
+  capitalizeWords,
+  carTypeMap,
+} from "@/app/utils/helpers";
 
 export default function AdvertInfos() {
   const params = useParams();
@@ -142,55 +148,7 @@ export default function AdvertInfos() {
     );
   }
 
-  function formatBrandModel(text) {
-    if (!text) return "";
-    if (text === "bmw") return "BMW";
-    if (text === "i20") return "i20";
-    return text
-      .split(" ")
-      .map((word) =>
-        word
-          .split("-")
-          .map(
-            (part) =>
-              part.charAt(0).toUpperCase() + part.slice(1).toLowerCase(),
-          )
-          .join("-"),
-      )
-      .join(" ");
-  }
-
-  function engineCapacityFormat(engineCapacity) {
-    if (!engineCapacity) return "";
-    return (+engineCapacity / 1000).toFixed(1);
-  }
-
-  function capitalize(text) {
-    if (typeof text !== "string") {
-      return "";
-    }
-
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-  }
-
-  const carTypeMap = {
-    bodyTypeMap: {
-      sedan: "Sedan",
-      suv: "SUV",
-      hatchback: "Hatchback",
-    },
-    fuelTypeMap: {
-      gasoline: "Benzin",
-      diesel: "Dizel",
-      electric: "Elektrik",
-      hybrid: "Hibrit",
-    },
-    transmissionTypeMap: {
-      automatic: "Otomatik",
-      "semi automatic": "Yarı Otomatik",
-      manual: "Manuel",
-    },
-  };
+  // Yardımcı fonksiyonlar artık helper.js dosyasından geliyor.
 
   const advertDetails = advert
     ? [
@@ -200,7 +158,7 @@ export default function AdvertInfos() {
           value: `${advert.price?.toLocaleString("tr-TR") || 0} ₺`,
           priceClassName: classes.price,
         },
-        { id: 2, label: "Şehir", value: capitalize(advert.city) },
+        { id: 2, label: "Şehir", value: capitalizeWords(advert.city) },
         {
           id: 3,
           label: "İlan No",
@@ -219,7 +177,7 @@ export default function AdvertInfos() {
         {
           id: 7,
           label: "Model",
-          value: `${formatBrandModel(advert.model)} ${capitalize(
+          value: `${formatBrandModel(advert.model)} ${capitalizeWords(
             advert.body_type,
           )} ${engineCapacityFormat(advert.engine_capacity)}`,
         },
@@ -240,7 +198,11 @@ export default function AdvertInfos() {
           label: "Kilometre",
           value: advert.kilometer?.toLocaleString("tr-TR") || 0,
         },
-        { id: 13, label: "Kasa Tipi", value: capitalize(advert.body_type) },
+        {
+          id: 13,
+          label: "Kasa Tipi",
+          value: capitalizeWords(advert.body_type),
+        },
         { id: 14, label: "Motor Gücü", value: `${advert.horsepower} hp` },
         {
           id: 15,

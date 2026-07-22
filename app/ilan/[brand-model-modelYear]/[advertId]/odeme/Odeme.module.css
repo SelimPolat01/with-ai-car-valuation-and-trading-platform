@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 91.5vh;
-  padding: 1rem;
+  padding: 0 1rem;
 }
 
 .paymentDiv {
@@ -12,6 +12,21 @@
   width: 100%;
   max-width: 800px;
   min-height: 506px;
+}
+
+.errorMessage {
+  color: #ffb3b3;
+  background-color: rgba(60, 20, 60, 0.5);
+  border: 1px solid rgba(255, 99, 132, 0.5);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  text-align: center;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
 }
 
 .paymentButton {

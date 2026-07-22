@@ -7,6 +7,12 @@ import { useParams, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useGetAvailableSlots } from "@/hooks/GET/useGetSlots";
 import { AlertCircle, ArrowLeft } from "lucide-react";
+import {
+  formatDayName,
+  formatDayNumber,
+  formatForDB,
+  formatMonthName,
+} from "@/app/utils/helpers";
 
 const ALL_HOURS = [
   "09:00",
@@ -49,26 +55,6 @@ export default function Randevu() {
     isError: getAvailableSlotsIsError,
     error: getAvailableSlotsError,
   } = useGetAvailableSlots(token);
-
-  const formatDayName = (date) => {
-    return date.toLocaleDateString("tr-TR", { weekday: "short" }).toUpperCase();
-  };
-
-  const formatDayNumber = (date) => {
-    return date.getDate();
-  };
-
-  const formatMonthName = (date) => {
-    return date.toLocaleDateString("tr-TR", { month: "short" }).toUpperCase();
-  };
-
-  const formatForDB = (dateObj) => {
-    const d = new Date(dateObj);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
 
   function appointmentClickHandler() {
     const appointmentData = {

@@ -10,6 +10,23 @@ import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import PrimaryButton from "@/app/components/PrimaryButton";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePostCarValuePredict } from "@/hooks/POST/usePostCarValuePredict";
+import {
+  capitalizeWords,
+  carGenerationsObject,
+  carTypeMap,
+  findIntervalFromYear,
+  formatBrandLowerParser,
+  formatModelForApi,
+  getCarStockImageSrcFunc,
+  getDbModelName,
+} from "@/app/utils/helpers";
+import {
+  tahminYapDropdownVariants,
+  tahminYapContainerVariants,
+  tahminYapFormContainerVariants,
+  tahminYapImageVariants,
+  tahminYapItemVariants,
+} from "@/app/utils/animations";
 
 export default function TahminYap() {
   useCheckAuth();
@@ -41,7 +58,6 @@ export default function TahminYap() {
 
   const isFromImage = searchParams.get("fromImage") === "true";
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [carValues, setCarValues] = useState({
     trimLevels: [],
@@ -51,6 +67,7 @@ export default function TahminYap() {
     transmissions: [],
     fuelTypes: [],
   });
+
   const [value, setValue] = useState({
     trimLevel: "Paket",
     bodyType: predictionCarValues?.bodyType || "Kasa Tipi",
@@ -60,6 +77,7 @@ export default function TahminYap() {
     kilometer: "",
     fuelType: "Yakıt Tipi",
   });
+
   const [isKmFocused, setIsKmFocused] = useState(false);
   const [errors, setErrors] = useState({
     trimLevel: false,
@@ -69,6 +87,7 @@ export default function TahminYap() {
     transmission: false,
     fuelType: false,
   });
+
   const [shake, setShake] = useState({
     shakeTrimLevel: false,
     shakeBodyType: false,
@@ -77,33 +96,6 @@ export default function TahminYap() {
     shakeTransmission: false,
     shakeFuelType: false,
   });
-
-  const brandLogos = {
-    audi: classes.audiLogo,
-    bmw: classes.bmwLogo,
-    chevrolet: classes.chevroletLogo,
-    citroen: classes.citroenLogo,
-    dacia: classes.daciaLogo,
-    fiat: classes.fiatLogo,
-    ford: classes.fordLogo,
-    honda: classes.hondaLogo,
-    hyundai: classes.hyundaiLogo,
-    mercedes: classes.mercedesLogo,
-    renault: classes.renaultLogo,
-    toyota: classes.toyotaLogo,
-    volkswagen: classes.volkswagenLogo,
-  };
-
-  const carTypeMap = {
-    trimLevelMap: { ambition: "Ambition" },
-    bodyTypeMap: { sedan: "Sedan", suv: "SUV", hatchback: "Hatchback" },
-    fuelTypeMap: { gasoline: "Benzin", diesel: "Dizel", hybrid: "Hibrit" },
-    transmissionTypeMap: {
-      automatic: "Otomatik",
-      "semi automatic": "Yarı Otomatik",
-      manual: "Manuel",
-    },
-  };
 
   useEffect(() => {
     const { engineCapacity, fuelType, horsepower, transmission, bodyType } =
@@ -219,19 +211,6 @@ export default function TahminYap() {
     );
   }
 
-  function formatModelForApi(modelParam) {
-    if (!modelParam) return "";
-    let model = decodeURIComponent(modelParam).toLowerCase().trim();
-    model = model.replace(/\s+/g, " ");
-    return model;
-  }
-
-  function brandParser(brand) {
-    if (!brand) return;
-    if (brand == "mercedes") return "mercedes-benz";
-    return brand.toLowerCase();
-  }
-
   useEffect(() => {
     async function fetchEngineCapacities(brand, model, modelYear) {
       if (!params || !params.brand || !params.model || !params.modelYear)
@@ -275,11 +254,10 @@ export default function TahminYap() {
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(false);
       }
     }
     fetchEngineCapacities(
-      brandParser(params.brand),
+      formatBrandLowerParser(params.brand),
       formatModelForApi(params.model.toLowerCase()),
       params.modelYear,
     );
@@ -288,8 +266,12 @@ export default function TahminYap() {
   async function fetchFuelTypes(selectedEngineCapacity) {
     try {
       const token = localStorage.getItem("token");
-      const brandEnc = encodeURIComponent(brandParser(params.brand));
-      const modelEnc = encodeURIComponent(formatModelForApi(params.model));
+      const brandEnc = encodeURIComponent(
+        formatBrandLowerParser(params.brand.toLowerCase()),
+      );
+      const modelEnc = encodeURIComponent(
+        formatModelForApi(params.model.toLowerCase()),
+      );
       const engineEnc = encodeURIComponent(selectedEngineCapacity);
 
       const response = await fetch(
@@ -321,14 +303,13 @@ export default function TahminYap() {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
     }
   }
 
   async function fetchHorsepowers(selectedEngineCapacity, selectedFuelType) {
     try {
       const token = localStorage.getItem("token");
-      const brandEnc = encodeURIComponent(brandParser(params.brand));
+      const brandEnc = encodeURIComponent(formatBrandLowerParser(params.brand));
       const modelEnc = encodeURIComponent(formatModelForApi(params.model));
       const engineEnc = encodeURIComponent(selectedEngineCapacity);
       const fuelEnc = encodeURIComponent(selectedFuelType);
@@ -362,7 +343,6 @@ export default function TahminYap() {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
     }
   }
 
@@ -373,7 +353,7 @@ export default function TahminYap() {
   ) {
     try {
       const token = localStorage.getItem("token");
-      const brandEnc = encodeURIComponent(brandParser(params.brand));
+      const brandEnc = encodeURIComponent(formatBrandLowerParser(params.brand));
       const modelEnc = encodeURIComponent(formatModelForApi(params.model));
       const engineEnc = encodeURIComponent(selectedEngineCapacity);
       const fuelEnc = encodeURIComponent(selectedFuelType);
@@ -407,8 +387,6 @@ export default function TahminYap() {
       }));
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -420,7 +398,7 @@ export default function TahminYap() {
   ) {
     try {
       const token = localStorage.getItem("token");
-      const brandEnc = encodeURIComponent(brandParser(params.brand));
+      const brandEnc = encodeURIComponent(formatBrandLowerParser(params.brand));
       const modelEnc = encodeURIComponent(formatModelForApi(params.model));
       const engineEnc = encodeURIComponent(selectedEngineCapacity);
       const fuelEnc = encodeURIComponent(selectedFuelType);
@@ -455,8 +433,6 @@ export default function TahminYap() {
       }));
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -469,7 +445,7 @@ export default function TahminYap() {
   ) {
     try {
       const token = localStorage.getItem("token");
-      const brandEnc = encodeURIComponent(brandParser(params.brand));
+      const brandEnc = encodeURIComponent(formatBrandLowerParser(params.brand));
       const modelEnc = encodeURIComponent(formatModelForApi(params.model));
       const engineEnc = encodeURIComponent(selectedEngineCapacity);
       const fuelEnc = encodeURIComponent(selectedFuelType);
@@ -505,8 +481,6 @@ export default function TahminYap() {
       }));
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -523,364 +497,17 @@ export default function TahminYap() {
     };
   }, []);
 
-  function capitalizeWords(text) {
-    if (typeof text !== "string") {
-      return "";
-    }
-    return text
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
-  }
+  const brand = params?.brand;
+  const model = params?.model;
+  const bodyType = value?.bodyType;
+  const modelYear = params?.modelYear;
 
-  const carGenerations = {
-    audi: {
-      a3: {
-        hatchback: [
-          { start: 2004, end: 2012, interval: "2004-2012" },
-          { start: 2012, end: 2016, interval: "2012-2016" },
-          { start: 2016, end: 2020, interval: "2016-2020" },
-          { start: 2020, end: 2024, interval: "2020-2024" },
-          { start: 2024, end: 2025, interval: "2024-2025" },
-        ],
-        sedan: [
-          { start: 2013, end: 2016, interval: "2013-2016" },
-          { start: 2016, end: 2020, interval: "2016-2020" },
-          { start: 2020, end: 2025, interval: "2020-2025" },
-        ],
-      },
-      a4: {
-        sedan: [
-          { start: 2012, end: 2015, interval: "2012-2015" },
-          { start: 2015, end: 2019, interval: "2015-2019" },
-          { start: 2019, end: 2024, interval: "2019-2024" },
-        ],
-      },
-    },
-    bmw: {
-      "1series": {
-        hatchback: [
-          { start: 2004, end: 2011, interval: "2004-2011" },
-          { start: 2011, end: 2014, interval: "2011-2014" },
-          { start: 2015, end: 2019, interval: "2015-2019" },
-          { start: 2019, end: 2025, interval: "2019-2025" },
-        ],
-      },
-      "3series": {
-        sedan: [
-          { start: 2012, end: 2015, interval: "2012-2015" },
-          { start: 2015, end: 2019, interval: "2015-2019" },
-          { start: 2019, end: 2023, interval: "2019-2023" },
-          { start: 2023, end: 2025, interval: "2023-2025" },
-        ],
-      },
-      "5series": {
-        sedan: [
-          { start: 2007, end: 2010, interval: "2007-2010" },
-          { start: 2011, end: 2016, interval: "2011-2016" },
-          { start: 2017, end: 2023, interval: "2017-2023" },
-          { start: 2024, end: 2025, interval: "2024-2025" },
-        ],
-      },
-    },
-    chevrolet: {
-      cruze: {
-        sedan: [
-          { start: 2009, end: 2012, interval: "2009-2012" },
-          { start: 2012, end: 2013, interval: "2012-2013" },
-        ],
-        hatchback: [{ start: 2011, end: 2013, interval: "2011-2013" }],
-      },
-    },
-    citroen: {
-      c3: {
-        hatchback: [
-          { start: 2002, end: 2009, interval: "2002-2009" },
-          { start: 2010, end: 2016, interval: "2010-2016" },
-          { start: 2016, end: 2020, interval: "2016-2020" },
-          { start: 2020, end: 2024, interval: "2020-2024" },
-        ],
-      },
-      c4: {
-        hatchback: [
-          { start: 2014, end: 2020, interval: "2014-2020" },
-          { start: 2020, end: 2024, interval: "2020-2024" },
-          { start: 2024, end: 2025, interval: "2024-2025" },
-        ],
-      },
-      celysee: {
-        sedan: [
-          { start: 2012, end: 2017, interval: "2012-2017" },
-          { start: 2017, end: 2023, interval: "2017-2023" },
-        ],
-      },
-    },
-    dacia: {
-      duster: {
-        suv: [
-          { start: 2010, end: 2017, interval: "2010-2017" },
-          { start: 2018, end: 2023, interval: "2018-2023" },
-          { start: 2024, end: 2024, interval: "2024-2024" },
-        ],
-      },
-    },
-    fiat: {
-      egea: {
-        sedan: [
-          { start: 2015, end: 2021, interval: "2015-2021" },
-          { start: 2021, end: 2026, interval: "2021-2026" },
-        ],
-        hatchback: [
-          { start: 2016, end: 2021, interval: "2016-2021" },
-          { start: 2021, end: 2024, interval: "2021-2024" },
-        ],
-      },
-    },
-    ford: {
-      fiesta: {
-        hatchback: [
-          { start: 2008, end: 2013, interval: "2008-2013" },
-          { start: 2013, end: 2017, interval: "2013-2017" },
-          { start: 2017, end: 2020, interval: "2017-2020" },
-        ],
-      },
-      focus: {
-        sedan: [
-          { start: 2011, end: 2014, interval: "2011-2014" },
-          { start: 2014, end: 2018, interval: "2014-2018" },
-          { start: 2018, end: 2022, interval: "2018-2022" },
-          { start: 2022, end: 2025, interval: "2022-2025" },
-        ],
-        hatchback: [
-          { start: 2011, end: 2014, interval: "2011-2014" },
-          { start: 2014, end: 2018, interval: "2014-2018" },
-          { start: 2018, end: 2022, interval: "2018-2022" },
-          { start: 2022, end: 2025, interval: "2022-2025" },
-        ],
-      },
-    },
-    honda: {
-      civ: {
-        sedan: [
-          { start: 2006, end: 2011, interval: "2006-2011" },
-          { start: 2011, end: 2016, interval: "2011-2016" },
-          { start: 2016, end: 2021, interval: "2016-2021" },
-          { start: 2021, end: 2025, interval: "2021-2025" },
-        ],
-      },
-    },
-    hyundai: {
-      i20: {
-        hatchback: [
-          { start: 2014, end: 2020, interval: "2014-2020" },
-          { start: 2020, end: 2025, interval: "2020-2025" },
-        ],
-      },
-    },
-    mercedes: {
-      cseries: {
-        sedan: [
-          { start: 2007, end: 2011, interval: "2007-2011" },
-          { start: 2011, end: 2014, interval: "2011-2014" },
-          { start: 2014, end: 2021, interval: "2014-2021" },
-          { start: 2021, end: 2025, interval: "2021-2025" },
-        ],
-      },
-      eseries: {
-        sedan: [
-          { start: 2009, end: 2013, interval: "2009-2013" },
-          { start: 2014, end: 2016, interval: "2014-2016" },
-          { start: 2016, end: 2020, interval: "2016-2020" },
-          { start: 2020, end: 2023, interval: "2020-2023" },
-          { start: 2023, end: 2025, interval: "2023-2025" },
-        ],
-      },
-    },
-    renault: {
-      clio: {
-        hatchback: [
-          { start: 2012, end: 2019, interval: "2012-2019" },
-          { start: 2019, end: 2023, interval: "2019-2023" },
-          { start: 2023, end: 2025, interval: "2019-2025" },
-        ],
-      },
-      megane: {
-        sedan: [
-          { start: 2016, end: 2020, interval: "2016-2020" },
-          { start: 2020, end: 2025, interval: "2020-2025" },
-        ],
-        hatchback: [
-          { start: 2011, end: 2014, interval: "2011-2014" },
-          { start: 2014, end: 2016, interval: "2014-2016" },
-          { start: 2016, end: 2020, interval: "2016-2020" },
-        ],
-      },
-    },
-    toyota: {
-      corolla: {
-        sedan: [
-          { start: 2013, end: 2018, interval: "2013-2018" },
-          { start: 2019, end: 2026, interval: "2019-2026" },
-        ],
-      },
-    },
-    volkswagen: {
-      golf: {
-        hatchback: [
-          { start: 2012, end: 2017, interval: "2012-2017" },
-          { start: 2017, end: 2020, interval: "2017-2020" },
-          { start: 2020, end: 2024, interval: "2020-2024" },
-          { start: 2024, end: 2025, interval: "2024-2025" },
-        ],
-      },
-      jetta: {
-        sedan: [
-          { start: 2011, end: 2014, interval: "2011-2014" },
-          { start: 2014, end: 2017, interval: "2014-2017" },
-        ],
-      },
-      passat: {
-        sedan: [
-          { start: 2011, end: 2014, interval: "2011-2014" },
-          { start: 2014, end: 2019, interval: "2014-2019" },
-          { start: 2019, end: 2022, interval: "2019-2022" },
-        ],
-      },
-      polo: {
-        hatchback: [
-          { start: 2010, end: 2017, interval: "2010-2017" },
-          { start: 2018, end: 2021, interval: "2018-2021" },
-          { start: 2021, end: 2025, interval: "2021-2025" },
-        ],
-      },
-      tiguan: {
-        suv: [
-          { start: 2011, end: 2016, interval: "2011-2016" },
-          { start: 2016, end: 2020, interval: "2016-2020" },
-          { start: 2020, end: 2024, interval: "2020-2024" },
-          { start: 2024, end: 2025, interval: "2024-2025" },
-        ],
-      },
-      troc: {
-        suv: [
-          { start: 2019, end: 2021, interval: "2019-2021" },
-          { start: 2022, end: 2025, interval: "2022-2025" },
-        ],
-      },
-    },
-  };
-
-  function findIntervalFromYear(
-    brandParam,
-    modelParam,
+  const stockImageSrc = getCarStockImageSrcFunc(
+    brand,
+    model,
+    modelYear,
     bodyType,
-    selectedYear,
-  ) {
-    if (!brandParam || !modelParam || !bodyType || !selectedYear) return null;
-    const brandKey = brandParam.toLowerCase().trim();
-    let decodedModel = decodeURIComponent(modelParam);
-    let modelKey = decodedModel
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, "")
-      .replace(/-/g, "");
-    if (modelKey.includes("serisi")) {
-      modelKey = modelKey.replace("serisi", "series");
-    }
-    const body = bodyType.toLowerCase().trim();
-    const year = Number(selectedYear);
-    const generations = carGenerations[brandKey]?.[modelKey]?.[body];
-    if (!generations) {
-      return null;
-    }
-    const foundGen = generations.find(
-      (gen) => year >= gen.start && year <= gen.end,
-    );
-    return foundGen ? foundGen.interval : null;
-  }
-
-  const getDbModelName = (modelParam) => {
-    if (!modelParam) return "";
-    let name = decodeURIComponent(modelParam).toLowerCase().trim();
-    name = name.replace("serisi", "series");
-    return name.replace(/[\s-]/g, "");
-  };
-
-  const getCarStockImageSrc = () => {
-    const brand = params?.brand;
-    const model = params?.model;
-    const bodyType = value?.bodyType;
-    const selectedYear = params?.modelYear;
-    if (!brand || !model || !bodyType || !selectedYear) return null;
-    const modelStr = getDbModelName(model);
-    const brandStr = brand.toLowerCase().trim();
-    const bodyStr = bodyType.toLowerCase().trim();
-    const finalYearInterval = findIntervalFromYear(
-      brand,
-      model,
-      bodyType,
-      selectedYear,
-    );
-    if (!finalYearInterval) return null;
-    const [startYear, endYear] = finalYearInterval.split("-");
-    const shortYearInterval = `${startYear.slice(-2)}-${endYear.slice(-2)}`;
-    return `/images/cars/${brand}/${brandStr}-${modelStr}-${bodyStr}-${shortYearInterval}.png`;
-  };
-
-  const stockImageSrc = getCarStockImageSrc();
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.25,
-        when: "beforeChildren",
-        staggerChildren: 0.03,
-      },
-    },
-  };
-
-  const formContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 16, scale: 0.98 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 260,
-        damping: 20,
-      },
-    },
-  };
-
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.92, y: 12 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: { duration: 0.35, ease: "easeOut" },
-    },
-  };
-
-  const dropdownVariants = {
-    hidden: { opacity: 0, y: -8, scale: 0.98 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.18 } },
-    exit: { opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.15 } },
-  };
+  );
 
   if (error) return <p>{error}</p>;
 
@@ -888,18 +515,21 @@ export default function TahminYap() {
     <motion.main
       initial="hidden"
       animate="visible"
-      variants={containerVariants}
+      variants={tahminYapContainerVariants}
       className={classes.main}
     >
       <div className={classes.flex}>
-        <motion.div variants={itemVariants} className={classes.title}>
+        <motion.div variants={tahminYapItemVariants} className={classes.title}>
           <h1>Lütfen aracın bilgilerini gir</h1>
         </motion.div>
         <hr />
-        <motion.div variants={itemVariants} className={classes.flexContainer}>
+        <motion.div
+          variants={tahminYapItemVariants}
+          className={classes.flexContainer}
+        >
           <div className={classes.flexContainer1}>
             <Image
-              className={`${classes.carLogo} ${brandLogos[params.brand] || ""}`}
+              className={classes.carLogo}
               src={`/images/car_logos/${params.brand}.png`}
               alt={`${params.brand} logo`}
               width={70}
@@ -908,7 +538,7 @@ export default function TahminYap() {
 
             {stockImageSrc && (
               <motion.img
-                variants={imageVariants}
+                variants={tahminYapImageVariants}
                 initial="hidden"
                 animate="visible"
                 whileHover={{
@@ -927,10 +557,10 @@ export default function TahminYap() {
             <motion.form
               className={classes.form}
               onSubmit={submitHandler}
-              variants={formContainerVariants}
+              variants={tahminYapFormContainerVariants}
             >
               <motion.div
-                variants={itemVariants}
+                variants={tahminYapItemVariants}
                 className={`${classes.engineCapacityWrapper} dropdownWrapper`}
               >
                 <div
@@ -960,7 +590,7 @@ export default function TahminYap() {
                 <AnimatePresence>
                   {openDropdown === "engineCapacity" && (
                     <motion.ul
-                      variants={dropdownVariants}
+                      variants={tahminYapDropdownVariants}
                       initial="hidden"
                       animate="visible"
                       exit="exit"
@@ -996,7 +626,10 @@ export default function TahminYap() {
                 </AnimatePresence>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="dropdownWrapper">
+              <motion.div
+                variants={tahminYapItemVariants}
+                className="dropdownWrapper"
+              >
                 <div
                   className={`dropdown ${errors.fuelType ? "notSelected" : ""} ${
                     value.fuelType !== "Yakıt Tipi" ? classes.selected : ""
@@ -1020,7 +653,7 @@ export default function TahminYap() {
                 <AnimatePresence>
                   {openDropdown === "fuelType" && (
                     <motion.ul
-                      variants={dropdownVariants}
+                      variants={tahminYapDropdownVariants}
                       initial="hidden"
                       animate="visible"
                       exit="exit"
@@ -1054,7 +687,10 @@ export default function TahminYap() {
                 </AnimatePresence>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="dropdownWrapper">
+              <motion.div
+                variants={tahminYapItemVariants}
+                className="dropdownWrapper"
+              >
                 <div
                   className={`dropdown ${errors.horsepower ? "notSelected" : ""} ${
                     value.horsepower !== "Beygir Gücü" ? classes.selected : ""
@@ -1077,7 +713,7 @@ export default function TahminYap() {
                 <AnimatePresence>
                   {openDropdown === "horsepower" && (
                     <motion.ul
-                      variants={dropdownVariants}
+                      variants={tahminYapDropdownVariants}
                       initial="hidden"
                       animate="visible"
                       exit="exit"
@@ -1113,7 +749,10 @@ export default function TahminYap() {
                 </AnimatePresence>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="dropdownWrapper">
+              <motion.div
+                variants={tahminYapItemVariants}
+                className="dropdownWrapper"
+              >
                 <div
                   className={`dropdown ${errors.transmission ? "notSelected" : ""} ${
                     value.transmission !== "Vites Tipi" ? classes.selected : ""
@@ -1137,7 +776,7 @@ export default function TahminYap() {
                 <AnimatePresence>
                   {openDropdown === "transmission" && (
                     <motion.ul
-                      variants={dropdownVariants}
+                      variants={tahminYapDropdownVariants}
                       initial="hidden"
                       animate="visible"
                       exit="exit"
@@ -1174,7 +813,10 @@ export default function TahminYap() {
                 </AnimatePresence>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="dropdownWrapper">
+              <motion.div
+                variants={tahminYapItemVariants}
+                className="dropdownWrapper"
+              >
                 <div
                   className={`dropdown ${errors.bodyType ? "notSelected" : ""} ${
                     value.bodyType !== "Kasa Tipi" ? classes.selected : ""
@@ -1197,7 +839,7 @@ export default function TahminYap() {
                 <AnimatePresence>
                   {openDropdown === "bodyType" && !isFromImage && (
                     <motion.ul
-                      variants={dropdownVariants}
+                      variants={tahminYapDropdownVariants}
                       initial="hidden"
                       animate="visible"
                       exit="exit"
@@ -1234,7 +876,10 @@ export default function TahminYap() {
                 </AnimatePresence>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="dropdownWrapper">
+              <motion.div
+                variants={tahminYapItemVariants}
+                className="dropdownWrapper"
+              >
                 <div
                   className={`dropdown ${errors.trimLevel ? "notSelected" : ""} ${
                     value.trimLevel !== "Paket" ? classes.selected : ""
@@ -1256,7 +901,7 @@ export default function TahminYap() {
                 <AnimatePresence>
                   {openDropdown === "trimLevel" && (
                     <motion.ul
-                      variants={dropdownVariants}
+                      variants={tahminYapDropdownVariants}
                       initial="hidden"
                       animate="visible"
                       exit="exit"
@@ -1287,7 +932,7 @@ export default function TahminYap() {
               </motion.div>
 
               <motion.input
-                variants={itemVariants}
+                variants={tahminYapItemVariants}
                 className={classes.kmInput}
                 type="text"
                 name="kilometer"
@@ -1308,7 +953,7 @@ export default function TahminYap() {
               />
 
               <motion.div
-                variants={itemVariants}
+                variants={tahminYapItemVariants}
                 style={{
                   gridColumn: "span 2",
                   width: "100%",
@@ -1326,7 +971,7 @@ export default function TahminYap() {
               </motion.div>
               {carValuePredictMutateIsError && (
                 <motion.div
-                  variants={itemVariants}
+                  variants={tahminYapItemVariants}
                   style={{
                     gridColumn: "span 2",
                     color: "#ff6363",

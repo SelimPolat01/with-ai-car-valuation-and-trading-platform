@@ -1,10 +1,11 @@
 "use client";
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 import classes from "./ChartBar.module.css";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { chartVariants } from "@/app/lib/variants";
+import { generateChartData } from "../utils/helpers";
 
 export default function ChartBar({ text, optionsIcon, width, height, data }) {
   const router = useRouter();
@@ -19,29 +20,7 @@ export default function ChartBar({ text, optionsIcon, width, height, data }) {
     }
   }, [router]);
 
-  const chartData = useMemo(() => {
-    if (!data || data.length === 0) {
-      const months = [
-        "Oca",
-        "Şub",
-        "Mar",
-        "Nis",
-        "May",
-        "Haz",
-        "Tem",
-        "Ağu",
-        "Eyl",
-        "Eki",
-        "Kas",
-        "Ara",
-      ];
-      return months.map((m) => ({ month: m, count: 0 }));
-    }
-    return data.map((item) => ({
-      month: item.name ? item.name.substring(0, 3) : item.month,
-      count: item.ilanSayisi !== undefined ? item.ilanSayisi : item.count || 0,
-    }));
-  }, [data]);
+  const chartData = generateChartData(data);
 
   return (
     <motion.div

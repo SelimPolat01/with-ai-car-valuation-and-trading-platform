@@ -10,6 +10,14 @@ import PrimaryButton from "@/app/components/PrimaryButton";
 import { Camera, Trash2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePostAdvertValidateContent } from "@/hooks/POST/usePostAdvertValidateContent";
+import { blobUrlToFile, generateErrorMessage } from "../utils/helpers";
+import {
+  innerStateVariants,
+  priceOfferFormContainerVariants,
+  priceOfferImageBoxVariants,
+  priceOfferImageGridVariants,
+  priceOfferItemVariants,
+} from "../utils/animations";
 
 export default function PriceOffer({ advertId }) {
   const isEdit = !!advertId;
@@ -36,19 +44,6 @@ export default function PriceOffer({ advertId }) {
     isError: postAdvertValidateContentIsError,
     error: postAdvertValidateContentError,
   } = usePostAdvertValidateContent();
-
-  const blobUrlToFile = async (blobUrl, filename) => {
-    try {
-      const response = await fetch(blobUrl);
-      const blob = await response.blob();
-      return new File([blob], filename, {
-        type: blob.type || "application/pdf",
-      });
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
-  };
 
   function inputTextareaChangeHandler(event) {
     const { name, value } = event.target;
@@ -136,21 +131,6 @@ export default function PriceOffer({ advertId }) {
           description: inputTextareValue.description,
         },
       });
-
-      const generateErrorMessage = (errors) => {
-        if (!errors) return null;
-        let messages = [];
-        if (errors.phones && errors.phones.length > 0)
-          messages.push(`Telefon (${errors.phones.join(", ")})`);
-        if (errors.persons && errors.persons.length > 0)
-          messages.push(`İsim (${errors.persons.join(", ")})`);
-        if (errors.locations && errors.locations.length > 0)
-          messages.push(`Adres/Konum (${errors.locations.join(", ")})`);
-
-        return messages.length > 0
-          ? `Yasaklı içerik tespit edildi:\n${messages.join(" | ")}`
-          : null;
-      };
 
       const titleErrorMsg = generateErrorMessage(validationData?.title_errors);
       const descErrorMsg = generateErrorMessage(
@@ -421,57 +401,12 @@ export default function PriceOffer({ advertId }) {
     }
   }, [advertId, router]);
 
-  const formContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4, ease: "easeOut" },
-    },
-  };
-
-  const imageGridVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-      },
-    },
-  };
-
-  const imageBoxVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.3, ease: "easeOut" },
-    },
-  };
-
-  const innerStateVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
-    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } },
-  };
-
   return (
     <main className={classes.main}>
       <motion.form
         onSubmit={formSubmitHandler}
         className={classes.form}
-        variants={formContainerVariants}
+        variants={priceOfferFormContainerVariants}
         initial="hidden"
         animate="visible"
       >
@@ -490,7 +425,7 @@ export default function PriceOffer({ advertId }) {
           )}
         </AnimatePresence>
 
-        <motion.div variants={itemVariants}>
+        <motion.div variants={priceOfferItemVariants}>
           <Input
             className={classes.input}
             type="text"
@@ -516,7 +451,7 @@ export default function PriceOffer({ advertId }) {
         </motion.div>
 
         <motion.div
-          variants={itemVariants}
+          variants={priceOfferItemVariants}
           style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}
         >
           <label className={classes.label} htmlFor="description">
@@ -544,20 +479,23 @@ export default function PriceOffer({ advertId }) {
           </AnimatePresence>
         </motion.div>
 
-        <motion.div variants={itemVariants} className={classes.imageSection}>
+        <motion.div
+          variants={priceOfferItemVariants}
+          className={classes.imageSection}
+        >
           <label className={classes.label}>
             Fotoğraflar (En fazla 10 adet)
           </label>
           <motion.div
             className={classes.imageGrid}
-            variants={imageGridVariants}
+            variants={priceOfferImageGridVariants}
             initial="hidden"
             animate="visible"
           >
             {images.map((img, index) => (
               <motion.div
                 key={index}
-                variants={imageBoxVariants}
+                variants={priceOfferImageBoxVariants}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 className={`${classes.imageBox} ${
@@ -634,7 +572,7 @@ export default function PriceOffer({ advertId }) {
           </motion.div>
         </motion.div>
 
-        <motion.div variants={itemVariants}>
+        <motion.div variants={priceOfferItemVariants}>
           <PrimaryButton
             type="submit"
             text={

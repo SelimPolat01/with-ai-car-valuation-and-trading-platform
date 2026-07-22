@@ -25,7 +25,6 @@ export default function Odeme() {
   const creditCardRef = useRef();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const appointmentData = sessionStorage.getItem("appointmentData");
@@ -52,6 +51,7 @@ export default function Odeme() {
     isPending: patchSoldAdvertIsPending,
     isError: patchSoldAdvertIsError,
     error: patchSoldAdvertError,
+    reset,
   } = usePatchSoldAdvert();
 
   function advertBuyHandler() {
@@ -61,6 +61,7 @@ export default function Odeme() {
     if (!appointmentDataStr) return;
     const appointmentData = JSON.parse(appointmentDataStr);
     const token = localStorage.getItem("token");
+
     patchSoldAdvertMutate(
       {
         token,
@@ -77,7 +78,7 @@ export default function Odeme() {
           sessionStorage.removeItem("appointmentData");
         },
         onError: (soldAdvertError) => {
-          setError(soldAdvertError?.message);
+          console.error(soldAdvertError?.message);
         },
       },
     );
@@ -88,12 +89,28 @@ export default function Odeme() {
   return (
     <div className={classes.div}>
       {!isSuccess ? (
-        <div className={classes.paymentDiv}>
+        <div
+          className={classes.paymentDiv}
+          onClick={() => {
+            if (patchSoldAdvertIsError) {
+              reset();
+            }
+          }}
+        >
           <CreditCard ref={creditCardRef} />
+
+          {patchSoldAdvertIsError && (
+            <div className={classes.errorMessage}>
+              {patchSoldAdvertError?.message ||
+                "Ödeme işlemi sırasında bir hata oluştu."}
+            </div>
+          )}
+
           <SecondaryButton
             className={classes.paymentButton}
-            text="Ödemeyi Tamamla"
+            text={patchSoldAdvertIsPending ? "İşleniyor..." : "Ödemeyi Tamamla"}
             onClick={advertBuyHandler}
+            disabled={patchSoldAdvertIsPending}
           />
         </div>
       ) : (

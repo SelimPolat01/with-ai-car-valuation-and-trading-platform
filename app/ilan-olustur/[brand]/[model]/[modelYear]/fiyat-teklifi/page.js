@@ -8,6 +8,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CancelButton from "@/app/components/CancelButton";
 import SecondaryButton from "@/app/components/SecondaryButton";
+import {
+  capitalizeWords,
+  engineCapacityFormat,
+  formatDate,
+  fuelTypeFormat,
+} from "@/app/utils/helpers";
 
 export default function PriceOffer() {
   useCheckAuth();
@@ -19,12 +25,7 @@ export default function PriceOffer() {
   const today = new Date();
   const validatyDate = new Date();
   validatyDate.setDate(today.getDate() + 3);
-  const formattedValidatyDate = validatyDate.toLocaleDateString("tr-TR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
+  const formattedValidatyDate = formatDate(validatyDate);
   const priceOffer = Number(carDetails.price);
 
   useEffect(() => {
@@ -37,30 +38,6 @@ export default function PriceOffer() {
 
     return () => controls.stop();
   }, [priceOffer]);
-
-  function capitalize(text) {
-    if (typeof text !== "string") {
-      return "";
-    }
-
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-  }
-
-  function engineCapacityFormat(engineCapacity) {
-    if (!engineCapacity) return "";
-    return (+engineCapacity / 1000).toFixed(1);
-  }
-
-  function fuelTypeFormat(fuelType) {
-    if (!fuelType) return "";
-    const parsedFuelType = {
-      gasoline: "Benzin",
-      diesel: "Dizel",
-      hybrid: "Hibrit",
-      lpg: "LPG",
-    };
-    return parsedFuelType[fuelType];
-  }
 
   return (
     <div className={classes.wrapperDiv}>
@@ -95,11 +72,15 @@ export default function PriceOffer() {
             <ul>
               <li>
                 <strong>Marka: </strong>
-                <span>{decodeURIComponent(capitalize(carDetails.brand))}</span>
+                <span>
+                  {decodeURIComponent(capitalizeWords(carDetails.brand))}
+                </span>
               </li>
               <li>
                 <strong>Model: </strong>
-                <span>{decodeURIComponent(capitalize(carDetails.model))}</span>
+                <span>
+                  {decodeURIComponent(capitalizeWords(carDetails.model))}
+                </span>
               </li>
               <li>
                 <strong>Yıl: </strong>
@@ -123,7 +104,7 @@ export default function PriceOffer() {
               </li>
               <li>
                 <strong>Paket: </strong>
-                <span>{capitalize(carDetails.trimLevel)}</span>
+                <span>{capitalizeWords(carDetails.trimLevel)}</span>
               </li>
             </ul>
           </div>

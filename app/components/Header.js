@@ -21,6 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import { useGetPersonalNotifications } from "@/hooks/GET/useGetPersonalNotifications";
 import { usePatchNotificationRead } from "@/hooks/PATCH/usePatchNotificationRead";
+import { headerLinks } from "../utils/helpers";
 
 export default function Header({ className }) {
   const path = usePathname();
@@ -88,51 +89,7 @@ export default function Header({ className }) {
     localStorage.removeItem("token");
   }
 
-  const links = {
-    notLoginlinks: [
-      {
-        href: "/register",
-        label: (
-          <UserPlus
-            className={classes.icon}
-            size={30}
-            stroke="url(#header-icon-gold)"
-          />
-        ),
-        hideOn: "/register",
-        className: "registerLink",
-        title: "Kayıt Ol",
-      },
-      {
-        href: "/login",
-        label: (
-          <LogIn
-            className={classes.icon}
-            size={30}
-            stroke="url(#header-icon-gold)"
-          />
-        ),
-        hideOn: "/login",
-        className: "loginLink",
-        title: "Giriş Yap",
-      },
-    ],
-    loginLinks: [
-      {
-        href: "/",
-        label: (
-          <Home
-            className={classes.icon}
-            size={30}
-            stroke="url(#header-icon-gold)"
-          />
-        ),
-        hideOn: "/",
-        className: "homeLink",
-        title: "Anasayfa",
-      },
-    ],
-  };
+  const links = headerLinks;
 
   return (
     <header className={`${classes.header} ${className ? className : ""}`}>

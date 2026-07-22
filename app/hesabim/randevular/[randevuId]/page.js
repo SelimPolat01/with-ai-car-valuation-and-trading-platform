@@ -23,6 +23,15 @@ import {
 } from "lucide-react";
 import { usePatchPersonalAppointmentCancel } from "@/hooks/PATCH/usePatchPersonalAppointmentCancel";
 import ConfirmDialog from "../../../components/ConfirmDialog.js";
+import {
+  capitalizeWords,
+  carTypeMap,
+  engineCapacityFormat,
+  formatBrandModel,
+  formatDate,
+  formatPrice,
+  getStatusData,
+} from "@/app/utils/helpers";
 
 export default function RandevuDetaylar() {
   const router = useRouter();
@@ -96,101 +105,7 @@ export default function RandevuDetaylar() {
     cancelDialogRef.current.showModal();
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString("tr-TR", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  const formatPrice = (price) => {
-    if (!price) return "";
-    return Number(price).toLocaleString("tr-TR") + " ₺";
-  };
-
-  const formatBrand = (brand) => {
-    if (!brand) return "";
-    const b = brand.trim().toLowerCase();
-    const specialBrands = {
-      bmw: "BMW",
-      "mercedes-benz": "Mercedes-Benz",
-    };
-    if (specialBrands[b]) return specialBrands[b];
-    return b
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  const formatModel = (model) => {
-    if (!model) return "";
-    const m = model.trim().toLowerCase();
-    const specialModels = {
-      "a series": "A Serisi",
-      "e series": "E Serisi",
-      "1 series": "1 Series",
-      "3 series": "3 Series",
-      "5 series": "5 Series",
-      "c-elysee": "C-Elysee",
-      i20: "i20",
-      "t-roc": "T-Roc",
-    };
-    if (specialModels[m]) return specialModels[m];
-    return m
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  function engineCapacityFormat(engineCapacity) {
-    if (!engineCapacity) return "";
-    return (+engineCapacity / 1000).toFixed(1);
-  }
-
-  const capitalizeWords = (text) => {
-    if (typeof text !== "string" || !text) return "";
-
-    return text
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
-  };
-
-  const carTypeMap = {
-    bodyTypeMap: {
-      sedan: "Sedan",
-      suv: "SUV",
-      hatchback: "Hatchback",
-      station_wagon: "Station Wagon",
-    },
-    fuelTypeMap: {
-      gasoline: "Benzin",
-      diesel: "Dizel",
-      electric: "Elektrik",
-      hybrid: "Hibrit",
-    },
-    transmissionTypeMap: {
-      automatic: "Otomatik",
-      "semi automatic": "Yarı Otomatik",
-      manual: "Manuel",
-    },
-  };
-
-  const getStatusData = (status) => {
-    switch (status) {
-      case "completed":
-      case "success":
-        return { text: "Tamamlandı", className: classes.badgeCompleted };
-      case "canceled":
-        return { text: "İptal Edildi", className: classes.badgeCanceled };
-      case "pending":
-      default:
-        return { text: "Bekliyor", className: classes.badgePending };
-    }
-  };
-
+  const carTypeMaps = carTypeMap;
   const statusData = getStatusData(appointment.appointment_status);
   const locationString =
     appointment.appointment_location || "Sultanbeyli, İstanbul";
@@ -261,8 +176,8 @@ export default function RandevuDetaylar() {
               </div>
               <div className={classes.carMainInfo}>
                 <h2 className={classes.carName}>
-                  {formatBrand(appointment.brand)}{" "}
-                  {formatModel(appointment.model)}
+                  {formatBrandModel(appointment.brand)}{" "}
+                  {formatBrandModel(appointment.model)}
                 </h2>
                 <div className={classes.carPrice}>
                   {formatPrice(appointment.price)}
@@ -302,7 +217,7 @@ export default function RandevuDetaylar() {
               <div className={classes.techItem}>
                 <span className={classes.techLabel}>Kasa Tipi</span>
                 <span className={classes.techValue}>
-                  {carTypeMap.bodyTypeMap[appointment.body_type] ||
+                  {carTypeMaps.bodyTypeMap[appointment.body_type] ||
                     capitalizeWords(appointment.body_type) ||
                     "Belirtilmemiş"}
                 </span>
@@ -310,7 +225,7 @@ export default function RandevuDetaylar() {
               <div className={classes.techItem}>
                 <span className={classes.techLabel}>Yakıt Tipi</span>
                 <span className={classes.techValue}>
-                  {carTypeMap.fuelTypeMap[appointment.fuel_type] ||
+                  {carTypeMaps.fuelTypeMap[appointment.fuel_type] ||
                     capitalizeWords(appointment.fuel_type) ||
                     "Belirtilmemiş"}
                 </span>
@@ -318,7 +233,7 @@ export default function RandevuDetaylar() {
               <div className={classes.techItem}>
                 <span className={classes.techLabel}>Vites Tipi</span>
                 <span className={classes.techValue}>
-                  {carTypeMap.transmissionTypeMap[appointment.transmission] ||
+                  {carTypeMaps.transmissionTypeMap[appointment.transmission] ||
                     capitalizeWords(appointment.transmission) ||
                     "Belirtilmemiş"}
                 </span>

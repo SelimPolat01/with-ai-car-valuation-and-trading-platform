@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import classes from "./FilterBrand.module.css";
 import { setFilterAdverts } from "@/store/advertsSlice";
+import { formatBrandModel } from "../utils/helpers";
 
 export default function FilterBrand({ brand, count }) {
   const dispatch = useDispatch();
@@ -15,21 +16,13 @@ export default function FilterBrand({ brand, count }) {
     }
   }
 
-  function brandFormatter(text) {
-    if (typeof text !== "string" || text === "") {
-      return "";
-    }
-    if (text === "bmw") return "BMW";
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-  }
-
   return (
     <li className={classes.li}>
       <button
         className={`${classes.button} ${isActive ? classes.active : ""}`}
         onClick={() => filterBrandHandler()}
       >
-        {brandFormatter(decodeURIComponent(brand))} ({count})
+        {formatBrandModel(decodeURIComponent(brand))} ({count})
       </button>
     </li>
   );

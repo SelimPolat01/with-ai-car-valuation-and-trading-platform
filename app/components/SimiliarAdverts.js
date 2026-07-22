@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import classes from "./SimiliarAdverts.module.css";
 import { useRouter } from "next/navigation";
+import { formatBrandModel, generateSlug } from "../utils/helpers";
 
 export default function SimilarAdverts({ currentAdvertId }) {
   const router = useRouter();
@@ -43,25 +44,6 @@ export default function SimilarAdverts({ currentAdvertId }) {
 
   if (similarCars.length === 0) return null;
 
-  const generateSlug = (text) => {
-    if (!text) return "";
-    return text.toString().toLowerCase().trim().replace(/\s+/g, "-");
-  };
-
-  const formatCarName = (text) => {
-    if (!text) return "";
-    const words = text.toString().trim().split(/\s+/);
-
-    return words
-      .map((word) => {
-        const lowerWord = word.toLowerCase();
-        if (lowerWord === "bmw") return "BMW";
-        if (lowerWord === "series") return "Serisi";
-        return lowerWord.charAt(0).toUpperCase() + lowerWord.slice(1);
-      })
-      .join(" ");
-  };
-
   return (
     <div className={classes.container}>
       <h3 className={classes.title}>
@@ -70,8 +52,8 @@ export default function SimilarAdverts({ currentAdvertId }) {
 
       <div className={classes.scrollContainer}>
         {similarCars.map((car) => {
-          const formattedBrand = formatCarName(car.brand);
-          const formattedModel = formatCarName(car.model);
+          const formattedBrand = formatBrandModel(car.brand);
+          const formattedModel = formatBrandModel(car.model);
 
           return (
             <div

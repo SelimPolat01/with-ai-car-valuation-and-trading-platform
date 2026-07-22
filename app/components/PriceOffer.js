@@ -222,37 +222,37 @@ export default function PriceOffer({ advertId }) {
 
     if (isEdit) {
       formData.append("id", advertId);
-    } else {
-      formData.append("brand", reduxData.brand);
-      formData.append("model", decodeURIComponent(reduxData.model || ""));
-      formData.append("modelYear", reduxData.modelYear);
-      formData.append("bodyType", reduxData.bodyType);
-      formData.append("engineCapacity", reduxData.engineCapacity);
-      formData.append("horsepower", reduxData.horsepower);
-      formData.append("transmission", reduxData.transmission);
-      formData.append("kilometer", reduxData.kilometer);
-      formData.append("fuelType", reduxData.fuelType);
-      formData.append("trimLevel", reduxData.trimLevel);
-      formData.append("price", reduxData.price);
-      formData.append("plate", reduxData.plate);
-      formData.append("chassisNumber", reduxData.chassisNumber);
-      formData.append("tramerRecord", reduxData.tramerRecord);
-      formData.append("inspectionDate", reduxData.inspectionDate);
-      formData.append("ownerCount", reduxData.ownerCount);
-      formData.append("hasPledge", reduxData.hasPledge);
-      formData.append("hasServiceMaintence", reduxData.hasServiceMaintence);
-      formData.append("hasWarrenty", reduxData.hasWarrenty);
-      formData.append("hasSpareKey", reduxData.hasSpareKey);
-      formData.append("tireType", reduxData.tireType);
-      formData.append("tireCondition", reduxData.tireCondition);
-      formData.append("extras", reduxData.extras);
-      formData.append("lpgStatus", reduxData.lpgStatus);
-
-      const hasScratch = reduxData.hasScratch || reduxData.has_scratch || false;
-      const hasDent = reduxData.hasDent || reduxData.has_dent || false;
-      formData.append("hasScratch", hasScratch);
-      formData.append("hasDent", hasDent);
     }
+
+    formData.append("brand", reduxData.brand || "");
+    formData.append("model", decodeURIComponent(reduxData.model || ""));
+    formData.append("modelYear", reduxData.modelYear || "");
+    formData.append("bodyType", reduxData.bodyType || "");
+    formData.append("engineCapacity", reduxData.engineCapacity || "");
+    formData.append("horsepower", reduxData.horsepower || "");
+    formData.append("transmission", reduxData.transmission || "");
+    formData.append("kilometer", reduxData.kilometer || "");
+    formData.append("fuelType", reduxData.fuelType || "");
+    formData.append("trimLevel", reduxData.trimLevel || "");
+    formData.append("price", reduxData.price || "");
+    formData.append("plate", reduxData.plate || "");
+    formData.append("chassisNumber", reduxData.chassisNumber || "");
+    formData.append("tramerRecord", reduxData.tramerRecord ?? "");
+    formData.append("inspectionDate", reduxData.inspectionDate || "");
+    formData.append("ownerCount", reduxData.ownerCount || "");
+    formData.append("hasPledge", reduxData.hasPledge);
+    formData.append("hasServiceMaintence", reduxData.hasServiceMaintence);
+    formData.append("hasWarrenty", reduxData.hasWarrenty);
+    formData.append("hasSpareKey", reduxData.hasSpareKey);
+    formData.append("tireType", reduxData.tireType || "");
+    formData.append("tireCondition", reduxData.tireCondition || "");
+    formData.append("extras", reduxData.extras || "");
+    formData.append("lpgStatus", reduxData.lpgStatus || "");
+
+    const hasScratch = reduxData.hasScratch || reduxData.has_scratch || false;
+    const hasDent = reduxData.hasDent || reduxData.has_dent || false;
+    formData.append("hasScratch", hasScratch);
+    formData.append("hasDent", hasDent);
 
     if (reduxData.files?.expertise1) {
       const file1 = await blobUrlToFile(
@@ -275,7 +275,7 @@ export default function PriceOffer({ advertId }) {
         reduxData.files.permit,
         "ruhsat_fotografi.pdf",
       );
-      if (permitFile) formData.append("ruhsatFile", permitFile);
+      if (permitFile) formData.append("permitFile", permitFile);
     }
 
     if (images[0]?.file) {

@@ -45,7 +45,6 @@ router.get("/personal-appointments", verifyToken, async (req, res) => {
     const result = await db.query(query, [userId]);
     return res.status(200).json(result.rows);
   } catch (err) {
-    console.error("Randevular getirilirken hata:", err);
     res.status(500).json({ message: "Sunucu hatası." });
   }
 });
@@ -59,10 +58,10 @@ router.patch(
 
     try {
       const checkQuery = `
-      SELECT * 
-      FROM appointments 
-      WHERE id = $1 AND user_id = $2
-    `;
+        SELECT * 
+        FROM appointments 
+        WHERE id = $1 AND user_id = $2
+      `;
       const checkResult = await db.query(checkQuery, [appointmentId, userId]);
 
       if (checkResult.rows.length === 0) {
@@ -84,11 +83,11 @@ router.patch(
       }
 
       const updateQuery = `
-      UPDATE appointments 
-      SET status = 'canceled' 
-      WHERE id = $1 AND user_id = $2
-      RETURNING *
-    `;
+        UPDATE appointments 
+        SET status = 'canceled' 
+        WHERE id = $1 AND user_id = $2
+        RETURNING *
+      `;
       const updateResult = await db.query(updateQuery, [appointmentId, userId]);
 
       return res.status(200).json({

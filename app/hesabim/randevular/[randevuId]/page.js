@@ -149,10 +149,14 @@ export default function RandevuDetaylar() {
     return (+engineCapacity / 1000).toFixed(1);
   }
 
-  function capitalize(text) {
+  const capitalizeWords = (text) => {
     if (typeof text !== "string" || !text) return "";
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-  }
+
+    return text
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
 
   const carTypeMap = {
     bodyTypeMap: {
@@ -284,7 +288,7 @@ export default function RandevuDetaylar() {
               <div className={classes.techItem}>
                 <span className={classes.techLabel}>Paket Tipi</span>
                 <span className={classes.techValue}>
-                  {capitalize(appointment.trim_level) || "Belirtilmemiş"}
+                  {capitalizeWords(appointment.trim_level) || "Belirtilmemiş"}
                 </span>
               </div>
               <div className={classes.techItem}>
@@ -299,7 +303,7 @@ export default function RandevuDetaylar() {
                 <span className={classes.techLabel}>Kasa Tipi</span>
                 <span className={classes.techValue}>
                   {carTypeMap.bodyTypeMap[appointment.body_type] ||
-                    capitalize(appointment.body_type) ||
+                    capitalizeWords(appointment.body_type) ||
                     "Belirtilmemiş"}
                 </span>
               </div>
@@ -307,7 +311,7 @@ export default function RandevuDetaylar() {
                 <span className={classes.techLabel}>Yakıt Tipi</span>
                 <span className={classes.techValue}>
                   {carTypeMap.fuelTypeMap[appointment.fuel_type] ||
-                    capitalize(appointment.fuel_type) ||
+                    capitalizeWords(appointment.fuel_type) ||
                     "Belirtilmemiş"}
                 </span>
               </div>
@@ -315,7 +319,7 @@ export default function RandevuDetaylar() {
                 <span className={classes.techLabel}>Vites Tipi</span>
                 <span className={classes.techValue}>
                   {carTypeMap.transmissionTypeMap[appointment.transmission] ||
-                    capitalize(appointment.transmission) ||
+                    capitalizeWords(appointment.transmission) ||
                     "Belirtilmemiş"}
                 </span>
               </div>

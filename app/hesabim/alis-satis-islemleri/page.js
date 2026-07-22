@@ -94,7 +94,7 @@ export default function AlisSatisİslemleri() {
   };
 
   const currentStep = activeTransaction
-    ? getStepFromStatus(activeTransaction.status)
+    ? getStepFromStatus(activeTransaction.payment_status)
     : 1;
 
   const getExpertiseStatusText = (step) => {
@@ -104,8 +104,18 @@ export default function AlisSatisİslemleri() {
   };
 
   const formatPrice = (price) => {
-    if (!price) return "";
+    if (price === null || price === undefined || price === "") return "0 TL";
     return Number(price).toLocaleString("tr-TR") + " TL";
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("tr-TR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
   };
 
   const formatBrand = (brand) => {
@@ -147,9 +157,43 @@ export default function AlisSatisİslemleri() {
     return (+engineCapacity / 1000).toFixed(1);
   };
 
-  const capitalize = (text) => {
+  const capitalizeWords = (text) => {
     if (typeof text !== "string" || !text) return "";
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+
+    return text
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
+
+  const formatLpgStatus = (status) => {
+    if (!status) return "Yok / Takılmadı";
+    const map = {
+      none: "Yok (Benzin/Dizel/Elektrik)",
+      "registered license": "Var - Ruhsata İşli",
+      "not registered license": "Var - Ruhsata İşli Değil",
+    };
+    return map[status.toLowerCase()] || status;
+  };
+
+  const formatTireType = (type) => {
+    if (!type) return "Belirtilmedi";
+    const map = {
+      summery: "Yazlık",
+      winter: "Kışlık",
+      "four seasons": "Dört Mevsim",
+    };
+    return map[type.toLowerCase()] || type;
+  };
+
+  const formatTireCondition = (condition) => {
+    if (!condition) return "";
+    const map = {
+      "like new": "Sıfır Ayarında",
+      good: "İyi",
+      "change has come": "Değişim Vakti Gelmiş",
+    };
+    return map[condition.toLowerCase()] || condition;
   };
 
   const formatAppointmentDateTime = (dateStr, timeStr) => {
@@ -201,6 +245,8 @@ export default function AlisSatisİslemleri() {
     return `${formattedDate} ${formattedTime}`;
   };
 
+  const canViewRuhsat = role === "seller" || ruhsatVisible;
+
   return (
     <div className={classes.container}>
       <h1 className={classes.pageTitle}>Alış-Satış İşlemleri</h1>
@@ -228,18 +274,35 @@ export default function AlisSatisİslemleri() {
         <>
           <div className={classes.card}>
             <div className={classes.vehicleHeader}>
-              <div>
-                <span className={classes.badge}>
-                  İşlem No: #
-                  {activeTransaction.transaction_reference || "Bekleniyor"}
-                </span>
-                <h2 className={classes.vehicleTitle}>
-                  {formatBrand(activeTransaction.brand)}{" "}
-                  {formatModel(activeTransaction.model)}{" "}
-                  {activeTransaction.model_year}{" "}
-                  {engineCapacityFormat(activeTransaction.engine_capacity)}L{" "}
-                  {capitalize(activeTransaction.trim_level)}
-                </h2>
+              <div className={classes.vehicleMainInfo}>
+                {activeTransaction.image_url && (
+                  <img
+                    src={activeTransaction.image_url}
+                    alt={`${activeTransaction.brand} ${activeTransaction.model}`}
+                    className={classes.vehicleCoverImage}
+                  />
+                )}
+                <div>
+                  <div className={classes.badgeGroup}>
+                    <span className={classes.badge}>
+                      İşlem Ref: #
+                      {activeTransaction.transaction_reference || "Bekleniyor"}
+                    </span>
+                    <span className={classes.subBadge}>
+                      İlan ID: #{activeTransaction.advert_id}
+                    </span>
+                    <span className={classes.subBadge}>
+                      Randevu ID: #{activeTransaction.appointment_id}
+                    </span>
+                  </div>
+                  <h2 className={classes.vehicleTitle}>
+                    {formatBrand(activeTransaction.brand)}{" "}
+                    {formatModel(activeTransaction.model)}{" "}
+                    {activeTransaction.model_year}{" "}
+                    {engineCapacityFormat(activeTransaction.engine_capacity)}L{" "}
+                    {capitalizeWords(activeTransaction.trim_level)}
+                  </h2>
+                </div>
               </div>
               <span className={classes.statusBadge}>
                 {getStatusBadgeText(activeTransaction.status)}
@@ -286,6 +349,118 @@ export default function AlisSatisİslemleri() {
           </div>
 
           <div className={classes.card}>
+            <h3 className={classes.sectionTitle}>
+              🚘 Araç Detayları & Geçmiş Bilgileri
+            </h3>
+            <div className={classes.detailsGrid}>
+              <div className={classes.detailsBox}>
+                <span className={classes.detailsLabel}>Tramer Kaydı</span>
+                <span className={classes.detailsValue}>
+                  {activeTransaction.tramer_record
+                    ? formatPrice(activeTransaction.tramer_record)
+                    : "Hasar Kaydı Yok"}
+                </span>
+              </div>
+
+              <div className={classes.detailsBox}>
+                <span className={classes.detailsLabel}>Muayene Geçerlilik</span>
+                <span className={classes.detailsValue}>
+                  {formatDate(activeTransaction.inspection_date)}
+                </span>
+              </div>
+
+              <div className={classes.detailsBox}>
+                <span className={classes.detailsLabel}>Rehin / Haciz</span>
+                <span className={classes.detailsValue}>
+                  {activeTransaction.has_pledge ? (
+                    <span className={classes.badgeWarning}>Rehinli / Var</span>
+                  ) : (
+                    <span className={classes.badgeSuccess}>Temiz / Yok</span>
+                  )}
+                </span>
+              </div>
+
+              <div className={classes.detailsBox}>
+                <span className={classes.detailsLabel}>Servis Bakımı</span>
+                <span className={classes.detailsValue}>
+                  {activeTransaction.has_service_maintenance === "yes" ||
+                  activeTransaction.has_service_maintenance === true
+                    ? "Yetkili Servis Bakımlı"
+                    : "Özel Bakımlı"}
+                </span>
+              </div>
+
+              <div className={classes.detailsBox}>
+                <span className={classes.detailsLabel}>Garanti Durumu</span>
+                <span className={classes.detailsValue}>
+                  {activeTransaction.has_warranty ? (
+                    <span className={classes.badgeSuccess}>
+                      Garanti Devam Ediyor
+                    </span>
+                  ) : (
+                    "Garanti Yok"
+                  )}
+                </span>
+              </div>
+
+              <div className={classes.detailsBox}>
+                <span className={classes.detailsLabel}>Yedek Anahtar</span>
+                <span className={classes.detailsValue}>
+                  {activeTransaction.has_spare_key ? "Mevcut" : "Yok"}
+                </span>
+              </div>
+
+              <div className={classes.detailsBox}>
+                <span className={classes.detailsLabel}>Ruhsat Sahibi</span>
+                <span className={classes.detailsValue}>
+                  {activeTransaction.owner_count
+                    ? `${activeTransaction.owner_count}. Sahibinden`
+                    : "Belirtilmedi"}
+                </span>
+              </div>
+
+              <div className={classes.detailsBox}>
+                <span className={classes.detailsLabel}>
+                  Lastik Tipi / Durumu
+                </span>
+                <span className={classes.detailsValue}>
+                  {formatTireType(activeTransaction.tire_type)}{" "}
+                  {activeTransaction.tire_condition
+                    ? `(${formatTireCondition(activeTransaction.tire_condition)})`
+                    : ""}
+                </span>
+              </div>
+
+              <div className={classes.detailsBox}>
+                <span className={classes.detailsLabel}>LPG Durumu</span>
+                <span className={classes.detailsValue}>
+                  {formatLpgStatus(activeTransaction.lpg_status)}
+                </span>
+              </div>
+
+              <div className={classes.detailsBox}>
+                <span className={classes.detailsLabel}>Şasi Numarası</span>
+                <span className={classes.detailsValue}>
+                  {canViewRuhsat
+                    ? activeTransaction.chassis_number || "Belirtilmedi"
+                    : "•••••••••••••••••"}
+                </span>
+              </div>
+            </div>
+
+            {activeTransaction.extras && (
+              <div className={classes.extrasBox}>
+                <span className={classes.detailsLabel}>
+                  Ekstra Donanım & Açıklamalar
+                </span>
+                <p className={classes.extrasContent}>
+                  {activeTransaction.extras}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className={classes.card}>
             <h3 className={classes.sectionTitle}>Süreç Adımları</h3>
             <div className={classes.stepper}>
               <div
@@ -299,7 +474,7 @@ export default function AlisSatisİslemleri() {
               </div>
 
               <div
-                className={`${classes.stepLine} ${currentStep > 1 ? classes.completedLine : currentStep === 2 ? classes.activeLine : ""}`}
+                className={`${classes.stepLine} ${currentStep > 1 ? classes.completedLine : currentStep === 1 ? classes.activeLine : ""}`}
               ></div>
 
               <div
@@ -318,7 +493,7 @@ export default function AlisSatisİslemleri() {
               </div>
 
               <div
-                className={`${classes.stepLine} ${currentStep > 2 ? classes.completedLine : currentStep === 3 ? classes.activeLine : ""}`}
+                className={`${classes.stepLine} ${currentStep > 2 ? classes.completedLine : currentStep === 2 ? classes.activeLine : ""}`}
               ></div>
 
               <div
@@ -332,7 +507,7 @@ export default function AlisSatisİslemleri() {
               </div>
 
               <div
-                className={`${classes.stepLine} ${currentStep > 3 ? classes.completedLine : currentStep === 4 ? classes.activeLine : ""}`}
+                className={`${classes.stepLine} ${currentStep > 3 ? classes.completedLine : currentStep === 3 ? classes.activeLine : ""}`}
               ></div>
 
               <div
@@ -346,7 +521,7 @@ export default function AlisSatisİslemleri() {
               </div>
 
               <div
-                className={`${classes.stepLine} ${currentStep > 4 ? classes.completedLine : currentStep === 5 ? classes.activeLine : ""}`}
+                className={`${classes.stepLine} ${currentStep > 4 ? classes.completedLine : currentStep === 4 ? classes.activeLine : ""}`}
               ></div>
 
               <div
@@ -379,6 +554,17 @@ export default function AlisSatisİslemleri() {
                     bakiyeyi Güvenli Hesaba aktarabilirsiniz.
                   </p>
 
+                  <div className={classes.extrasBox}>
+                    <span className={classes.detailsLabel}>
+                      🛡️ Güvenli Havuz Hesap Bilgisi
+                    </span>
+                    <p className={classes.extrasContent}>
+                      Yatırdığınız tüm tutarlar noter satışı resmi olarak
+                      tamamlanana kadar Garanti Bankası Güvenli Escrow hesabında
+                      bloke altında tutulur.
+                    </p>
+                  </div>
+
                   <div className={classes.buttonGroup}>
                     <button
                       className={classes.primaryBtn}
@@ -397,8 +583,9 @@ export default function AlisSatisİslemleri() {
               ) : (
                 <div className={classes.actionContainer}>
                   <p className={classes.actionDescription}>
-                    Alıcının sigorta teklifi alabilmesi için ruhsat yetkisini
-                    yönetebilir ve güncel ekspertiz raporunu yükleyebilirsiniz.
+                    Alıcının sigorta ve kasko teklifi alabilmesi için ruhsat
+                    yetkisini yönetebilir, noter satışı sonrası paranın
+                    hesabınıza aktarılmasını onaylayabilirsiniz.
                   </p>
 
                   <div className={classes.toggleRow}>
@@ -411,15 +598,26 @@ export default function AlisSatisİslemleri() {
                     </button>
                   </div>
 
+                  <div className={classes.extrasBox}>
+                    <span className={classes.detailsLabel}>
+                      💳 Bakiye Aktarım & Noter Süreci
+                    </span>
+                    <p className={classes.extrasContent}>
+                      Noterde devir imzasını attıktan sonra satışı onaylayınız.
+                      Alıcı onayı ile birlikte havuzda bekletilen tutar doğrudan
+                      kayıtlı IBAN hesabınıza aktarılacaktır.
+                    </p>
+                  </div>
+
                   <div className={classes.buttonGroup}>
-                    <button className={classes.outlineBtn}>
-                      📄 Ekspertiz Raporu Yükle / Güncelle
-                    </button>
                     <button
                       className={classes.secondaryBtn}
                       disabled={currentStep < 5}
                     >
                       Noterde Satışı Verdim / Onayla
+                    </button>
+                    <button className={classes.outlineBtn}>
+                      Banka & IBAN Bilgilerimi Düzenle
                     </button>
                   </div>
                 </div>
@@ -442,15 +640,57 @@ export default function AlisSatisİslemleri() {
 
                 <div className={classes.infoItem}>
                   <div>
+                    <strong>Ekspertiz Belgeleri</strong>
+                    <p>
+                      {activeTransaction.expertise_images?.length > 0
+                        ? `${activeTransaction.expertise_images.length} Adet Belge Yüklendi`
+                        : "Henüz Belge Yüklenmedi"}
+                    </p>
+                  </div>
+                  {activeTransaction.expertise_images?.length > 0 && (
+                    <div className={classes.documentLinks}>
+                      {activeTransaction.expertise_images.map((imgUrl, idx) => (
+                        <a
+                          key={idx}
+                          href={imgUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={classes.linkBtn}
+                        >
+                          Rapor {idx + 1}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className={classes.infoItem}>
+                  <div>
                     <strong>Araç Ruhsat Bilgileri</strong>
                     <p>
-                      {ruhsatVisible
-                        ? `Plaka: ${activeTransaction.plate || "Belirtilmedi"} (Şasi No Paylaşıldı)`
+                      {canViewRuhsat
+                        ? `Plaka: ${activeTransaction.plate || "Belirtilmedi"} (Şasi: ${activeTransaction.chassis_number || "Yok"})`
                         : "Satıcı tarafından gizlendi"}
                     </p>
                   </div>
-                  {ruhsatVisible ? (
-                    <button className={classes.linkBtn}>Kopyala</button>
+                  {canViewRuhsat ? (
+                    <div className={classes.documentLinks}>
+                      {activeTransaction.permit_images?.length > 0 ? (
+                        activeTransaction.permit_images.map((imgUrl, idx) => (
+                          <a
+                            key={idx}
+                            href={imgUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={classes.linkBtn}
+                          >
+                            Ruhsat {idx + 1}
+                          </a>
+                        ))
+                      ) : (
+                        <button className={classes.linkBtn}>Kopyala</button>
+                      )}
+                    </div>
                   ) : (
                     <span className={classes.infoTagAlert}>Kısıtlı</span>
                   )}

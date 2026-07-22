@@ -14,12 +14,6 @@
   box-sizing: border-box;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .header {
   display: flex;
   flex-direction: column;

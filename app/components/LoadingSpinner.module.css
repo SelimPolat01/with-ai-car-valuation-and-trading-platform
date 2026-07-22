@@ -2,15 +2,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 90vh;
+  min-height: clamp(50vh, 70vh, 90vh);
+  padding: 1rem;
 }
 
 .loading {
-  border: 6px solid rgba(90, 50, 50, 0.1);
-  border-top: 6px solid #00f4ff;
+  border: clamp(4px, 1vw, 6px) solid rgba(90, 50, 50, 0.1);
+  border-top: clamp(4px, 1vw, 6px) solid #00f4ff;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: clamp(30px, 8vw, 40px);
+  height: clamp(30px, 8vw, 40px);
   animation: spin 1s linear infinite;
 }
 

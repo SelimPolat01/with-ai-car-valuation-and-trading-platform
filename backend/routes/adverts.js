@@ -181,7 +181,6 @@ const upload = multer({
 router.post("/post", verifyToken, upload.any(), async (req, res) => {
   const data = req.body;
   const user = req.user;
-
   const isScratched = data.hasScratch === "true" || data.hasScratch === true;
   const hasDent = data.hasDent === "true" || data.hasDent === true;
   const hasPledge = data.hasPledge === "true" || data.hasPledge === true;
@@ -714,12 +713,46 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
       [slot_date, slot_time],
     );
 
+    const formatBrand = (brand) => {
+      if (!brand) return "";
+      const b = brand.trim().toLowerCase();
+      const specialBrands = {
+        bmw: "BMW",
+        "mercedes-benz": "Mercedes-Benz",
+      };
+      if (specialBrands[b]) return specialBrands[b];
+      return b
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    };
+
+    const formatModel = (model) => {
+      if (!model) return "";
+      const m = model.trim().toLowerCase();
+      const specialModels = {
+        "a series": "A Serisi",
+        "e series": "E Serisi",
+        "1 series": "1 Series",
+        "3 series": "3 Series",
+        "5 series": "5 Series",
+        "c-elysee": "C-Elysee",
+        i20: "i20",
+        "t-roc": "T-Roc",
+      };
+      if (specialModels[m]) return specialModels[m];
+      return m
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    };
+
     await db.query(
       `INSERT INTO notifications (user_id, title, message, type, related_entity_id) VALUES ($1, $2, $3, $4, $5)`,
       [
         soldAdvertDetail.user_id,
         "İlanınız Satıldı! 🎉",
-        `${soldAdvertDetail.brand} ${soldAdvertDetail.model} aracınız satın alındı. Alıcı ${slot_date} saat ${slot_time} için randevu oluşturdu.`,
+        `${formatBrand(soldAdvertDetail.brand)} ${formatModel(soldAdvertDetail.model)} aracınız satın alındı. Alıcı ${slot_date} saat ${slot_time} için randevu oluşturdu.`,
         "sold",
         advertId,
       ],

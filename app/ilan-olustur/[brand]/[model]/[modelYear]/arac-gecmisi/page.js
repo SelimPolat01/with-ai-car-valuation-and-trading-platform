@@ -266,6 +266,7 @@ export default function AracGecmisi() {
               value={carDetails.plate}
               onChange={detailsChangeHandler}
               placeholder="Örn: 34ABC123"
+              className={classes.input}
             />
             {errors.plate && (
               <span className={classes.errorText}>{errors.plate}</span>
@@ -279,6 +280,7 @@ export default function AracGecmisi() {
               value={carDetails.chassisNumber}
               onChange={detailsChangeHandler}
               placeholder="Şase Numarası"
+              className={classes.input}
             />
             {errors.chassisNumber && (
               <span className={classes.errorText}>{errors.chassisNumber}</span>
@@ -292,6 +294,7 @@ export default function AracGecmisi() {
               value={carDetails.tramerRecord}
               onChange={detailsChangeHandler}
               placeholder="Örn: 5000"
+              className={classes.input}
             />
             {errors.tramerRecord && (
               <span className={classes.errorText}>{errors.tramerRecord}</span>
@@ -304,6 +307,7 @@ export default function AracGecmisi() {
               type="date"
               value={carDetails.inspectionDate}
               onChange={detailsChangeHandler}
+              className={classes.input}
             />
             {errors.inspectionDate && (
               <span className={classes.errorText}>{errors.inspectionDate}</span>
@@ -343,6 +347,7 @@ export default function AracGecmisi() {
               value={carDetails.ownerCount}
               onChange={detailsChangeHandler}
               placeholder="Örn: 2"
+              className={classes.input}
             />
             {errors.ownerCount && (
               <span className={classes.errorText}>{errors.ownerCount}</span>
@@ -404,6 +409,7 @@ export default function AracGecmisi() {
               value={carDetails.extras}
               onChange={detailsChangeHandler}
               placeholder="Seramik kaplama, cam filmi vb."
+              className={classes.input}
             />
           </div>
         </div>

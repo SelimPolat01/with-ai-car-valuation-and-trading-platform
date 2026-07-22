@@ -1,9 +1,16 @@
 .button {
   background: none;
   outline: none;
-  font-size: 18px;
+  font-size: clamp(15px, 3vw, 18px);
   transition: transform 0.25s ease-in;
-  padding: 0;
+  padding: clamp(6px, 1.5vw, 10px);
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 6px;
 }
 
 .button:hover {

@@ -1,7 +1,7 @@
 .li {
   list-style-type: none;
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: clamp(6px, 1.5vw, 8px);
 }
 
 .button {
@@ -10,10 +10,10 @@
   color: whitesmoke;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(72, 144, 216, 0.15);
-  padding: 10px 16px;
+  padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px);
   border-radius: 8px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: clamp(14px, 3vw, 15px);
   font-weight: 500;
   display: flex;
   justify-content: space-between;
@@ -22,6 +22,7 @@
   backface-visibility: hidden;
   transform: translateZ(0);
   will-change: background-color, border-color, text-shadow, box-shadow;
+  min-height: clamp(40px, 8vw, 44px);
 }
 
 .button:hover {

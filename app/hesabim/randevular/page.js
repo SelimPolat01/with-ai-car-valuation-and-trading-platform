@@ -140,7 +140,7 @@ export default function RandevularPage() {
     <div className={classes.container}>
       <h1 className={classes.pageTitle}>Randevular</h1>
 
-      <div className={classes.tabs} style={{ marginBottom: "0.5rem" }}>
+      <div className={classes.tabs} style={{ marginBottom: "1rem" }}>
         <button
           className={`${classes.tabButton} ${roleTab === "buyer" ? classes.activeTab : ""}`}
           onClick={() => setRoleTab("buyer")}
@@ -172,7 +172,7 @@ export default function RandevularPage() {
           className={`${classes.tabButton} ${activeTab === "cancel" ? classes.activeTab : ""}`}
           onClick={() => setActiveTab("cancel")}
         >
-          İptal Edilen Randevularım
+          İptal Randevularım
         </button>
       </div>
 

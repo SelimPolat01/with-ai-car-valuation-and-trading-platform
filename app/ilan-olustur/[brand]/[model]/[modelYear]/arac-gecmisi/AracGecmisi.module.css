@@ -47,15 +47,22 @@
 }
 
 .inputWrapper label {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 14px !important;
+  margin: 0 !important;
   color: #475569;
+}
+
+.errorText {
+  color: #ff4d4d;
+  font-size: 13.6px;
+  font-weight: 500;
+  margin: 0;
 }
 
 .selectWrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.2rem;
   position: relative;
   width: 100%;
 }
@@ -145,6 +152,20 @@
   width: 100%;
 }
 
+.fileWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  width: 100%;
+}
+
+.fileTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+  display: block;
+}
+
 .fileCard {
   display: flex;
   justify-content: center;
@@ -159,13 +180,70 @@
   transition: all 0.3s ease;
   padding: 1.5rem;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
 }
 
-.fileCard:hover {
+.fileCard.hasPreview {
+  padding: 0;
+  border-style: solid;
+  border-color: #e2e8f0;
+}
+
+.fileCard:not(.hasPreview):hover {
   border-color: #3b82f6;
   background-color: #eff6ff;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.previewContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.removeButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(255, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  padding: 5px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.removeButton:hover {
+  background: rgba(255, 0, 0, 1);
+}
+
+.previewContainer:hover .removeButton {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .removeButton {
+    opacity: 1;
+  }
 }
 
 .fileInput {
@@ -177,6 +255,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
+  text-align: center;
 }
 
 .fileUploadContent svg {
@@ -192,37 +271,12 @@
 
 .uploadText {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #475569;
 }
 
 .fileCard:hover .uploadText {
   color: #2563eb;
-}
-
-.fileSuccessContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  text-align: center;
-}
-
-.fileSuccessContent svg {
-  width: 36px;
-  height: 36px;
-  color: #10b981;
-}
-
-.successText {
-  color: #10b981;
-  font-weight: 600;
-  font-size: 0.95rem;
-  word-break: break-all;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .buttonContainer {
@@ -269,5 +323,10 @@
 
   .fileCard {
     height: 140px;
+  }
+
+  .removeButton {
+    opacity: 1;
+    padding: 6px;
   }
 }

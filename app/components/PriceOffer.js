@@ -37,6 +37,19 @@ export default function PriceOffer({ advertId }) {
     error: postAdvertValidateContentError,
   } = usePostAdvertValidateContent();
 
+  const blobUrlToFile = async (blobUrl, filename) => {
+    try {
+      const response = await fetch(blobUrl);
+      const blob = await response.blob();
+      return new File([blob], filename, {
+        type: blob.type || "application/pdf",
+      });
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
+
   function inputTextareaChangeHandler(event) {
     const { name, value } = event.target;
     setInputTextareaValue((prevValue) => ({ ...prevValue, [name]: value }));
@@ -222,6 +235,18 @@ export default function PriceOffer({ advertId }) {
       formData.append("trimLevel", reduxData.trimLevel);
       formData.append("price", reduxData.price);
       formData.append("plate", reduxData.plate);
+      formData.append("chassisNumber", reduxData.chassisNumber);
+      formData.append("tramerRecord", reduxData.tramerRecord);
+      formData.append("inspectionDate", reduxData.inspectionDate);
+      formData.append("ownerCount", reduxData.ownerCount);
+      formData.append("hasPledge", reduxData.hasPledge);
+      formData.append("hasServiceMaintence", reduxData.hasServiceMaintence);
+      formData.append("hasWarrenty", reduxData.hasWarrenty);
+      formData.append("hasSpareKey", reduxData.hasSpareKey);
+      formData.append("tireType", reduxData.tireType);
+      formData.append("tireCondition", reduxData.tireCondition);
+      formData.append("extras", reduxData.extras);
+      formData.append("lpgStatus", reduxData.lpgStatus);
 
       const hasScratch = reduxData.hasScratch || reduxData.has_scratch || false;
       const hasDent = reduxData.hasDent || reduxData.has_dent || false;
@@ -229,10 +254,34 @@ export default function PriceOffer({ advertId }) {
       formData.append("hasDent", hasDent);
     }
 
-    if (images[0].file) {
+    if (reduxData.files?.expertise1) {
+      const file1 = await blobUrlToFile(
+        reduxData.files.expertise1,
+        "ekspertiz_sayfa_1.pdf",
+      );
+      if (file1) formData.append("expertiseFiles", file1);
+    }
+
+    if (reduxData.files?.expertise2) {
+      const file2 = await blobUrlToFile(
+        reduxData.files.expertise2,
+        "ekspertiz_sayfa_2.pdf",
+      );
+      if (file2) formData.append("expertiseFiles", file2);
+    }
+
+    if (reduxData.files?.permit) {
+      const permitFile = await blobUrlToFile(
+        reduxData.files.permit,
+        "ruhsat_fotografi.pdf",
+      );
+      if (permitFile) formData.append("ruhsatFile", permitFile);
+    }
+
+    if (images[0]?.file) {
       formData.append("coverImageIdentifier", images[0].file.name);
       formData.append("coverImageType", "new_file");
-    } else if (images[0].preview) {
+    } else if (images[0]?.preview) {
       formData.append("coverImageIdentifier", images[0].preview);
       formData.append("coverImageType", "existing_url");
     }

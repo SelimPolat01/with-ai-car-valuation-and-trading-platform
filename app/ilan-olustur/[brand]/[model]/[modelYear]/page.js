@@ -16,6 +16,10 @@ export default function TahminYap() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const predictionCarValues = useSelector(
+    (state) => state.prediction.prediction,
+  );
+  const dispatch = useDispatch();
   const [token, setToken] = useState(null);
 
   useEffect(() => {
@@ -39,10 +43,6 @@ export default function TahminYap() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const predictionCarValues = useSelector(
-    (state) => state.prediction.prediction,
-  );
-  const dispatch = useDispatch();
   const [carValues, setCarValues] = useState({
     trimLevels: [],
     bodyTypes: [],
@@ -209,7 +209,7 @@ export default function TahminYap() {
             fuelType: payload.fuel_type,
             price: Number(data.result.price),
           };
-          dispatch(setPrediction(reduxData));
+          dispatch(setPrediction({ ...predictionCarValues, ...reduxData }));
           router.push(
             `/ilan-olustur/${params.brand.toLowerCase()}/${params.model.toLowerCase()}/${params.modelYear}/hasar-durumu`,
           );

@@ -178,250 +178,437 @@ const upload = multer({
   },
 });
 
-router.post(
-  "/post",
-  verifyToken,
-  upload.array("images", 10),
-  async (req, res) => {
-    const data = req.body;
-    const user = req.user;
-    const isScratched = data.hasScratch === "true" || data.hasScratch === true;
-    const hasDent = data.hasDent === "true" || data.hasDent === true;
-    const trimLevel = data.trimLevel;
-    const { coverImageIdentifier, plate } = data;
+router.post("/post", verifyToken, upload.any(), async (req, res) => {
+  const data = req.body;
+  const user = req.user;
 
-    let imageEmbedding = null;
-    if (data.image_embedding) {
-      try {
-        const parsedArray = JSON.parse(data.image_embedding);
-        if (Array.isArray(parsedArray)) {
-          imageEmbedding = JSON.stringify(parsedArray);
-        }
-      } catch (e) {
-        console.error("Embedding parse hatası:", e);
-      }
-    }
+  const isScratched = data.hasScratch === "true" || data.hasScratch === true;
+  const hasDent = data.hasDent === "true" || data.hasDent === true;
+  const hasPledge = data.hasPledge === "true" || data.hasPledge === true;
+  const hasServiceMaintence =
+    data.hasServiceMaintence === "yes"
+      ? "yes"
+      : data.hasServiceMaintence === "no"
+        ? "no"
+        : null;
+  const hasWarrenty = data.hasWarrenty === "true" || data.hasWarrenty === true;
+  const hasSpareKey = data.hasSpareKey === "true" || data.hasSpareKey === true;
 
-    let descEmbedding = null;
-    if (data.description_embedding) {
-      try {
-        const parsedArray = JSON.parse(data.description_embedding);
-        if (Array.isArray(parsedArray)) {
-          descEmbedding = JSON.stringify(parsedArray);
-        }
-      } catch (error) {
-        console.error("Description Embedding parse hatası:", error);
-      }
-    }
+  const trimLevel = data.trimLevel;
+  const {
+    coverImageIdentifier,
+    plate,
+    chassisNumber,
+    tramerRecord,
+    inspectionDate,
+    ownerCount,
+    tireType,
+    tireCondition,
+    extras,
+    lpgStatus,
+  } = data;
 
-    let sumEmbedding = null;
-    if (data.description_summary_embedding) {
-      try {
-        const parsedArray = JSON.parse(data.description_summary_embedding);
-        if (Array.isArray(parsedArray)) {
-          sumEmbedding = JSON.stringify(parsedArray);
-        }
-      } catch (error) {
-        console.error("Summary Embedding parse hatası:", error);
-      }
-    }
-
+  let imageEmbedding = null;
+  if (data.image_embedding) {
     try {
-      const advertResult = await db.query(
-        `INSERT INTO adverts (
+      const parsedArray = JSON.parse(data.image_embedding);
+      if (Array.isArray(parsedArray)) {
+        imageEmbedding = JSON.stringify(parsedArray);
+      }
+    } catch (err) {}
+  }
+
+  let descEmbedding = null;
+  if (data.description_embedding) {
+    try {
+      const parsedArray = JSON.parse(data.description_embedding);
+      if (Array.isArray(parsedArray)) {
+        descEmbedding = JSON.stringify(parsedArray);
+      }
+    } catch (err) {}
+  }
+
+  let sumEmbedding = null;
+  if (data.description_summary_embedding) {
+    try {
+      const parsedArray = JSON.parse(data.description_summary_embedding);
+      if (Array.isArray(parsedArray)) {
+        sumEmbedding = JSON.stringify(parsedArray);
+      }
+    } catch (err) {}
+  }
+
+  try {
+    const advertResult = await db.query(
+      `INSERT INTO adverts (
           user_id, brand, model, model_year, body_type, 
           engine_capacity, horsepower, transmission, kilometer, 
-          fuel_type, price, title, description, summary, has_scratch, has_dent, trim_level, image_embedding, description_embedding, description_summary_embedding, plate
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) RETURNING id`,
-        [
-          Number(user.id),
-          data.brand,
-          data.model,
-          data.modelYear ? Number(data.modelYear) : null,
-          data.bodyType,
-          data.engineCapacity ? Number(data.engineCapacity) : null,
-          data.horsepower ? Number(data.horsepower) : null,
-          data.transmission,
-          data.kilometer ? Number(data.kilometer) : null,
-          data.fuelType,
-          data.price ? Math.round(Number(data.price)) : null,
-          data.title,
-          data.description,
-          data.summary,
-          isScratched,
-          hasDent,
-          trimLevel,
-          imageEmbedding,
-          descEmbedding,
-          sumEmbedding,
-          plate,
-        ],
-      );
+          fuel_type, price, title, description, summary, has_scratch, has_dent, trim_level, 
+          image_embedding, description_embedding, description_summary_embedding, plate,
+          chassis_number, tramer_record, inspection_date, owner_count, has_pledge, 
+          has_service_maintenance, has_warranty, has_spare_key, tire_type, tire_condition, 
+          extras, lpg_status
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, 
+          $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33
+        ) RETURNING id`,
+      [
+        Number(user.id),
+        data.brand || null,
+        data.model || null,
+        data.modelYear && !isNaN(Number(data.modelYear))
+          ? Number(data.modelYear)
+          : null,
+        data.bodyType || null,
+        data.engineCapacity && !isNaN(Number(data.engineCapacity))
+          ? Number(data.engineCapacity)
+          : null,
+        data.horsepower && !isNaN(Number(data.horsepower))
+          ? Number(data.horsepower)
+          : null,
+        data.transmission || null,
+        data.kilometer && !isNaN(Number(data.kilometer))
+          ? Number(data.kilometer)
+          : null,
+        data.fuelType || null,
+        data.price && !isNaN(Number(data.price))
+          ? Math.round(Number(data.price))
+          : null,
+        data.title || null,
+        data.description || null,
+        data.summary || null,
+        isScratched,
+        hasDent,
+        trimLevel || null,
+        imageEmbedding,
+        descEmbedding,
+        sumEmbedding,
+        plate || null,
+        chassisNumber || null,
+        tramerRecord !== undefined &&
+        tramerRecord !== "" &&
+        !isNaN(Number(tramerRecord))
+          ? Number(tramerRecord)
+          : null,
+        inspectionDate || null,
+        ownerCount && !isNaN(Number(ownerCount)) ? Number(ownerCount) : null,
+        hasPledge,
+        hasServiceMaintence,
+        hasWarrenty,
+        hasSpareKey,
+        tireType || null,
+        tireCondition || null,
+        extras || null,
+        lpgStatus || null,
+      ],
+    );
 
-      const newAdvertId = advertResult.rows[0].id;
+    const newAdvertId = advertResult.rows[0].id;
 
-      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-        const valuesQueryParts = [];
-        const queryArgs = [newAdvertId];
-        req.files.forEach((file, index) => {
-          const imgParamIndex = index * 2 + 2;
-          const mainParamIndex = index * 2 + 3;
-          valuesQueryParts.push(`($1, $${imgParamIndex}, $${mainParamIndex})`);
-          const base64Str = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+      const valuesQueryParts = [];
+      const queryArgs = [newAdvertId];
+      let paramOffset = 2;
+      let isMainAssigned = false;
 
-          let isMain = false;
+      req.files.forEach((file) => {
+        const base64Str = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+        let isMain = false;
+        let isExpertise = false;
+        let isPermit = false;
+
+        if (file.fieldname && file.fieldname.startsWith("expertise")) {
+          isExpertise = true;
+        } else if (file.fieldname && file.fieldname.startsWith("permit")) {
+          isPermit = true;
+        } else {
           if (
             coverImageIdentifier &&
             file.originalname === coverImageIdentifier
           ) {
             isMain = true;
-          } else if (!coverImageIdentifier && index === 0) {
+            isMainAssigned = true;
+          } else if (!coverImageIdentifier && !isMainAssigned) {
             isMain = true;
+            isMainAssigned = true;
           }
+        }
 
-          queryArgs.push(base64Str);
-          queryArgs.push(isMain);
-        });
-        const imagesInsertQuery = `
-          INSERT INTO advert_images (advert_id, image_url, is_main) 
+        valuesQueryParts.push(
+          `($1, $${paramOffset}, $${paramOffset + 1}, $${paramOffset + 2}, $${paramOffset + 3})`,
+        );
+        queryArgs.push(base64Str, isMain, isExpertise, isPermit);
+        paramOffset += 4;
+      });
+
+      const imagesInsertQuery = `
+          INSERT INTO advert_images (advert_id, image_url, is_main, is_expertise, is_permit) 
           VALUES ${valuesQueryParts.join(", ")}
         `;
-        await db.query(imagesInsertQuery, queryArgs);
-      }
-      res.status(200).json({
-        message: "İlan ve fotoğraflar başarıyla yayınlandı.",
-        advertId: newAdvertId,
-      });
-    } catch (err) {
-      console.error("İlan Paylaşım Hatası:", err);
-      res.status(500).json({ message: "Sunucu hatası." });
-    }
-  },
-);
-
-router.put(
-  "/edit",
-  verifyToken,
-  upload.array("images", 10),
-  async (req, res) => {
-    const {
-      id,
-      title,
-      description,
-      summary,
-      existingImages,
-      image_embedding,
-      description_embedding,
-      description_summary_embedding,
-      coverImageIdentifier,
-      coverImageType,
-    } = req.body;
-    const user = req.user;
-    const newFiles = req.files;
-
-    let imageEmbeddingObj = null;
-    if (image_embedding) {
-      try {
-        const parsedArray = JSON.parse(image_embedding);
-        if (Array.isArray(parsedArray)) {
-          imageEmbeddingObj = JSON.stringify(parsedArray);
-        }
-      } catch (e) {
-        console.error("Embedding parse hatası:", e);
-      }
+      await db.query(imagesInsertQuery, queryArgs);
     }
 
-    let descEmbedding = null;
-    if (description_embedding) {
-      try {
-        const parsedArray = JSON.parse(description_embedding);
-        if (Array.isArray(parsedArray)) {
-          descEmbedding = JSON.stringify(parsedArray);
-        }
-      } catch (error) {
-        console.error("Description Embedding parse hatası:", error);
-      }
-    }
+    res.status(200).json({
+      message: "İlan ve fotoğraflar başarıyla yayınlandı.",
+      advertId: newAdvertId,
+    });
+  } catch (err) {
+    console.error("Post endpoint hatası:", err);
+    res.status(500).json({ message: "Sunucu hatası oluştu" });
+  }
+});
 
-    let sumEmbedding = null;
-    if (description_summary_embedding) {
-      try {
-        const parsedArray = JSON.parse(description_summary_embedding);
-        if (Array.isArray(parsedArray)) {
-          sumEmbedding = JSON.stringify(parsedArray);
-        }
-      } catch (error) {
-        console.error("Summary Embedding parse hatası:", error);
-      }
-    }
+router.put("/edit", verifyToken, upload.any(), async (req, res) => {
+  const {
+    id,
+    title,
+    description,
+    summary,
+    brand,
+    model,
+    modelYear,
+    bodyType,
+    engineCapacity,
+    horsepower,
+    transmission,
+    kilometer,
+    fuelType,
+    price,
+    trimLevel,
+    hasScratch,
+    hasDent,
+    existingImages,
+    image_embedding,
+    description_embedding,
+    description_summary_embedding,
+    coverImageIdentifier,
+    coverImageType,
+    plate,
+    chassisNumber,
+    tramerRecord,
+    inspectionDate,
+    ownerCount,
+    hasPledge,
+    hasServiceMaintence,
+    hasWarrenty,
+    hasSpareKey,
+    tireType,
+    tireCondition,
+    extras,
+    lpgStatus,
+  } = req.body;
 
+  const user = req.user;
+  const newFiles = req.files;
+
+  const isScratched = hasScratch === "true" || hasScratch === true;
+  const isDent = hasDent === "true" || hasDent === true;
+  const isPledge = hasPledge === "true" || hasPledge === true;
+  const isService =
+    hasServiceMaintence === "yes"
+      ? "yes"
+      : hasServiceMaintence === "no"
+        ? "no"
+        : null;
+  const isWarranty = hasWarrenty === "true" || hasWarrenty === true;
+  const isSpareKey = hasSpareKey === "true" || hasSpareKey === true;
+
+  const parsedModelYear =
+    modelYear && !isNaN(Number(modelYear)) ? Number(modelYear) : null;
+  const parsedEngineCapacity =
+    engineCapacity && !isNaN(Number(engineCapacity))
+      ? Number(engineCapacity)
+      : null;
+  const parsedHorsepower =
+    horsepower && !isNaN(Number(horsepower)) ? Number(horsepower) : null;
+  const parsedKilometer =
+    kilometer && !isNaN(Number(kilometer)) ? Number(kilometer) : null;
+  const parsedPrice =
+    price && !isNaN(Number(price)) ? Math.round(Number(price)) : null;
+  const parsedTramer =
+    tramerRecord !== undefined &&
+    tramerRecord !== "" &&
+    !isNaN(Number(tramerRecord))
+      ? Number(tramerRecord)
+      : null;
+  const parsedOwnerCount =
+    ownerCount && !isNaN(Number(ownerCount)) ? Number(ownerCount) : null;
+
+  let imageEmbeddingObj = null;
+  if (image_embedding) {
     try {
-      if (imageEmbeddingObj) {
-        await db.query(
-          "UPDATE adverts SET title = $1, description = $2, summary = $3, image_embedding = $4, description_embedding = $5, description_summary_embedding = $6 WHERE user_id = $7 AND id = $8",
-          [
-            title,
-            description,
-            summary,
-            imageEmbeddingObj,
-            descEmbedding,
-            sumEmbedding,
-            Number(user.id),
-            id,
-          ],
-        );
-      } else {
-        await db.query(
-          "UPDATE adverts SET title = $1, description = $2, summary = $3, description_embedding = $4, description_summary_embedding = $5 WHERE user_id = $6 AND id = $7",
-          [
-            title,
-            description,
-            summary,
-            descEmbedding,
-            sumEmbedding,
-            Number(user.id),
-            id,
-          ],
-        );
+      const parsedArray = JSON.parse(image_embedding);
+      if (Array.isArray(parsedArray)) {
+        imageEmbeddingObj = JSON.stringify(parsedArray);
       }
+    } catch (e) {}
+  }
 
-      await db.query("DELETE FROM advert_images WHERE advert_id = $1", [id]);
+  let descEmbedding = null;
+  if (description_embedding) {
+    try {
+      const parsedArray = JSON.parse(description_embedding);
+      if (Array.isArray(parsedArray)) {
+        descEmbedding = JSON.stringify(parsedArray);
+      }
+    } catch (error) {}
+  }
 
-      let isMainAssigned = false;
+  let sumEmbedding = null;
+  if (description_summary_embedding) {
+    try {
+      const parsedArray = JSON.parse(description_summary_embedding);
+      if (Array.isArray(parsedArray)) {
+        sumEmbedding = JSON.stringify(parsedArray);
+      }
+    } catch (error) {}
+  }
 
-      if (existingImages) {
-        try {
-          const imagesToKeep = JSON.parse(existingImages);
-          if (Array.isArray(imagesToKeep)) {
-            for (const url of imagesToKeep) {
-              if (url && url !== "null" && url !== "") {
-                let isMain = false;
+  try {
+    if (imageEmbeddingObj) {
+      await db.query(
+        `UPDATE adverts SET 
+            title = $1, description = $2, summary = $3, brand = $4, model = $5, 
+            model_year = $6, body_type = $7, engine_capacity = $8, horsepower = $9, 
+            transmission = $10, kilometer = $11, fuel_type = $12, price = $13, 
+            trim_level = $14, has_scratch = $15, has_dent = $16, image_embedding = $17, 
+            description_embedding = $18, description_summary_embedding = $19,
+            plate = $20, chassis_number = $21, tramer_record = $22, inspection_date = $23,
+            owner_count = $24, has_pledge = $25, has_service_maintenance = $26,
+            has_warranty = $27, has_spare_key = $28, tire_type = $29, tire_condition = $30,
+            extras = $31, lpg_status = $32
+           WHERE user_id = $33 AND id = $34`,
+        [
+          title || null,
+          description || null,
+          summary || null,
+          brand || null,
+          model || null,
+          parsedModelYear,
+          bodyType || null,
+          parsedEngineCapacity,
+          parsedHorsepower,
+          transmission || null,
+          parsedKilometer,
+          fuelType || null,
+          parsedPrice,
+          trimLevel || null,
+          isScratched,
+          isDent,
+          imageEmbeddingObj,
+          descEmbedding,
+          sumEmbedding,
+          plate || null,
+          chassisNumber || null,
+          parsedTramer,
+          inspectionDate || null,
+          parsedOwnerCount,
+          isPledge,
+          isService,
+          isWarranty,
+          isSpareKey,
+          tireType || null,
+          tireCondition || null,
+          extras || null,
+          lpgStatus || null,
+          Number(user.id),
+          id,
+        ],
+      );
+    } else {
+      await db.query(
+        `UPDATE adverts SET 
+            title = $1, description = $2, summary = $3, brand = $4, model = $5, 
+            model_year = $6, body_type = $7, engine_capacity = $8, horsepower = $9, 
+            transmission = $10, kilometer = $11, fuel_type = $12, price = $13, 
+            trim_level = $14, has_scratch = $15, has_dent = $16, 
+            description_embedding = $17, description_summary_embedding = $18,
+            plate = $19, chassis_number = $20, tramer_record = $21, inspection_date = $22,
+            owner_count = $23, has_pledge = $24, has_service_maintenance = $25,
+            has_warranty = $26, has_spare_key = $27, tire_type = $28, tire_condition = $29,
+            extras = $30, lpg_status = $31
+           WHERE user_id = $32 AND id = $33`,
+        [
+          title || null,
+          description || null,
+          summary || null,
+          brand || null,
+          model || null,
+          parsedModelYear,
+          bodyType || null,
+          parsedEngineCapacity,
+          parsedHorsepower,
+          transmission || null,
+          parsedKilometer,
+          fuelType || null,
+          parsedPrice,
+          trimLevel || null,
+          isScratched,
+          isDent,
+          descEmbedding,
+          sumEmbedding,
+          plate || null,
+          chassisNumber || null,
+          parsedTramer,
+          inspectionDate || null,
+          parsedOwnerCount,
+          isPledge,
+          isService,
+          isWarranty,
+          isSpareKey,
+          tireType || null,
+          tireCondition || null,
+          extras || null,
+          lpgStatus || null,
+          Number(user.id),
+          id,
+        ],
+      );
+    }
 
-                if (
-                  coverImageType === "existing_url" &&
-                  url === coverImageIdentifier
-                ) {
-                  isMain = true;
-                  isMainAssigned = true;
-                }
+    await db.query("DELETE FROM advert_images WHERE advert_id = $1", [id]);
 
-                await db.query(
-                  "INSERT INTO advert_images (advert_id, image_url, is_main) VALUES ($1, $2, $3)",
-                  [id, url, isMain],
-                );
+    let isMainAssigned = false;
+
+    if (existingImages) {
+      try {
+        const imagesToKeep = JSON.parse(existingImages);
+        if (Array.isArray(imagesToKeep)) {
+          for (const url of imagesToKeep) {
+            if (url && url !== "null" && url !== "") {
+              let isMain = false;
+
+              if (
+                coverImageType === "existing_url" &&
+                url === coverImageIdentifier
+              ) {
+                isMain = true;
+                isMainAssigned = true;
               }
+
+              await db.query(
+                "INSERT INTO advert_images (advert_id, image_url, is_main, is_expertise, is_permit) VALUES ($1, $2, $3, $4, $5)",
+                [id, url, isMain, false, false],
+              );
             }
           }
-        } catch (parseErr) {
-          console.error("JSON Parse Hatası:", parseErr);
         }
-      }
+      } catch (parseErr) {}
+    }
 
-      if (newFiles && newFiles.length > 0) {
-        for (const file of newFiles) {
-          const base64Str = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+    if (newFiles && newFiles.length > 0) {
+      for (const file of newFiles) {
+        const base64Str = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 
-          let isMain = false;
+        let isMain = false;
+        let isExpertise = false;
+        let isPermit = false;
+
+        if (file.fieldname && file.fieldname.startsWith("expertise")) {
+          isExpertise = true;
+        } else if (file.fieldname && file.fieldname.startsWith("permit")) {
+          isPermit = true;
+        } else {
           if (
             coverImageType === "new_file" &&
             file.originalname === coverImageIdentifier
@@ -429,32 +616,32 @@ router.put(
             isMain = true;
             isMainAssigned = true;
           }
-
-          await db.query(
-            "INSERT INTO advert_images (advert_id, image_url, is_main) VALUES ($1, $2, $3)",
-            [id, base64Str, isMain],
-          );
         }
-      }
 
-      if (!isMainAssigned) {
         await db.query(
-          `UPDATE advert_images 
-           SET is_main = true 
-           WHERE id = (
-             SELECT id FROM advert_images WHERE advert_id = $1 ORDER BY id ASC LIMIT 1
-           )`,
-          [id],
+          "INSERT INTO advert_images (advert_id, image_url, is_main, is_expertise, is_permit) VALUES ($1, $2, $3, $4, $5)",
+          [id, base64Str, isMain, isExpertise, isPermit],
         );
       }
-
-      res.status(200).json({ message: "İlan başarıyla güncellendi." });
-    } catch (err) {
-      console.error("Güncelleme Hatası:", err);
-      res.status(500).json({ message: "Sunucu hatası oluştu." });
     }
-  },
-);
+
+    if (!isMainAssigned) {
+      await db.query(
+        `UPDATE advert_images 
+           SET is_main = true 
+           WHERE id = (
+             SELECT id FROM advert_images WHERE advert_id = $1 AND is_expertise = false AND is_permit = false ORDER BY id ASC LIMIT 1
+           )`,
+        [id],
+      );
+    }
+
+    res.status(200).json({ message: "İlan başarıyla güncellendi." });
+  } catch (err) {
+    console.error("Edit endpoint hatası:", err);
+    res.status(500).json({ message: "Sunucu hatası oluştu." });
+  }
+});
 
 router.patch("/soldAdvert", verifyToken, async (req, res) => {
   const { advertId, slot_date, slot_time } = req.body;

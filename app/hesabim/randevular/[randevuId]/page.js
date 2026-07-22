@@ -107,7 +107,7 @@ export default function RandevuDetaylar() {
 
   const formatPrice = (price) => {
     if (!price) return "";
-    return Number(price).toLocaleString("tr-TR") + " TL";
+    return Number(price).toLocaleString("tr-TR") + " ₺";
   };
 
   const formatBrand = (brand) => {

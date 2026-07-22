@@ -181,9 +181,8 @@
 .fieldErrorText {
   color: #ff4d4d;
   font-size: 0.85rem;
-  margin-top: 0.4rem;
+  margin-top: 0.4rem 0 0 0;
   font-weight: 500;
-  margin-bottom: 0;
   white-space: pre-line;
 }
 

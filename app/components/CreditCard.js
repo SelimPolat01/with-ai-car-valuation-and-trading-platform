@@ -263,7 +263,7 @@ const CreditCard = forwardRef((props, ref) => {
             src={cardTypeLogoSrc}
             alt={cardTypeLogoAlt}
             width={75}
-            height={75}
+            height={58}
             priority
           />
         </div>

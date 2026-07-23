@@ -747,6 +747,10 @@ button:disabled {
 }
 
 @media (max-width: 480px) {
+  .container {
+    gap: 1rem;
+  }
+
   .tabs {
     flex-direction: row;
   }

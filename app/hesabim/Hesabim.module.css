@@ -105,7 +105,7 @@
 
 .mainContent {
   flex: 1;
-  padding: 0 2rem 2rem 2rem;
+  padding: 0.5rem 2rem 2rem 2rem;
   color: #f8f8f8;
 }
 
@@ -175,6 +175,6 @@
   }
 
   .mainContent {
-    padding: 1rem 1rem 2rem 1rem;
+    padding: 1rem;
   }
 }

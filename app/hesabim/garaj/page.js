@@ -11,7 +11,7 @@ import {
   TurkishLira,
 } from "lucide-react";
 import Frame from "../../components/Frame";
-import classes from "./Garajim.module.css";
+import classes from "./Garaj.module.css";
 import { useEffect, useState } from "react";
 import ChartBar from "../../components/ChartBar";
 import HalfCircleProgress from "../../components/HalfCircleProgress";

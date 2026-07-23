@@ -194,9 +194,9 @@ export default function AlisSatisİslemleri() {
               <div className={classes.detailsBox}>
                 <span className={classes.detailsLabel}>Tramer Kaydı</span>
                 <span className={classes.detailsValue}>
-                  {activeTransaction.tramer_record
-                    ? formatPrice(activeTransaction.tramer_record)
-                    : "Hasar Kaydı Yok"}
+                  {activeTransaction.tramer_record === 0
+                    ? "Hasar Kaydı Yok"
+                    : `${formatPrice(activeTransaction.tramer_record)} ₺`}
                 </span>
               </div>
 

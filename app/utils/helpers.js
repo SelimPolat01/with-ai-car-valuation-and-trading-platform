@@ -232,7 +232,7 @@ export const getStepFromStatus = (status) => {
   if (s === "3" || s === "expertise" || s === "control") return 3;
   if (s === "4" || s === "escrow" || s === "payment") return 4;
   if (s === "5" || s === "notary") return 5;
-  if (s === "success" || s === "completed") return 6;
+  if (s === "completed" || s === "success") return 6;
 
   return 1;
 };

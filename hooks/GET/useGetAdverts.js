@@ -10,6 +10,7 @@ export async function getAdverts(token) {
 
 export function useGetAdverts(token) {
   const isValidToken = !!token && token !== "null" && token !== "undefined";
+
   return useQuery({
     queryKey: ["adverts", token],
     queryFn: () => getAdverts(token),

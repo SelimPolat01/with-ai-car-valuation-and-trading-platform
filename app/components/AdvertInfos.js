@@ -24,6 +24,7 @@ import {
   capitalizeWords,
   carTypeMap,
 } from "@/app/utils/helpers";
+import Loading from "./Loading";
 
 export default function AdvertInfos() {
   const params = useParams();
@@ -237,11 +238,7 @@ export default function AdvertInfos() {
   };
 
   if (!token || getAdvertIsLoading) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getAdvertIsError) {

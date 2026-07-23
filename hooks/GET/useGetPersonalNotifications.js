@@ -15,10 +15,12 @@ export async function getPersonalNotifications(token) {
 }
 
 export function useGetPersonalNotifications(token) {
+  const isValidToken = !!token && token !== "null" && token !== "undefined";
+
   return useQuery({
     queryKey: ["personalNotifications", token],
     queryFn: () => getPersonalNotifications(token),
-    enabled: !!token,
+    enabled: isValidToken,
     retry: false,
   });
 }

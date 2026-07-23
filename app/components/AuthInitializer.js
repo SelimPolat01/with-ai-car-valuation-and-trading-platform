@@ -4,7 +4,7 @@ import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import { initAuth } from "@/store/authSlice";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "./Loading";
 
 export default function AuthInitializer({ children }) {
   const dispatch = useDispatch();

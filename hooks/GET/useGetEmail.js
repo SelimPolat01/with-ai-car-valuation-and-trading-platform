@@ -9,10 +9,12 @@ export async function getEmail(token) {
 }
 
 export function useGetEmail(token) {
+  const isValidToken = !!token && token !== "null" && token !== "undefined";
+
   return useQuery({
     queryKey: ["email", token],
     queryFn: () => getEmail(token),
-    enabled: !!token,
+    enabled: !!isValidToken,
     retry: false,
   });
 }

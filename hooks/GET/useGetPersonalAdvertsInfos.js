@@ -9,10 +9,12 @@ export async function getPersonalAdvertsInfos(token) {
 }
 
 export function useGetPersonalAdvertsInfos(token) {
+  const isValidToken = !!token && token !== "null" && token !== "undefined";
+
   return useQuery({
     queryKey: ["personalAdvertsInfos", token],
     queryFn: () => getPersonalAdvertsInfos(token),
-    enabled: !!token,
+    enabled: isValidToken,
     retry: false,
   });
 }

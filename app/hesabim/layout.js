@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import classes from "./Hesabim.module.css";
-import { useEffect, useState } from "react";
 import {
   User,
   Settings,
@@ -13,24 +12,12 @@ import {
   Handshake,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import Header from "../components/Header";
 import { logout } from "@/store/authSlice";
 import { useDispatch } from "react-redux";
 
 export default function SettingsLayout({ children }) {
   const pathName = usePathname();
   const dispatch = useDispatch();
-  const [token, setToken] = useState(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const currentToken = localStorage.getItem("token");
-    if (currentToken) {
-      setToken(currentToken);
-    }
-  }, []);
-
   const icons = [Handshake, CalendarClock, BellDot, CarFront, User, Settings];
   const links = [
     { href: "/hesabim/alis-satis-islemleri", text: "Alış-Satış İşlemleri" },
@@ -47,11 +34,8 @@ export default function SettingsLayout({ children }) {
     localStorage.removeItem("refreshToken");
   }
 
-  if (!mounted) return null;
-
   return (
     <main className={classes.main}>
-      <Header className={classes.header} />
       <div className={classes.wrapper}>
         <div className={classes.linkDiv}>
           <div className={classes.linkContainer}>
@@ -74,7 +58,7 @@ export default function SettingsLayout({ children }) {
                 <Link
                   href="/login"
                   onClick={logoutHandler}
-                  className={classes.logoutLink}
+                  className={`${classes.logoutLink} ${classes.link}`}
                 >
                   <LogOut />
                   Çıkış Yap

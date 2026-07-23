@@ -14,7 +14,12 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { formatBrandModel, formatDate } from "@/app/utils/helpers";
+import {
+  formatBrandModel,
+  formatDate,
+  getAppointmentStatusData,
+} from "@/app/utils/helpers";
+import Loading from "@/app/loading";
 
 export default function RandevularPage() {
   const router = useRouter();
@@ -40,11 +45,7 @@ export default function RandevularPage() {
   } = useGetPersonalAppointments(token);
 
   if (!token || getPersonalAppointmentsIsLoading) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getPersonalAppointmentsIsError) {
@@ -84,7 +85,7 @@ export default function RandevularPage() {
     <div className={classes.container}>
       <h1 className={classes.pageTitle}>Randevular</h1>
 
-      <div className={classes.tabs} style={{ marginBottom: "1rem" }}>
+      <div className={classes.tabs}>
         <button
           className={`${classes.tabButton} ${roleTab === "buyer" ? classes.activeTab : ""}`}
           onClick={() => setRoleTab("buyer")}
@@ -139,27 +140,17 @@ export default function RandevularPage() {
                 <div
                   className={`
                   ${classes.badge} 
-                  ${appointment.appointment_status === "completed" ? classes.badgeSuccess : ""}
-                  ${appointment.appointment_status === "pending" ? classes.badgeWarning : ""}
-                  ${appointment.appointment_status === "canceled" ? classes.badgeDanger : ""}
+                  ${getAppointmentStatusData(appointment.appointment_status).className}
                   `}
                 >
-                  {appointment.appointment_status === "pending" && (
-                    <CheckCircle2 size={14} />
-                  )}
-                  {appointment.appointment_status === "canceled" && (
-                    <XCircle size={14} />
-                  )}
-                  {appointment.appointment_status === "completed" && (
-                    <CheckCircle2 size={14} />
-                  )}
-                  {appointment.appointment_status === "pending"
-                    ? "Bekliyor"
-                    : appointment.appointment_status === "completed"
-                      ? "Tamamlandı"
-                      : appointment.appointment_status === "canceled"
-                        ? "İptal Edildi"
-                        : appointment.appointment_status}
+                  {
+                    getAppointmentStatusData(appointment.appointment_status)
+                      .icon
+                  }
+                  {
+                    getAppointmentStatusData(appointment.appointment_status)
+                      .text
+                  }
                 </div>
               </div>
 

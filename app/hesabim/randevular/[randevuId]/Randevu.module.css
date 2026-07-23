@@ -1,12 +1,8 @@
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 0.5rem 1.5rem 2rem 1.5rem;
   color: #ffffff;
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
   box-sizing: border-box;
 }
 
@@ -55,29 +51,14 @@
 }
 
 .badge {
-  padding: 0.4rem 1rem;
-  border-radius: 99px;
-  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 600;
-  white-space: nowrap;
-}
-
-.badgePending {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.badgeCompleted {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.badgeCanceled {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  letter-spacing: 0.5px;
 }
 
 .contentWrapper {
@@ -90,7 +71,7 @@
 .leftColumn {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
   height: 100%;
   min-height: 0;
 }
@@ -100,14 +81,7 @@
   flex-direction: column;
   height: 100%;
   min-height: 0;
-}
-
-.stickySidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  height: 100%;
-  min-height: 0;
+  gap: 2rem;
 }
 
 .flexGrow1 {
@@ -143,10 +117,6 @@
   overflow: hidden;
   background-color: #0b0517;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.realCarImage {
-  object-fit: cover;
 }
 
 .carImagePlaceholder {
@@ -475,33 +445,16 @@
   color: #a1a1aa;
 }
 
-.backButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: transparent;
-  border: none;
-  color: #ffffffb3;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  padding: 0;
-  width: fit-content;
-}
-
-.backButton:hover {
-  color: #ffffff;
-}
-
 @media (max-width: 1024px) {
   .contentWrapper {
     grid-template-columns: 1fr;
   }
-  .stickySidebar {
-    position: relative;
-    top: 0;
+
+  .rightColumn,
+  .leftColumn {
+    gap: 1.5rem;
   }
+
   .alertsGrid {
     grid-template-columns: 1fr;
   }
@@ -511,29 +464,42 @@
   .container {
     padding: 1.5rem 1rem;
   }
+
+  .rightColumn,
+  .leftColumn {
+    gap: 1.25rem;
+  }
+
   .title {
     font-size: 1.5rem;
   }
+
   .hashId {
     font-size: 1.25rem;
   }
+
   .carName {
     font-size: 1.5rem;
   }
+
   .carPrice {
     font-size: 1.25rem;
   }
+
   .techGrid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .qrWrapper {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
+
   .statusItemText span {
     font-size: 0.75rem;
   }
+
   .statusItemText strong {
     font-size: 0.9rem;
   }
@@ -543,24 +509,35 @@
   .container {
     padding: 1rem 0.5rem;
   }
+
+  .rightColumn,
+  .leftColumn {
+    gap: 1rem;
+  }
+
   .card {
     padding: 1.25rem;
   }
+
   .titleContainer {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
   }
+
   .techGrid {
     grid-template-columns: 1fr;
   }
+
   .carImageContainer {
     aspect-ratio: 4 / 3;
   }
+
   .dateTimeBox {
     flex-direction: column;
     gap: 0.25rem;
   }
+
   .mapIframe {
     min-height: 200px;
   }

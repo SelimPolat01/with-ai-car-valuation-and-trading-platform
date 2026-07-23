@@ -9,10 +9,12 @@ export async function getTokenDuration(token) {
 }
 
 export function useGetTokenDuration(token) {
+  const isValidToken = !!token && token !== "null" && token !== "undefined";
+
   return useQuery({
     queryKey: ["tokenDuration", token],
     queryFn: () => getTokenDuration(token),
-    enabled: !!token,
+    enabled: isValidToken,
     retry: false,
   });
 }

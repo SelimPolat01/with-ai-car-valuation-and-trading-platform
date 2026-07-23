@@ -20,6 +20,7 @@ import { motion } from "framer-motion";
 import { useGetPersonalAdvertsInfos } from "@/hooks/GET/useGetPersonalAdvertsInfos";
 import { useGetPersonalSoldAdverts } from "@/hooks/GET/usePersonalSoldAdverts";
 import { formatMaliDeger, getAylikIlanVerileri } from "@/app/utils/helpers";
+import Loading from "@/app/loading";
 
 export default function Garajim() {
   const router = useRouter();
@@ -85,11 +86,7 @@ export default function Garajim() {
   const aylikIlanVerileri = getAylikIlanVerileri(kisiselİlanlar);
 
   if (!token || personalSoldAdvertsIsLoading) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getPersonalAdvertsIsError) {

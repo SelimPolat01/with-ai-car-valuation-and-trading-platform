@@ -128,7 +128,7 @@ a {
   gap: 0.5rem;
   background: transparent;
   border: none;
-  color: black;
+  color: #ffffffb3;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -387,25 +387,64 @@ a {
   z-index: 9999;
 }
 
-.loadingContainer,
+.badgeCompleted {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badgeCanceled {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badgeNotary {
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.badgeEscrow {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badgeExpertise {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badgeAppointment {
+  background: rgba(20, 184, 166, 0.15);
+  color: #2dd4bf;
+  border: 1px solid rgba(20, 184, 166, 0.3);
+}
+
+.badgePending {
+  background: rgba(209, 213, 219, 0.15);
+  color: #d1d5db;
+  border: 1px solid rgba(209, 213, 219, 0.3);
+}
+
+.badgeWaiting {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
 .errorContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 78vh;
+  max-height: 100vh;
   gap: 1rem;
   color: #ffffff;
   text-align: center;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 6px solid rgba(90, 50, 50, 0.1);
-  border-top: 6px solid #00f4ff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
 }
 
 .hr {

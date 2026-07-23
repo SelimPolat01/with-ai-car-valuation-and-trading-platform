@@ -1,8 +1,6 @@
-import Header from "@/app/components/Header";
-
 export const metadata = {
-  title: "Giriş yap",
-  description: "Giriş sayfası.",
+  title: "Giriş Yap",
+  description: "Giriş yapma ekranı.",
 };
 
 export default function LoginLayout({ children }) {
@@ -16,7 +14,6 @@ export default function LoginLayout({ children }) {
       }}
     >
       <div className="bgLogin">
-        <Header />
         <div className="pageHeading">
           <h1>Giriş Yap</h1>
           <span className="subHeading">Tekrar Hoşgeldiniz!</span>

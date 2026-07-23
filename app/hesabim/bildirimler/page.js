@@ -14,6 +14,7 @@ import {
   AlertCircle,
   ArrowLeft,
 } from "lucide-react";
+import Loading from "@/app/loading";
 
 export default function Bildirimler() {
   const router = useRouter();
@@ -90,11 +91,7 @@ export default function Bildirimler() {
   }
 
   if (!token || getPersonalNotificationsIsLoading) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getPersonalNotificationsIsError) {

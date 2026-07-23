@@ -30,8 +30,9 @@ import {
   formatBrandModel,
   formatDate,
   formatPrice,
-  getStatusData,
+  getAppointmentStatusData,
 } from "@/app/utils/helpers";
+import Loading from "@/app/loading";
 
 export default function RandevuDetaylar() {
   const router = useRouter();
@@ -60,11 +61,7 @@ export default function RandevuDetaylar() {
   } = usePatchPersonalAppointmentCancel();
 
   if (!token || getPersonalAppointmentsIsLoading) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getPersonalAppointmentsIsError) {
@@ -94,7 +91,7 @@ export default function RandevuDetaylar() {
         <Ban size={48} className={classes.iconSecondary} />
         <h2>Randevu Bulunamadı</h2>
         <p>Randevu bulunamadı veya bu randevuyu görüntüleme yetkiniz yok.</p>
-        <button onClick={() => router.back()} className={classes.backButton}>
+        <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
       </div>
@@ -106,7 +103,7 @@ export default function RandevuDetaylar() {
   };
 
   const carTypeMaps = carTypeMap;
-  const statusData = getStatusData(appointment.appointment_status);
+  const statusData = getAppointmentStatusData(appointment.appointment_status);
   const locationString =
     appointment.appointment_location || "Sultanbeyli, İstanbul";
   const mapQuery = encodeURIComponent(locationString);
@@ -139,7 +136,7 @@ export default function RandevuDetaylar() {
         title="Randevuyu İptal Et"
       />
       <div className={classes.header}>
-        <button onClick={() => router.back()} className={classes.backButton}>
+        <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} />
           Geri Dön
         </button>
@@ -295,126 +292,124 @@ export default function RandevuDetaylar() {
         </div>
 
         <div className={classes.rightColumn}>
-          <div className={classes.stickySidebar}>
-            <div className={classes.card}>
-              <div className={classes.boxHeader}>
-                <Info className={classes.iconPrimary} size={20} />
-                <h3>Sizin Rolünüz</h3>
-              </div>
-              <div className={classes.roleContent}>
-                <CheckCircle2 className={classes.iconSuccess} size={24} />
-                <p className={classes.roleText}>
-                  Bu işlemde{" "}
-                  <strong>
-                    {appointment.role === "buyer" ? "Alıcı" : "Satıcı"}
-                  </strong>{" "}
-                  rolündesiniz.
+          <div className={classes.card}>
+            <div className={classes.boxHeader}>
+              <Info className={classes.iconPrimary} size={20} />
+              <h3>Sizin Rolünüz</h3>
+            </div>
+            <div className={classes.roleContent}>
+              <CheckCircle2 className={classes.iconSuccess} size={24} />
+              <p className={classes.roleText}>
+                Bu işlemde{" "}
+                <strong>
+                  {appointment.role === "buyer" ? "Alıcı" : "Satıcı"}
+                </strong>{" "}
+                rolündesiniz.
+              </p>
+            </div>
+          </div>
+
+          <div className={`${classes.card} ${classes.flexGrow1}`}>
+            <div className={classes.boxHeader}>
+              <CalendarClock className={classes.iconPrimary} size={20} />
+              <h3>Zaman ve Konum</h3>
+            </div>
+            <div className={classes.combinedInfo}>
+              <div className={classes.dateTimeBox}>
+                <p className={classes.dateHighlight}>
+                  {formatDate(appointment.appointment_date)}
+                </p>
+                <p className={classes.timeHighlight}>
+                  {appointment.appointment_time?.slice(0, 5)}
                 </p>
               </div>
-            </div>
 
-            <div className={`${classes.card} ${classes.flexGrow1}`}>
-              <div className={classes.boxHeader}>
-                <CalendarClock className={classes.iconPrimary} size={20} />
-                <h3>Zaman ve Konum</h3>
+              <div className={classes.addressContainer}>
+                <MapPin size={18} className={classes.iconSubtle} />
+                <p className={classes.addressText}>{locationString}</p>
               </div>
-              <div className={classes.combinedInfo}>
-                <div className={classes.dateTimeBox}>
-                  <p className={classes.dateHighlight}>
-                    {formatDate(appointment.appointment_date)}
-                  </p>
-                  <p className={classes.timeHighlight}>
-                    {appointment.appointment_time?.slice(0, 5)}
-                  </p>
-                </div>
 
-                <div className={classes.addressContainer}>
-                  <MapPin size={18} className={classes.iconSubtle} />
-                  <p className={classes.addressText}>{locationString}</p>
-                </div>
+              <iframe
+                src={mapEmbedUrl}
+                className={classes.mapIframe}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
 
-                <iframe
-                  src={mapEmbedUrl}
-                  className={classes.mapIframe}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
+              <a
+                href={mapDirectionUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.directionBtn}
+              >
+                <Navigation size={18} />
+                Yol Tarifi Al
+              </a>
+            </div>
+          </div>
 
-                <a
-                  href={mapDirectionUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={classes.directionBtn}
-                >
-                  <Navigation size={18} />
-                  Yol Tarifi Al
-                </a>
+          <div className={classes.card}>
+            <div className={classes.qrWrapper}>
+              <div className={classes.qrBox}>
+                <QrCode size={48} className={classes.qrIcon} />
+              </div>
+              <div className={classes.qrText}>
+                <h4>Hızlı Giriş (Check-in)</h4>
+                <p>Girişte bu kodu danışmaya okutun.</p>
               </div>
             </div>
 
-            <div className={classes.card}>
-              <div className={classes.qrWrapper}>
-                <div className={classes.qrBox}>
-                  <QrCode size={48} className={classes.qrIcon} />
-                </div>
-                <div className={classes.qrText}>
-                  <h4>Hızlı Giriş (Check-in)</h4>
-                  <p>Girişte bu kodu danışmaya okutun.</p>
+            <hr className={classes.dividerSmall} />
+
+            <div className={classes.statusGrid}>
+              <div className={classes.statusItem}>
+                <Hash size={18} className={classes.iconSubtle} />
+                <div className={classes.statusItemText}>
+                  <span>Referans / PNR No</span>
+                  <strong>RND-2026-X89</strong>
                 </div>
               </div>
-
-              <hr className={classes.dividerSmall} />
-
-              <div className={classes.statusGrid}>
-                <div className={classes.statusItem}>
-                  <Hash size={18} className={classes.iconSubtle} />
-                  <div className={classes.statusItemText}>
-                    <span>Referans / PNR No</span>
-                    <strong>RND-2026-X89</strong>
-                  </div>
-                </div>
-                <div className={classes.statusItem}>
-                  <Clock size={18} className={classes.iconSubtle} />
-                  <div className={classes.statusItemText}>
-                    <span>Hizmet Süresi</span>
-                    <strong>Tahmini 45 Dakika</strong>
-                  </div>
+              <div className={classes.statusItem}>
+                <Clock size={18} className={classes.iconSubtle} />
+                <div className={classes.statusItemText}>
+                  <span>Hizmet Süresi</span>
+                  <strong>Tahmini 45 Dakika</strong>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className={classes.card}>
-              <div className={classes.boxHeader}>
-                <ShieldAlert className={classes.iconSecondary} size={20} />
-                <h3>İşlemler</h3>
-              </div>
-              <p className={classes.policyText}>
-                Randevunuzu, başlama saatine son 24 saat kalana kadar ücretsiz
-                iptal edebilirsiniz.
-              </p>
+          <div className={classes.card}>
+            <div className={classes.boxHeader}>
+              <ShieldAlert className={classes.iconSecondary} size={20} />
+              <h3>İşlemler</h3>
+            </div>
+            <p className={classes.policyText}>
+              Randevunuzu, başlama saatine son 24 saat kalana kadar ücretsiz
+              iptal edebilirsiniz.
+            </p>
 
-              <div className={classes.actionButtonsContainer}>
-                {appointment.appointment_status === "pending" && (
-                  <button
-                    onClick={handleCancelAppointment}
-                    disabled={patchPersonalAppointmentCancelIsPending}
-                    className={classes.cancelButton}
-                  >
-                    <Ban size={18} />
-                    {patchPersonalAppointmentCancelIsPending
-                      ? "İptal Ediliyor..."
-                      : "Randevuyu İptal Et"}
-                  </button>
-                )}
+            <div className={classes.actionButtonsContainer}>
+              {appointment.appointment_status === "pending" && (
                 <button
-                  onClick={() => window.print()}
-                  className={classes.printButton}
+                  onClick={handleCancelAppointment}
+                  disabled={patchPersonalAppointmentCancelIsPending}
+                  className={classes.cancelButton}
                 >
-                  <Printer size={18} />
-                  Yazdır / PDF İndir
+                  <Ban size={18} />
+                  {patchPersonalAppointmentCancelIsPending
+                    ? "İptal Ediliyor..."
+                    : "Randevuyu İptal Et"}
                 </button>
-              </div>
+              )}
+              <button
+                onClick={() => window.print()}
+                className={classes.printButton}
+              >
+                <Printer size={18} />
+                Yazdır / PDF İndir
+              </button>
             </div>
           </div>
         </div>

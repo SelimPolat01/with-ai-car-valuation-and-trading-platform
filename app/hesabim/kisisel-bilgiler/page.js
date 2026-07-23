@@ -9,6 +9,7 @@ import SecondaryButton from "@/app/components/SecondaryButton";
 import { useGetPersonalInfos } from "@/hooks/GET/useGetPersonalInfos";
 import { usePatchPersonalInfos } from "@/hooks/PATCH/usePatchPersonalInfos";
 import SuccessMessage from "@/app/components/SuccessMessage";
+import Loading from "@/app/loading";
 
 export default function Hesabim() {
   const router = useRouter();
@@ -149,11 +150,7 @@ export default function Hesabim() {
   }
 
   if (!token || getPersonalInfosIsLoading) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getPersonalInfosIsError) {

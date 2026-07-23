@@ -13,6 +13,7 @@ import FilterBrand from "../components/FilterBrand.js";
 import { useGetAdverts } from "@/hooks/GET/useGetAdverts";
 import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
 import { AlertCircle, ArrowLeft } from "lucide-react";
+import Loading from "../loading.js";
 
 export default function AllAdverts() {
   const dispatch = useDispatch();
@@ -91,11 +92,7 @@ export default function AllAdverts() {
   }
 
   if (!token || getAdvertsIsLoading || deleteAdvertIsPending) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getAdvertsDataIsError || deleteAdvertIsError) {

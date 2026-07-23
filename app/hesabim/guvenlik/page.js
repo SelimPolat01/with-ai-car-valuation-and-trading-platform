@@ -22,6 +22,7 @@ import { usePatchPassword } from "@/hooks/PATCH/usePatchPassword";
 import { usePatchTokenDuration } from "@/hooks/PATCH/usePatchTokenDuration";
 import { useGetTokenDuration } from "@/hooks/GET/useGetTokenDuration";
 import { useDeleteAccount } from "@/hooks/DELETE/useDeleteAccount";
+import Loading from "@/app/loading";
 
 export default function Guvenlik() {
   const router = useRouter();
@@ -272,11 +273,7 @@ export default function Guvenlik() {
   }
 
   if (!token || getEmailInfoIsLoading || getTokenDurationIsLoading) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getEmailInfoIsError || getTokenDurationIsError) {

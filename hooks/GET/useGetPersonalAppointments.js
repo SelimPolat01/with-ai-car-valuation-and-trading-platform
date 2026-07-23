@@ -15,10 +15,12 @@ export async function getPersonalAppointments(token) {
 }
 
 export function useGetPersonalAppointments(token) {
+  const isValidToken = !!token && token !== "null" && token !== "undefined";
+
   return useQuery({
     queryKey: ["personalAppointments", token],
     queryFn: () => getPersonalAppointments(token),
-    enabled: !!token,
+    enabled: isValidToken,
     retry: false,
   });
 }

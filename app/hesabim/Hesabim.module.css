@@ -1,6 +1,6 @@
 .main {
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
-  min-height: 100vh;
+  min-height: calc(100vh - 237px);
   display: flex;
   flex-direction: column;
 }
@@ -90,7 +90,7 @@
   box-shadow: 0 4px 12px rgba(152, 103, 255, 0.3);
 }
 
-.linkMenu a {
+.link {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -153,6 +153,11 @@
   .linkMenu li:last-child {
     margin-top: 0;
     margin-bottom: 0;
+    flex: 0 0 100%;
+  }
+
+  .linkMenu li:last-child .link {
+    justify-content: center;
   }
 
   .linkMenu li:last-child::before {
@@ -165,9 +170,8 @@
     min-width: 140px;
   }
 
-  .linkMenu a {
+  .link {
     padding: 8px 12px;
-    justify-content: center;
   }
 
   .list:hover:not(.active) {

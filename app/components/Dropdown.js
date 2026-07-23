@@ -186,7 +186,7 @@ export default function Dropdown() {
         )}
         <input type="hidden" name="brand" value={value.brandValue} />
       </motion.div>
-      <motion.div variants={itemVariants} className="dropdownWrapper">
+      <motion.div variants={dropdownItemVariants} className="dropdownWrapper">
         <div
           onClick={() => {
             setOpenDropdown(openDropdown === "model" ? null : "model");
@@ -233,7 +233,7 @@ export default function Dropdown() {
         )}
         <input type="hidden" name="modelYear" value={value.modelValue} />
       </motion.div>
-      <motion.div variants={itemVariants} className="dropdownWrapper">
+      <motion.div variants={dropdownItemVariants} className="dropdownWrapper">
         <div
           onClick={() => {
             setOpenDropdown(openDropdown === "modelYear" ? null : "modelYear");

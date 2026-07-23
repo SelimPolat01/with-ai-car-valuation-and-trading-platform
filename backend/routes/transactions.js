@@ -34,6 +34,7 @@ router.get("/trading-values", verifyToken, async (req, res) => {
       appo.slot_date, 
       appo.slot_time, 
       appo.location,
+      pay.id AS payment_id,
       pay.payment_status,
       pay.deposit_amount, 
       pay.remaining_amount, 

@@ -3,6 +3,7 @@ import Footer from "@/app/components/Footer";
 import "./globals.css";
 import ReactQuery from "./lib/reactQuery";
 import Providers from "./lib/Providers";
+import Header from "./components/Header";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -95,6 +96,7 @@ export default function RootLayout({ children }) {
                 </linearGradient>
               </defs>
             </svg>
+            <Header />
             {children}
             <Footer />
           </ReactQuery>

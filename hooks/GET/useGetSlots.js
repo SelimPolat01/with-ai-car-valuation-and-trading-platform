@@ -9,10 +9,12 @@ export async function getAvailableSlots(token) {
 }
 
 export function useGetAvailableSlots(token) {
+  const isValidToken = !!token && token !== "null" && token !== "undefined";
+
   return useQuery({
     queryKey: ["available-slots", token],
     queryFn: () => getAvailableSlots(token),
-    enabled: !!token,
+    enabled: isValidToken,
     retry: false,
   });
 }

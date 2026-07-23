@@ -207,7 +207,7 @@
 
 @media (max-width: 768px) {
   .div {
-    padding: 1rem;
+    padding: 0;
     max-height: none;
     overflow-y: visible;
   }

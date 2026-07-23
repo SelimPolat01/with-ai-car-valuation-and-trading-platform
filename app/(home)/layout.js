@@ -1,6 +1,5 @@
 "use client";
 
-import Header from "@/app/components/Header";
 import { useSearchParams } from "next/navigation";
 
 export default function HomeLayout({ children }) {
@@ -8,7 +7,6 @@ export default function HomeLayout({ children }) {
   const mode = searchParams.get("mode");
   return (
     <div className={`${mode == "form" ? "bgForm" : "bgAiCarDetector"}`}>
-      <Header />
       <main className="homeMain">{children}</main>
     </div>
   );

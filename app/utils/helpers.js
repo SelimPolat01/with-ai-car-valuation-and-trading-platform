@@ -1,5 +1,16 @@
-import { LogIn, UserPlus, Home } from "lucide-react";
-import classes from "@/app/components/Header.module.css";
+import {
+  LogIn,
+  UserPlus,
+  Home,
+  FileText,
+  CheckCircle2,
+  Shield,
+  Wrench,
+  Calendar,
+  Clock,
+  XCircle,
+} from "lucide-react";
+import headerClasses from "@/app/components/Header.module.css";
 
 export function formatBrandModel(text) {
   if (!text) return "";
@@ -165,7 +176,7 @@ export const headerLinks = {
       href: "/register",
       label: (
         <UserPlus
-          className={classes.icon}
+          className={headerClasses.icon}
           size={30}
           stroke="url(#header-icon-gold)"
         />
@@ -178,7 +189,7 @@ export const headerLinks = {
       href: "/login",
       label: (
         <LogIn
-          className={classes.icon}
+          className={headerClasses.icon}
           size={30}
           stroke="url(#header-icon-gold)"
         />
@@ -193,7 +204,7 @@ export const headerLinks = {
       href: "/",
       label: (
         <Home
-          className={classes.icon}
+          className={headerClasses.icon}
           size={30}
           stroke="url(#header-icon-gold)"
         />
@@ -235,20 +246,6 @@ export const getStepFromStatus = (status) => {
   if (s === "completed" || s === "success") return 6;
 
   return 1;
-};
-
-export const getStatusBadgeText = (status) => {
-  if (!status) return "Satın Alma Sürecinde";
-  const s = String(status).toLowerCase();
-
-  if (s === "success") return "İlan Alım Satım Tamamlandı";
-  if (s === "5") return "Noter Sürecinde";
-  if (s === "4") return "Ödeme Sürecinde";
-  if (s === "3") return "Ekspertiz Kontrolünde";
-  if (s === "2") return "Yetkili Randevu Sürecinde";
-  if (s === "1") return "Satın Alma Sürecinde";
-
-  return "Satın Alma Sürecinde";
 };
 
 export const getExpertiseStatusText = (step) => {
@@ -404,16 +401,83 @@ export const formatMaliDeger = (deger) => {
   return deger < 0 ? `-${metin}` : metin;
 };
 
-export const getStatusData = (status) => {
+export const getAppointmentStatusData = (status) => {
   switch (status) {
     case "completed":
     case "success":
-      return { text: "Tamamlandı", className: classes.badgeCompleted };
+      return {
+        text: "Tamamlandı",
+        className: "badgeCompleted",
+        icon: <CheckCircle2 size={14} />,
+      };
     case "canceled":
-      return { text: "İptal Edildi", className: classes.badgeCanceled };
+      return {
+        text: "İptal Edildi",
+        className: "badgeCanceled",
+        icon: <XCircle size={14} />,
+      };
     case "pending":
     default:
-      return { text: "Bekliyor", className: classes.badgePending };
+      return {
+        text: "Bekliyor",
+        className: "badgeWaiting",
+        icon: <Clock size={14} />,
+      };
+  }
+};
+
+export const getTransactionStatusData = (status) => {
+  switch (status) {
+    case "completed":
+    case "success":
+      return {
+        text: "İlan Alım Satım Tamamlandı",
+        className: "badgeCompleted",
+        icon: <CheckCircle2 size={14} />,
+      };
+
+    case "notary":
+      return {
+        text: "Noter Sürecinde",
+        className: "badgeNotary",
+        icon: <FileText size={14} />,
+      };
+
+    case "escrow":
+      return {
+        text: "Ödeme Sürecinde",
+        className: "badgeEscrow",
+        icon: <Shield size={14} />,
+      };
+
+    case "expertise":
+      return {
+        text: "Ekspertiz Sürecinde",
+        className: "badgeExpertise",
+        icon: <Wrench size={14} />,
+      };
+
+    case "appointment":
+      return {
+        text: "Randevu Sürecinde",
+        className: "badgeAppointment",
+        icon: <Calendar size={14} />,
+      };
+
+    case "canceled":
+      return {
+        text: "İşlem İptal Edildi",
+        className: "badgeCanceled",
+        icon: <XCircle size={14} />,
+      };
+
+    case "pending":
+    default:
+      return {
+        text: "Satın Alma Sürecinde",
+        className: "badgePending",
+        icon: <Clock size={14} />,
+      };
   }
 };
 

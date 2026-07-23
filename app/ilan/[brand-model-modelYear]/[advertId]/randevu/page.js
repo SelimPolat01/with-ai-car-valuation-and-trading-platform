@@ -13,6 +13,7 @@ import {
   formatForDB,
   formatMonthName,
 } from "@/app/utils/helpers";
+import Loading from "@/app/loading";
 
 const ALL_HOURS = [
   "09:00",
@@ -72,11 +73,7 @@ export default function Randevu() {
   const dbSlots = getAvailableSlotsData?.result || [];
 
   if (!token || getAvailableSlotsIsLoading) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getAvailableSlotsIsError) {

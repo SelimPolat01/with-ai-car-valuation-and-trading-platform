@@ -12,6 +12,7 @@ import { AnimatePresence } from "framer-motion";
 import { useGetFavoriteAdverts } from "@/hooks/GET/useGetFavoriteAdverts";
 import { usePostFavoriteAdvert } from "@/hooks/POST/usePostFavoriteAdvert";
 import { AlertCircle, ArrowLeft } from "lucide-react";
+import Loading from "../loading";
 
 export default function FavoriIlanlar() {
   const router = useRouter();
@@ -71,11 +72,7 @@ export default function FavoriIlanlar() {
   }
 
   if (!token || getFavoriteAdvertsIsLoading) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getFavoriteAdvertsIsError) {
@@ -111,7 +108,7 @@ export default function FavoriIlanlar() {
 
       <div className={classes.myFavoriteAdvertsTextDiv}>
         <h3>Favori İlanlarım</h3>
-        <hr style={{ width: "845px" }} />
+        <hr />
       </div>
 
       <div className={classes.listWrapper}>

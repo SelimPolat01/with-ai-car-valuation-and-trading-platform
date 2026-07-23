@@ -9,10 +9,12 @@ export async function getTradingValues(token) {
 }
 
 export default function useGetTradingValues(token) {
+  const isValidToken = !!token && token !== "null" && token !== "undefined";
+
   return useQuery({
     queryKey: ["tradingValues", token],
     queryFn: () => getTradingValues(token),
-    enabled: !!token,
+    enabled: isValidToken,
     retry: false,
   });
 }

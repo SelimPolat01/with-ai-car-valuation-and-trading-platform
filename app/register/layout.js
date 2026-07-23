@@ -1,8 +1,6 @@
-import Header from "@/app/components/Header";
-
 export const metadata = {
-  title: "Kayıt ol",
-  description: "Kayıt olma sayfası.",
+  title: "Kayıt Ol",
+  description: "Kayıt olma ekranı.",
 };
 
 export default function RegisterLayout({ children }) {
@@ -16,7 +14,6 @@ export default function RegisterLayout({ children }) {
       }}
     >
       <div className="bgRegister">
-        <Header />
         <div className="pageHeading">
           <h1>Kayıt Ol</h1>
           <span className="subHeading">

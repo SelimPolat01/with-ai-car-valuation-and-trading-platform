@@ -11,6 +11,7 @@ import ManagementNav from "../components/ManagementNav";
 import { useGetPersonalAdverts } from "@/hooks/GET/useGetPersonalAdverts";
 import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
 import { AlertCircle, ArrowLeft } from "lucide-react";
+import Loading from "../loading";
 
 export default function MyAdverts() {
   const router = useRouter();
@@ -79,11 +80,7 @@ export default function MyAdverts() {
   }
 
   if (!token || getPersonalAdvertsIsLoading) {
-    return (
-      <div className="loadingContainer">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (getPersonalAdvertsIsError) {

@@ -8,6 +8,8 @@ import { logout } from "@/store/authSlice";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
 import {
+  AlertCircle,
+  ArrowLeft,
   BellDot,
   FolderHeart,
   Home,
@@ -22,6 +24,7 @@ import { useEffect, useState } from "react";
 import { useGetPersonalNotifications } from "@/hooks/GET/useGetPersonalNotifications";
 import { usePatchNotificationRead } from "@/hooks/PATCH/usePatchNotificationRead";
 import { headerLinks } from "../utils/helpers";
+import Loading from "./Loading";
 
 export default function Header({ className }) {
   const path = usePathname();
@@ -90,6 +93,19 @@ export default function Header({ className }) {
   }
 
   const links = headerLinks;
+
+  if (getPersonalNotificationsIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getPersonalNotificationsError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
+      </div>
+    );
+  }
 
   return (
     <header className={`${classes.header} ${className ? className : ""}`}>

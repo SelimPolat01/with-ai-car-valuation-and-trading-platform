@@ -9,10 +9,12 @@ export async function getPersonalInfos(token) {
 }
 
 export function useGetPersonalInfos(token) {
+  const isValidToken = !!token && token !== "null" && token !== "undefined";
+
   return useQuery({
     queryKey: ["personalInfos", token],
     queryFn: () => getPersonalInfos(token),
-    enabled: !!token,
+    enabled: isValidToken,
     retry: false,
   });
 }

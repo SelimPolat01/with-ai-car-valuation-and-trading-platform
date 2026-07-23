@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo } from "react";
 import classes from "./AlisSatisİslemleri.module.css";
-import useGetTradingValues from "@/hooks/GET/useGetTradingValues";
 import { usePathname, useRouter } from "next/navigation";
 import {
   AlertCircle,
@@ -21,6 +20,7 @@ import {
   formatAppointmentDateTime,
 } from "@/app/utils/helpers";
 import Loading from "@/app/loading";
+import useGetPersonalTransactions from "@/hooks/GET/useGetPersonalTransactions";
 
 export default function AlisSatisiIslemleri() {
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function AlisSatisiIslemleri() {
     isLoading: getTradingValuesIsLoading,
     isError: getTradingValuesIsError,
     error: getTradingValuesError,
-  } = useGetTradingValues(token);
+  } = useGetPersonalTransactions(token);
 
   const currentData = useMemo(() => {
     if (!getTradingValuesData) return [];
@@ -81,7 +81,7 @@ export default function AlisSatisiIslemleri() {
         <AlertCircle size={48} className={classes.iconSecondary} />
         <h2>Bir Hata Oluştu</h2>
         <p>{getTradingValuesError?.message}</p>
-        <button onClick={() => router.back()} className={classes.backButton}>
+        <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
       </div>

@@ -38,7 +38,6 @@ export default function Guvenlik() {
     password: false,
     tokenDuration: false,
   });
-  const [accountDelete, setAccountDelete] = useState(false);
   const deleteAccountInputRef = useRef();
 
   useEffect(() => {
@@ -253,11 +252,9 @@ export default function Guvenlik() {
   function accountDeleteSubmitHandler(event) {
     event.preventDefault();
     deleteAccountInputRef.current.showModal();
-    setAccountDelete(true);
   }
 
   function confirmDeleteHandler() {
-    if (!accountDelete) return;
     const token = localStorage.getItem("token");
     deleteAccountMutate(
       { token },

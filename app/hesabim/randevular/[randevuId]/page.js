@@ -20,6 +20,7 @@ import {
   MapPin,
   Navigation,
   CheckCircle2,
+  CalendarX,
 } from "lucide-react";
 import { usePatchPersonalAppointmentCancel } from "@/hooks/PATCH/usePatchPersonalAppointmentCancel";
 import ConfirmDialog from "../../../components/ConfirmDialog.js";
@@ -58,6 +59,8 @@ export default function RandevuDetaylar() {
   const {
     mutate: patchPersonalAppointmentCancelMutate,
     isPending: patchPersonalAppointmentCancelIsPending,
+    isError: patchPersonalAppointmentCancelIsError,
+    error: patchPersonalAppointmentCancelError,
   } = usePatchPersonalAppointmentCancel();
 
   if (!token || getPersonalAppointmentsIsLoading) {
@@ -67,7 +70,7 @@ export default function RandevuDetaylar() {
   if (getPersonalAppointmentsIsError) {
     return (
       <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
+        <AlertCircle size={30} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
         <p>{getPersonalAppointmentsError?.message}</p>
         <button onClick={() => router.back()} className="backButton">
@@ -98,9 +101,23 @@ export default function RandevuDetaylar() {
     );
   }
 
-  const handleCancelAppointment = () => {
+  const cancelAppointmentHandler = () => {
     cancelDialogRef.current.showModal();
   };
+
+  function cancelAppointmentConfirmHandler(appointmentId) {
+    patchPersonalAppointmentCancelMutate(
+      { token: token, appointmentId: appointmentId },
+      {
+        onSuccess: (data) => {
+          console.log(data?.message);
+        },
+        onError: (err) => {
+          console.log(err?.message);
+        },
+      },
+    );
+  }
 
   const carTypeMaps = carTypeMap;
   const statusData = getAppointmentStatusData(appointment.appointment_status);
@@ -114,26 +131,13 @@ export default function RandevuDetaylar() {
     <div className={classes.container}>
       <ConfirmDialog
         ref={cancelDialogRef}
-        onConfirm={() => {
-          const token = localStorage.getItem("token");
-          patchPersonalAppointmentCancelMutate(
-            {
-              token: token,
-              appointmentId: appointment.appointment_id,
-            },
-            {
-              onSuccess: () => {
-                cancelDialogRef.current?.close();
-                router.back();
-              },
-              onError: (error) => {
-                console.error(error);
-              },
-            },
-          );
-        }}
-        text="Randevuyu iptal etmek istediğinize emin misiniz?"
-        title="Randevuyu İptal Et"
+        onConfirm={() =>
+          cancelAppointmentConfirmHandler(appointment.appointment_id)
+        }
+        text="Bu randevuyu iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+        title="Randevu İptali"
+        confirmRedirect={"/hesabim/randevular"}
+        logo={<CalendarX size={35} />}
       />
       <div className={classes.header}>
         <button onClick={() => router.back()} className="backButton">
@@ -393,9 +397,10 @@ export default function RandevuDetaylar() {
             <div className={classes.actionButtonsContainer}>
               {appointment.appointment_status === "pending" && (
                 <button
-                  onClick={handleCancelAppointment}
+                  onClick={cancelAppointmentHandler}
                   disabled={patchPersonalAppointmentCancelIsPending}
                   className={classes.cancelButton}
+                  type="button"
                 >
                   <Ban size={18} />
                   {patchPersonalAppointmentCancelIsPending

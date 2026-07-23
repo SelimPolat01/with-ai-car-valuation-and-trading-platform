@@ -1,7 +1,6 @@
 "use client";
 
-import useGetTradingValues from "@/hooks/GET/useGetTradingValues";
-import { AlertCircle, ArrowLeft, Ban } from "lucide-react";
+import { AlertCircle, ArrowLeft, Ban, FileX } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import classes from "./İslem.module.css";
@@ -21,6 +20,8 @@ import {
 } from "@/app/utils/helpers";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import Loading from "@/app/loading";
+import useGetPersonalTransactions from "@/hooks/GET/useGetPersonalTransactions";
+import { usePatchPersonalTransactionCancel } from "@/hooks/PATCH/usePatchPersonalTransactionCancel";
 
 export default function IslemDetaylar() {
   const router = useRouter();
@@ -38,30 +39,37 @@ export default function IslemDetaylar() {
   }, [router]);
 
   const {
-    data: getTradingValuesData,
-    isLoading: getTradingValuesIsLoading,
-    isError: getTradingValuesIsError,
-    error: getTradingValuesError,
-  } = useGetTradingValues(token);
+    data: getPersonalTransactionsData,
+    isLoading: getPersonalTransactionsIsLoading,
+    isError: getPersonalTransactionsIsError,
+    error: getPersonalTransactionsError,
+  } = useGetPersonalTransactions(token);
 
-  const transactionList = Array.isArray(getTradingValuesData)
-    ? getTradingValuesData
-    : getTradingValuesData?.result || [];
+  const {
+    mutate: patchPersonalTransactionMutate,
+    isPending: patchPersonalTransactionIsPending,
+    isError: patchPersonalTransactionIsError,
+    error: patchPersonalTransactionError,
+  } = usePatchPersonalTransactionCancel();
+
+  const transactionList = Array.isArray(getPersonalTransactionsData)
+    ? getPersonalTransactionsData
+    : getPersonalTransactionsData?.result || [];
 
   const transaction = transactionList.find(
     (transaction) => String(transaction.payment_id) === String(params.islemId),
   );
 
-  if (!token || getTradingValuesIsLoading) {
+  if (!token || getPersonalTransactionsIsLoading) {
     return <Loading />;
   }
 
-  if (getTradingValuesIsError) {
+  if (getPersonalTransactionsIsError) {
     return (
       <div className={classes.errorContainer}>
         <AlertCircle size={48} className={classes.iconSecondary} />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getTradingValuesError?.message}</p>
+        <p>{getPersonalTransactionsError?.message}</p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
@@ -82,6 +90,22 @@ export default function IslemDetaylar() {
     );
   }
 
+  function cancelTransactionHandler() {
+    if (cancelDialogRef.current) {
+      cancelDialogRef.current.showModal();
+    }
+  }
+
+  function cancelTransactionConfirmHandler(transactionId) {
+    patchPersonalTransactionMutate(
+      { token: token, transactionId: transactionId },
+      {
+        onSuccess: (data) => console.log(data?.message),
+        onError: (err) => console.log(err?.message),
+      },
+    );
+  }
+
   const currentStep = getStepFromStatus(transaction.payment_status);
   const canViewPermit = transaction.role === "seller" || ruhsatVisible;
   const statusData = getTransactionStatusData(transaction.payment_status);
@@ -90,26 +114,13 @@ export default function IslemDetaylar() {
     <div className={classes.container}>
       <ConfirmDialog
         ref={cancelDialogRef}
-        onConfirm={() => {
-          const token = localStorage.getItem("token");
-          patchPersonalAppointmentCancelMutate(
-            {
-              token: token,
-              appointmentId: appointment.appointment_id,
-            },
-            {
-              onSuccess: () => {
-                cancelDialogRef.current?.close();
-                router.back();
-              },
-              onError: (error) => {
-                console.error(error);
-              },
-            },
-          );
-        }}
-        text="Randevuyu iptal etmek istediğinize emin misiniz?"
-        title="Randevuyu İptal Et"
+        onConfirm={() =>
+          cancelTransactionConfirmHandler(transaction.payment_id)
+        }
+        title={`Araç ${transaction.role === "seller" ? "Satışını" : "Alışını"} İptal Et`}
+        text={`Bu aracın ${transaction.role === "seller" ? "satış" : "alım"} işlemini iptal etmek istediğinize emin misiniz? Bu işlem kalıcıdır ve geri alınamaz.`}
+        confirmRedirect="/hesabim/alis-satis-islemleri"
+        logo={<FileX size={35} />}
       />
       <div className={classes.header}>
         <button onClick={() => router.back()} className="backButton">
@@ -559,13 +570,35 @@ export default function IslemDetaylar() {
               kullanmak isterseniz başlatabilirsiniz.
             </p>
           </div>
-          <div className={classes.dangerButtons}>
-            <button className={classes.supportBtn}>Canlı Destek</button>
-            <button className={classes.cancelBtn}>
-              {transaction.role === "buyer"
-                ? "Süreci İptal Et (Cayma)"
-                : "Satıştan Vazgeç"}
-            </button>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+              gap: "10px",
+            }}
+          >
+            <div className={classes.dangerButtons}>
+              <button className={classes.supportBtn}>Canlı Destek</button>
+              <button
+                onClick={cancelTransactionHandler}
+                className={classes.cancelBtn}
+                disabled={patchPersonalTransactionIsPending}
+                type="button"
+              >
+                {transaction.role === "buyer"
+                  ? "Süreci İptal Et (Cayma)"
+                  : "Satıştan Vazgeç"}
+              </button>
+            </div>
+            {patchPersonalTransactionIsError && (
+              <span
+                style={{ color: "red", fontSize: "14px", fontWeight: "500" }}
+              >
+                {patchPersonalTransactionError?.message ||
+                  "İptal işlemi sırasında bir hata oluştu."}
+              </span>
+            )}
           </div>
         </div>
       </div>

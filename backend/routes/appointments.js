@@ -5,7 +5,7 @@ import { db } from "../lib/db.js";
 export const router = express.Router();
 
 router.get("/personal-appointments", verifyToken, async (req, res) => {
-  const userId = req.user.id;
+  const userId = Number(req.user.id);
 
   const query = `
     SELECT 
@@ -53,8 +53,9 @@ router.patch(
   "/personal-appointments/:appointmentId",
   verifyToken,
   async (req, res) => {
-    const { appointmentId } = req.params;
-    const userId = req.user.id;
+    const appointmentId = Number(req.params.appointmentId);
+    const userId = Number(req.user.id);
+    const isCancel = req.query.cancel === "true";
 
     try {
       const checkQuery = `
@@ -72,8 +73,7 @@ router.patch(
       }
 
       const appointment = checkResult.rows[0];
-      const currentStatus =
-        appointment.status || appointment.appointment_status;
+      const currentStatus = appointment.status;
 
       if (currentStatus !== "pending") {
         return res.status(400).json({
@@ -82,18 +82,28 @@ router.patch(
         });
       }
 
-      const updateQuery = `
+      if (isCancel) {
+        const updateQuery = `
         UPDATE appointments 
-        SET status = 'canceled' 
+        SET status = 'canceled', cancellation_reason = 'withdrawal'
         WHERE id = $1 AND user_id = $2
         RETURNING *
       `;
-      const updateResult = await db.query(updateQuery, [appointmentId, userId]);
+        const updateResult = await db.query(updateQuery, [
+          appointmentId,
+          userId,
+        ]);
 
-      return res.status(200).json({
-        message: "Randevu başarıyla iptal edildi.",
-        appointment: updateResult.rows[0],
-      });
+        return res.status(200).json({
+          message: "Randevu başarıyla iptal edildi.",
+          appointment: updateResult.rows[0],
+        });
+      } else {
+        return res.status(400).json({
+          message:
+            "Geçerli bir işlem belirtilmedi. (İptal için cancel=true gerekli)",
+        });
+      }
     } catch (err) {
       return res.status(500).json({ message: "Sunucu hatası." });
     }

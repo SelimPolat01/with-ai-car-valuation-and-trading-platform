@@ -20,6 +20,7 @@ const ConfirmDialog = forwardRef(
     ref,
   ) => {
     const router = useRouter();
+
     function handleConfirm() {
       onConfirm();
       ref.current?.close();
@@ -36,7 +37,7 @@ const ConfirmDialog = forwardRef(
       <dialog className={classes.dialog} ref={ref}>
         <div className={classes.modalContainer}>
           <div className={classes.trashContainer}>
-            {logo ? logo : <Trash2 size={35} color="#ef4444" />}
+            {logo ? logo : <Trash2 size={30} color="#ef4444" />}
           </div>
           <h2 className={classes.title}>{title}</h2>
           <p className={classes.text}>{text}</p>

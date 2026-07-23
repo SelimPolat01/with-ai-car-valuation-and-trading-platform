@@ -7,8 +7,6 @@ import {
   CalendarClock,
   MapPin,
   CarFront,
-  CheckCircle2,
-  XCircle,
   ChevronRight,
   AlertCircle,
   ArrowLeft,

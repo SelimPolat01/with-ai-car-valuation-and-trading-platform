@@ -5,7 +5,7 @@ async function patchPersonalAppointmentCancel(token, appointmentId) {
   return await Fetch(
     token,
     "appointments",
-    `personal-appointments/${appointmentId}`,
+    `personal-appointments/${appointmentId}?cancel=true`,
     "PATCH",
     null,
   );

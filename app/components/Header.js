@@ -125,14 +125,7 @@ export default function Header({ className }) {
 
           {!isLogin &&
             links.notLoginlinks.map((notLoginlink, index) => (
-              <li
-                className={classes.li}
-                key={index}
-                style={{
-                  visibility:
-                    notLoginlink.hideOn === path ? "hidden" : "visible",
-                }}
-              >
+              <li className={classes.li} key={index}>
                 <Link
                   title={notLoginlink.title}
                   className={classes[notLoginlink.className]}
@@ -145,13 +138,7 @@ export default function Header({ className }) {
 
           {isLogin &&
             links.loginLinks.map((loginLink, index) => (
-              <li
-                className={classes.li}
-                key={index}
-                style={{
-                  visibility: loginLink.hideOn === path ? "hidden" : "visible",
-                }}
-              >
+              <li className={classes.li} key={index}>
                 <Link
                   title={loginLink.title}
                   className={`${classes[loginLink.className]}${
@@ -165,14 +152,7 @@ export default function Header({ className }) {
             ))}
 
           {isLogin && (
-            <div
-              className={classes.notificationContainer}
-              style={{
-                visibility: path.startsWith("/hesabim/bildirimler")
-                  ? "hidden"
-                  : "visible",
-              }}
-            >
+            <div className={classes.notificationContainer}>
               <button
                 className={`${classes.notificationButton}${
                   className ? ` ${className}` : ""
@@ -243,11 +223,6 @@ export default function Header({ className }) {
               }`}
               title="Tüm İlanlar"
               href="/tum-ilanlar"
-              style={{
-                visibility: path.startsWith("/tum-ilanlar")
-                  ? "hidden"
-                  : "visible",
-              }}
             >
               <LayoutGrid
                 className={classes.icon}

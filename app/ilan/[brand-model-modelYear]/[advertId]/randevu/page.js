@@ -90,97 +90,103 @@ export default function Randevu() {
   }
 
   return (
-    <div className={classes.div}>
-      <h2 className={classes.title}>RANDEVU TARİHİ SEÇİN</h2>
-      <div className={classes.daysWrapper}>
-        {days.map((date, index) => {
-          const dateStr = date.toDateString();
-          const dbDateStr = formatForDB(date);
-          const isSelected = selectedDate === dateStr;
+    <div className={classes.main}>
+      <div className={classes.div}>
+        <h2 className={classes.title}>RANDEVU TARİHİ SEÇİN</h2>
+        <div className={classes.daysWrapper}>
+          {days.map((date, index) => {
+            const dateStr = date.toDateString();
+            const dbDateStr = formatForDB(date);
+            const isSelected = selectedDate === dateStr;
 
-          const todaysSlots = dbSlots.filter(
-            (slot) => slot.slot_date === dbDateStr,
-          );
+            const todaysSlots = dbSlots.filter(
+              (slot) => slot.slot_date === dbDateStr,
+            );
 
-          const isAllHoursFull =
-            todaysSlots.length > 0 &&
-            todaysSlots.every((slot) => slot.is_booked);
+            const isAllHoursFull =
+              todaysSlots.length > 0 &&
+              todaysSlots.every((slot) => slot.is_booked);
 
-          return (
-            <button
-              key={dateStr}
-              disabled={isAllHoursFull}
-              className={`${classes.dayCard} ${isSelected ? classes.activeDay : ""} ${
-                isAllHoursFull ? classes.fullDay : ""
-              }`}
-              onClick={() => {
-                setSelectedDate(dateStr);
-                setSelectedHour(null); //
-              }}
+            return (
+              <button
+                key={dateStr}
+                disabled={isAllHoursFull}
+                className={`${classes.dayCard} ${isSelected ? classes.activeDay : ""} ${
+                  isAllHoursFull ? classes.fullDay : ""
+                }`}
+                onClick={() => {
+                  setSelectedDate(dateStr);
+                  setSelectedHour(null); //
+                }}
+              >
+                <span className={classes.dayNumber}>
+                  {formatDayNumber(date)}
+                </span>{" "}
+                <span className={classes.dayMonth}>
+                  {formatMonthName(date)}
+                </span>{" "}
+                <span className={classes.dayName}>{formatDayName(date)}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <hr className={classes.divider} />
+
+        <h3 className={classes.subtitle}>SAAT SEÇİN</h3>
+        <div className={classes.hoursGrid}>
+          {ALL_HOURS.map((saat) => {
+            const isSelected = selectedHour === saat;
+            const selectedDateDBStr = formatForDB(selectedDate);
+
+            const currentSlot = dbSlots.find(
+              (slot) =>
+                slot.slot_date === selectedDateDBStr && slot.slot_time === saat,
+            );
+
+            const isFull = currentSlot ? currentSlot.is_booked : false;
+
+            return (
+              <button
+                key={saat}
+                disabled={isFull}
+                className={`${classes.hourCard} ${
+                  isFull
+                    ? classes.fullHour
+                    : isSelected
+                      ? classes.activeHour
+                      : classes.emptyHour
+                }`}
+                onClick={() =>
+                  setSelectedHour(selectedHour === saat ? null : saat)
+                }
+              >
+                <span className={classes.hourTime}>{saat}</span>
+                <span className={classes.hourStatus}>
+                  {isFull ? "DOLU" : isSelected ? "SEÇİLDİ" : "BOŞ"}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <AnimatePresence>
+          {selectedDate !== null && selectedHour !== null && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 15 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <span className={classes.dayNumber}>{formatDayNumber(date)}</span>{" "}
-              <span className={classes.dayMonth}>{formatMonthName(date)}</span>{" "}
-              <span className={classes.dayName}>{formatDayName(date)}</span>
-            </button>
-          );
-        })}
+              <SecondaryButton
+                className={classes.appointmentButton}
+                text="Ödeme Adımına Geç"
+                onClick={appointmentClickHandler}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
-      <hr className={classes.divider} />
-
-      <h3 className={classes.subtitle}>SAAT SEÇİN</h3>
-      <div className={classes.hoursGrid}>
-        {ALL_HOURS.map((saat) => {
-          const isSelected = selectedHour === saat;
-          const selectedDateDBStr = formatForDB(selectedDate);
-
-          const currentSlot = dbSlots.find(
-            (slot) =>
-              slot.slot_date === selectedDateDBStr && slot.slot_time === saat,
-          );
-
-          const isFull = currentSlot ? currentSlot.is_booked : false;
-
-          return (
-            <button
-              key={saat}
-              disabled={isFull}
-              className={`${classes.hourCard} ${
-                isFull
-                  ? classes.fullHour
-                  : isSelected
-                    ? classes.activeHour
-                    : classes.emptyHour
-              }`}
-              onClick={() =>
-                setSelectedHour(selectedHour === saat ? null : saat)
-              }
-            >
-              <span className={classes.hourTime}>{saat}</span>
-              <span className={classes.hourStatus}>
-                {isFull ? "DOLU" : isSelected ? "SEÇİLDİ" : "BOŞ"}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      <AnimatePresence>
-        {selectedDate !== null && selectedHour !== null && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 15 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            <SecondaryButton
-              className={classes.appointmentButton}
-              text="Ödeme Adımına Geç"
-              onClick={appointmentClickHandler}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

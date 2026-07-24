@@ -7,8 +7,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 90vh;
-  gap: 3rem;
+  min-height: 90vh;
+  gap: 4rem;
+  padding: 0 2rem 2rem 2rem;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .photoDiv {
@@ -16,8 +19,9 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
-  margin: 0 0 4.2rem 0;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 450px;
 }
 
 .photoContainer {
@@ -25,11 +29,16 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  width: 100%;
 }
 
 .preview {
   display: block;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
@@ -37,8 +46,8 @@
 }
 
 .emptyBox {
-  width: 400px;
-  height: 250px;
+  width: 100%;
+  aspect-ratio: 16 / 10;
   border: 2px dashed rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   background-color: rgba(255, 255, 255, 0.03);
@@ -56,14 +65,11 @@
   display: none;
 }
 
-.yearInterval {
-  color: purple;
-  cursor: pointer;
-}
-
 .uploadButton {
-  width: 400px !important;
+  width: 100% !important;
+  max-width: 450px;
   transition: all 0.3s ease;
+  margin: 0 !important;
 }
 
 .uploadButton:hover {
@@ -72,34 +78,18 @@
   box-shadow: 0 8px 20px rgba(0, 244, 255, 0.4);
 }
 
-.button {
-  border-radius: 10px;
-  background-color: rgb(72, 144, 216);
-  color: white;
-  grid-column: span 2;
-  border: 3px solid rgb(72, 144, 216);
-  font-size: 16px;
-  transition:
-    background 0.5s ease,
-    color 0.5s ease;
-  font-weight: bolder;
-  padding: 5px 0;
-  margin: 0.25rem 0 0 0;
-  width: 133px;
-  box-sizing: border-box;
-}
-
-.button:hover {
-  background: white;
-  color: rgb(72, 144, 216);
-  cursor: pointer;
+.predictionWrapper {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: center;
 }
 
 .buttonGroup {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: 500px;
+  gap: 16px;
+  width: 100%;
 }
 
 .infoText {
@@ -107,19 +97,18 @@
   color: #c7cdd5;
   font-size: 1.05rem;
   font-weight: 500;
-  margin-bottom: 16px;
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 14px 20px;
+  padding: 16px 20px;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  white-space: nowrap;
+  flex-wrap: wrap;
+  gap: 10px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -136,12 +125,13 @@
   position: relative;
   cursor: pointer;
   background-color: #eff6ff;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
   font-weight: 600;
   font-size: 1rem;
+  color: #1d4ed8;
   border: 1px solid #dbeafe;
   transition: all 0.2s ease;
   text-decoration: none;
@@ -150,7 +140,6 @@
 
 .yearInterval:hover {
   background-color: #dbeafe;
-  color: #1d4ed8;
 }
 
 .yearIntervalDropdown {
@@ -158,7 +147,7 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(0);
-  margin-top: 6px;
+  margin-top: 8px;
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
@@ -166,8 +155,8 @@
     0 10px 25px -5px rgba(0, 0, 0, 0.1),
     0 8px 10px -6px rgba(0, 0, 0, 0.05);
   z-index: 999;
-  min-width: 95px;
-  max-height: 150px;
+  min-width: 100px;
+  max-height: 180px;
   overflow-y: auto;
   animation: dynamicSlideDown 0.15s ease-out;
   box-sizing: border-box;
@@ -195,11 +184,11 @@
 
 .yearIntervalDropdownList {
   color: #4b5563;
-  padding: 6px 12px;
-  font-size: 0.85rem;
+  padding: 8px 12px;
+  font-size: 0.9rem;
   font-weight: 500;
   text-align: center;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -209,39 +198,29 @@
   color: #ffffff;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .buttonContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  width: 500px;
+  width: 100%;
 }
 
 .confirmButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 400px;
+  width: 100%;
   padding: 14px 24px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
+  box-sizing: border-box;
 }
 
 .primary {
@@ -281,11 +260,11 @@
 .photoUploadTextContainer {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .customUpload {
-  font-size: 32px;
-  margin-bottom: 20px;
+  font-size: 28px;
   background: linear-gradient(
     105.66deg,
     #00f4ff 16.76%,
@@ -297,89 +276,68 @@
   background-clip: text;
   color: transparent;
   display: inline-block;
-  width: max-content;
-  margin: 0 1rem 0 0;
+  margin-right: 0.75rem;
+  font-weight: 700;
 }
 
 .cameraIcon {
-  height: 32px;
+  height: 28px;
+  width: 28px;
 }
 
 .notAllowed {
   cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.errorText {
+  color: #ff6b6b;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+@media (max-width: 1024px) {
+  .div {
+    flex-direction: column;
+    gap: 3rem;
+    padding: 2.5rem 1.5rem;
+  }
+
+  .photoDiv {
+    margin-bottom: 0;
+  }
 }
 
 @media (max-width: 768px) {
   .div {
-    flex-direction: column;
-    height: auto;
-    min-height: 90vh;
-    padding: 2rem 1rem;
-    gap: 2rem;
-    box-sizing: border-box;
-    width: 100%;
-  }
-
-  .photoDiv {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 0 1.5rem 0;
-  }
-
-  .photoContainer {
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .emptyBox,
-  .preview {
-    width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 16 / 10 !important;
-    object-fit: cover !important;
-    display: block !important;
-    box-sizing: border-box;
-  }
-
-  .uploadButton,
-  .confirmButton {
-    width: 100% !important;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .buttonGroup,
-  .buttonContainer {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .infoText {
-    white-space: normal;
-    flex-direction: column;
-    text-align: center;
-    gap: 12px;
-    height: auto;
-    padding: 16px 12px;
-  }
-
-  .photoUploadTextContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: nowrap;
-    margin-bottom: 10px;
-    width: 100%;
+    gap: 1.5rem;
+    padding: 0;
   }
 
   .customUpload {
-    font-size: 26px;
-    margin: 0 0.5rem 0 0 !important;
+    font-size: 24px;
+    margin-right: 0.5rem;
   }
 
   .cameraIcon {
-    width: 26px;
-    height: 26px;
+    height: 24px;
+    width: 24px;
+  }
+
+  .infoText {
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .confirmButton {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+
+  .uploadButton {
+    margin: 0 !important;
   }
 }

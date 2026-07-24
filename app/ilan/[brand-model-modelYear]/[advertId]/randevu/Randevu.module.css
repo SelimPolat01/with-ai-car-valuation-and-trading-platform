@@ -1,7 +1,13 @@
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 0 2.5rem 0;
+}
+
 .div {
   width: calc(100% - 2rem);
   max-width: 800px;
-  margin: 2rem auto;
   padding: 2.5rem;
   background: rgba(20, 20, 22, 0.85);
   backdrop-filter: blur(12px);
@@ -172,8 +178,7 @@
 @media (max-width: 768px) {
   .div {
     width: calc(100% - 3rem);
-    padding: 1.5rem;
-    margin: 1.5rem auto;
+    padding: 1.25rem 1.25rem 2.5rem 1.25rem;
   }
 
   .daysWrapper {
@@ -188,11 +193,15 @@
 }
 
 @media (max-width: 480px) {
+  .main {
+    padding: 1rem 1rem 2rem 1rem;
+  }
+
   .div {
-    width: calc(100% - 2rem);
+    width: 100%;
     padding: 1rem;
-    margin: 1rem auto;
     border-radius: 12px;
+    margin: 0;
   }
 
   .title {

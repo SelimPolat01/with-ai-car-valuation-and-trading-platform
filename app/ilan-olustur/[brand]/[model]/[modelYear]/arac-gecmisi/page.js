@@ -33,7 +33,7 @@ export default function AracGecmisi() {
   const [carDetails, setCarDetails] = useState({
     plate: "",
     chassisNumber: "",
-    tramerRecord: "",
+    tramerRecord: 0,
     inspectionDate: "",
     ownerCount: "",
     hasPledge: false,
@@ -249,6 +249,7 @@ export default function AracGecmisi() {
               onChange={detailsChangeHandler}
               placeholder="Örn: 34ABC123"
               className={classes.input}
+              maxLength={8}
             />
             {errors.plate && (
               <span className={classes.errorText}>{errors.plate}</span>
@@ -263,6 +264,7 @@ export default function AracGecmisi() {
               onChange={detailsChangeHandler}
               placeholder="Şase Numarası"
               className={classes.input}
+              maxLength={17}
             />
             {errors.chassisNumber && (
               <span className={classes.errorText}>{errors.chassisNumber}</span>
@@ -270,7 +272,7 @@ export default function AracGecmisi() {
           </div>
           <div className={classes.inputWrapper}>
             <Input
-              label="Tramer Kaydı (TL)"
+              label="Tramer Kaydı (₺)"
               name="tramerRecord"
               type="number"
               value={carDetails.tramerRecord}

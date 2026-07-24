@@ -204,13 +204,13 @@ export default function AiCarDetector() {
         )}
       </div>
 
-      <motion.div
-        key={prediction.prediction.length > 0 ? "visible" : "hidden"}
-        variants={aiDetectorPredictionContainerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {prediction.prediction && prediction.prediction.length > 0 && (
+      {prediction.prediction && prediction.prediction.length > 0 && (
+        <motion.div
+          variants={aiDetectorPredictionContainerVariants}
+          initial="hidden"
+          animate="visible"
+          className={classes.predictionWrapper}
+        >
           <div className={classes.buttonGroup}>
             <motion.div
               variants={aiDetectorPredictionItemVariants}
@@ -312,8 +312,8 @@ export default function AiCarDetector() {
               </button>
             </motion.div>
           </div>
-        )}
-      </motion.div>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

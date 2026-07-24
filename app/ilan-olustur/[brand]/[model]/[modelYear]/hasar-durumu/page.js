@@ -459,12 +459,8 @@ export default function HasarDurumu() {
               initial={{ opacity: 0, y: 20, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.8 }}
-              style={{
-                gridColumn: "1 / -1",
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "20px",
-              }}
+              className={classes.buttonContainer}
+              style={{}}
             >
               <PrimaryButton
                 type="submit"

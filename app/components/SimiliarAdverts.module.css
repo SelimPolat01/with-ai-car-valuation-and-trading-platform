@@ -82,6 +82,10 @@
 }
 
 @media (max-width: 1024px) {
+  .container {
+    margin: 0;
+  }
+
   .scrollContainer {
     flex-direction: column;
     overflow-x: hidden;
@@ -98,5 +102,10 @@
   .image {
     height: auto;
     aspect-ratio: 16 / 9;
+  }
+
+  .title {
+    margin: 1.25rem 0;
+    text-align: center;
   }
 }

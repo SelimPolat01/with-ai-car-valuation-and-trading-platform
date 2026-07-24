@@ -5,15 +5,8 @@ export const metadata = {
 
 export default function LoginLayout({ children }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        flex: 1,
-        width: "100%",
-      }}
-    >
-      <div className="bgLogin">
+    <div>
+      <div>
         <div className="pageHeading">
           <h1>Giriş Yap</h1>
           <span className="subHeading">Tekrar Hoşgeldiniz!</span>

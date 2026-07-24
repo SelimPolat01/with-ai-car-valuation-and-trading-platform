@@ -23,6 +23,8 @@ import {
   engineCapacityFormat,
   capitalizeWords,
   carTypeMap,
+  bodyTypeParser,
+  formatPrice,
 } from "@/app/utils/helpers";
 import Loading from "./Loading";
 
@@ -149,14 +151,12 @@ export default function AdvertInfos() {
     );
   }
 
-  // Yardımcı fonksiyonlar artık helper.js dosyasından geliyor.
-
   const advertDetails = advert
     ? [
         {
           id: 1,
           label: "Fiyat",
-          value: `${advert.price?.toLocaleString("tr-TR") || 0} ₺`,
+          value: `${formatPrice(advert.price)} ₺`,
           priceClassName: classes.price,
         },
         { id: 2, label: "Şehir", value: capitalizeWords(advert.city) },
@@ -178,9 +178,8 @@ export default function AdvertInfos() {
         {
           id: 7,
           label: "Model",
-          value: `${formatBrandModel(advert.model)} ${capitalizeWords(
-            advert.body_type,
-          )} ${engineCapacityFormat(advert.engine_capacity)}`,
+          value: `
+          ${engineCapacityFormat(advert.engine_capacity)} ${carTypeMap.trimLevelMap[advert.trim_level]}`,
         },
         { id: 8, label: "Yıl", value: advert.model_year },
         {
@@ -202,7 +201,7 @@ export default function AdvertInfos() {
         {
           id: 13,
           label: "Kasa Tipi",
-          value: capitalizeWords(advert.body_type),
+          value: bodyTypeParser(advert.body_type),
         },
         { id: 14, label: "Motor Gücü", value: `${advert.horsepower} hp` },
         {
@@ -213,7 +212,12 @@ export default function AdvertInfos() {
         {
           id: 16,
           label: "Hasar Durumu",
-          value: "Yok",
+          value: `${advert.has_dent == true ? "Var" : "Yok"}`,
+        },
+        {
+          id: 17,
+          label: "Çizik Durumu",
+          value: `${advert.has_scratch == true ? "Var" : "Yok"}`,
         },
       ]
     : [];
@@ -337,13 +341,11 @@ export default function AdvertInfos() {
             </div>
 
             <div className={classes.advertInfoWrapper2}>
-              <ul
-                className={`${classes.ul} ${user && advert && Number(user.id) == Number(advert.user_id) ? classes.expandedUl : ""}`}
-              >
+              <ul className={`${classes.ul} `}>
                 {advertDetails.map((detail) => (
                   <li
                     key={detail.id}
-                    className={`${classes.li} ${detail.priceClassName || ""}`}
+                    className={`${classes.li} ${detail.priceClassName || ""} ${user && advert && Number(user.id) == Number(advert.user_id) ? classes.expandedLi : classes.expandlessLi}`}
                   >
                     <strong className={classes.strong}>{detail.label}</strong>
                     <span className={detail.spanClassName || ""}>

@@ -106,44 +106,46 @@ export default function FavoriIlanlar() {
       />
       <ManagementNav className={classes.managementNav} />
 
-      <div className={classes.myFavoriteAdvertsTextDiv}>
-        <h3>Favori İlanlarım</h3>
-        <hr />
-      </div>
+      <div className={classes.container}>
+        <div className={classes.myFavoriteAdvertsTextDiv}>
+          <h3>Favori İlanlarım</h3>
+          <hr />
+        </div>
 
-      <div className={classes.listWrapper}>
-        {deleteFavoriteAdvertMutateIsError && (
-          <p style={{ color: "#ff6363", marginBottom: "1rem" }}>
-            {deleteFavoriteAdvertMutateError?.message ||
-              "İlan favorilerden kaldırılırken bir hata oluştu."}
-          </p>
-        )}
+        <div className={classes.listWrapper}>
+          {deleteFavoriteAdvertMutateIsError && (
+            <p style={{ color: "#ff6363", marginBottom: "1rem" }}>
+              {deleteFavoriteAdvertMutateError?.message ||
+                "İlan favorilerden kaldırılırken bir hata oluştu."}
+            </p>
+          )}
 
-        {favoriteAdverts.length > 0 && (
-          <div className={classes.listHeader}>
-            <span>Fotoğraf</span>
-            <span>İlan Başlığı</span>
-            <span>Fiyat</span>
-          </div>
-        )}
+          {favoriteAdverts.length > 0 && (
+            <div className={classes.listHeader}>
+              <span>Fotoğraf</span>
+              <span>İlan Başlığı</span>
+              <span>Fiyat</span>
+            </div>
+          )}
 
-        <AnimatePresence>
-          {favoriteAdverts &&
-            favoriteAdverts.map((favoriteAdvert) => (
-              <FavoriteAdvertItem
-                key={favoriteAdvert.id}
-                advert={favoriteAdvert}
-                onDeleteDialog={() => openDeleteModal(favoriteAdvert.id)}
-                showDeleteButton={user && user.id !== favoriteAdvert.user_id}
-              />
-            ))}
-        </AnimatePresence>
+          <AnimatePresence>
+            {favoriteAdverts &&
+              favoriteAdverts.map((favoriteAdvert) => (
+                <FavoriteAdvertItem
+                  key={favoriteAdvert.id}
+                  advert={favoriteAdvert}
+                  onDeleteDialog={() => openDeleteModal(favoriteAdvert.id)}
+                  showDeleteButton={user && user.id !== favoriteAdvert.user_id}
+                />
+              ))}
+          </AnimatePresence>
 
-        {favoriteAdverts.length === 0 && (
-          <div className={classes.noFavoriteAdvertDiv}>
-            <p>Favori ilanınız Bulunmamaktadır</p>
-          </div>
-        )}
+          {favoriteAdverts.length === 0 && (
+            <div className={classes.noFavoriteAdvertDiv}>
+              <p>Favori ilanınız Bulunmamaktadır</p>
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );

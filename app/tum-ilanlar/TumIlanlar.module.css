@@ -86,7 +86,7 @@
 @media (max-width: 768px) {
   .main {
     flex-direction: column;
-    padding: 1rem;
+    padding: 1.5rem;
     gap: 1.5rem;
   }
 

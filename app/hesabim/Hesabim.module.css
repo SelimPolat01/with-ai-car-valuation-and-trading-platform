@@ -145,7 +145,7 @@
   .linkMenu {
     flex-direction: row;
     flex-wrap: wrap;
-    padding: 12px;
+    padding: 1.48rem;
     gap: 8px;
     justify-content: center;
   }
@@ -179,6 +179,6 @@
   }
 
   .mainContent {
-    padding: 1rem;
+    padding: 1rem 1rem 2rem 1rem;
   }
 }

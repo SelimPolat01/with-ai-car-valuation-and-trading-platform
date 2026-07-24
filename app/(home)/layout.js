@@ -1,12 +1,11 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
+export const metadata = {
+  title: "Ana Sayfa",
+  description: "Yapay zeka ile araç tanıma ekranı.",
+};
 
 export default function HomeLayout({ children }) {
-  const searchParams = useSearchParams();
-  const mode = searchParams.get("mode");
   return (
-    <div className={`${mode == "form" ? "bgForm" : "bgAiCarDetector"}`}>
+    <div>
       <main className="homeMain">{children}</main>
     </div>
   );

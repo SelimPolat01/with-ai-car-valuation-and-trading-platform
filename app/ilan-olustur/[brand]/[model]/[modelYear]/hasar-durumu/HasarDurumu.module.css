@@ -105,6 +105,13 @@
   display: block;
 }
 
+.buttonContainer {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: "center";
+  margin-top: "20px";
+}
+
 .removeBtn {
   position: absolute;
   top: 8px;
@@ -237,19 +244,19 @@
 
 @media (max-width: 768px) {
   .container {
-    margin: 0 0 2rem 0;
-    padding: 0 0.75rem;
+    margin: 0 0 1.5rem 0;
+    padding: 0 1rem;
   }
 
   .sellTimeBubble {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 1rem auto;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 0.75rem auto;
     border-width: 3px;
   }
 
   .bubbleTitle {
-    font-size: 0.55rem;
+    font-size: 0.45rem;
   }
 
   .bubbleValue {
@@ -257,7 +264,7 @@
   }
 
   .bubbleSubtitle {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
   }
 
   .grid {
@@ -298,6 +305,10 @@
     font-size: 10px;
     line-height: 1.2;
     margin: 2px 0;
+  }
+
+  .buttonContainer {
+    margin: 0.25rem 0 0 0;
   }
 
   .clickToTry {

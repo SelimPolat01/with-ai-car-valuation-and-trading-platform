@@ -967,6 +967,7 @@ export default function TahminYap() {
                   }
                   disabled={carValuePredictMutateIsPending}
                   type="submit"
+                  className={classes.button}
                 />
               </motion.div>
               {carValuePredictMutateIsError && (

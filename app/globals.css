@@ -4,27 +4,29 @@ body {
   flex-direction: column;
   min-height: 100vh;
   font-family: var(--font-josefin), sans-serif;
-  input,
-  label,
-  button,
-  textarea,
-  select {
-    font-family: inherit;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-inter), sans-serif;
-    font-weight: 600;
-  }
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   overflow-x: clip;
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
+}
+
+input,
+label,
+button,
+textarea,
+select {
+  font-family: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 600;
 }
 
 .rootMain {
@@ -73,12 +75,33 @@ a {
   padding: 2rem 0;
 }
 
+.container12 {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@media (max-width: 1024px) {
+  .container2 {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container2 {
+    padding: 0 1rem;
+  }
+}
+
 .homeContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 85vh;
-  padding: 0;
+  min-height: 89.5vh;
+  padding: 0 1rem 1rem 1rem;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .main {
@@ -92,21 +115,22 @@ a {
 
 .dropdownContainer {
   display: flex;
-  flex-grow: 0;
-  flex-shrink: 1;
   flex-direction: column;
-  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   background-color: #fff;
-  width: 400px;
-  height: 345px;
+  width: 100%;
+  max-width: 400px;
+  min-height: 345px;
   border-radius: 12px;
-  margin: 0 50px 0 50px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
 .dropdownWrapper {
   position: relative;
+  width: 100%;
 }
 
 .error {
@@ -164,6 +188,9 @@ a {
   border-radius: 8px;
   background-color: #fff;
   color: #acacac;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .dropdown::after {
@@ -202,6 +229,7 @@ a {
   border: 1px solid #ccc;
   max-height: 130px;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .dropdownList li {
@@ -225,24 +253,6 @@ a {
   border-bottom: none;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-}
-
-.pageHeading,
-.subHeading {
-  color: #fff;
-  text-align: center;
-  font-size: 3rem;
-  font-size: 1.5rem;
-  font-weight: 300;
-  line-height: 1.1;
-  display: block;
-}
-
-.pageHeading h1 {
-  margin-top: 0;
-  padding-top: 8.5rem;
-  font-size: 5rem;
-  margin: 0 0 8px 0;
 }
 
 .iconUl {
@@ -301,7 +311,7 @@ a {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 .bgAiCarDetector {
@@ -309,9 +319,7 @@ a {
 }
 
 .bgLogin {
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("/images/login.jpg");
+  background-image: url("/images/background.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -321,6 +329,31 @@ a {
   flex-direction: column;
 }
 
+.pageHeading,
+.subHeading {
+  color: #fff;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 300;
+  line-height: 1.1;
+  display: block;
+}
+
+.pageHeading {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  height: 315px;
+  gap: 1rem;
+}
+
+.pageHeading h1 {
+  margin: 0;
+  padding: 3.25rem 0 0 0;
+  font-size: 5rem;
+}
+
 .whiteFormSection {
   flex: 1;
   background-color: #ffffff !important;
@@ -328,12 +361,20 @@ a {
 }
 
 .bgRegister {
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("/images/register.jpg");
+  background-image: url("/images/background.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.registerDiv {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+}
+
+.registerContainer {
   width: 100%;
   height: 390px;
   display: flex;
@@ -483,5 +524,45 @@ a {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1024px) {
+  .bgLogin,
+  .registerContainer {
+    height: 320px;
+  }
+
+  .pageHeading h1 {
+    font-size: 3.8rem;
+    padding-top: 6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .bgLogin {
+    height: 240px;
+  }
+
+  .registerContainer {
+    height: auto;
+    min-height: 250px;
+    padding-bottom: 2rem;
+  }
+
+  .pageHeading {
+    height: 135.5px;
+    display: flex;
+    gap: 0.25rem;
+    justify-content: flex-start;
+  }
+
+  .pageHeading h1 {
+    font-size: 2.5rem;
+    padding: 0;
+  }
+
+  .subHeading {
+    font-size: 1.1rem;
   }
 }

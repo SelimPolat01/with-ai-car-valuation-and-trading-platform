@@ -119,14 +119,17 @@ export default function Dropdown() {
   }
 
   useEffect(() => {
-    document.addEventListener("mousedown", function handleOutsideClick(event) {
+    function handleOutsideClick(event) {
       if (!event.target.closest(".dropdownWrapper")) {
         setOpenDropdown(null);
       }
-      return () => {
-        document.removeEventListener("mousedown", handleOutsideClick);
-      };
-    });
+    }
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
   }, []);
 
   return (
@@ -139,7 +142,7 @@ export default function Dropdown() {
     >
       <motion.div
         variants={dropdownItemVariants}
-        className={`${classes.brandWrapper} dropdownWrapper `}
+        className={`${classes.brandWrapper} dropdownWrapper`}
       >
         <div
           onClick={() => {
@@ -278,7 +281,11 @@ export default function Dropdown() {
         )}
         <input type="hidden" name="modelYear" value={value.modelYearValue} />
       </motion.div>
-      <PrimaryButton type="submit" text="Hemen Sat" />
+      <PrimaryButton
+        className={classes.sellerButton}
+        type="submit"
+        text="Hemen Sat"
+      />
     </motion.form>
   );
 }

@@ -30,10 +30,11 @@ h6 {
 }
 
 .rootMain {
-  flex: 1 0 auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   margin: 0;
-  padding-bottom: 2rem;
-  min-height: 85vh;
+  padding-bottom: 0;
 }
 
 .mainBg {
@@ -94,16 +95,6 @@ a {
   }
 }
 
-.homeContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 89.5vh;
-  padding: 0 1rem 1rem 1rem;
-  box-sizing: border-box;
-  width: 100%;
-}
-
 .main {
   display: flex;
   flex-direction: column;
@@ -111,6 +102,24 @@ a {
   justify-content: center;
   align-items: center;
   height: 280px;
+}
+
+.bgForm {
+  background-image: url("/images/bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+}
+
+.homeContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 75px);
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .dropdownContainer {
@@ -121,16 +130,33 @@ a {
   background-color: #fff;
   width: 100%;
   max-width: 400px;
-  min-height: 345px;
   border-radius: 12px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 1.5rem;
   box-sizing: border-box;
 }
 
-.dropdownWrapper {
-  position: relative;
+.dropdownDiv {
   width: 100%;
+  padding: 0 0 2rem 0;
+  flex: 1;
+  max-height: calc(100vh - 75px);
+}
+
+@media (max-width: 768px) {
+  .homeContainer {
+    min-height: calc(100vh - 68px);
+  }
+
+  .dropdownDiv {
+    width: 100%;
+    padding: 0 1rem 2rem 1rem;
+    max-height: calc(100vh - 68px);
+  }
+
+  .dropdownContainer {
+    padding: 1rem;
+  }
 }
 
 .error {
@@ -179,6 +205,11 @@ a {
   will-change: transform;
 }
 
+.dropdownWrapper {
+  position: relative;
+  width: 100%;
+}
+
 .dropdown {
   border: 1px solid #ccc;
   padding: 12px 0 12px 0;
@@ -220,6 +251,7 @@ a {
   list-style: none;
   padding: 2px 0;
   margin: 0;
+  margin-top: 4px;
   position: absolute;
   top: 100%;
   left: 0;
@@ -230,6 +262,8 @@ a {
   max-height: 130px;
   overflow-y: auto;
   box-sizing: border-box;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .dropdownList li {
@@ -306,16 +340,15 @@ a {
   min-height: 90vh;
 }
 
-.bgForm {
-  background-image: url("/images/bg.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 100vh;
-}
-
 .bgAiCarDetector {
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
+}
+
+.loginLayoutWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
 }
 
 .bgLogin {
@@ -327,6 +360,7 @@ a {
   height: 390px;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 .pageHeading,
@@ -358,6 +392,8 @@ a {
   flex: 1;
   background-color: #ffffff !important;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .bgRegister {
@@ -541,7 +577,7 @@ a {
 
 @media (max-width: 768px) {
   .bgLogin {
-    height: 240px;
+    height: calc(36.9658119659vh + 68px);
   }
 
   .registerContainer {
@@ -551,18 +587,31 @@ a {
   }
 
   .pageHeading {
-    height: 135.5px;
+    height: 36.9658119659vh;
     display: flex;
     gap: 0.25rem;
     justify-content: flex-start;
+    box-sizing: border-box;
   }
 
   .pageHeading h1 {
     font-size: 2.5rem;
-    padding: 0;
+    padding: 5.625rem 0 0 0;
   }
 
   .subHeading {
     font-size: 1.1rem;
+  }
+
+  .loginLayoutWrapper {
+    height: 74.2548076925vh;
+  }
+
+  .whiteFormSection {
+    flex: 1;
+  }
+
+  .div {
+    flex: 1;
   }
 }

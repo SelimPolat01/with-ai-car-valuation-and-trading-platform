@@ -27,6 +27,10 @@
   border-radius: 8px;
 }
 
+.sellerButton {
+  margin: 0 !important;
+}
+
 @media (max-width: 768px) {
   .form {
     grid-template-columns: 1fr;

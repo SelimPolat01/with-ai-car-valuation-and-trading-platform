@@ -402,7 +402,7 @@ export default function PriceOffer({ advertId }) {
   }, [advertId, router]);
 
   return (
-    <main className={classes.main}>
+    <div className={classes.div}>
       <motion.form
         onSubmit={formSubmitHandler}
         className={classes.form}
@@ -585,6 +585,6 @@ export default function PriceOffer({ advertId }) {
           />
         </motion.div>
       </motion.form>
-    </main>
+    </div>
   );
 }

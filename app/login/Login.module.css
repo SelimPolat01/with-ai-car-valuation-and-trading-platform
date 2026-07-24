@@ -7,6 +7,7 @@
   width: 100%;
   padding: 0;
   box-sizing: border-box;
+  flex: 1;
 }
 
 .form {
@@ -54,8 +55,9 @@
 
 @media (max-width: 768px) {
   .div {
-    padding: 1.5rem;
+    padding: 0 1.5rem;
     width: 100%;
+    flex: 1;
   }
 
   .form {
@@ -63,6 +65,10 @@
     max-width: 100%;
     gap: 1rem;
     margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
   }
 
   .form button {

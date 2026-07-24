@@ -1,8 +1,9 @@
-.rootMain {
+.div {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 90vh;
+  min-height: calc(100vh - 75px);
+  padding: 0;
 }
 
 .title h1 {
@@ -149,11 +150,20 @@
   border-radius: 8px;
 }
 
+.button {
+  margin: 0 !important;
+}
+
 @media (max-width: 768px) {
-  .main {
-    min-height: 100vh;
+  .div {
+    min-height: calc(100vh - 68px);
+  }
+
+  .container {
+    min-height: calc(100vh - 68px);
     width: 100%;
     overflow-x: hidden;
+    padding: 1rem 1rem 0 1rem;
   }
 
   .flex {
@@ -162,7 +172,6 @@
     top: auto;
     transform: none;
     width: 100%;
-    padding: 1rem 1rem 2rem 1rem;
     box-sizing: border-box;
   }
 

@@ -1,4 +1,4 @@
-.main {
+.div {
   display: flex;
   justify-content: center;
   padding: 3rem 0;
@@ -187,7 +187,7 @@
 }
 
 @media (max-width: 768px) {
-  .main {
+  .div {
     padding: 1rem 1rem 2rem 1rem;
     box-sizing: border-box;
   }

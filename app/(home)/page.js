@@ -9,20 +9,22 @@ export default function Home() {
   const mode = searchParams.get("mode");
 
   return (
-    <main className="homeContainer">
+    <div className="homeContainer">
       {mode === "form" ? (
-        <div className="dropdownContainer">
-          <div>
-            <h2>Araç bilgilerini gir.</h2>
+        <div className="dropdownDiv">
+          <div className="dropdownContainer">
+            <div>
+              <h2 style={{ margin: 0 }}>Araç bilgilerini gir.</h2>
+            </div>
+            <div>
+              <p style={{ color: "#FF6B6B" }}>Aracını hemen sat.</p>
+            </div>
+            <Dropdown />
           </div>
-          <div>
-            <p style={{ color: "#FF6B6B" }}>Aracını hemen sat.</p>
-          </div>
-          <Dropdown />
         </div>
       ) : (
         <AiCarDetector />
       )}
-    </main>
+    </div>
   );
 }

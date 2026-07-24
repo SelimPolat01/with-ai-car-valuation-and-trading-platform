@@ -14,6 +14,12 @@ import {
   formatMonthName,
 } from "@/app/utils/helpers";
 import Loading from "@/app/loading";
+import {
+  cardVariants,
+  fadeItemVariants,
+  gridContainerVariants,
+  pageVariants,
+} from "@/app/utils/animations";
 
 const ALL_HOURS = [
   "09:00",
@@ -50,6 +56,7 @@ export default function Randevu() {
 
   const [selectedDate, setSelectedDate] = useState(days[0].toDateString());
   const [selectedHour, setSelectedHour] = useState(null);
+
   const {
     data: getAvailableSlotsData,
     isLoading: getAvailableSlotsIsLoading,
@@ -91,10 +98,23 @@ export default function Randevu() {
 
   return (
     <div className={classes.main}>
-      <div className={classes.div}>
-        <h2 className={classes.title}>RANDEVU TARİHİ SEÇİN</h2>
-        <div className={classes.daysWrapper}>
-          {days.map((date, index) => {
+      <motion.div
+        className={classes.div}
+        variants={pageVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h2 variants={fadeItemVariants} className={classes.title}>
+          RANDEVU TARİHİ SEÇİN
+        </motion.h2>
+
+        <motion.div
+          className={classes.daysWrapper}
+          variants={gridContainerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {days.map((date) => {
             const dateStr = date.toDateString();
             const dbDateStr = formatForDB(date);
             const isSelected = selectedDate === dateStr;
@@ -108,33 +128,44 @@ export default function Randevu() {
               todaysSlots.every((slot) => slot.is_booked);
 
             return (
-              <button
+              <motion.button
                 key={dateStr}
+                variants={cardVariants}
+                whileHover={!isAllHoursFull ? { scale: 1.05 } : {}}
+                whileTap={!isAllHoursFull ? { scale: 0.95 } : {}}
                 disabled={isAllHoursFull}
                 className={`${classes.dayCard} ${isSelected ? classes.activeDay : ""} ${
                   isAllHoursFull ? classes.fullDay : ""
                 }`}
                 onClick={() => {
                   setSelectedDate(dateStr);
-                  setSelectedHour(null); //
+                  setSelectedHour(null);
                 }}
               >
                 <span className={classes.dayNumber}>
                   {formatDayNumber(date)}
-                </span>{" "}
+                </span>
                 <span className={classes.dayMonth}>
                   {formatMonthName(date)}
-                </span>{" "}
+                </span>
                 <span className={classes.dayName}>{formatDayName(date)}</span>
-              </button>
+              </motion.button>
             );
           })}
-        </div>
+        </motion.div>
 
-        <hr className={classes.divider} />
+        <motion.hr variants={fadeItemVariants} className={classes.divider} />
 
-        <h3 className={classes.subtitle}>SAAT SEÇİN</h3>
-        <div className={classes.hoursGrid}>
+        <motion.h3 variants={fadeItemVariants} className={classes.subtitle}>
+          SAAT SEÇİN
+        </motion.h3>
+
+        <motion.div
+          className={classes.hoursGrid}
+          variants={gridContainerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {ALL_HOURS.map((saat) => {
             const isSelected = selectedHour === saat;
             const selectedDateDBStr = formatForDB(selectedDate);
@@ -147,8 +178,11 @@ export default function Randevu() {
             const isFull = currentSlot ? currentSlot.is_booked : false;
 
             return (
-              <button
+              <motion.button
                 key={saat}
+                variants={cardVariants}
+                whileHover={!isFull ? { scale: 1.05 } : {}}
+                whileTap={!isFull ? { scale: 0.95 } : {}}
                 disabled={isFull}
                 className={`${classes.hourCard} ${
                   isFull
@@ -165,10 +199,10 @@ export default function Randevu() {
                 <span className={classes.hourStatus}>
                   {isFull ? "DOLU" : isSelected ? "SEÇİLDİ" : "BOŞ"}
                 </span>
-              </button>
+              </motion.button>
             );
           })}
-        </div>
+        </motion.div>
 
         <AnimatePresence>
           {selectedDate !== null && selectedHour !== null && (
@@ -186,7 +220,7 @@ export default function Randevu() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -664,36 +664,94 @@ button:disabled {
   width: auto;
 }
 
-.supportBtn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background 0.2s ease;
+.headerButtoncard {
+  background: rgba(25, 15, 40, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1.2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  backdrop-filter: blur(12px);
 }
 
-.supportBtn:hover {
-  background: rgba(255, 255, 255, 0.15);
+.boxHeaderDiv {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
 }
 
-.cancelBtn {
+.actionButtonsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 400px;
+}
+
+.boxHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.boxHeader h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.policyText {
+  color: #a1a1aa;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0 0 1.25rem 0;
+}
+
+.cancelButton {
   background: #dc2626;
   border: 1px solid #b91c1c;
   color: #ffffff;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 13px;
-  transition: all 0.2s ease;
 }
 
-.cancelBtn:hover {
-  background: #b91c1c;
-  box-shadow: 0 0 10px rgba(220, 38, 38, 0.4);
+.cancelButton:hover {
+  background: #ef4444;
+  border-color: #dc2626;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+.supportButton {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.supportButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.cancelButton,
+.supportButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  max-width: 392.8px;
+  max-height: 46.8px;
+  padding: 0.85rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
 }
 
 @media (max-width: 1024px) {
@@ -721,6 +779,17 @@ button:disabled {
 
   .cardContainer {
     gap: 1.25rem;
+  }
+
+  .headerButtoncard {
+    flex-direction: column;
+    gap: 0;
+    padding: 19.2px;
+  }
+
+  .actionButtonsContainer {
+    width: 100%;
+    gap: 0.75rem;
   }
 
   .tabs {
@@ -808,7 +877,9 @@ button:disabled {
   }
 
   .supportBtn,
-  .cancelBtn {
+  .cancelBtn,
+  .supportButton,
+  .cancelButton {
     flex: 1;
     text-align: center;
   }
@@ -873,7 +944,9 @@ button:disabled {
   }
 
   .supportBtn,
-  .cancelBtn {
+  .cancelBtn,
+  .supportButton,
+  .cancelButton {
     width: 100%;
   }
 }

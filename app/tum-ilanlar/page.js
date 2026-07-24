@@ -118,7 +118,7 @@ export default function AllAdverts() {
     );
 
   return (
-    <main className={classes.main}>
+    <div className={classes.mainDiv}>
       <ConfirmDialog
         ref={deleteDialogRef}
         onConfirm={() => advertDeleteHandler(selectedAdvertId)}
@@ -185,6 +185,6 @@ export default function AllAdverts() {
           </AnimatePresence>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

@@ -7,6 +7,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .sellTimeBubble {
@@ -244,8 +246,9 @@
 
 @media (max-width: 768px) {
   .container {
-    margin: 0 0 1.5rem 0;
-    padding: 0 1rem;
+    min-height: calc(100vh - 68px);
+    margin: 0;
+    padding: 0 1rem 2rem 1rem;
   }
 
   .sellTimeBubble {

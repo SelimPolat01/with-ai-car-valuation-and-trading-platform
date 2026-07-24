@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function GetPriceOfferLayout({ children }) {
-  return <main className={classes.rootMain}>{children}</main>;
+  return <div className={classes.div}>{children}</div>;
 }

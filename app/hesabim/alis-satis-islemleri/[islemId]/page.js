@@ -1,6 +1,14 @@
 "use client";
 
-import { AlertCircle, ArrowLeft, Ban, FileX } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  Ban,
+  FileX,
+  Headset,
+  ShieldAlert,
+  ShieldX,
+} from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import classes from "./İslem.module.css";
@@ -22,6 +30,11 @@ import ConfirmDialog from "@/app/components/ConfirmDialog";
 import Loading from "@/app/loading";
 import useGetPersonalTransactions from "@/hooks/GET/useGetPersonalTransactions";
 import { usePatchPersonalTransactionCancel } from "@/hooks/PATCH/usePatchPersonalTransactionCancel";
+import { motion } from "framer-motion";
+import {
+  islemDetayCardVariants,
+  islemDetayContainerVariants,
+} from "@/app/utils/animations";
 
 export default function IslemDetaylar() {
   const router = useRouter();
@@ -48,8 +61,6 @@ export default function IslemDetaylar() {
   const {
     mutate: patchPersonalTransactionMutate,
     isPending: patchPersonalTransactionIsPending,
-    isError: patchPersonalTransactionIsError,
-    error: patchPersonalTransactionError,
   } = usePatchPersonalTransactionCancel();
 
   const transactionList = Array.isArray(getPersonalTransactionsData)
@@ -118,11 +129,19 @@ export default function IslemDetaylar() {
           cancelTransactionConfirmHandler(transaction.payment_id)
         }
         title={`Araç ${transaction.role === "seller" ? "Satışını" : "Alışını"} İptal Et`}
-        text={`Bu aracın ${transaction.role === "seller" ? "satış" : "alım"} işlemini iptal etmek istediğinize emin misiniz? Bu işlem kalıcıdır ve geri alınamaz.`}
+        text={`Bu aracın ${
+          transaction.role === "seller" ? "satış" : "alım"
+        } işlemini iptal etmek istediğinize emin misiniz? Bu işlem kalıcıdır ve geri alınamaz.`}
         confirmRedirect="/hesabim/alis-satis-islemleri"
         logo={<FileX size={35} />}
       />
-      <div className={classes.header}>
+
+      <motion.div
+        initial={{ opacity: 0, y: -15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={classes.header}
+      >
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} />
           Geri Dön
@@ -136,9 +155,15 @@ export default function IslemDetaylar() {
             {statusData.text}
           </span>
         </div>
-      </div>
-      <div className={classes.carContainer}>
-        <div className={classes.card}>
+      </motion.div>
+
+      <motion.div
+        variants={islemDetayContainerVariants}
+        initial="hidden"
+        animate="show"
+        className={classes.carContainer}
+      >
+        <motion.div variants={islemDetayCardVariants} className={classes.card}>
           <div className={classes.vehicleHeader}>
             <div className={classes.vehicleMainInfo}>
               {transaction.image_url && (
@@ -204,9 +229,9 @@ export default function IslemDetaylar() {
               </span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className={classes.card}>
+        <motion.div variants={islemDetayCardVariants} className={classes.card}>
           <h3 className={classes.sectionTitle}>
             🚘 Araç Detayları & Geçmiş Bilgileri
           </h3>
@@ -312,13 +337,19 @@ export default function IslemDetaylar() {
               <p className={classes.extrasContent}>{transaction.extras}</p>
             </div>
           )}
-        </div>
+        </motion.div>
 
-        <div className={classes.card}>
+        <motion.div variants={islemDetayCardVariants} className={classes.card}>
           <h3 className={classes.sectionTitle}>Süreç Adımları</h3>
           <div className={classes.stepper}>
             <div
-              className={`${classes.step} ${currentStep > 1 ? classes.completedStep : currentStep === 1 ? classes.activeStep : ""}`}
+              className={`${classes.step} ${
+                currentStep > 1
+                  ? classes.completedStep
+                  : currentStep === 1
+                    ? classes.activeStep
+                    : ""
+              }`}
             >
               <div className={classes.stepCircle}>
                 {currentStep > 1 ? "✓" : "1"}
@@ -328,11 +359,23 @@ export default function IslemDetaylar() {
             </div>
 
             <div
-              className={`${classes.stepLine} ${currentStep > 1 ? classes.completedLine : currentStep === 1 ? classes.activeLine : ""}`}
+              className={`${classes.stepLine} ${
+                currentStep > 1
+                  ? classes.completedLine
+                  : currentStep === 1
+                    ? classes.activeLine
+                    : ""
+              }`}
             ></div>
 
             <div
-              className={`${classes.step} ${currentStep > 2 ? classes.completedStep : currentStep === 2 ? classes.activeStep : ""}`}
+              className={`${classes.step} ${
+                currentStep > 2
+                  ? classes.completedStep
+                  : currentStep === 2
+                    ? classes.activeStep
+                    : ""
+              }`}
             >
               <div className={classes.stepCircle}>
                 {currentStep > 2 ? "✓" : "2"}
@@ -347,11 +390,23 @@ export default function IslemDetaylar() {
             </div>
 
             <div
-              className={`${classes.stepLine} ${currentStep > 2 ? classes.completedLine : currentStep === 2 ? classes.activeLine : ""}`}
+              className={`${classes.stepLine} ${
+                currentStep > 2
+                  ? classes.completedLine
+                  : currentStep === 2
+                    ? classes.activeLine
+                    : ""
+              }`}
             ></div>
 
             <div
-              className={`${classes.step} ${currentStep > 3 ? classes.completedStep : currentStep === 3 ? classes.activeStep : ""}`}
+              className={`${classes.step} ${
+                currentStep > 3
+                  ? classes.completedStep
+                  : currentStep === 3
+                    ? classes.activeStep
+                    : ""
+              }`}
             >
               <div className={classes.stepCircle}>
                 {currentStep > 3 ? "✓" : "3"}
@@ -361,11 +416,23 @@ export default function IslemDetaylar() {
             </div>
 
             <div
-              className={`${classes.stepLine} ${currentStep > 3 ? classes.completedLine : currentStep === 3 ? classes.activeLine : ""}`}
+              className={`${classes.stepLine} ${
+                currentStep > 3
+                  ? classes.completedLine
+                  : currentStep === 3
+                    ? classes.activeLine
+                    : ""
+              }`}
             ></div>
 
             <div
-              className={`${classes.step} ${currentStep > 4 ? classes.completedStep : currentStep === 4 ? classes.activeStep : ""}`}
+              className={`${classes.step} ${
+                currentStep > 4
+                  ? classes.completedStep
+                  : currentStep === 4
+                    ? classes.activeStep
+                    : ""
+              }`}
             >
               <div className={classes.stepCircle}>
                 {currentStep > 4 ? "✓" : "4"}
@@ -375,11 +442,23 @@ export default function IslemDetaylar() {
             </div>
 
             <div
-              className={`${classes.stepLine} ${currentStep > 4 ? classes.completedLine : currentStep === 4 ? classes.activeLine : ""}`}
+              className={`${classes.stepLine} ${
+                currentStep > 4
+                  ? classes.completedLine
+                  : currentStep === 4
+                    ? classes.activeLine
+                    : ""
+              }`}
             ></div>
 
             <div
-              className={`${classes.step} ${currentStep > 5 ? classes.completedStep : currentStep === 5 ? classes.activeStep : ""}`}
+              className={`${classes.step} ${
+                currentStep > 5
+                  ? classes.completedStep
+                  : currentStep === 5
+                    ? classes.activeStep
+                    : ""
+              }`}
             >
               <div className={classes.stepCircle}>
                 {currentStep > 5 ? "✓" : "5"}
@@ -388,9 +467,12 @@ export default function IslemDetaylar() {
               <span className={classes.stepSub}>Devir & Onay</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className={classes.gridTwoColumn}>
+        <motion.div
+          variants={islemDetayCardVariants}
+          className={classes.gridTwoColumn}
+        >
           <div className={classes.card}>
             <h3 className={classes.sectionTitle}>
               {transaction.role === "buyer"
@@ -443,7 +525,9 @@ export default function IslemDetaylar() {
                 <div className={classes.toggleRow}>
                   <span>Ruhsat Bilgilerini Alıcıya Göster:</span>
                   <button
-                    className={`${classes.toggleBtn} ${ruhsatVisible ? classes.toggleActive : ""}`}
+                    className={`${classes.toggleBtn} ${
+                      ruhsatVisible ? classes.toggleActive : ""
+                    }`}
                     onClick={() => setRuhsatVisible(!ruhsatVisible)}
                   >
                     {ruhsatVisible ? "AÇIK" : "KAPALI"}
@@ -521,7 +605,9 @@ export default function IslemDetaylar() {
                   <strong>Araç Ruhsat Bilgileri</strong>
                   <p>
                     {canViewPermit
-                      ? `Plaka: ${transaction.plate || "Belirtilmedi"} (Şasi: ${transaction.chassis_number || "Yok"})`
+                      ? `Plaka: ${transaction.plate || "Belirtilmedi"} (Şasi: ${
+                          transaction.chassis_number || "Yok"
+                        })`
                       : "Satıcı tarafından gizlendi"}
                   </p>
                 </div>
@@ -560,48 +646,41 @@ export default function IslemDetaylar() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className={classes.dangerCard}>
-          <div>
-            <h4>İşlem İptali veya Destek</h4>
-            <p>
+        <motion.div
+          variants={islemDetayCardVariants}
+          className={classes.headerButtoncard}
+        >
+          <div className={classes.boxHeaderDiv}>
+            <div className={classes.boxHeader}>
+              <ShieldAlert className={classes.iconSecondary} size={20} />
+              <h3>İşlem İptali veya Destek</h3>
+            </div>
+            <p className={classes.policyText}>
               Süreçte herhangi bir sorun yaşarsanız veya cayma hakkınızı
               kullanmak isterseniz başlatabilirsiniz.
             </p>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-              gap: "10px",
-            }}
-          >
-            <div className={classes.dangerButtons}>
-              <button className={classes.supportBtn}>Canlı Destek</button>
-              <button
-                onClick={cancelTransactionHandler}
-                className={classes.cancelBtn}
-                disabled={patchPersonalTransactionIsPending}
-                type="button"
-              >
-                {transaction.role === "buyer"
-                  ? "Süreci İptal Et (Cayma)"
-                  : "Satıştan Vazgeç"}
-              </button>
-            </div>
-            {patchPersonalTransactionIsError && (
-              <span
-                style={{ color: "red", fontSize: "14px", fontWeight: "500" }}
-              >
-                {patchPersonalTransactionError?.message ||
-                  "İptal işlemi sırasında bir hata oluştu."}
-              </span>
-            )}
+          <div className={classes.actionButtonsContainer}>
+            <button className={classes.supportButton}>
+              <Headset />
+              Canlı Destek
+            </button>
+            <button
+              onClick={cancelTransactionHandler}
+              className={classes.cancelButton}
+              disabled={patchPersonalTransactionIsPending}
+              type="button"
+            >
+              <ShieldX />
+              {transaction.role === "buyer"
+                ? "Süreci İptal Et"
+                : "Satıştan Vazgeç"}
+            </button>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

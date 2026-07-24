@@ -179,7 +179,9 @@ export default function AracGecmisi() {
       <div className={`${classes.selectWrapper} dropdownWrapper`}>
         <label className={classes.selectLabel}>{label}</label>
         <div
-          className={`${classes.dropdownHeader} ${isOpen ? classes.dropdownHeaderActive : ""}`}
+          className={`${classes.dropdownHeader} ${
+            isOpen ? classes.dropdownHeaderActive : ""
+          }`}
           onClick={() => setOpenDropdown(isOpen ? null : name)}
         >
           <span className={classes.selectedText}>{selectedOption.label}</span>
@@ -251,9 +253,18 @@ export default function AracGecmisi() {
               className={classes.input}
               maxLength={8}
             />
-            {errors.plate && (
-              <span className={classes.errorText}>{errors.plate}</span>
-            )}
+            <AnimatePresence>
+              {errors.plate && (
+                <motion.span
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className={classes.errorText}
+                >
+                  {errors.plate}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
           <div className={classes.inputWrapper}>
             <Input
@@ -266,9 +277,18 @@ export default function AracGecmisi() {
               className={classes.input}
               maxLength={17}
             />
-            {errors.chassisNumber && (
-              <span className={classes.errorText}>{errors.chassisNumber}</span>
-            )}
+            <AnimatePresence>
+              {errors.chassisNumber && (
+                <motion.span
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className={classes.errorText}
+                >
+                  {errors.chassisNumber}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
           <div className={classes.inputWrapper}>
             <Input
@@ -280,9 +300,18 @@ export default function AracGecmisi() {
               placeholder="Örn: 5000"
               className={classes.input}
             />
-            {errors.tramerRecord && (
-              <span className={classes.errorText}>{errors.tramerRecord}</span>
-            )}
+            <AnimatePresence>
+              {errors.tramerRecord && (
+                <motion.span
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className={classes.errorText}
+                >
+                  {errors.tramerRecord}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
           <div className={classes.inputWrapper}>
             <Input
@@ -293,9 +322,18 @@ export default function AracGecmisi() {
               onChange={detailsChangeHandler}
               className={classes.input}
             />
-            {errors.inspectionDate && (
-              <span className={classes.errorText}>{errors.inspectionDate}</span>
-            )}
+            <AnimatePresence>
+              {errors.inspectionDate && (
+                <motion.span
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className={classes.errorText}
+                >
+                  {errors.inspectionDate}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
           <CustomDropdown
             label="Rehin / Hak Mahrumiyeti"
@@ -336,9 +374,18 @@ export default function AracGecmisi() {
               placeholder="Örn: 2"
               className={classes.input}
             />
-            {errors.ownerCount && (
-              <span className={classes.errorText}>{errors.ownerCount}</span>
-            )}
+            <AnimatePresence>
+              {errors.ownerCount && (
+                <motion.span
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className={classes.errorText}
+                >
+                  {errors.ownerCount}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
           <CustomDropdown
             label="Yetkili Servis Bakımlı Mı?"
@@ -417,9 +464,13 @@ export default function AracGecmisi() {
             return (
               <div key={view.id} className={classes.fileWrapper}>
                 <span className={classes.fileTitle}>{view.label}</span>
-                <label
+                <motion.label
+                  whileHover={{ scale: 1.03, y: -4 }}
+                  whileTap={{ scale: 0.97 }}
                   htmlFor={view.id}
-                  className={`${classes.fileCard} ${previewUrl ? classes.hasPreview : ""}`}
+                  className={`${classes.fileCard} ${
+                    previewUrl ? classes.hasPreview : ""
+                  }`}
                 >
                   <input
                     id={view.id}
@@ -435,7 +486,9 @@ export default function AracGecmisi() {
                         alt={view.label}
                         className={classes.previewImage}
                       />
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.15 }}
+                        whileTap={{ scale: 0.85 }}
                         className={classes.removeButton}
                         onClick={(e) => removeFileHandler(e, view.id)}
                         title="Kaldır"
@@ -453,7 +506,7 @@ export default function AracGecmisi() {
                           <line x1="18" y1="6" x2="6" y2="18"></line>
                           <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
-                      </button>
+                      </motion.button>
                     </div>
                   ) : (
                     <div className={classes.fileUploadContent}>
@@ -474,10 +527,19 @@ export default function AracGecmisi() {
                       </span>
                     </div>
                   )}
-                </label>
-                {errors[view.id] && (
-                  <span className={classes.errorText}>{errors[view.id]}</span>
-                )}
+                </motion.label>
+                <AnimatePresence>
+                  {errors[view.id] && (
+                    <motion.span
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      className={classes.errorText}
+                    >
+                      {errors[view.id]}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </div>
             );
           })}
@@ -487,6 +549,8 @@ export default function AracGecmisi() {
       <motion.div
         variants={aracGecmisiItemVariants}
         className={classes.buttonContainer}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
       >
         <SecondaryButton
           type="button"

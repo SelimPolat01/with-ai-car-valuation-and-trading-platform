@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import classes from "./SimiliarAdverts.module.css";
 import { useRouter } from "next/navigation";
 import { formatBrandModel, generateSlug } from "../utils/helpers";
+import { motion } from "framer-motion";
 
 export default function SimilarAdverts({ currentAdvertId }) {
   const router = useRouter();
@@ -37,15 +38,24 @@ export default function SimilarAdverts({ currentAdvertId }) {
 
   if (loading)
     return (
-      <p className={classes.loadingText}>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className={classes.loadingText}
+      >
         Benzer Yapay Zekâ Önerileri Yükleniyor...
-      </p>
+      </motion.p>
     );
 
   if (similarCars.length === 0) return null;
 
   return (
-    <div className={classes.container}>
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className={classes.container}
+    >
       <h3 className={classes.title}>
         Görsel Olarak Benzer Araçlar (Yapay Zekâ Önerisi)
       </h3>
@@ -56,8 +66,11 @@ export default function SimilarAdverts({ currentAdvertId }) {
           const formattedModel = formatBrandModel(car.model);
 
           return (
-            <div
+            <motion.div
               key={car.id}
+              whileHover={{ y: -6 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.05 }}
               onClick={() => {
                 const brandSlug = generateSlug(car.brand);
                 const modelSlug = generateSlug(car.model);
@@ -81,10 +94,10 @@ export default function SimilarAdverts({ currentAdvertId }) {
               <p className={classes.carPrice}>
                 {car.price?.toLocaleString("tr-TR")} ₺
               </p>
-            </div>
+            </motion.div>
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -7,6 +7,7 @@ import { usePatchSoldAdvert } from "@/hooks/PATCH/usePatchSoldAdvert";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import SuccessMessage from "@/app/components/SuccessMessage";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Odeme() {
   const router = useRouter();
@@ -88,44 +89,69 @@ export default function Odeme() {
 
   return (
     <div className={classes.div}>
-      {!isSuccess ? (
-        <div
-          className={classes.paymentDiv}
-          onClick={() => {
-            if (patchSoldAdvertIsError) {
-              reset();
-            }
-          }}
-        >
-          <CreditCard ref={creditCardRef} />
+      <AnimatePresence mode="wait">
+        {!isSuccess ? (
+          <motion.div
+            key="payment-form"
+            className={classes.paymentDiv}
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.98 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            onClick={() => {
+              if (patchSoldAdvertIsError) {
+                reset();
+              }
+            }}
+          >
+            <CreditCard ref={creditCardRef} />
 
-          {patchSoldAdvertIsError && (
-            <div className={classes.errorMessage}>
-              {patchSoldAdvertError?.message ||
-                "Ödeme işlemi sırasında bir hata oluştu."}
-            </div>
-          )}
+            <AnimatePresence>
+              {patchSoldAdvertIsError && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, y: -10 }}
+                  animate={{ opacity: 1, height: "auto", y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className={classes.errorMessage}
+                >
+                  {patchSoldAdvertError?.message ||
+                    "Ödeme işlemi sırasında bir hata oluştu."}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-          <SecondaryButton
-            className={classes.paymentButton}
-            text={patchSoldAdvertIsPending ? "İşleniyor..." : "Ödemeyi Tamamla"}
-            onClick={advertBuyHandler}
-            disabled={patchSoldAdvertIsPending}
-          />
-        </div>
-      ) : (
-        <SuccessMessage
-          key="success-message"
-          onClick={() => {
-            setIsSuccess(false);
-            router.replace("/hesabim/randevular");
-          }}
-          title="İşlem Başarılı! 🎉"
-          text="Ödemeniz başarıyla alındı ve randevunuz oluşturuldu. Araç teslim detaylarına profilinizdeki randevularım kısmından ulaşabilirsiniz."
-          buttonText="Ana Sayfaya Git"
-          className={classes.successMessage}
-        />
-      )}
+            <SecondaryButton
+              className={classes.paymentButton}
+              text={
+                patchSoldAdvertIsPending ? "İşleniyor..." : "Ödemeyi Tamamla"
+              }
+              onClick={advertBuyHandler}
+              disabled={patchSoldAdvertIsPending}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="success-container"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
+            <SuccessMessage
+              key="success-message"
+              onClick={() => {
+                setIsSuccess(false);
+                router.replace("/hesabim/randevular");
+              }}
+              title="İşlem Başarılı! 🎉"
+              text="Ödemeniz başarıyla alındı ve randevunuz oluşturuldu. Araç teslim detaylarına profilinizdeki randevularım kısmından ulaşabilirsiniz."
+              buttonText="Ana Sayfaya Git"
+              className={classes.successMessage}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

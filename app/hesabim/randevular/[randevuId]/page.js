@@ -34,6 +34,7 @@ import {
   getAppointmentStatusData,
 } from "@/app/utils/helpers";
 import Loading from "@/app/loading";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function RandevuDetaylar() {
   const router = useRouter();
@@ -62,6 +63,29 @@ export default function RandevuDetaylar() {
     isError: patchPersonalAppointmentCancelIsError,
     error: patchPersonalAppointmentCancelError,
   } = usePatchPersonalAppointmentCancel();
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+      },
+    },
+  };
 
   if (!token || getPersonalAppointmentsIsLoading) {
     return <Loading />;
@@ -128,7 +152,12 @@ export default function RandevuDetaylar() {
   const mapDirectionUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
 
   return (
-    <div className={classes.container}>
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={classes.container}
+    >
       <ConfirmDialog
         ref={cancelDialogRef}
         onConfirm={() =>
@@ -139,11 +168,17 @@ export default function RandevuDetaylar() {
         confirmRedirect={"/hesabim/randevular"}
         logo={<CalendarX size={35} />}
       />
+
       <div className={classes.header}>
-        <button onClick={() => router.back()} className="backButton">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => router.back()}
+          className="backButton"
+        >
           <ArrowLeft size={20} />
           Geri Dön
-        </button>
+        </motion.button>
         <div className={classes.titleContainer}>
           <h1 className={classes.title}>
             Randevu Detayı{" "}
@@ -157,11 +192,22 @@ export default function RandevuDetaylar() {
         </div>
       </div>
 
-      <div className={classes.contentWrapper}>
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className={classes.contentWrapper}
+      >
         <div className={classes.leftColumn}>
-          <div className={`${classes.card} ${classes.flexGrow1}`}>
+          <motion.div
+            variants={itemVariants}
+            className={`${classes.card} ${classes.flexGrow1}`}
+          >
             <div className={classes.carHeaderSection}>
-              <div className={classes.carImageContainer}>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className={classes.carImageContainer}
+              >
                 {appointment.image_url ? (
                   <Image
                     src={appointment.image_url}
@@ -174,7 +220,7 @@ export default function RandevuDetaylar() {
                     <CarFront size={64} opacity={0.3} />
                   </div>
                 )}
-              </div>
+              </motion.div>
               <div className={classes.carMainInfo}>
                 <h2 className={classes.carName}>
                   {formatBrandModel(appointment.brand)}{" "}
@@ -268,10 +314,10 @@ export default function RandevuDetaylar() {
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           <div className={classes.alertsGrid}>
-            <div className={classes.card}>
+            <motion.div variants={itemVariants} className={classes.card}>
               <div className={classes.boxHeader}>
                 <AlertCircle className={classes.iconWarning} size={20} />
                 <h3>Önemli Hatırlatmalar</h3>
@@ -291,12 +337,12 @@ export default function RandevuDetaylar() {
                   unutmayın.
                 </li>
               </ul>
-            </div>
+            </motion.div>
           </div>
         </div>
 
         <div className={classes.rightColumn}>
-          <div className={classes.card}>
+          <motion.div variants={itemVariants} className={classes.card}>
             <div className={classes.boxHeader}>
               <Info className={classes.iconPrimary} size={20} />
               <h3>Sizin Rolünüz</h3>
@@ -311,9 +357,12 @@ export default function RandevuDetaylar() {
                 rolündesiniz.
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className={`${classes.card} ${classes.flexGrow1}`}>
+          <motion.div
+            variants={itemVariants}
+            className={`${classes.card} ${classes.flexGrow1}`}
+          >
             <div className={classes.boxHeader}>
               <CalendarClock className={classes.iconPrimary} size={20} />
               <h3>Zaman ve Konum</h3>
@@ -341,7 +390,9 @@ export default function RandevuDetaylar() {
                 referrerPolicy="no-referrer-when-downgrade"
               ></iframe>
 
-              <a
+              <motion.a
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 href={mapDirectionUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -349,11 +400,11 @@ export default function RandevuDetaylar() {
               >
                 <Navigation size={18} />
                 Yol Tarifi Al
-              </a>
+              </motion.a>
             </div>
-          </div>
+          </motion.div>
 
-          <div className={classes.card}>
+          <motion.div variants={itemVariants} className={classes.card}>
             <div className={classes.qrWrapper}>
               <div className={classes.qrBox}>
                 <QrCode size={48} className={classes.qrIcon} />
@@ -382,9 +433,9 @@ export default function RandevuDetaylar() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className={classes.card}>
+          <motion.div variants={itemVariants} className={classes.card}>
             <div className={classes.boxHeader}>
               <ShieldAlert className={classes.iconSecondary} size={20} />
               <h3>İşlemler</h3>
@@ -416,9 +467,9 @@ export default function RandevuDetaylar() {
                 Yazdır / PDF İndir
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

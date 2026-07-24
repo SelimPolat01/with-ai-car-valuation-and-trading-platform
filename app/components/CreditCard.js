@@ -4,6 +4,7 @@ import Image from "next/image";
 import { CreditCard as CreditCardIcon } from "lucide-react";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import classes from "./CreditCard.module.css";
+import { AnimatePresence, motion } from "framer-motion";
 
 const CreditCard = forwardRef((props, ref) => {
   const [cardNumberParts, setCardNumberParts] = useState(["", "", "", ""]);
@@ -254,19 +255,33 @@ const CreditCard = forwardRef((props, ref) => {
   }));
 
   return (
-    <div className={classes.cardDiv}>
-      <div className={classes.cardContainer}>
-        <div className={classes.cardTypeDiv}>
-          <h2 className={classes.cardTypeText}>{cardTypeLogoText}</h2>
-          <Image
-            className={classes.cardLogo}
-            src={cardTypeLogoSrc}
-            alt={cardTypeLogoAlt}
-            width={75}
-            height={58}
-            priority
-          />
-        </div>
+    <motion.div
+      className={classes.cardDiv}
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
+      <motion.div className={classes.cardContainer}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={cardTypeLogoText}
+            className={classes.cardTypeDiv}
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 5 }}
+            transition={{ duration: 0.2 }}
+          >
+            <h2 className={classes.cardTypeText}>{cardTypeLogoText}</h2>
+            <Image
+              className={classes.cardLogo}
+              src={cardTypeLogoSrc}
+              alt={cardTypeLogoAlt}
+              width={75}
+              height={58}
+              priority
+            />
+          </motion.div>
+        </AnimatePresence>
 
         <div className={classes.cardTemplateDiv}>
           <CreditCardIcon className={classes.cardIcon} color="#D4AF37" />
@@ -293,11 +308,19 @@ const CreditCard = forwardRef((props, ref) => {
                     maxLength={4}
                   />
                   <hr className={classes.hr} />
-                  {cardErrors.number[index] && (
-                    <p className={classes.errorMessage}>
-                      {cardErrors.number[index]}
-                    </p>
-                  )}
+                  <AnimatePresence>
+                    {cardErrors.number[index] && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.2 }}
+                        className={classes.errorMessage}
+                      >
+                        {cardErrors.number[index]}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
             </div>
@@ -318,9 +341,19 @@ const CreditCard = forwardRef((props, ref) => {
                 placeholder="NAME SURNAME"
               />
               <hr className={classes.nameHr} />
-              {cardErrors.name && (
-                <p className={classes.errorMessage}>{cardErrors.name}</p>
-              )}
+              <AnimatePresence>
+                {cardErrors.name && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2 }}
+                    className={classes.errorMessage}
+                  >
+                    {cardErrors.name}
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -349,11 +382,19 @@ const CreditCard = forwardRef((props, ref) => {
                       placeholder={index === 0 ? "MM" : "YY"}
                     />
                     <hr className={classes.expireDatehr} />
-                    {cardErrors.expireDate[index] && (
-                      <p className={classes.errorMessage}>
-                        {cardErrors.expireDate[index]}
-                      </p>
-                    )}
+                    <AnimatePresence>
+                      {cardErrors.expireDate[index] && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          transition={{ duration: 0.2 }}
+                          className={classes.errorMessage}
+                        >
+                          {cardErrors.expireDate[index]}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
                   </div>
                   {index === 0 && <h2 className={classes.dateText}>/</h2>}
                 </div>
@@ -361,8 +402,8 @@ const CreditCard = forwardRef((props, ref) => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 });
 

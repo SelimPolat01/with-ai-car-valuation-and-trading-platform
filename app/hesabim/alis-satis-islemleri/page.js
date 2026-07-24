@@ -21,6 +21,7 @@ import {
 } from "@/app/utils/helpers";
 import Loading from "@/app/loading";
 import useGetPersonalTransactions from "@/hooks/GET/useGetPersonalTransactions";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AlisSatisiIslemleri() {
   const router = useRouter();
@@ -93,146 +94,169 @@ export default function AlisSatisiIslemleri() {
       <h1 className={classes.pageTitle}>Alış-Satış İşlemleri</h1>
 
       <div className={classes.tabs}>
-        <button
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           className={`${classes.tabButton} ${role === "buyer" ? classes.activeTab : ""}`}
           onClick={() => setRole("buyer")}
         >
           Alıcı Olduğum
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           className={`${classes.tabButton} ${role === "seller" ? classes.activeTab : ""}`}
           onClick={() => setRole("seller")}
         >
           Satıcı Olduğum
-        </button>
+        </motion.button>
       </div>
 
       <div className={classes.tabs} style={{ marginBottom: "2rem" }}>
-        <button
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           className={`${classes.tabButton} ${activeTab === "active" ? classes.activeTab : ""}`}
           onClick={() => setActiveTab("active")}
         >
           Aktif İşlemlerim
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           className={`${classes.tabButton} ${activeTab === "past" ? classes.activeTab : ""}`}
           onClick={() => setActiveTab("past")}
         >
           Geçmiş İşlemlerim
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           className={`${classes.tabButton} ${activeTab === "cancel" ? classes.activeTab : ""}`}
           onClick={() => setActiveTab("cancel")}
         >
           İptal İşlemlerim
-        </button>
+        </motion.button>
       </div>
 
-      <div className={classes.listContainer}>
-        {currentData.length === 0 ? (
-          <div className={classes.emptyState}>
-            Şu anda bu kategoride bir işlem bulunmamaktadır.
-          </div>
-        ) : (
-          currentData.map((transaction, index) => {
-            const statusData = getTransactionStatusData(
-              transaction.payment_status,
-            );
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`${role}-${activeTab}`}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+          className={classes.listContainer}
+        >
+          {currentData.length === 0 ? (
+            <div className={classes.emptyState}>
+              Şu anda bu kategoride bir işlem bulunmamaktadır.
+            </div>
+          ) : (
+            currentData.map((transaction, index) => {
+              const statusData = getTransactionStatusData(
+                transaction.payment_status,
+              );
 
-            return (
-              <div
-                key={transaction.transaction_reference || index}
-                className={classes.card}
-              >
-                <div className={classes.cardHeader}>
-                  <div className={classes.dateTime}>
-                    <CarFront size={20} className={classes.iconPrimary} />
-                    <span>
-                      <strong>
-                        {formatBrandModel(transaction.brand)}{" "}
-                        {formatBrandModel(transaction.model)}
-                      </strong>{" "}
-                      {transaction.model_year}
-                    </span>
-                  </div>
-                  <div className={`${classes.badge} ${statusData.className}`}>
-                    {statusData.icon}
-                    <span>{statusData.text}</span>
-                  </div>
-                </div>
-
-                <div className={classes.cardBody}>
-                  {transaction.image_url && (
-                    <img
-                      src={transaction.image_url}
-                      alt={`${transaction.brand} ${transaction.model}`}
-                      className={classes.carThumbnail}
-                    />
-                  )}
-                  <div className={classes.infoCol}>
-                    <div className={classes.infoRow}>
-                      <Banknote size={18} className={classes.iconSecondary} />
+              return (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.2, delay: index * 0.05 }}
+                  key={transaction.transaction_reference || index}
+                  className={classes.card}
+                >
+                  <div className={classes.cardHeader}>
+                    <div className={classes.dateTime}>
+                      <CarFront size={20} className={classes.iconPrimary} />
                       <span>
-                        Fiyat:{" "}
                         <strong>
-                          {formatPrice(transaction.total_price)} ₺
-                        </strong>
+                          {formatBrandModel(transaction.brand)}{" "}
+                          {formatBrandModel(transaction.model)}
+                        </strong>{" "}
+                        {transaction.model_year}
                       </span>
                     </div>
+                    <div className={`${classes.badge} ${statusData.className}`}>
+                      {statusData.icon}
+                      <span>{statusData.text}</span>
+                    </div>
+                  </div>
 
-                    {transaction.deposit_amount ? (
+                  <div className={classes.cardBody}>
+                    {transaction.image_url && (
+                      <img
+                        src={transaction.image_url}
+                        alt={`${transaction.brand} ${transaction.model}`}
+                        className={classes.carThumbnail}
+                      />
+                    )}
+                    <div className={classes.infoCol}>
                       <div className={classes.infoRow}>
-                        <CreditCard
-                          size={18}
-                          className={classes.iconSecondary}
-                        />
+                        <Banknote size={18} className={classes.iconSecondary} />
                         <span>
-                          Kapora:{" "}
+                          Fiyat:{" "}
                           <strong>
-                            {formatPrice(transaction.deposit_amount)} ₺
+                            {formatPrice(transaction.total_price)} ₺
                           </strong>
                         </span>
                       </div>
-                    ) : null}
 
-                    {(transaction.slot_date || transaction.created_at) && (
-                      <div className={classes.infoRow}>
-                        <Calendar size={18} className={classes.iconSecondary} />
-                        <span>
-                          {transaction.slot_date
-                            ? formatAppointmentDateTime(
-                                transaction.slot_date,
-                                transaction.slot_time,
-                              )
-                            : formatDate(transaction.created_at)}
-                        </span>
-                      </div>
-                    )}
+                      {transaction.deposit_amount ? (
+                        <div className={classes.infoRow}>
+                          <CreditCard
+                            size={18}
+                            className={classes.iconSecondary}
+                          />
+                          <span>
+                            Kapora:{" "}
+                            <strong>
+                              {formatPrice(transaction.deposit_amount)} ₺
+                            </strong>
+                          </span>
+                        </div>
+                      ) : null}
+
+                      {(transaction.slot_date || transaction.created_at) && (
+                        <div className={classes.infoRow}>
+                          <Calendar
+                            size={18}
+                            className={classes.iconSecondary}
+                          />
+                          <span>
+                            {transaction.slot_date
+                              ? formatAppointmentDateTime(
+                                  transaction.slot_date,
+                                  transaction.slot_time,
+                                )
+                              : formatDate(transaction.created_at)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                <div className={classes.cardFooter}>
-                  <span className={classes.transactionId}>
-                    #
-                    {transaction.transaction_reference ||
-                      transaction.payment_id}
-                  </span>
+                  <div className={classes.cardFooter}>
+                    <span className={classes.transactionId}>
+                      #
+                      {transaction.transaction_reference ||
+                        transaction.payment_id}
+                    </span>
 
-                  <button
-                    onClick={() =>
-                      router.push(`${pathName}/${transaction.payment_id}`)
-                    }
-                    className={classes.actionButton}
-                  >
-                    Detayları Gör
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() =>
+                        router.push(`${pathName}/${transaction.payment_id}`)
+                      }
+                      className={classes.actionButton}
+                    >
+                      Detayları Gör
+                      <ChevronRight size={16} />
+                    </motion.button>
+                  </div>
+                </motion.div>
+              );
+            })
+          )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

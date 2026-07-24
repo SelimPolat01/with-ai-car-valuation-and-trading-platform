@@ -15,6 +15,11 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import Loading from "@/app/loading";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  bildirimlerContainerVariants,
+  bildirimlerItemVariants,
+} from "@/app/utils/animations";
 
 export default function Bildirimler() {
   const router = useRouter();
@@ -108,9 +113,13 @@ export default function Bildirimler() {
   }
 
   return (
-    <div className={classes.container}>
+    <motion.div
+      initial={{ opacity: 0, y: -15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className={classes.container}
+    >
       <h1 className={classes.pageTitle}>Bildirimler</h1>
-
       <div className={classes.controlsSection}>
         <div className={classes.leftControls}>
           <div className={classes.tabs}>
@@ -144,24 +153,32 @@ export default function Bildirimler() {
               <ChevronDown size={16} />
             </button>
 
-            {isFilterOpen && (
-              <div className={classes.dropdownMenu}>
-                {uniqueTypes.map((type, index) => (
-                  <div
-                    key={index}
-                    className={`${classes.dropdownItem} ${
-                      typeFilter === type ? classes.activeDropdownItem : ""
-                    }`}
-                    onClick={() => {
-                      setTypeFilter(type);
-                      setIsFilterOpen(false);
-                    }}
-                  >
-                    {typeLabels[type] || type}
-                  </div>
-                ))}
-              </div>
-            )}
+            <AnimatePresence>
+              {isFilterOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className={classes.dropdownMenu}
+                >
+                  {uniqueTypes.map((type, index) => (
+                    <div
+                      key={index}
+                      className={`${classes.dropdownItem} ${
+                        typeFilter === type ? classes.activeDropdownItem : ""
+                      }`}
+                      onClick={() => {
+                        setTypeFilter(type);
+                        setIsFilterOpen(false);
+                      }}
+                    >
+                      {typeLabels[type] || type}
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -174,52 +191,68 @@ export default function Bildirimler() {
           Tümünü Okundu İşaretle
         </button>
       </div>
-
-      <div className={classes.listContainer}>
-        {filteredNotifications.length > 0 ? (
-          filteredNotifications.map((notification) => (
-            <div
-              key={notification.id}
-              className={`${classes.notificationCard} ${
-                !notification.is_read ? classes.unread : ""
-              }`}
-              onClick={() => notificationClickHandler(notification)}
-            >
-              <div className={classes.iconContainer}>
-                {!notification.is_read ? (
-                  <Bell size={26} color="#ffffff" fill="#a855f7" />
-                ) : (
-                  <CheckCircle2 size={26} color="#10b981" />
-                )}
-              </div>
-              <div className={classes.contentContainer}>
-                <div className={classes.notificationTitle}>
-                  {notification.title}
-                </div>
-                <div className={classes.notificationMessage}>
-                  {notification.message}
-                </div>
-                <div className={classes.notificationTime}>
-                  {new Date(notification.created_at).toLocaleDateString(
-                    "tr-TR",
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    },
+      <motion.div
+        variants={bildirimlerContainerVariants}
+        initial="hidden"
+        animate="show"
+        className={classes.listContainer}
+      >
+        <AnimatePresence mode="popLayout">
+          {filteredNotifications.length > 0 ? (
+            filteredNotifications.map((notification) => (
+              <motion.div
+                layout
+                variants={bildirimlerItemVariants}
+                initial="hidden"
+                animate="show"
+                exit="exit"
+                key={notification.id}
+                className={`${classes.notificationCard} ${
+                  !notification.is_read ? classes.unread : ""
+                }`}
+                onClick={() => notificationClickHandler(notification)}
+              >
+                <div className={classes.iconContainer}>
+                  {!notification.is_read ? (
+                    <Bell size={26} color="#ffffff" fill="#a855f7" />
+                  ) : (
+                    <CheckCircle2 size={26} color="#10b981" />
                   )}
                 </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className={classes.emptyState}>
-            Bu filtreye uygun bildirim bulunamadı.
-          </div>
-        )}
-      </div>
-    </div>
+                <div className={classes.contentContainer}>
+                  <div className={classes.notificationTitle}>
+                    {notification.title}
+                  </div>
+                  <div className={classes.notificationMessage}>
+                    {notification.message}
+                  </div>
+                  <div className={classes.notificationTime}>
+                    {new Date(notification.created_at).toLocaleDateString(
+                      "tr-TR",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      },
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className={classes.emptyState}
+            >
+              Bu filtreye uygun bildirim bulunamadı.
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
   );
 }

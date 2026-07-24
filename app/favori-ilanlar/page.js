@@ -93,7 +93,7 @@ export default function FavoriIlanlar() {
     : getFavoriteAdvertsData?.result || getFavoriteAdvertsData?.data || [];
 
   return (
-    <main className={classes.main}>
+    <main className={classes.div}>
       <ConfirmDialog
         ref={deleteDialogRef}
         onConfirm={() => removeFavoriteAdvertHandler(selectedAdvertId)}

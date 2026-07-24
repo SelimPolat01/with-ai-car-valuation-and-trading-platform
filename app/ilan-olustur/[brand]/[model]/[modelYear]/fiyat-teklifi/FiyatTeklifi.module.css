@@ -1,21 +1,11 @@
-.rootMain {
-  flex: 1;
-  background: url("/images/price-offer-bg.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  display: flex;
-  flex-direction: column;
-  min-height: 90vh;
-}
-
 .wrapperDiv {
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
   align-items: center;
   justify-content: center;
-  margin: 0 0 8.5rem 0;
+  max-height: calc(100vh - 75px);
+  padding: 0 0 2rem 0;
 }
 
 .div {
@@ -287,11 +277,11 @@
 @media (max-width: 768px) {
   .wrapperDiv {
     height: auto;
-    min-height: 80vh;
-    padding: 3rem 1rem;
+    min-height: calc(100vh - 68px);
+    padding: 0 0 2rem 0;
     gap: 2rem;
     box-sizing: border-box;
-    margin: 0 0 1.5rem 0;
+    margin: 0;
   }
 
   .carModel {

@@ -1,8 +1,9 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
   width: 100%;
+  box-sizing: border-box;
+  gap: 2rem;
 }
 
 .pageTitle {
@@ -78,11 +79,14 @@
 
 .filterDropdownContainer {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .filterButton {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background: rgba(255, 255, 255, 0.05);
   color: #ffffff;
@@ -109,7 +113,7 @@
   position: absolute;
   top: calc(100% + 12px);
   left: 50%;
-  transform: translateX(-50%);
+  margin-left: -100px;
   background: #2a1b38;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
@@ -125,7 +129,7 @@
   position: absolute;
   bottom: 100%;
   left: 50%;
-  transform: translateX(-50%);
+  margin-left: -8px;
   border-width: 8px;
   border-style: solid;
   border-color: transparent transparent #a855f7 transparent;
@@ -138,6 +142,7 @@
   font-size: 14px;
   cursor: pointer;
   transition: background 0.2s ease;
+  text-align: left;
 }
 
 .dropdownItem:first-child {
@@ -165,6 +170,7 @@
 .markAllButton {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background: rgba(168, 85, 247, 0.2);
   color: #ffffff;
@@ -296,15 +302,18 @@
   .leftControls {
     flex-direction: column;
     align-items: stretch;
+    width: 100%;
     gap: 12px;
   }
 
   .tabs {
+    width: 100%;
     justify-content: center;
   }
 
   .tabButton {
     flex: 1;
+    text-align: center;
   }
 
   .filterDropdownContainer {
@@ -313,11 +322,18 @@
 
   .filterButton {
     width: 100%;
-    justify-content: space-between;
+    justify-content: center;
   }
 
   .dropdownMenu {
     width: 100%;
+    left: 0;
+    margin-left: 0;
+  }
+
+  .dropdownMenu::before {
+    left: 50%;
+    margin-left: -8px;
   }
 
   .markAllButton {

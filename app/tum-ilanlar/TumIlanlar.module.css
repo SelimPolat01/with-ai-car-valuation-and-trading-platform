@@ -1,7 +1,9 @@
-.main {
+.mainDiv {
   display: flex;
   justify-content: center;
   gap: 1rem;
+  min-height: calc(100vh - 75px);
+  padding: 0 0 2rem 0;
 }
 
 .advertsContainer {
@@ -84,10 +86,11 @@
 }
 
 @media (max-width: 768px) {
-  .main {
+  .mainDiv {
     flex-direction: column;
-    padding: 1.5rem;
+    padding: 1rem 1rem 1.5rem 1rem;
     gap: 1.5rem;
+    min-height: calc(100vh - 68px);
   }
 
   .advertsContainer {
@@ -115,7 +118,6 @@
   .div {
     margin: 0;
     justify-content: center;
-    gap: 1rem;
   }
 
   .notFoundAdvertDiv {

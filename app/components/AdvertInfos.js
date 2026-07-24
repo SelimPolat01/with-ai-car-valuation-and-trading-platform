@@ -275,172 +275,209 @@ export default function AdvertInfos() {
   }
 
   return (
-    <div className={classes.advertDiv}>
-      {!isSuccess ? (
-        <div className={classes.advertInfoDiv}>
-          <div className={classes.titleFavoriteDiv}>
-            <h2 className={classes.title}>{advert.title?.toUpperCase()}</h2>
-            {user && advert && Number(user.id) !== Number(advert.user_id) && (
-              <button
-                className={
-                  isFavorite ? classes.favoriteButton : classes.defaultButton
-                }
-                type="button"
-                onClick={toggleFavoriteClick}
-              >
-                {isFavorite ? "Favorilerimden Çıkar" : "Favorilerime Ekle"}
-              </button>
-            )}
-          </div>
-
-          <div className={classes.advertInfoWrapper1}>
-            <div className={classes.imgDiv}>
-              <div
-                className={classes.sliderTrack}
-                style={{ transform: `translateX(-${currentImgIndex * 100}%)` }}
-              >
-                {advertImages.map((imgUrl, idx) => (
-                  <img
-                    key={idx}
-                    className={classes.img}
-                    src={imgUrl}
-                    alt={`${advert.title} - ${idx + 1}`}
-                  />
-                ))}
-              </div>
-
-              {advertImages.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    className={`${classes.sliderBtn} ${classes.prevBtn}`}
-                    onClick={prevImage}
-                  >
-                    <ChevronLeft size={24} />
-                  </button>
-
-                  <button
-                    type="button"
-                    className={`${classes.sliderBtn} ${classes.nextBtn}`}
-                    onClick={nextImage}
-                  >
-                    <ChevronRight size={24} />
-                  </button>
-
-                  <div className={classes.sliderDots}>
-                    {advertImages.map((_, idx) => (
-                      <span
-                        key={idx}
-                        className={`${classes.dot} ${idx === currentImgIndex ? classes.activeDot : ""}`}
-                        onClick={() => setCurrentImgIndex(idx)}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className={classes.advertInfoWrapper2}>
-              <ul className={`${classes.ul} `}>
-                {advertDetails.map((detail) => (
-                  <li
-                    key={detail.id}
-                    className={`${classes.li} ${detail.priceClassName || ""} ${user && advert && Number(user.id) == Number(advert.user_id) ? classes.expandedLi : classes.expandlessLi}`}
-                  >
-                    <strong className={classes.strong}>{detail.label}</strong>
-                    <span className={detail.spanClassName || ""}>
-                      {detail.value}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+    <motion.div
+      className={classes.advertDiv}
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <AnimatePresence mode="wait">
+        {!isSuccess ? (
+          <motion.div
+            key="advert-content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={classes.advertInfoDiv}
+          >
+            <div className={classes.titleFavoriteDiv}>
+              <h2 className={classes.title}>{advert.title?.toUpperCase()}</h2>
               {user && advert && Number(user.id) !== Number(advert.user_id) && (
-                <div className={classes.buyButtonContainer}>
-                  <PrimaryButton
-                    type="button"
-                    text="Bu Aracı Satın Al"
-                    className={classes.buyButton}
-                    onClick={advertBuyHandler}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className={classes.descriptionContainer}>
-            <div
-              onClick={() => setShowDescription((prevValue) => !prevValue)}
-              className={`${classes.descriptionTextDiv} ${
-                showDescription
-                  ? classes.semiBorderRadius
-                  : classes.fullBorderRadius
-              }`}
-            >
-              Açıklama
-            </div>
-            {showDescription && (
-              <div className={classes.descriptionDiv}>
-                <div className={classes.summaryButtonDiv}>
-                  <button
-                    onClick={handleToggleSummary}
-                    disabled={isSummarizing}
-                    className={classes.aiSummaryBtn}
-                  >
-                    {isSummarizing
-                      ? "✨ Özet Çıkarılıyor..."
-                      : isShowingSummary
-                        ? "Orijinal Açıklamayı Göster"
-                        : "✨ Yapay Zekâ ile Özetle"}
-                  </button>
-                </div>
-                <div className={classes.descriptionWrapper}>
-                  <p className={classes.description}>
-                    {isShowingSummary ? summaryText : advert.description}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className={classes.similarAdvertsContainer}>
-            <button
-              type="button"
-              className={classes.toggleSimilarBtn}
-              onClick={() => setShowSimilarAdverts((prev) => !prev)}
-            >
-              {showSimilarAdverts
-                ? "Benzer Araçları Gizle"
-                : "Yapay Zekâ Önerisi Benzer Araçları Gör ✨"}
-            </button>
-
-            <AnimatePresence>
-              {showSimilarAdverts && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0, y: -20 }}
-                  animate={{ opacity: 1, height: "auto", y: 0 }}
-                  exit={{ opacity: 0, height: 0, y: -20 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  style={{ width: "100%", overflow: "hidden" }}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={
+                    isFavorite ? classes.favoriteButton : classes.defaultButton
+                  }
+                  type="button"
+                  onClick={toggleFavoriteClick}
                 >
-                  <SimilarAdverts currentAdvertId={advert.id} />
-                </motion.div>
+                  {isFavorite ? "Favorilerimden Çıkar" : "Favorilerime Ekle"}
+                </motion.button>
               )}
-            </AnimatePresence>
-          </div>
-        </div>
-      ) : (
-        <SuccessMessage
-          key="success-message"
-          onClick={() => {
-            setIsSuccess(false);
-            router.replace("/hesabim/garajim");
-          }}
-          title="Hayırlı Olsun! 🎉"
-          text="Araç başarıyla satın alındı. İşlem detaylarına garajınızdan ulaşabilirsiniz."
-          buttonText="Garajıma Git"
-          className={classes.successMessage}
-        />
-      )}
-    </div>
+            </div>
+
+            <div className={classes.advertInfoWrapper1}>
+              <div className={classes.imgDiv}>
+                <div
+                  className={classes.sliderTrack}
+                  style={{
+                    transform: `translateX(-${currentImgIndex * 100}%)`,
+                  }}
+                >
+                  {advertImages.map((imgUrl, idx) => (
+                    <img
+                      key={idx}
+                      className={classes.img}
+                      src={imgUrl}
+                      alt={`${advert.title} - ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {advertImages.length > 1 && (
+                  <>
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      type="button"
+                      className={`${classes.sliderBtn} ${classes.prevBtn}`}
+                      onClick={prevImage}
+                    >
+                      <ChevronLeft size={24} />
+                    </motion.button>
+
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      type="button"
+                      className={`${classes.sliderBtn} ${classes.nextBtn}`}
+                      onClick={nextImage}
+                    >
+                      <ChevronRight size={24} />
+                    </motion.button>
+
+                    <div className={classes.sliderDots}>
+                      {advertImages.map((_, idx) => (
+                        <span
+                          key={idx}
+                          className={`${classes.dot} ${idx === currentImgIndex ? classes.activeDot : ""}`}
+                          onClick={() => setCurrentImgIndex(idx)}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className={classes.advertInfoWrapper2}>
+                <ul className={`${classes.ul} `}>
+                  {advertDetails.map((detail) => (
+                    <li
+                      key={detail.id}
+                      className={`${classes.li} ${detail.priceClassName || ""} ${user && advert && Number(user.id) == Number(advert.user_id) ? classes.expandedLi : classes.expandlessLi}`}
+                    >
+                      <strong className={classes.strong}>{detail.label}</strong>
+                      <span className={detail.spanClassName || ""}>
+                        {detail.value}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                {user &&
+                  advert &&
+                  Number(user.id) !== Number(advert.user_id) && (
+                    <div className={classes.buyButtonContainer}>
+                      <PrimaryButton
+                        type="button"
+                        text="Bu Aracı Satın Al"
+                        className={classes.buyButton}
+                        onClick={advertBuyHandler}
+                      />
+                    </div>
+                  )}
+              </div>
+            </div>
+
+            <div className={classes.descriptionContainer}>
+              <div
+                onClick={() => setShowDescription((prevValue) => !prevValue)}
+                className={`${classes.descriptionTextDiv} ${
+                  showDescription
+                    ? classes.semiBorderRadius
+                    : classes.fullBorderRadius
+                }`}
+              >
+                Açıklama
+              </div>
+              <AnimatePresence>
+                {showDescription && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className={classes.descriptionDiv}
+                    style={{ overflow: "hidden" }}
+                  >
+                    <div className={classes.summaryButtonDiv}>
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleToggleSummary}
+                        disabled={isSummarizing}
+                        className={classes.aiSummaryBtn}
+                      >
+                        {isSummarizing
+                          ? "✨ Özet Çıkarılıyor..."
+                          : isShowingSummary
+                            ? "Orijinal Açıklamayı Göster"
+                            : "✨ Yapay Zekâ ile Özetle"}
+                      </motion.button>
+                    </div>
+                    <div className={classes.descriptionWrapper}>
+                      <p className={classes.description}>
+                        {isShowingSummary ? summaryText : advert.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className={classes.similarAdvertsContainer}>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                type="button"
+                className={classes.toggleSimilarBtn}
+                onClick={() => setShowSimilarAdverts((prev) => !prev)}
+              >
+                {showSimilarAdverts
+                  ? "Benzer Araçları Gizle"
+                  : "Yapay Zekâ Önerisi Benzer Araçları Gör ✨"}
+              </motion.button>
+
+              <AnimatePresence>
+                {showSimilarAdverts && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, y: -20 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    exit={{ opacity: 0, height: 0, y: -20 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    style={{ width: "100%", overflow: "hidden" }}
+                  >
+                    <SimilarAdverts currentAdvertId={advert.id} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="success-message"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+          >
+            <SuccessMessage
+              onClick={() => {
+                setIsSuccess(false);
+                router.replace("/hesabim/garajim");
+              }}
+              title="Hayırlı Olsun! 🎉"
+              text="Araç başarıyla satın alındı. İşlem detaylarına garajınızdan ulaşabilirsiniz."
+              buttonText="Garajıma Git"
+              className={classes.successMessage}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }

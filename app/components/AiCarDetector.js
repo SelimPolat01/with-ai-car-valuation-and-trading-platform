@@ -5,7 +5,7 @@ import classes from "./AiCarDetector.module.css";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import SecondaryButton from "./SecondaryButton";
-import { Camera } from "lucide-react";
+import { Camera, ChevronDown } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { setPrediction as setPredictionAction } from "@/store/predictionSlice";
 import { motion } from "framer-motion";
@@ -174,14 +174,22 @@ export default function AiCarDetector() {
             />
           </div>
           {preview ? (
-            <Image
-              width={400}
-              height={250}
-              src={preview}
-              alt="preview"
-              className={classes.preview}
-              onClick={handleClick}
-            />
+            <motion.div
+              key={preview}
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              style={{ width: "100%" }}
+            >
+              <Image
+                width={400}
+                height={250}
+                src={preview}
+                alt="preview"
+                className={classes.preview}
+                onClick={handleClick}
+              />
+            </motion.div>
           ) : (
             <div className={classes.emptyBox} onClick={handleClick}></div>
           )}
@@ -238,11 +246,23 @@ export default function AiCarDetector() {
                         borderColor: "transparent",
                         padding: "4px 0",
                         marginLeft: "0",
+                        boxShadow: "none",
                       }
                     : {}
                 }
               >
                 {!car.selectedYear ? car.yearInterval : car.selectedYear}
+                {yearsArray.length > 1 && (
+                  <ChevronDown
+                    size={15}
+                    style={{
+                      transition: "transform 0.2s ease",
+                      transform: showYearInterval
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  />
+                )}
 
                 {yearsArray.length > 1 && showYearInterval && (
                   <div className={classes.yearIntervalDropdown}>

@@ -12,13 +12,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { usePostCarValuePredict } from "@/hooks/POST/usePostCarValuePredict";
 import {
   capitalizeWords,
-  carGenerationsObject,
   carTypeMap,
-  findIntervalFromYear,
   formatBrandLowerParser,
   formatModelForApi,
   getCarStockImageSrcFunc,
-  getDbModelName,
 } from "@/app/utils/helpers";
 import {
   tahminYapDropdownVariants,
@@ -512,11 +509,11 @@ export default function TahminYap() {
   if (error) return <p>{error}</p>;
 
   return (
-    <motion.main
+    <motion.div
       initial="hidden"
       animate="visible"
       variants={tahminYapContainerVariants}
-      className={classes.main}
+      className={classes.container}
     >
       <div className={classes.flex}>
         <motion.div variants={tahminYapItemVariants} className={classes.title}>
@@ -988,6 +985,6 @@ export default function TahminYap() {
           </div>
         </motion.div>
       </div>
-    </motion.main>
+    </motion.div>
   );
 }

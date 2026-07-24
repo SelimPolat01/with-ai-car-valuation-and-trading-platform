@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
 import classes from "./Hesabim.module.css";
-
 import {
   User,
   Settings,
@@ -12,42 +10,38 @@ import {
   CalendarClock,
   BellDot,
   Handshake,
+  Receipt,
 } from "lucide-react";
-
 import { usePathname } from "next/navigation";
-
 import { logout } from "@/store/authSlice";
-
 import { useDispatch } from "react-redux";
-
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function SettingsLayout({ children }) {
   const pathName = usePathname();
-
   const dispatch = useDispatch();
-
-  const icons = [Handshake, CalendarClock, BellDot, CarFront, User, Settings];
-
+  const icons = [
+    Handshake,
+    CalendarClock,
+    BellDot,
+    CarFront,
+    User,
+    Settings,
+    Receipt,
+  ];
   const links = [
     { href: "/hesabim/alis-satis-islemleri", text: "Alış-Satış İşlemleri" },
-
     { href: "/hesabim/randevular", text: "Randevular" },
-
     { href: "/hesabim/bildirimler", text: "Bildirimler" },
-
     { href: "/hesabim/garaj", text: "Garaj" },
-
     { href: "/hesabim/kisisel-bilgiler", text: "Kişisel Bilgiler" },
-
     { href: "/hesabim/guvenlik", text: "Güvenlik Ayarları" },
+    { href: "/hesabim/odemeler-faturalar", text: "Ödemeler Faturalar" },
   ];
 
   function logoutHandler() {
     dispatch(logout());
-
     localStorage.removeItem("token");
-
     localStorage.removeItem("refreshToken");
   }
 
@@ -64,7 +58,6 @@ export default function SettingsLayout({ children }) {
             <ul className={classes.linkMenu}>
               {links.map((link, index) => {
                 const Icon = icons[index];
-
                 return (
                   <li
                     className={`${classes.list} ${
@@ -73,22 +66,20 @@ export default function SettingsLayout({ children }) {
                     key={index}
                   >
                     <Link className={classes.link} href={link.href}>
-                      <Icon />
-
-                      {link.text}
+                      <Icon size={22} className={classes.icon} />
+                      <span className={classes.linkText}>{link.text}</span>
                     </Link>
                   </li>
                 );
               })}
-
               <li className={classes.list}>
                 <Link
                   href="/login"
                   onClick={logoutHandler}
                   className={`${classes.logoutLink} ${classes.link}`}
                 >
-                  <LogOut />
-                  Çıkış Yap
+                  <LogOut size={22} className={classes.icon} />
+                  <span className={classes.linkText}>Çıkış Yap</span>
                 </Link>
               </li>
             </ul>

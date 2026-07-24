@@ -62,7 +62,7 @@ yarn-error.log*
 logs
 *.log
 screenshots/
-# uploads/ (Eğer yüklemeleri kapatmak istersen başındaki # işaretini kaldır)
+uploads/
 
 # =========================================================================
 # 6. PYTORCH-MODEL-BACKEND KLASÖRÜNE ÖZEL FİLTRELER (Eğitim & Verisetleri)
@@ -81,3 +81,5 @@ pytorch-model-backend/ortam_1/
 pytorch-model-backend/oto_ozet_modeli/
 pytorch-model-backend/benim_oto_ozet_modelim/
 pytorch-model-backend/mt5-oto-ekspertiz-ozet/
+
+.session*

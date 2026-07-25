@@ -1,25 +1,26 @@
 .div {
   display: flex;
   flex-direction: column;
-  padding: 0 2rem 2rem 2rem;
   width: 100%;
   height: 100%;
   max-width: 1600px;
   box-sizing: border-box;
   align-items: center;
+  gap: 2rem;
 }
 
 .pageTitle {
-  margin: 0 0 24px 10px;
+  margin: 0;
   align-self: flex-start;
   padding: 0;
   font-size: 32px;
   width: max-content;
   background: linear-gradient(
     105.66deg,
-    #00f4ff 16.76%,
-    #68ffed 46.39%,
-    #9867ff 76.01%
+    #00b7ff 10%,
+    #00f7ff 45%,
+    #9cf0fd 75%,
+    #ffffff 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -42,9 +43,9 @@
 
 .gridContainer {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 183px 1fr;
   width: 100%;
-  gap: 2rem;
+  gap: 3rem;
 }
 
 .mediaColumn {
@@ -53,7 +54,8 @@
   gap: 3rem;
   align-items: center;
   justify-content: center;
-  height: 345px;
+  height: 100%;
+  width: fit-content;
 }
 
 .avatarSection {
@@ -201,11 +203,12 @@
   .div {
     padding: 0;
     height: auto;
+    gap: 1.5rem;
   }
 
   .pageTitle {
     font-size: 24px;
-    margin: 0 0 16px 10px;
+    margin: 0;
   }
 
   .formWrapper {
@@ -216,17 +219,26 @@
   .gridContainer {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
   }
 
   .mediaColumn {
+    width: 100%;
     height: auto;
     gap: 1.5rem;
   }
 
   .row {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
+  }
+
+  .textColumn {
+    gap: 1rem;
+  }
+
+  .row label {
+    margin: 0 !important;
   }
 
   .submitContainer {
@@ -235,6 +247,7 @@
 
   .button {
     width: 100%;
+    margin: 0 !important;
   }
 
   .successMessage {

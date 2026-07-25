@@ -12,27 +12,6 @@
   gap: 2rem;
 }
 
-.pageTitle {
-  font-size: clamp(22px, 5vw, 32px);
-  color: #ffffff;
-  margin: 0;
-  align-self: flex-start;
-  padding: 0;
-  width: max-content;
-  max-width: 100%;
-  background: linear-gradient(
-    105.66deg,
-    #00f4ff 16.76%,
-    #68ffed 46.39%,
-    #9867ff 76.01%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  display: inline-block;
-  word-break: break-word;
-}
-
 .tabs {
   display: flex;
   gap: 0.75rem;
@@ -594,17 +573,14 @@ button:disabled {
 }
 
 .title {
-  font-family:
-    Lora,
-    -apple-system,
-    sans-serif;
   font-size: 2rem;
   margin: 0;
   background: linear-gradient(
     105.66deg,
-    #00f4ff 16.76%,
-    #68ffed 46.39%,
-    #9867ff 76.01%
+    #00b7ff 10%,
+    #00f7ff 45%,
+    #9cf0fd 75%,
+    #ffffff 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

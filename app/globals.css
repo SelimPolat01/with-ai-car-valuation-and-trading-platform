@@ -512,6 +512,30 @@ a {
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
+.textGold {
+  background: linear-gradient(
+    to bottom right,
+    #ffe066 0%,
+    #f5af19 50%,
+    #e65c00 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.textCyan {
+  background: linear-gradient(
+    to bottom right,
+    #00f2fe 0%,
+    #4facfe 50%,
+    #90e0ef 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .errorContainer {
   display: flex;
   flex-direction: column;

@@ -4,7 +4,7 @@ export default function OdemelerFaturalar() {
   return (
     <div>
       <div>
-        <h2>Ödemeler ve Faturalar</h2>
+        <h2 className={classes.pageTitle}>Ödemeler ve Faturalar</h2>
       </div>
     </div>
   );

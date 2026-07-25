@@ -24,7 +24,7 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 6px;
   width: 100%;
 }
 
@@ -276,23 +276,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 38px;
+  gap: 0.75rem;
 }
 
 .customUpload {
-  font-size: 28px;
+  font-size: 32px;
   background: linear-gradient(
     105.66deg,
-    #00f4ff 16.76%,
-    #68ffed 46.39%,
-    #9867ff 76.01%
+    #00b7ff 10%,
+    #00f7ff 45%,
+    #9cf0fd 75%,
+    #ffffff 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
   display: inline-block;
-  margin-right: 0.75rem;
+  margin: 0;
   font-weight: 700;
+  align-self: flex-end;
 }
 
 .cameraIcon {

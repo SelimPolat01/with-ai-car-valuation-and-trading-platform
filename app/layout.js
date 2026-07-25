@@ -98,6 +98,72 @@ export default function RootLayout({ children }) {
                   </linearGradient>
                 </defs>
               </svg>
+
+              <svg width="0" height="0" style={{ position: "absolute" }}>
+                <defs>
+                  <linearGradient
+                    id="custom-icon-gradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="20%" stopColor="#ffffff" />
+                    <stop offset="45%" stopColor="#9cf0fd" />
+                    <stop offset="75%" stopColor=" #00f7ff" />
+                    <stop offset="100%" stopColor="#00b7ff" />
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              <svg width="0" height="0" style={{ position: "absolute" }}>
+                <defs>
+                  <linearGradient
+                    id="header-stroke-gold"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="#FFE066" />
+                    <stop offset="50%" stopColor="#F5AF19" />
+                    <stop offset="100%" stopColor="#E65C00" />
+                  </linearGradient>
+                  <linearGradient
+                    id="header-stroke-cyan"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="#00F2FE" />
+                    <stop offset="50%" stopColor="#4FACFE" />
+                    <stop offset="100%" stopColor="#0062E6" />
+                  </linearGradient>
+                  <linearGradient
+                    id="header-stroke-rosegold"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="#FFC3A0" />
+                    <stop offset="50%" stopColor="#FFAF7B" />
+                    <stop offset="100%" stopColor="#D76D77" />
+                  </linearGradient>
+                  <linearGradient
+                    id="header-stroke-ice"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="#FFFFFF" />
+                    <stop offset="50%" stopColor="#E0EAFC" />
+                    <stop offset="100%" stopColor="#CFDEF3" />
+                  </linearGradient>
+                </defs>
+              </svg>
               <Header />
               <main>{children}</main>
               <Footer />

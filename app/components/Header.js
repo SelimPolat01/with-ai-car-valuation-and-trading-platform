@@ -203,7 +203,7 @@ export default function Header({ className }) {
                       ))
                     ) : (
                       <div className={classes.emptyNotification}>
-                        Henüz okunmamış bildiriminiz yok.
+                        Henüz bildiriminiz yok.
                       </div>
                     )}
                   </div>

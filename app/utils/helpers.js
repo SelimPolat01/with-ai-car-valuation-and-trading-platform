@@ -742,7 +742,6 @@ export const carGenerationsObject = {
   citroen: {
     c3: {
       hatchback: [
-        { start: 2002, end: 2009, interval: "2002-2009" },
         { start: 2010, end: 2016, interval: "2010-2016" },
         { start: 2016, end: 2020, interval: "2016-2020" },
         { start: 2020, end: 2024, interval: "2020-2024" },
@@ -848,7 +847,7 @@ export const carGenerationsObject = {
       hatchback: [
         { start: 2012, end: 2019, interval: "2012-2019" },
         { start: 2019, end: 2023, interval: "2019-2023" },
-        { start: 2023, end: 2025, interval: "2019-2025" },
+        { start: 2023, end: 2025, interval: "2023-2025" },
       ],
     },
     megane: {
@@ -882,7 +881,7 @@ export const carGenerationsObject = {
     },
     jetta: {
       sedan: [
-        { start: 2012, end: 2017, interval: "2012-2017" },
+        { start: 2011, end: 2014, interval: "2011-2014" },
         { start: 2014, end: 2017, interval: "2014-2017" },
       ],
     },
@@ -924,6 +923,7 @@ export function findIntervalFromYear(
   modelYear,
 ) {
   if (!brandParam || !modelParam || !bodyType || !modelYear) return null;
+
   const brandKey = brandParam.toLowerCase().trim();
   let decodedModel = decodeURIComponent(modelParam);
   let modelKey = decodedModel
@@ -931,18 +931,23 @@ export function findIntervalFromYear(
     .trim()
     .replace(/\s+/g, "")
     .replace(/-/g, "");
+
   if (modelKey.includes("serisi")) {
     modelKey = modelKey.replace("serisi", "series");
   }
+
   const body = bodyType.toLowerCase().trim();
   const year = Number(modelYear);
   const generations = carGenerationsObject[brandKey]?.[modelKey]?.[body];
-  if (!generations) {
+
+  if (!generations || !Array.isArray(generations)) {
     return null;
   }
+
   const foundGen = generations.find(
-    (gen) => year >= gen.start && year <= gen.end,
+    (gen) => year >= Number(gen.start) && year <= Number(gen.end),
   );
+
   return foundGen ? foundGen.interval : null;
 }
 
@@ -952,9 +957,12 @@ export const getDbModelName = (modelParam) => {
   name = name.replace("serisi", "series");
   return name.replace(/[\s-]/g, "");
 };
-
 export const getCarStockImageSrcFunc = (brand, model, modelYear, bodyType) => {
   if (!brand || !model || !bodyType || !modelYear) return null;
+
+  const numericYear = Number(modelYear);
+  if (isNaN(numericYear)) return null;
+
   const modelStr = getDbModelName(model);
   const brandStr = brand.toLowerCase().trim();
   const bodyStr = bodyType.toLowerCase().trim();
@@ -962,12 +970,15 @@ export const getCarStockImageSrcFunc = (brand, model, modelYear, bodyType) => {
     brand,
     model,
     bodyType,
-    modelYear,
+    numericYear,
   );
+
   if (!finalYearInterval) return null;
+
   const [startYear, endYear] = finalYearInterval.split("-");
   const shortYearInterval = `${startYear.slice(-2)}-${endYear.slice(-2)}`;
-  return `/images/cars/${brand}/${brandStr}-${modelStr}-${bodyStr}-${shortYearInterval}.png`;
+
+  return `/images/cars/${brandStr}/${brandStr}-${modelStr}-${bodyStr}-${shortYearInterval}.png`;
 };
 
 export function formatModelForApi(modelParam) {

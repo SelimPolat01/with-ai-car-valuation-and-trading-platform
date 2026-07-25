@@ -363,75 +363,16 @@ router.put("/edit", verifyToken, upload.any(), async (req, res) => {
     title,
     description,
     summary,
-    brand,
-    model,
-    modelYear,
-    bodyType,
-    engineCapacity,
-    horsepower,
-    transmission,
-    kilometer,
-    fuelType,
-    price,
-    trimLevel,
-    hasScratch,
-    hasDent,
     existingImages,
     image_embedding,
     description_embedding,
     description_summary_embedding,
     coverImageIdentifier,
     coverImageType,
-    plate,
-    chassisNumber,
-    tramerRecord,
-    inspectionDate,
-    ownerCount,
-    hasPledge,
-    hasServiceMaintence,
-    hasWarrenty,
-    hasSpareKey,
-    tireType,
-    tireCondition,
-    extras,
-    lpgStatus,
   } = req.body;
 
   const user = req.user;
   const newFiles = req.files;
-
-  const isScratched = hasScratch === "true" || hasScratch === true;
-  const isDent = hasDent === "true" || hasDent === true;
-  const isPledge = hasPledge === "true" || hasPledge === true;
-  const isService =
-    hasServiceMaintence === "yes"
-      ? "yes"
-      : hasServiceMaintence === "no"
-        ? "no"
-        : null;
-  const isWarranty = hasWarrenty === "true" || hasWarrenty === true;
-  const isSpareKey = hasSpareKey === "true" || hasSpareKey === true;
-
-  const parsedModelYear =
-    modelYear && !isNaN(Number(modelYear)) ? Number(modelYear) : null;
-  const parsedEngineCapacity =
-    engineCapacity && !isNaN(Number(engineCapacity))
-      ? Number(engineCapacity)
-      : null;
-  const parsedHorsepower =
-    horsepower && !isNaN(Number(horsepower)) ? Number(horsepower) : null;
-  const parsedKilometer =
-    kilometer && !isNaN(Number(kilometer)) ? Number(kilometer) : null;
-  const parsedPrice =
-    price && !isNaN(Number(price)) ? Math.round(Number(price)) : null;
-  const parsedTramer =
-    tramerRecord !== undefined &&
-    tramerRecord !== "" &&
-    !isNaN(Number(tramerRecord))
-      ? Number(tramerRecord)
-      : null;
-  const parsedOwnerCount =
-    ownerCount && !isNaN(Number(ownerCount)) ? Number(ownerCount) : null;
 
   let imageEmbeddingObj = null;
   if (image_embedding) {
@@ -467,49 +408,21 @@ router.put("/edit", verifyToken, upload.any(), async (req, res) => {
     if (imageEmbeddingObj) {
       await db.query(
         `UPDATE adverts SET 
-            title = $1, description = $2, summary = $3, brand = $4, model = $5, 
-            model_year = $6, body_type = $7, engine_capacity = $8, horsepower = $9, 
-            transmission = $10, kilometer = $11, fuel_type = $12, price = $13, 
-            trim_level = $14, has_scratch = $15, has_dent = $16, image_embedding = $17, 
-            description_embedding = $18, description_summary_embedding = $19,
-            plate = $20, chassis_number = $21, tramer_record = $22, inspection_date = $23,
-            owner_count = $24, has_pledge = $25, has_service_maintenance = $26,
-            has_warranty = $27, has_spare_key = $28, tire_type = $29, tire_condition = $30,
-            extras = $31, lpg_status = $32
-           WHERE user_id = $33 AND id = $34`,
+            title = $1, 
+            description = $2, 
+            summary = $3, 
+            image_embedding = $4, 
+            description_embedding = $5, 
+            description_summary_embedding = $6,
+            edited_at = NOW()
+           WHERE user_id = $7 AND id = $8`,
         [
           title || null,
           description || null,
           summary || null,
-          brand || null,
-          model || null,
-          parsedModelYear,
-          bodyType || null,
-          parsedEngineCapacity,
-          parsedHorsepower,
-          transmission || null,
-          parsedKilometer,
-          fuelType || null,
-          parsedPrice,
-          trimLevel || null,
-          isScratched,
-          isDent,
           imageEmbeddingObj,
           descEmbedding,
           sumEmbedding,
-          plate || null,
-          chassisNumber || null,
-          parsedTramer,
-          inspectionDate || null,
-          parsedOwnerCount,
-          isPledge,
-          isService,
-          isWarranty,
-          isSpareKey,
-          tireType || null,
-          tireCondition || null,
-          extras || null,
-          lpgStatus || null,
           Number(user.id),
           id,
         ],
@@ -517,48 +430,19 @@ router.put("/edit", verifyToken, upload.any(), async (req, res) => {
     } else {
       await db.query(
         `UPDATE adverts SET 
-            title = $1, description = $2, summary = $3, brand = $4, model = $5, 
-            model_year = $6, body_type = $7, engine_capacity = $8, horsepower = $9, 
-            transmission = $10, kilometer = $11, fuel_type = $12, price = $13, 
-            trim_level = $14, has_scratch = $15, has_dent = $16, 
-            description_embedding = $17, description_summary_embedding = $18,
-            plate = $19, chassis_number = $20, tramer_record = $21, inspection_date = $22,
-            owner_count = $23, has_pledge = $24, has_service_maintenance = $25,
-            has_warranty = $26, has_spare_key = $27, tire_type = $28, tire_condition = $29,
-            extras = $30, lpg_status = $31
-           WHERE user_id = $32 AND id = $33`,
+            title = $1, 
+            description = $2, 
+            summary = $3, 
+            description_embedding = $4, 
+            description_summary_embedding = $5,
+            edited_at = NOW()
+           WHERE user_id = $6 AND id = $7`,
         [
           title || null,
           description || null,
           summary || null,
-          brand || null,
-          model || null,
-          parsedModelYear,
-          bodyType || null,
-          parsedEngineCapacity,
-          parsedHorsepower,
-          transmission || null,
-          parsedKilometer,
-          fuelType || null,
-          parsedPrice,
-          trimLevel || null,
-          isScratched,
-          isDent,
           descEmbedding,
           sumEmbedding,
-          plate || null,
-          chassisNumber || null,
-          parsedTramer,
-          inspectionDate || null,
-          parsedOwnerCount,
-          isPledge,
-          isService,
-          isWarranty,
-          isSpareKey,
-          tireType || null,
-          tireCondition || null,
-          extras || null,
-          lpgStatus || null,
           Number(user.id),
           id,
         ],

@@ -1,5 +1,8 @@
-.div {
-  flex: 1;
+.main {
+  background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
+  min-height: calc(100vh - 237px);
+  display: flex;
+  flex-direction: column;
 }
 
 .wrapper {
@@ -20,7 +23,6 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-top-right-radius: 12px;
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
-  flex: 1;
 }
 
 .linkContainer {

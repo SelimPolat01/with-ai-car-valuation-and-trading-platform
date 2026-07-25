@@ -11,12 +11,6 @@ body {
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
 }
 
-.mainRoot {
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 75px);
-}
-
 input,
 label,
 button,
@@ -150,10 +144,6 @@ a {
 }
 
 @media (max-width: 768px) {
-  .rootMain {
-    min-height: calc(100vh - 68px);
-  }
-
   .homeContainer {
     min-height: calc(100vh - 68px);
   }

@@ -46,7 +46,7 @@ export default function SettingsLayout({ children }) {
   }
 
   return (
-    <main className={classes.div}>
+    <div className={classes.div}>
       <div className={classes.wrapper}>
         <motion.div
           initial={{ opacity: 0, x: -30 }}
@@ -99,6 +99,6 @@ export default function SettingsLayout({ children }) {
           </motion.div>
         </AnimatePresence>
       </div>
-    </main>
+    </div>
   );
 }

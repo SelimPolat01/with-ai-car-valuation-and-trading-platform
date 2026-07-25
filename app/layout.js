@@ -165,7 +165,7 @@ export default function RootLayout({ children }) {
                 </defs>
               </svg>
               <Header />
-              <main>{children}</main>
+              <main className="mainRoot">{children}</main>
               <Footer />
             </BackgroundWrapper>
           </ReactQuery>

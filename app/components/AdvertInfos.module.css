@@ -196,7 +196,7 @@
   color: #f1ef71;
   border: 1px solid rgba(241, 239, 113, 0.3);
   border-radius: 8px;
-  padding: 6px 16px;
+  padding: 6px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -217,7 +217,7 @@
   color: #1a1a1a;
   border: 1px solid #c2c047;
   border-radius: 8px;
-  padding: 6px 16px;
+  padding: 6px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

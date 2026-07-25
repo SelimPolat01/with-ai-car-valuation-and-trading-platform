@@ -12,19 +12,15 @@ import {
   ArrowLeft,
   BellDot,
   FolderHeart,
-  Home,
   LayoutGrid,
-  LogIn,
   LogOut,
   Tags,
   User,
-  UserPlus,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useGetPersonalNotifications } from "@/hooks/GET/useGetPersonalNotifications";
 import { usePatchNotificationRead } from "@/hooks/PATCH/usePatchNotificationRead";
 import { headerLinks } from "../utils/helpers";
-import Loading from "./Loading";
 
 export default function Header({ className }) {
   const path = usePathname();
@@ -94,6 +90,8 @@ export default function Header({ className }) {
 
   const links = headerLinks;
 
+  const isNotLoginRegisterPage = path !== "/login" && path !== "/register";
+
   if (getPersonalNotificationsIsError) {
     return (
       <div className="errorContainer">
@@ -108,18 +106,22 @@ export default function Header({ className }) {
   }
 
   return (
-    <header className={`${classes.header} ${className ? className : ""}`}>
-      <nav className={classes.nav}>
-        <Link href="/">
-          <Image
-            className={classes.logo}
-            src="/images/logo.svg"
-            alt="logo"
-            width={55}
-            height={55}
-            priority
-          />
-        </Link>
+    <header className={`${classes.header} ${className ? className : ""} `}>
+      <nav
+        className={`${classes.nav} ${!isNotLoginRegisterPage ? classes.logoHideNav : ""}`}
+      >
+        {isNotLoginRegisterPage && (
+          <Link href="/">
+            <Image
+              className={classes.logo}
+              src="/images/logo.svg"
+              alt="logo"
+              width={55}
+              height={55}
+              priority
+            />
+          </Link>
+        )}
         <ul className={classes.ul}>
           {isLogin && <SearchBar />}
 
@@ -201,7 +203,7 @@ export default function Header({ className }) {
                       ))
                     ) : (
                       <div className={classes.emptyNotification}>
-                        Henüz bildiriminiz yok.
+                        Henüz okunmamış bildiriminiz yok.
                       </div>
                     )}
                   </div>

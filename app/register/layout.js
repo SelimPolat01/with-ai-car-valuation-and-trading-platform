@@ -14,7 +14,7 @@ export const metadata = {
     title: "Kayıt Ol | Aracını Hemen Sat",
     description:
       "Yapay zeka destekli araç değerleme platformuna ücretsiz kayıt olun ve aracınızın değerini anında öğrenin.",
-    url: "/register",
+    url: "https://yapayoto.me/register",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

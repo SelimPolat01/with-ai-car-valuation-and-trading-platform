@@ -17,8 +17,8 @@ export const metadata = {
     title: "Yapay Zeka ile Araç Değerleme ve Satış Platformu",
     description:
       "Fotoğraftan araç tanıyan yapay zeka teknolojisi ile aracınızın değerini öğrenin ve hızlıca satım ilanınızı oluşturun.",
-    url: "/",
-    siteName: "Aracını Sat",
+    url: "https://yapayoto.me",
+    siteName: "YapayOto",
     locale: "tr_TR",
     type: "website",
   },

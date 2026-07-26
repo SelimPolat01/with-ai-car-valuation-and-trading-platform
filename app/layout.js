@@ -17,33 +17,27 @@ const josefin = Josefin_Sans({
 });
 
 export const metadata = {
-  title: "Giriş Yap | Aracını Hemen Sat",
+  title: {
+    default: "YapayOto | Yapay Zeka Araç Değerleme ve Alım-Satım",
+    template: "%s | YapayOto",
+  },
   description:
-    "Yapay zeka destekli araç değerleme ve alım-satım platformumuza giriş yapın. Aracınızın gerçek değerini saniyeler içinde öğrenin ve güvenle satın.",
+    "Yapay zeka destekli araç değerleme platformu. Aracınızın gerçek değerini saniyeler içinde öğrenin.",
   verification: {
     google: "_wknVEzmwH7amGR7nb6fnqjGlMDgKpzrBbP065UOWkM",
   },
   keywords: [
-    "giriş yap",
-    "üye girişi",
-    "aracını sat giriş",
     "yapay zeka araç değerleme",
     "ikinci el araç satışı",
+    "araç fiyat teklifi",
   ],
   openGraph: {
-    title: "Giriş Yap | Aracını Hemen Sat",
-    description:
-      "Yapay zeka destekli araç değerleme platformuna giriş yapın ve aracınızın değerini anında öğrenin.",
-    url: "/login",
-    siteName: "Aracını Sat",
+    title: "YapayOto | Yapay Zeka Araç Değerleme",
+    description: "Aracınızın değerini anında öğrenin.",
+    url: "https://yapayoto.me",
+    siteName: "YapayOto",
     locale: "tr_TR",
     type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Giriş Yap | Aracını Hemen Sat",
-    description:
-      "Yapay zeka destekli araç değerleme platformuna giriş yapın ve aracınızın değerini anında öğrenin.",
   },
 };
 

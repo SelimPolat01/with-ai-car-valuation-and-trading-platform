@@ -6,21 +6,40 @@
   align-items: center;
   width: 100%;
   box-sizing: border-box;
-  padding: 2rem 0;
+  padding: 3.35rem 0 5rem 0;
 }
 
 .title h1 {
   margin: 0;
   padding: 0;
-  font-size: 30px;
-  font-weight: bolder;
   font-style: normal;
+  font-size: 32px;
+  background: linear-gradient(
+    105.66deg,
+    #ffd445 10%,
+    #fbd867 30%,
+    #ffe590 50%,
+    #fff4d0 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  font-weight: 700;
+  align-self: flex-end;
 }
 
 .flex hr {
   border: none;
   height: 1px;
-  background-color: black;
+  background: linear-gradient(
+    105.66deg,
+    #ffd445 10%,
+    #fbd867 30%,
+    #ffe590 50%,
+    #fff4d0 100%
+  );
   margin: 20px 0;
   width: 50%;
 }
@@ -158,7 +177,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 1rem;
+    padding: 1rem 1rem 2.5rem 1rem;
   }
 
   .flexContainer {
@@ -175,16 +194,19 @@
   .carImg {
     width: 100%;
     height: auto;
-    max-width: 250px;
+    max-width: 180px;
   }
 
   .carLogo {
     margin: 0;
+    width: 45px !important;
+    height: 45px !important;
   }
 
   .carYear {
     opacity: 1;
     transform: none;
+    font-size: 14px;
   }
 
   .flexContainer2 {

@@ -506,6 +506,8 @@ export default function TahminYap() {
     bodyType,
   );
 
+  console.log(stockImageSrc);
+
   if (error) return <p>{error}</p>;
 
   return (

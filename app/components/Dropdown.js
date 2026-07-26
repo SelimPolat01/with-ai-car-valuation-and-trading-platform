@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import classes from "./Dropdown.module.css";
 import PrimaryButton from "./PrimaryButton";
 import { AnimatePresence, motion } from "framer-motion";
-import { formatAndCleanBrand, formatBrandModel } from "../utils/helpers";
+import {
+  decodeBrandModel,
+  formatAndCleanBrand,
+  formatBrandModel,
+} from "../utils/helpers";
 import {
   dropdownItemVariants,
   dropdownVariants,
@@ -18,22 +22,27 @@ export default function Dropdown() {
     modelValue: "Model",
     modelYearValue: "Yıl",
   });
+
   const [openDropdown, setOpenDropdown] = useState(null);
+
   const [errors, setErrors] = useState({
     brand: false,
     model: false,
     modelYear: false,
   });
+
   const [options, setOptions] = useState({
     brandOptions: [],
     modelOptions: [],
     modelYearOptions: [],
   });
+
   const [shake, setShake] = useState({
     shakeBrand: false,
     shakeModel: false,
     shakeModelYear: false,
   });
+
   const router = useRouter();
 
   function submitHandler(event) {
@@ -61,9 +70,9 @@ export default function Dropdown() {
     }
     router.push(
       `/ilan-olustur/${encodeURIComponent(
-        formatAndCleanBrand(value.brandValue),
+        decodeBrandModel(value.brandValue),
       ).toLowerCase()}/${encodeURIComponent(
-        value.modelValue,
+        decodeBrandModel(value.modelValue),
       ).toLowerCase()}/${value.modelYearValue}`,
     );
   }

@@ -1,12 +1,11 @@
 .div {
   position: relative;
-  font-family: "Oswald", sans-serif;
   height: 36px;
 }
 
 .form {
   display: flex;
-  margin: 4px 0 0 0;
+  margin: 2px 0 0 0;
   align-items: flex-start;
 }
 
@@ -15,7 +14,7 @@
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
   width: 232px;
-  height: 28px;
+  height: 30px;
   box-sizing: border-box;
   font-size: 16px;
   padding: 2px 4px;
@@ -33,10 +32,10 @@
 
 .button {
   font-size: 16px;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   box-sizing: border-box;
-  padding: 2px 0;
+  padding: 0 4px 0 0;
   border: none;
   border-bottom-right-radius: 8px;
   border-top-right-radius: 8px;

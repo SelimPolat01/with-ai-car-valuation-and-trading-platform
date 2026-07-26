@@ -2,9 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  max-height: calc(100vh - 75px);
   gap: 4rem;
-  padding: 0 0 2rem 0;
+  padding: 3rem 0 5rem 0;
   box-sizing: border-box;
   width: 100%;
 }
@@ -332,7 +331,7 @@
 @media (max-width: 768px) {
   .div {
     gap: 1.5rem;
-    padding: 0 1rem 2rem 1rem;
+    padding: 0 1rem 2.5rem 1rem;
     min-height: calc(100vh - 68px);
   }
 

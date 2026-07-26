@@ -106,7 +106,7 @@
 
 .mainContent {
   flex: 1;
-  padding: 0.5rem 2rem 2rem 2rem;
+  padding: 0.5rem 2rem 5rem 2rem;
   color: #f8f8f8;
 }
 
@@ -134,6 +134,7 @@
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     border-top-right-radius: 0;
+    margin: 1rem 0 0 0;
   }
 
   .linkContainer {
@@ -177,6 +178,6 @@
   }
 
   .mainContent {
-    padding: 1rem 1rem 2rem 1rem;
+    padding: 1rem 1rem 2.5rem 1rem;
   }
 }

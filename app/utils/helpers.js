@@ -993,3 +993,16 @@ export function formatBrandLowerParser(brand) {
   if (brand == "mercedes") return "mercedes-benz";
   return brand.toLowerCase();
 }
+
+export function decodeBrandModel(text) {
+  if (!text) return;
+  if (text.toLowerCase() === "1 serisi") return "1 series";
+  if (text.toLowerCase() === "3 serisi") return "3 series";
+  if (text.toLowerCase() === "5 serisi") return "5 series";
+  if (text.toLowerCase() === "c serisi") return "e series";
+  if (text.toLowerCase() === "e serisi") return "e series";
+  if (text.toLowerCase() === "mercedes-benz") return "mercedes";
+  if (text.toLowerCase() === "c elysee") return "c-elysee";
+  if (text.toLowerCase() === "c serisi") return "e series";
+  return text.toLowerCase();
+}

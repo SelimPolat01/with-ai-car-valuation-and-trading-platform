@@ -111,16 +111,18 @@ a {
   width: 100%;
   max-width: 400px;
   border-radius: 12px;
-  margin: 0 auto;
   padding: 1.5rem;
   box-sizing: border-box;
 }
 
 .dropdownDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  padding: 0 0 2rem 0;
+  padding: 0 0 1.5rem 0;
   flex: 1;
-  max-height: calc(100vh - 75px);
 }
 
 @media (max-width: 768px) {
@@ -130,12 +132,15 @@ a {
 
   .dropdownDiv {
     width: 100%;
-    padding: 0 1rem 2rem 1rem;
-    max-height: calc(100vh - 68px);
+    padding: 0 1rem 0 1rem;
   }
 
   .dropdownContainer {
     padding: 1rem;
+  }
+
+  .homeContainer {
+    padding: 0 0 2.5rem 0;
   }
 }
 

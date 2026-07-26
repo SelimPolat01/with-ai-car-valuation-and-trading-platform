@@ -2,12 +2,15 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100%;
   align-items: center;
+  width: 100%;
+  padding: 1rem 0 5rem 0;
+  box-sizing: border-box;
 }
 
 .listWrapper {
-  width: 1055px;
+  width: 100%;
+  max-width: 1055px;
   margin: 0 0 2rem 0;
   box-sizing: border-box;
   background: rgba(255, 255, 255, 0.03);
@@ -18,8 +21,10 @@
 }
 
 .searchTextDiv {
-  width: 1055px;
+  width: 100%;
+  max-width: 1055px;
   margin-bottom: 1rem;
+  box-sizing: border-box;
 }
 
 .searchText {
@@ -174,9 +179,19 @@
 }
 
 @media (max-width: 768px) {
+  .div {
+    padding: 1rem 1rem 2.5rem 1rem;
+  }
+
+  .searchText {
+    margin: 0;
+    padding: 0 0 1rem 0;
+  }
+
   .listWrapper,
   .searchTextDiv {
-    width: 92%;
+    width: 100%;
+    margin: 0;
   }
 
   .listHeader {

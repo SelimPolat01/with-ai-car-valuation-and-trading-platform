@@ -5,7 +5,7 @@ import classes from "./Arama.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function SearchCar() {
+export default function SearchAdvert() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [similarAdverts, setSimilarAdverts] = useState([]);

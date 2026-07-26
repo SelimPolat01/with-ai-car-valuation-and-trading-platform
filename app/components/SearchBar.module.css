@@ -1,12 +1,11 @@
 .div {
   position: relative;
-  height: 36px;
+  height: 30px;
 }
 
 .form {
   display: flex;
   margin: 2px 0 0 0;
-  align-items: flex-start;
 }
 
 .input {
@@ -587,7 +586,7 @@
 
 @media (max-width: 480px) {
   .div {
-    height: 24px;
+    height: 22px;
     margin: 0;
   }
 
@@ -597,15 +596,15 @@
   }
 
   .input {
-    width: 100px;
-    height: 24px;
+    width: 132px;
+    height: 22px;
     font-size: 13px;
     padding: 2px 4px;
   }
 
   .button {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
   }
 
   .button svg {

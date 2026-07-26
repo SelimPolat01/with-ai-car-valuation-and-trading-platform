@@ -23,7 +23,7 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 0.5rem;
   width: 100%;
 }
 
@@ -333,6 +333,10 @@
     gap: 1.5rem;
     padding: 0 1rem 2.5rem 1rem;
     min-height: calc(100vh - 68px);
+  }
+
+  .photoContainer {
+    gap: 6px;
   }
 
   .customUpload {

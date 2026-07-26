@@ -143,8 +143,20 @@
 
 .carYear {
   padding: 0;
+  font-style: normal;
+  background: linear-gradient(
+    105.66deg,
+    #ffd445 10%,
+    #fbd867 30%,
+    #ffe590 50%,
+    #fff4d0 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
   margin: 10px 0 0 0;
-  color: #303030;
   font-weight: bolder;
   font-style: normal;
   font-size: 18px;

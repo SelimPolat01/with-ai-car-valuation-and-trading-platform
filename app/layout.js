@@ -115,7 +115,6 @@ export default function RootLayout({ children }) {
                   </linearGradient>
                 </defs>
               </svg>
-
               <svg width="0" height="0" style={{ position: "absolute" }}>
                 <defs>
                   <linearGradient

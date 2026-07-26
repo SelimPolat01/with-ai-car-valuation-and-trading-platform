@@ -1,5 +1,6 @@
 import Dropdown from "@/app/components/Dropdown";
 import AiCarDetector from "@/app/components/AiCarDetector";
+
 export const metadata = {
   title: "Yapay Zeka ile Araç Değerleme ve Satış Platformu",
   description:

@@ -101,7 +101,7 @@ export default function MyAdverts() {
     : getPersonalAdvertsData?.result || [];
 
   return (
-    <div className={classes.mainDiv}>
+    <div className={classes.container}>
       <ConfirmDialog
         ref={deleteDialogRef}
         onConfirm={() => advertDeleteHandler(selectedAdvertId)}

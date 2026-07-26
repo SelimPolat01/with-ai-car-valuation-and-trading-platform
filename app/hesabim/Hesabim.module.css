@@ -1,11 +1,4 @@
-.main {
-  background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
-  min-height: calc(100vh - 237px);
-  display: flex;
-  flex-direction: column;
-}
-
-.wrapper {
+.div {
   display: flex;
   width: 100%;
   flex: 1;
@@ -132,7 +125,7 @@
 }
 
 @media (max-width: 768px) {
-  .wrapper {
+  .div {
     flex-direction: column;
   }
 

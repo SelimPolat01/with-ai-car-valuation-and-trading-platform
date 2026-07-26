@@ -117,60 +117,66 @@ export default function Login() {
   }
 
   return (
-    <div className={classes.div}>
-      <form className={classes.form} onSubmit={submitHandler}>
-        <div className={classes.inputColumn}>
-          <Input
-            className={classes.input}
-            type="text"
-            identifier="email"
-            onChange={inputChangeHandler}
-            onBlur={inputBlurHandler}
-            value={input.email.value}
-            label="E-posta"
-            autoFocus
-            autoComplete="email"
-          />
-          {!isEmailValid && input.email.isBlur && (
-            <p className={classes.error}>Lütfen geçerli bir e-posta girin.</p>
-          )}
-          {error === "Girilen e-postaya ait kullanıcı bulunamadı." && (
-            <p className={classes.error}>{error}</p>
-          )}
-        </div>
-
-        <div className={classes.inputColumn}>
-          <Input
-            type="password"
-            identifier="password"
-            onChange={inputChangeHandler}
-            onBlur={inputBlurHandler}
-            value={input.password.value}
-            label="Parola"
-            className={classes.input}
-            autoComplete="current-password"
-          />
-          {!isPasswordValid && input.password.isBlur && (
-            <p className={classes.error}>
-              Parola en az 6 karakterden oluşmalı.
-            </p>
-          )}
-          {error === "Girilen parola hatalı." && (
-            <p className={classes.error}>{error}</p>
-          )}
-          {error &&
-            error !== "Girilen e-postaya ait kullanıcı bulunamadı." &&
-            error !== "Girilen parola hatalı." && (
+    <div className={classes.container}>
+      <div className={classes.pageHeading}>
+        <h1>Giriş Yap</h1>
+        <span className="subHeading">Tekrar Hoşgeldiniz!</span>
+      </div>
+      <div className={classes.div}>
+        <form className={classes.form} onSubmit={submitHandler}>
+          <div className={classes.inputColumn}>
+            <Input
+              className={classes.input}
+              type="text"
+              identifier="email"
+              onChange={inputChangeHandler}
+              onBlur={inputBlurHandler}
+              value={input.email.value}
+              label="E-posta"
+              autoFocus
+              autoComplete="email"
+            />
+            {!isEmailValid && input.email.isBlur && (
+              <p className={classes.error}>Lütfen geçerli bir e-posta girin.</p>
+            )}
+            {error === "Girilen e-postaya ait kullanıcı bulunamadı." && (
               <p className={classes.error}>{error}</p>
             )}
-        </div>
+          </div>
 
-        <SecondaryButton
-          type="submit"
-          text={loading ? "Yükleniyor..." : "Giriş Yap"}
-          className={classes.button}
-        />
-      </form>
+          <div className={classes.inputColumn}>
+            <Input
+              type="password"
+              identifier="password"
+              onChange={inputChangeHandler}
+              onBlur={inputBlurHandler}
+              value={input.password.value}
+              label="Parola"
+              className={classes.input}
+              autoComplete="current-password"
+            />
+            {!isPasswordValid && input.password.isBlur && (
+              <p className={classes.error}>
+                Parola en az 6 karakterden oluşmalı.
+              </p>
+            )}
+            {error === "Girilen parola hatalı." && (
+              <p className={classes.error}>{error}</p>
+            )}
+            {error &&
+              error !== "Girilen e-postaya ait kullanıcı bulunamadı." &&
+              error !== "Girilen parola hatalı." && (
+                <p className={classes.error}>{error}</p>
+              )}
+          </div>
+
+          <SecondaryButton
+            type="submit"
+            text={loading ? "Yükleniyor..." : "Giriş Yap"}
+            className={classes.button}
+          />
+        </form>
+      </div>
     </div>
   );
 }

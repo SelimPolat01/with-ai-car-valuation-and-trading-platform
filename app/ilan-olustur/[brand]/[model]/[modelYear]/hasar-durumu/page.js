@@ -279,199 +279,203 @@ export default function HasarDurumu() {
   const views = viewsList;
 
   return (
-    <div className={classes.container}>
-      <ConfirmDialog
-        ref={dialogRef}
-        onConfirm={dialogConfirmHandler}
-        cancelRedirect="/"
-        title="Hasar Tespiti"
-        text={generateDamageText(damagePredictions)}
-        cancelButtonText="Ana Sayfaya Git"
-        logo={<AlertTriangle size={35} color="#ef4444" />}
-      />
+    <div className={classes.div}>
+      <div className={classes.container}>
+        <ConfirmDialog
+          ref={dialogRef}
+          onConfirm={dialogConfirmHandler}
+          cancelRedirect="/"
+          title="Hasar Tespiti"
+          text={generateDamageText(damagePredictions)}
+          cancelButtonText="Ana Sayfaya Git"
+          logo={<AlertTriangle size={35} color="#ef4444" />}
+        />
 
-      {(error ||
-        carDirectionDetectionIsError ||
-        carScratchDentDetectionIsError ||
-        carSellTimePredictIsError) && (
-        <div
-          style={{
-            backgroundColor: "#fee2e2",
-            color: "#dc2626",
-            padding: "12px",
-            borderRadius: "8px",
-            marginBottom: "16px",
-            textAlign: "center",
-            fontWeight: "600",
-            display: "flex",
-            flexDirection: "column",
-            gap: "4px",
-          }}
-        >
-          {error && <span>⚠️ {error}</span>}
-          {carDirectionDetectionIsError && (
-            <span>
-              ⚠️ Yön Tespiti Hatası: {carDirectionDetectionError?.message}
-            </span>
-          )}
-          {carScratchDentDetectionIsError && (
-            <span>
-              ⚠️ Hasar Tespiti Hatası: {carScratchDentDetectionError?.message}
-            </span>
-          )}
-          {carSellTimePredictIsError && (
-            <span>
-              ⚠️ Satış Tahmin Hatası: {carSellTimePredictError?.message}
-            </span>
-          )}
-        </div>
-      )}
-
-      <AnimatePresence>
-        {isAllImagesUploaded && avarageSellPrediction && (
-          <motion.div
-            className={classes.sellTimeBubble}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 15 }}
+        {(error ||
+          carDirectionDetectionIsError ||
+          carScratchDentDetectionIsError ||
+          carSellTimePredictIsError) && (
+          <div
+            style={{
+              backgroundColor: "#fee2e2",
+              color: "#dc2626",
+              padding: "12px",
+              borderRadius: "8px",
+              marginBottom: "16px",
+              textAlign: "center",
+              fontWeight: "600",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
           >
-            <span className={classes.bubbleTitle}>Tahmini Satış Süresi</span>
-            <span className={classes.bubbleValue}>{avarageSellPrediction}</span>
-            <span className={classes.bubbleSubtitle}>GÜN</span>
-          </motion.div>
+            {error && <span>⚠️ {error}</span>}
+            {carDirectionDetectionIsError && (
+              <span>
+                ⚠️ Yön Tespiti Hatası: {carDirectionDetectionError?.message}
+              </span>
+            )}
+            {carScratchDentDetectionIsError && (
+              <span>
+                ⚠️ Hasar Tespiti Hatası: {carScratchDentDetectionError?.message}
+              </span>
+            )}
+            {carSellTimePredictIsError && (
+              <span>
+                ⚠️ Satış Tahmin Hatası: {carSellTimePredictError?.message}
+              </span>
+            )}
+          </div>
         )}
-      </AnimatePresence>
-
-      <motion.div
-        className={classes.grid}
-        variants={hasarDurumuContainerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {views.map((view) => (
-          <motion.div
-            key={view.id}
-            className={classes.card}
-            variants={hasarDurumuCardVariants}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <AnimatePresence mode="wait">
-              {images[view.id] ? (
-                <motion.label
-                  key="image"
-                  htmlFor={`file-upload-${view.id}`}
-                  variants={innerStateVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    position: "relative",
-                    cursor: isAnyPending ? "not-allowed" : "pointer",
-                    display: "block",
-                  }}
-                >
-                  <img
-                    src={images[view.id]}
-                    className={classes.imagePreview}
-                    alt="Araç"
-                  />
-                  <button
-                    type="button"
-                    className={classes.removeBtn}
-                    onClick={(e) => handleRemoveImage(view.id, e)}
-                    disabled={isAnyPending}
-                  >
-                    ✕
-                  </button>
-                </motion.label>
-              ) : cardErrors[view.id] ? (
-                <motion.label
-                  key="error"
-                  htmlFor={`file-upload-${view.id}`}
-                  variants={innerStateVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    cursor: isAnyPending ? "not-allowed" : "pointer",
-                    display: "block",
-                  }}
-                >
-                  <div className={classes.overlayMask}>
-                    <div className={classes.targetCross}>+</div>
-                    <p className={classes.overlayMessage}>
-                      {cardErrors[view.id]}
-                    </p>
-                    <span className={classes.clickToTry}>
-                      Yeniden denemek için tıklayın
-                    </span>
-                  </div>
-                </motion.label>
-              ) : (
-                <motion.label
-                  key="empty"
-                  htmlFor={`file-upload-${view.id}`}
-                  variants={innerStateVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: isAnyPending ? "not-allowed" : "pointer",
-                  }}
-                >
-                  <img
-                    src={view.icon}
-                    className={classes.icon}
-                    alt={view.label}
-                  />
-                  <span className={classes.label}>{view.label}</span>
-                </motion.label>
-              )}
-            </AnimatePresence>
-            <input
-              id={`file-upload-${view.id}`}
-              type="file"
-              className={classes.fileInput}
-              accept="image/*"
-              onChange={(e) => handleImageChange(view.id, e)}
-              disabled={isAnyPending}
-            />
-          </motion.div>
-        ))}
 
         <AnimatePresence>
-          {isAllImagesUploaded && (
+          {isAllImagesUploaded && avarageSellPrediction && (
             <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.8 }}
-              className={classes.buttonContainer}
-              style={{}}
+              className={classes.sellTimeBubble}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
             >
-              <PrimaryButton
-                type="submit"
-                text="Fiyat Teklifi Al"
-                onClick={() => router.push("fiyat-teklifi")}
-                disabled={isAnyPending}
-              />
+              <span className={classes.bubbleTitle}>Tahmini Satış Süresi</span>
+              <span className={classes.bubbleValue}>
+                {avarageSellPrediction}
+              </span>
+              <span className={classes.bubbleSubtitle}>GÜN</span>
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+
+        <motion.div
+          className={classes.grid}
+          variants={hasarDurumuContainerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {views.map((view) => (
+            <motion.div
+              key={view.id}
+              className={classes.card}
+              variants={hasarDurumuCardVariants}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <AnimatePresence mode="wait">
+                {images[view.id] ? (
+                  <motion.label
+                    key="image"
+                    htmlFor={`file-upload-${view.id}`}
+                    variants={innerStateVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      position: "relative",
+                      cursor: isAnyPending ? "not-allowed" : "pointer",
+                      display: "block",
+                    }}
+                  >
+                    <img
+                      src={images[view.id]}
+                      className={classes.imagePreview}
+                      alt="Araç"
+                    />
+                    <button
+                      type="button"
+                      className={classes.removeBtn}
+                      onClick={(e) => handleRemoveImage(view.id, e)}
+                      disabled={isAnyPending}
+                    >
+                      ✕
+                    </button>
+                  </motion.label>
+                ) : cardErrors[view.id] ? (
+                  <motion.label
+                    key="error"
+                    htmlFor={`file-upload-${view.id}`}
+                    variants={innerStateVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      cursor: isAnyPending ? "not-allowed" : "pointer",
+                      display: "block",
+                    }}
+                  >
+                    <div className={classes.overlayMask}>
+                      <div className={classes.targetCross}>+</div>
+                      <p className={classes.overlayMessage}>
+                        {cardErrors[view.id]}
+                      </p>
+                      <span className={classes.clickToTry}>
+                        Yeniden denemek için tıklayın
+                      </span>
+                    </div>
+                  </motion.label>
+                ) : (
+                  <motion.label
+                    key="empty"
+                    htmlFor={`file-upload-${view.id}`}
+                    variants={innerStateVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: isAnyPending ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    <img
+                      src={view.icon}
+                      className={classes.icon}
+                      alt={view.label}
+                    />
+                    <span className={classes.label}>{view.label}</span>
+                  </motion.label>
+                )}
+              </AnimatePresence>
+              <input
+                id={`file-upload-${view.id}`}
+                type="file"
+                className={classes.fileInput}
+                accept="image/*"
+                onChange={(e) => handleImageChange(view.id, e)}
+                disabled={isAnyPending}
+              />
+            </motion.div>
+          ))}
+
+          <AnimatePresence>
+            {isAllImagesUploaded && (
+              <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                className={classes.buttonContainer}
+                style={{}}
+              >
+                <PrimaryButton
+                  type="submit"
+                  text="Fiyat Teklifi Al"
+                  onClick={() => router.push("fiyat-teklifi")}
+                  disabled={isAnyPending}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </div>
     </div>
   );
 }

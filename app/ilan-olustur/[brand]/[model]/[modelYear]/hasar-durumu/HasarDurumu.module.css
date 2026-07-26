@@ -1,10 +1,15 @@
+.div {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 0 4.8rem 0;
+}
+
 .container {
   max-width: 500px;
   width: 100%;
-  padding: 0 1rem;
-  margin: 0 0 3rem 0;
   position: relative;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -245,10 +250,15 @@
 }
 
 @media (max-width: 768px) {
-  .container {
-    min-height: calc(100vh - 68px);
+  .div {
+    min-height: calc(100vh - 214.2px);
     margin: 0;
-    padding: 0 1rem 2rem 1rem;
+    width: 100%;
+    padding: 0;
+  }
+
+  .container {
+    padding: 0 1rem 3rem 1rem;
   }
 
   .sellTimeBubble {

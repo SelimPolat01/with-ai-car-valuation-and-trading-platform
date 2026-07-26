@@ -1,23 +1,59 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  width: 100%;
+  height: auto;
+}
+
 .div {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   align-items: center;
-  min-height: 311px;
   width: 100%;
-  padding: 0;
+  padding: 2rem 0;
   box-sizing: border-box;
-  flex: 1;
+  flex: 1 0 auto;
+  background-color: #ffff;
+  height: auto;
+  min-height: max-content;
+}
+
+.pageHeading,
+.subHeading {
+  color: #fff;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 300;
+  line-height: 1.1;
+  display: block;
+}
+
+.pageHeading {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: auto;
+  min-height: 200px;
+  box-sizing: border-box;
+  gap: 1rem;
+}
+
+.pageHeading h1 {
+  margin: 0;
+  padding: 0;
+  font-size: 5rem;
 }
 
 .form {
   margin: 0;
-  padding: 1rem 0;
+  padding: 0;
   width: 100%;
   max-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .inputColumn {
@@ -25,6 +61,10 @@
   flex-direction: column;
   width: 100%;
   gap: 0.25rem;
+}
+
+.inputColumn label {
+  margin: 0 !important;
 }
 
 .input {
@@ -51,9 +91,19 @@
   .form {
     max-width: 350px;
   }
+
+  .pageHeading h1 {
+    font-size: 3.8rem;
+    padding-top: 6rem;
+  }
 }
 
 @media (max-width: 768px) {
+  .container {
+    min-height: 74.2548076925vh;
+    height: auto;
+  }
+
   .div {
     padding: 0 1.5rem;
     width: 100%;
@@ -65,11 +115,10 @@
     max-width: 100%;
     gap: 1rem;
     margin: 0;
-    padding: 0;
     justify-content: center;
     align-items: center;
     flex: 1;
-    padding: 0 0 2rem 0;
+    padding: 0;
   }
 
   .form button {
@@ -79,5 +128,24 @@
 
   .inputColumn label {
     margin: 0 !important;
+  }
+
+  .pageHeading {
+    height: auto;
+    min-height: 250px;
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0 0 4.5rem 0;
+  }
+
+  .pageHeading h1 {
+    font-size: 2.5rem;
+    padding: 0;
+  }
+
+  .subHeading {
+    font-size: 1.1rem;
   }
 }

@@ -1,7 +1,6 @@
 .advertDiv {
   display: flex;
   justify-content: center;
-  min-height: 90vh;
   padding: 1.5rem 0;
   color: #f8f8f8;
 }

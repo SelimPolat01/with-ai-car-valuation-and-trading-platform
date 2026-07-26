@@ -47,58 +47,56 @@ export default function SettingsLayout({ children }) {
 
   return (
     <div className={classes.div}>
-      <div className={classes.wrapper}>
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className={classes.linkDiv}
-        >
-          <div className={classes.linkContainer}>
-            <ul className={classes.linkMenu}>
-              {links.map((link, index) => {
-                const Icon = icons[index];
-                return (
-                  <li
-                    className={`${classes.list} ${
-                      pathName.startsWith(link.href) ? classes.active : ""
-                    }`}
-                    key={index}
-                  >
-                    <Link className={classes.link} href={link.href}>
-                      <Icon size={22} className={classes.icon} />
-                      <span className={classes.linkText}>{link.text}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-              <li className={classes.list}>
-                <Link
-                  href="/login"
-                  onClick={logoutHandler}
-                  className={`${classes.logoutLink} ${classes.link}`}
+      <motion.div
+        initial={{ opacity: 0, x: -30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className={classes.linkDiv}
+      >
+        <div className={classes.linkContainer}>
+          <ul className={classes.linkMenu}>
+            {links.map((link, index) => {
+              const Icon = icons[index];
+              return (
+                <li
+                  className={`${classes.list} ${
+                    pathName.startsWith(link.href) ? classes.active : ""
+                  }`}
+                  key={index}
                 >
-                  <LogOut size={22} className={classes.icon} />
-                  <span className={classes.linkText}>Çıkış Yap</span>
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </motion.div>
+                  <Link className={classes.link} href={link.href}>
+                    <Icon size={22} className={classes.icon} />
+                    <span className={classes.linkText}>{link.text}</span>
+                  </Link>
+                </li>
+              );
+            })}
+            <li className={classes.list}>
+              <Link
+                href="/login"
+                onClick={logoutHandler}
+                className={`${classes.logoutLink} ${classes.link}`}
+              >
+                <LogOut size={22} className={classes.icon} />
+                <span className={classes.linkText}>Çıkış Yap</span>
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </motion.div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={pathName}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className={classes.mainContent}
-          >
-            {children}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={pathName}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className={classes.mainContent}
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

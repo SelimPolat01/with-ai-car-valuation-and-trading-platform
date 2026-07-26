@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  min-height: calc(100vh - 75px);
   padding: 0 0 2rem 0;
 }
 
@@ -90,7 +89,6 @@
     flex-direction: column;
     padding: 1rem 1rem 1.5rem 1rem;
     gap: 1.5rem;
-    min-height: calc(100vh - 68px);
   }
 
   .advertsContainer {

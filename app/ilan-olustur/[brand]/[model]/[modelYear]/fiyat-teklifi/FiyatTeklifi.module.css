@@ -4,8 +4,8 @@
   gap: 2.5rem;
   align-items: center;
   justify-content: center;
-  max-height: calc(100vh - 75px);
   padding: 0 0 2rem 0;
+  flex: 1;
 }
 
 .div {
@@ -277,7 +277,6 @@
 @media (max-width: 768px) {
   .wrapperDiv {
     height: auto;
-    min-height: calc(100vh - 68px);
     padding: 0 0 2rem 0;
     gap: 2rem;
     box-sizing: border-box;

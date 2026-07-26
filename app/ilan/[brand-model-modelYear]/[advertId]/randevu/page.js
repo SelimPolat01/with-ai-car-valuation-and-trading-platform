@@ -97,7 +97,7 @@ export default function Randevu() {
   }
 
   return (
-    <div className={classes.main}>
+    <div className={classes.container}>
       <motion.div
         className={classes.div}
         variants={pageVariants}

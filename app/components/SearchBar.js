@@ -25,7 +25,7 @@ export default function SearchBar() {
           type="text"
           onChange={inputChangeHandler}
           value={query}
-          placeholder="İlan Ara..."
+          placeholder="AI İle İlan Ara..."
           className={classes.input}
           name="search"
         />

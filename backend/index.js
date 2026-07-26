@@ -31,7 +31,6 @@ const globalLimiter = rateLimit({
 });
 
 const PORT = Number(process.env.PORT) || 3000;
-const FRONTEND_URL = process.env.FRONT_END_URL || "*";
 
 app.use(
   cors({

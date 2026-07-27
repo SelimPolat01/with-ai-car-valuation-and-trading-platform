@@ -29,10 +29,15 @@ h6 {
   font-weight: 600;
 }
 
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
 .mainRoot {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 237.2px);
   flex: 1;
 }
 
@@ -126,10 +131,6 @@ a {
 }
 
 @media (max-width: 768px) {
-  .mainRoot {
-    min-height: calc(100vh - 214.2px);
-  }
-
   .dropdownDiv {
     width: 100%;
     padding: 0;

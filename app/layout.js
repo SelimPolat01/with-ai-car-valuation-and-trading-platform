@@ -191,9 +191,11 @@ export default function RootLayout({ children }) {
                   </linearGradient>
                 </defs>
               </svg>
-              <Header />
-              <main className="mainRoot">{children}</main>
-              <Footer />
+              <div className="appLayout">
+                <Header />
+                <main className="mainRoot">{children}</main>
+                <Footer />
+              </div>
             </BackgroundWrapper>
           </ReactQuery>
         </Providers>

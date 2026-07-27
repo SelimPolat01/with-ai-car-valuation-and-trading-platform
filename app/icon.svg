@@ -1,43 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <!-- Arka Plan (Uygulama İkonu Standardı - Köşeleri Yuvarlatılmış Kare) -->
-  <rect width="512" height="512" rx="115" fill="#0B0F19"/>
-
-  <!-- Gradient Renk Tanımlamaları -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
-    <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#A855F7" /> <!-- Canlı Mor (Yapay Zeka & Premium His) -->
-      <stop offset="50%" stop-color="#6366F1" /> <!-- İndigo (Güven) -->
-      <stop offset="100%" stop-color="#3B82F6" /> <!-- Mavi (Teknoloji & Hız) -->
+    <!-- Otomobil için Altın Sarısı Gradient -->
+    <linearGradient id="carGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe590" />
+      <stop offset="50%" stop-color="#ffd445" />
+      <stop offset="100%" stop-color="#fbd867" />
+    </linearGradient>
+    
+    <!-- Değerleme Oku ve Tekerlekler için Neon Teknoloji Gradienti -->
+    <linearGradient id="techGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f5d4" />
+      <stop offset="100%" stop-color="#2ed573" />
     </linearGradient>
   </defs>
 
-  <!-- Yapay Zeka Işıltıları (✨) -->
-  <path d="M370 120 Q390 120 390 100 Q390 120 410 120 Q390 120 390 140 Q390 120 370 120 Z" fill="#3B82F6" opacity="0.9"/>
-  <path d="M120 180 Q130 180 130 170 Q130 180 140 180 Q130 180 130 190 Q130 180 120 180 Z" fill="#A855F7" opacity="0.8"/>
-  <path d="M410 240 Q415 240 415 235 Q415 240 420 240 Q415 240 415 245 Q415 240 410 240 Z" fill="#6366F1" opacity="0.6"/>
+  <!-- Koyu Modern Arka Plan -->
+  <rect width="100" height="100" rx="24" fill="#0f0a19" />
 
-  <!-- Modern Araç Silueti -->
-  <g stroke="url(#brandGradient)" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    
-    <!-- Tavan Çizgisi ve Aerodinamik Hat -->
-    <path d="M 100 290
-             L 140 210
-             C 165 175, 205 160, 245 160
-             L 280 160
-             C 320 160, 355 180, 385 220
-             L 430 290" />
-             
-    <!-- Alt Gövde (Tekerlek Boşlukları) -->
-    <path d="M 90 290 L 135 290" />
-    <path d="M 225 290 L 305 290" />
-    <path d="M 395 290 L 445 290" />
+  <!-- Yükselen Değerleme Grafiği / Alım Satım Oku -->
+  <path d="M 20 40 L 38 22 L 52 32 L 76 8 M 62 8 L 76 8 L 76 22" 
+        fill="none" 
+        stroke="url(#techGrad)" 
+        stroke-width="5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
 
-    <!-- Tekerlek Dış Hatları -->
-    <circle cx="180" cy="290" r="45" />
-    <circle cx="350" cy="290" r="45" />
-  </g>
+  <!-- Spor/Modern Araç Gövdesi (Sağa Bakan) -->
+  <path d="M 16 64 
+           C 16 55, 22 50, 30 46 
+           C 38 34, 50 30, 66 30 
+           C 76 30, 82 38, 86 46 
+           C 92 48, 94 54, 94 62 
+           C 94 65, 92 68, 88 68 
+           L 16 68 Z" 
+        fill="url(#carGrad)" />
+        
+  <!-- Araç Camları (Arka plan ile negatif alan yaratarak derinlik katar) -->
+  <path d="M 34 46 C 38 38, 48 35, 60 35 L 68 35 C 74 35, 78 40, 80 46 Z" fill="#0f0a19" />
 
-  <!-- Tekerlek Merkezleri (Dinamizm ve Güç) -->
-  <circle cx="180" cy="290" r="16" fill="url(#brandGradient)" />
-  <circle cx="350" cy="290" r="16" fill="url(#brandGradient)" />
+  <!-- Siberpunk / AI Tarzı Neon Tekerlekler -->
+  <circle cx="30" cy="68" r="11" fill="#0f0a19" stroke="url(#techGrad)" stroke-width="4.5" />
+  <circle cx="78" cy="68" r="11" fill="#0f0a19" stroke="url(#techGrad)" stroke-width="4.5" />
+
+  <!-- Yapay Zeka Işıltıları (AI Magic Sparkles) -->
+  <path d="M 18 10 Q 18 16 12 16 Q 18 16 18 22 Q 18 16 24 16 Q 18 16 18 10 Z" fill="#ffffff" />
+  <path d="M 88 32 Q 88 36 84 36 Q 88 36 88 40 Q 88 36 92 36 Q 88 36 88 32 Z" fill="#ffffff" />
 </svg>

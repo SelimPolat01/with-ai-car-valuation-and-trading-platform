@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { toggleFavorite } from "@/store/advertsSlice";
 import { useParams, useRouter } from "next/navigation";
-import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import classes from "./AdvertInfos.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -32,16 +31,6 @@ export default function AdvertInfos() {
   const params = useParams();
   const router = useRouter();
   const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    if (!currentToken) {
-      router.replace("/admin/login");
-      return;
-    }
-    setToken(currentToken);
-  }, [router]);
-
   const [isSuccess, setIsSuccess] = useState(false);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
@@ -52,6 +41,13 @@ export default function AdvertInfos() {
   const [showSimilarAdverts, setShowSimilarAdverts] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    const currentToken = localStorage.getItem("token");
+    if (currentToken) {
+      setToken(currentToken);
+    }
+  }, []);
 
   const {
     data: getAdvertData,
@@ -65,8 +61,6 @@ export default function AdvertInfos() {
   const advert = Array.isArray(getAdvertData?.result)
     ? getAdvertData.result[0]
     : getAdvertData?.result;
-
-  useCheckAuth();
 
   useEffect(() => {
     if (advert && advert.isFavorite !== undefined) {
@@ -122,7 +116,12 @@ export default function AdvertInfos() {
   }
 
   async function toggleFavoriteClick() {
-    if (!advert || !advert.id || !token) return;
+    if (!token) {
+      router.push("/admin/login");
+      return;
+    }
+
+    if (!advert || !advert.id) return;
 
     const previousFavoriteState = isFavorite;
     setIsFavorite(!previousFavoriteState);
@@ -146,6 +145,11 @@ export default function AdvertInfos() {
   }
 
   function advertBuyHandler() {
+    if (!token) {
+      router.push("/admin/login");
+      return;
+    }
+
     router.push(
       `/ilan/${params["brand-model-modelYear"]}/${params.advertId}/randevu`,
     );
@@ -241,7 +245,7 @@ export default function AdvertInfos() {
     );
   };
 
-  if (!token || getAdvertIsLoading) {
+  if (getAdvertIsLoading) {
     return <Loading />;
   }
 
@@ -264,11 +268,8 @@ export default function AdvertInfos() {
         <AlertCircle size={48} className="iconSecondary" />
         <h2>İlan Bulunamadı</h2>
         <p>Aradığınız ilan yayından kaldırılmış veya bulunamıyor.</p>
-        <button
-          onClick={() => router.push("/hesabim/garajim")}
-          className="backButton"
-        >
-          <ArrowLeft size={20} /> Garajıma Dön
+        <button onClick={() => router.push("/")} className="backButton">
+          <ArrowLeft size={20} /> Ana Sayfaya Dön
         </button>
       </div>
     );
@@ -292,7 +293,8 @@ export default function AdvertInfos() {
           >
             <div className={classes.titleFavoriteDiv}>
               <h2 className={classes.title}>{advert.title?.toUpperCase()}</h2>
-              {user && advert && Number(user.id) !== Number(advert.user_id) && (
+              {(!user ||
+                (user && Number(user.id) !== Number(advert.user_id))) && (
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.95 }}
@@ -372,18 +374,17 @@ export default function AdvertInfos() {
                     </li>
                   ))}
                 </ul>
-                {user &&
-                  advert &&
-                  Number(user.id) !== Number(advert.user_id) && (
-                    <div className={classes.buyButtonContainer}>
-                      <PrimaryButton
-                        type="button"
-                        text="Bu Aracı Satın Al"
-                        className={classes.buyButton}
-                        onClick={advertBuyHandler}
-                      />
-                    </div>
-                  )}
+                {(!user ||
+                  (user && Number(user.id) !== Number(advert.user_id))) && (
+                  <div className={classes.buyButtonContainer}>
+                    <PrimaryButton
+                      type="button"
+                      text="Bu Aracı Satın Al"
+                      className={classes.buyButton}
+                      onClick={advertBuyHandler}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 

@@ -1,5 +1,5 @@
 import AdvertInfos from "@/app/components/AdvertInfos";
 
-export default function AdvertDetail() {
+export default function Advert() {
   return <AdvertInfos />;
 }

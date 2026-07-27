@@ -10,6 +10,8 @@ import {
   Clock,
   XCircle,
   LayoutGrid,
+  Building2,
+  Store,
 } from "lucide-react";
 import headerClasses from "@/app/components/Header.module.css";
 
@@ -268,6 +270,7 @@ export const headerLinks = {
           className={headerClasses.icon}
           size={30}
           stroke="url(#header-icon-gold)"
+          fill="none"
         />
       ),
       className: "homeLink",
@@ -276,14 +279,28 @@ export const headerLinks = {
     {
       href: "/tum-ilanlar",
       label: (
-        <LayoutGrid
+        <Store
           className={headerClasses.icon}
           size={30}
           stroke="url(#header-icon-gold)"
+          fill="none"
         />
       ),
       className: "allAdvertsLink",
       title: "Tüm İlanlar",
+    },
+    {
+      href: "/hakkimizda",
+      label: (
+        <Building2
+          className={headerClasses.icon}
+          size={30}
+          stroke="url(#header-icon-gold)"
+          fill="none"
+        />
+      ),
+      className: "allAdvertsLink",
+      title: "Hakkımızda",
     },
   ],
   notLoginlinks: [
@@ -294,6 +311,7 @@ export const headerLinks = {
           className={headerClasses.icon}
           size={30}
           stroke="url(#header-icon-gold)"
+          fill="none"
         />
       ),
       className: "registerLink",
@@ -306,6 +324,7 @@ export const headerLinks = {
           className={headerClasses.icon}
           size={30}
           stroke="url(#header-icon-gold)"
+          fill="none"
         />
       ),
       className: "loginLink",

@@ -14,6 +14,12 @@ export default async function sitemap() {
       changeFrequency: "hourly",
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/hakkimizda`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
   ];
 
   let dynamicRoutes = [];

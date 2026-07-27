@@ -332,7 +332,6 @@
   .div {
     gap: 1.5rem;
     padding: 0 1rem 2.5rem 1rem;
-    min-height: calc(100vh - 68px);
   }
 
   .photoContainer {

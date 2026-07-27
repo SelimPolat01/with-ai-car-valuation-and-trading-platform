@@ -112,14 +112,17 @@ export default function RootLayout({ children }) {
                 <defs>
                   <linearGradient
                     id="header-icon-gold"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="100%"
+                    x1="0"
+                    y1="0"
+                    x2="24"
+                    y2="24"
+                    gradientUnits="userSpaceOnUse"
                   >
                     <stop offset="0%" stopColor="#FFDF00" />
-                    <stop offset="50%" stopColor="#FFB300" />
-                    <stop offset="100%" stopColor="#FFA000" />
+                    <stop offset="25%" stopColor="#FFB300" />
+                    <stop offset="50%" stopColor="#FFA000" />
+                    <stop offset="75%" stopColor="#FFB300" />
+                    <stop offset="100%" stopColor="#FFDF00" />
                   </linearGradient>
                 </defs>
               </svg>

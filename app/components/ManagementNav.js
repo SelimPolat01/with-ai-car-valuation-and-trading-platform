@@ -18,8 +18,8 @@ export default function ManagementNav({ className }) {
         </li>
         <li>
           <Link
-            className={path === "/favori-ilanlar" ? classes.active : ""}
-            href="/favori-ilanlar"
+            className={path === "/favorilerim" ? classes.active : ""}
+            href="/favorilerim"
           >
             Favorilerim
           </Link>

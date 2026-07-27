@@ -11,11 +11,11 @@ import {
   AlertCircle,
   ArrowLeft,
   BellDot,
-  CircleUserRound,
   FolderHeart,
   LogOut,
   Tags,
   User,
+  UserCog,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useGetPersonalNotifications } from "@/hooks/GET/useGetPersonalNotifications";
@@ -118,11 +118,7 @@ export default function Header({ className }) {
           />
         </Link>
         <ul className={classes.ul}>
-          {!hideSearchBar && (
-            <li className={classes.searchLi}>
-              <SearchBar />
-            </li>
-          )}
+          {!hideSearchBar && <SearchBar />}
 
           {links.commonLinks.map((commonLink, index) => (
             <li className={classes.li} key={index}>
@@ -229,7 +225,7 @@ export default function Header({ className }) {
                 title="Hesabım"
                 href="/hesabim"
               >
-                <CircleUserRound
+                <UserCog
                   className={classes.icon}
                   size={30}
                   stroke="url(#header-icon-gold)"
@@ -252,7 +248,7 @@ export default function Header({ className }) {
                 </li>
                 <li>
                   <Link
-                    href="/favori-ilanlar"
+                    href="/favorilerim"
                     className={classes.favoriteAdvertsLink}
                     title="Favori İlanlarım"
                   >

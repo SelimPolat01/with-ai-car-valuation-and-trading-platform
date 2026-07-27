@@ -331,7 +331,7 @@
 @media (max-width: 768px) {
   .div {
     gap: 1.5rem;
-    padding: 0 1rem 2.5rem 1rem;
+    padding: 0;
   }
 
   .photoContainer {

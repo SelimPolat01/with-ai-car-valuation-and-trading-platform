@@ -38,6 +38,8 @@ app.use(
       "https://with-ai-car-valuation-and-trading-sy9d.onrender.com",
       "http://localhost:3000",
       "https://with-ai-car-valuation-and-trading-p.vercel.app",
+      "https://yapayoto.me",
+      "https://www.yapayoto.me",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],

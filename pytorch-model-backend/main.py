@@ -36,7 +36,14 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://localhost:3000", "http://127.0.0.1:3000", "https://with-ai-car-valuation-and-trading-sy9d.onrender.com"],
+    allow_origins=["http://localhost:3000", 
+                   "https://localhost:3000", 
+                   "http://127.0.0.1:3000", 
+                   "https://with-ai-car-valuation-and-trading-sy9d.onrender.com", 
+                   "https://with-ai-car-valuation-and-trading-p.vercel.app", 
+                   "https://yapayoto.me", 
+                   "https://www.yapayoto.me"
+                   ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]

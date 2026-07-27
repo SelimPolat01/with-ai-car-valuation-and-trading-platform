@@ -328,7 +328,7 @@ a {
 .bgLogin {
   background-image: url("/images/background.png");
   background-size: cover;
-  background-position: center;
+  background-position: top center;
   background-repeat: no-repeat;
   width: 100%;
   min-height: 390px;

@@ -54,10 +54,7 @@ export default function AiCarDetector() {
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
     setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-    }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -66,7 +63,16 @@ export default function AiCarDetector() {
   }, [preview]);
 
   function handleClick() {
-    fileInputRef.current.click();
+    const currentToken = localStorage.getItem("token") || token;
+
+    if (!currentToken) {
+      router.push("/login");
+      return;
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   }
 
   function handleChange(event) {
@@ -93,12 +99,20 @@ export default function AiCarDetector() {
   }
 
   function handleUpload() {
-    if (!file || postCarDetectionIsPending || !token) return;
+    const currentToken = localStorage.getItem("token") || token;
+
+    if (!currentToken) {
+      router.push("/login");
+      return;
+    }
+
+    if (!file || postCarDetectionIsPending) return;
+
     setError(null);
     const formData = new FormData();
     formData.append("file", file);
     postCarDetectionMutate(
-      { token, body: formData },
+      { token: currentToken, body: formData },
       {
         onSuccess: (data) => {
           const parsedPrediction = data.result.prediction.split("-");

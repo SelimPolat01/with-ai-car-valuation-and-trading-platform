@@ -32,8 +32,21 @@ export async function Fetch(
 
   if (response.status === 401) {
     if (typeof window !== "undefined") {
+      const hasExpiredToken = !!localStorage.getItem("token");
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      localStorage.removeItem("tokenExpire");
+
+      const currentPath = window.location.pathname;
+      const isPublicPage =
+        currentPath === "/" ||
+        currentPath.startsWith("/tum-ilanlar") ||
+        currentPath.startsWith("/ilan/");
+
+      if (!isPublicPage) {
+        window.location.href = "/login";
+      } else if (hasExpiredToken) {
+        window.location.reload();
+      }
     }
     throw { ok: false, status: 401, message: "Oturum süresi doldu." };
   }

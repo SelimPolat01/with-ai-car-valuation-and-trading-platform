@@ -15,7 +15,7 @@
   padding: 2rem 0;
   box-sizing: border-box;
   flex: 1 0 auto;
-  background-color: #ffff;
+  background-color: #ffffff;
   height: auto;
   min-height: max-content;
 }
@@ -53,7 +53,7 @@
   max-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .inputColumn {
@@ -61,6 +61,8 @@
   flex-direction: column;
   width: 100%;
   gap: 0.25rem;
+  position: relative;
+  padding-bottom: 1.0625rem;
 }
 
 .inputColumn label {
@@ -77,6 +79,11 @@
   color: #ef4444;
   font-size: 14px;
   margin: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  line-height: 1.2;
 }
 
 .button {

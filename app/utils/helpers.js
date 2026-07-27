@@ -9,6 +9,7 @@ import {
   Calendar,
   Clock,
   XCircle,
+  LayoutGrid,
 } from "lucide-react";
 import headerClasses from "@/app/components/Header.module.css";
 
@@ -259,6 +260,32 @@ export function formatAndCleanBrand(brand) {
 }
 
 export const headerLinks = {
+  commonLinks: [
+    {
+      href: "/",
+      label: (
+        <Home
+          className={headerClasses.icon}
+          size={30}
+          stroke="url(#header-icon-gold)"
+        />
+      ),
+      className: "homeLink",
+      title: "Anasayfa",
+    },
+    {
+      href: "/tum-ilanlar",
+      label: (
+        <LayoutGrid
+          className={headerClasses.icon}
+          size={30}
+          stroke="url(#header-icon-gold)"
+        />
+      ),
+      className: "allAdvertsLink",
+      title: "Tüm İlanlar",
+    },
+  ],
   notLoginlinks: [
     {
       href: "/register",
@@ -269,7 +296,6 @@ export const headerLinks = {
           stroke="url(#header-icon-gold)"
         />
       ),
-      hideOn: "/register",
       className: "registerLink",
       title: "Kayıt Ol",
     },
@@ -282,24 +308,8 @@ export const headerLinks = {
           stroke="url(#header-icon-gold)"
         />
       ),
-      hideOn: "/login",
       className: "loginLink",
       title: "Giriş Yap",
-    },
-  ],
-  loginLinks: [
-    {
-      href: "/",
-      label: (
-        <Home
-          className={headerClasses.icon}
-          size={30}
-          stroke="url(#header-icon-gold)"
-        />
-      ),
-      hideOn: "/",
-      className: "homeLink",
-      title: "Anasayfa",
     },
   ],
 };

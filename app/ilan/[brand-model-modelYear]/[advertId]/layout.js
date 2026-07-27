@@ -5,7 +5,7 @@ export async function generateMetadata({ params }) {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_URL}/adverts/${advertId}`,
       {
-        cache: "no-store",
+        next: { revalidate: 3600 },
       },
     );
 
@@ -23,9 +23,10 @@ export async function generateMetadata({ params }) {
 
     const mainImgObj =
       advert.images?.find((img) => img.is_main) || advert.images?.[0];
+
     const imageUrl = mainImgObj
       ? mainImgObj.image_data || mainImgObj.image_url
-      : "https://seninsiten.com/images/default-car.png";
+      : "https://yapayoto.me/images/default-car.svg";
 
     return {
       title: pageTitle,

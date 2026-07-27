@@ -71,18 +71,26 @@ export default function Login() {
     }));
   }
 
-  const isEmailValid = input.email.value.includes("@") && input.email.isBlur;
-  const isPasswordValid =
-    input.password.value.length >= 6 && input.password.isBlur;
+  // Geçerlilik kontrollerini sadece "value" üzerinden yapıyoruz
+  const isEmailValid = input.email.value.includes("@");
+  const isPasswordValid = input.password.value.length >= 6;
 
   async function submitHandler(event) {
     event.preventDefault();
-    if (input.email.value.trim().length === 0) return;
-    setLoading(true);
+
+    // Submit'e basıldığında her iki alanı da blur edilmiş (dokunulmuş) gibi işaretliyoruz ki
+    // eğer alanlar boşsa uyarı mesajları ekranda belirebilsin.
     setInput((prevInput) => ({
       email: { ...prevInput.email, isBlur: true },
       password: { ...prevInput.password, isBlur: true },
     }));
+
+    // Eğer validasyonlardan geçemiyorsa API'ye istek atma
+    if (!input.email.value.includes("@") || input.password.value.length < 6) {
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/login`, {
@@ -136,9 +144,18 @@ export default function Login() {
               autoFocus
               autoComplete="email"
             />
-            {!isEmailValid && input.email.isBlur && (
-              <p className={classes.error}>Lütfen geçerli bir e-posta girin.</p>
+            {/* Boşsa ve dışarı tıklandıysa: */}
+            {input.email.isBlur && input.email.value.trim().length === 0 && (
+              <p className={classes.error}>E-posta alanı boş bırakılamaz.</p>
             )}
+            {/* Boş değilse ve geçersizse: */}
+            {!isEmailValid &&
+              input.email.isBlur &&
+              input.email.value.trim().length > 0 && (
+                <p className={classes.error}>
+                  Lütfen geçerli bir e-posta girin.
+                </p>
+              )}
             {error === "Girilen e-postaya ait kullanıcı bulunamadı." && (
               <p className={classes.error}>{error}</p>
             )}
@@ -155,11 +172,19 @@ export default function Login() {
               className={classes.input}
               autoComplete="current-password"
             />
-            {!isPasswordValid && input.password.isBlur && (
-              <p className={classes.error}>
-                Parola en az 6 karakterden oluşmalı.
-              </p>
-            )}
+            {/* Boşsa ve dışarı tıklandıysa: */}
+            {input.password.isBlur &&
+              input.password.value.trim().length === 0 && (
+                <p className={classes.error}>Parola alanı boş bırakılamaz.</p>
+              )}
+            {/* Boş değilse ve geçersizse: */}
+            {!isPasswordValid &&
+              input.password.isBlur &&
+              input.password.value.trim().length > 0 && (
+                <p className={classes.error}>
+                  Parola en az 6 karakterden oluşmalı.
+                </p>
+              )}
             {error === "Girilen parola hatalı." && (
               <p className={classes.error}>{error}</p>
             )}

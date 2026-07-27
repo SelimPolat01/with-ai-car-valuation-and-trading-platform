@@ -5,7 +5,7 @@ import multer from "multer";
 
 export const router = express.Router();
 
-router.get("/", verifyToken, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const queryText = `
       SELECT 
@@ -124,9 +124,21 @@ router.post("/favoriteAdverts/:advertId", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/:advertId", verifyToken, async (req, res) => {
+router.get("/:advertId", async (req, res) => {
   const { advertId } = req.params;
-  const userId = Number(req.user.id);
+  let userId = 0;
+
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.split(" ")[1];
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.SECRET);
+        userId = Number(decoded.id);
+      } catch (err) {}
+    }
+  }
+
   try {
     const result = await db.query(
       `SELECT 
@@ -159,11 +171,13 @@ router.get("/:advertId", verifyToken, async (req, res) => {
       WHERE a.id = $2 AND a.is_sold = false`,
       [userId, advertId],
     );
+
     if (!result.rows.length) {
       return res
         .status(404)
         .json({ message: "İlan bulunamadı veya satılmış olabilir." });
     }
+
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error("SQL Hatası Detayı:", err.message);
@@ -685,7 +699,7 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/similar-by-ai/:advertId", verifyToken, async (req, res) => {
+router.get("/similar-by-ai/:advertId", async (req, res) => {
   const { advertId } = req.params;
 
   try {

@@ -50,16 +50,13 @@ export default function Register() {
     }));
   }
 
-  const isEmailValid = input.email.value.includes("@") && input.email.isBlur;
-  const isPasswordValid =
-    input.password.value.length >= 6 && input.password.isBlur;
-  const isNameValid = input.name.value.length !== 0 && input.name.isBlur;
-  const isSurnameValid =
-    input.surname.value.length !== 0 && input.surname.isBlur;
-  const isTelNumberValid =
-    input.tel_number.value.length === 11 && input.tel_number.isBlur;
-  const isCityValid = input.city.value.length !== 0 && input.city.isBlur;
-  const isIbanValid = input.iban.value.length === 26 && input.iban.isBlur;
+  const isEmailValid = input.email.value.includes("@");
+  const isPasswordValid = input.password.value.length >= 6;
+  const isNameValid = input.name.value.trim().length !== 0;
+  const isSurnameValid = input.surname.value.trim().length !== 0;
+  const isTelNumberValid = input.tel_number.value.trim().length === 11;
+  const isCityValid = input.city.value.trim().length !== 0;
+  const isIbanValid = input.iban.value.trim().length === 26;
 
   async function submitHandler(event) {
     event.preventDefault();
@@ -72,7 +69,8 @@ export default function Register() {
       !isNameValid ||
       !isSurnameValid ||
       !isCityValid ||
-      !isIbanValid
+      !isIbanValid ||
+      !isTelNumberValid
     ) {
       setInput((prevInput) => ({
         email: { ...prevInput.email, isBlur: true },
@@ -145,9 +143,16 @@ export default function Register() {
             autoFocus
             autoComplete="email"
           />
-          {!isEmailValid && input.email.isBlur && (
-            <p className={classes.error}>Lütfen geçerli bir e-posta giriniz.</p>
+          {input.email.isBlur && input.email.value.trim() === "" && (
+            <p className={classes.error}>Bu alan boş bırakılamaz.</p>
           )}
+          {input.email.isBlur &&
+            input.email.value.trim() !== "" &&
+            !isEmailValid && (
+              <p className={classes.error}>
+                Lütfen geçerli bir e-posta giriniz.
+              </p>
+            )}
           {isConflict && (
             <p className={classes.error}>
               Bu E-posta zaten kayıtlı!{" "}
@@ -172,11 +177,16 @@ export default function Register() {
             label="Parola"
             autoComplete="new-password"
           />
-          {!isPasswordValid && input.password.isBlur && (
-            <p className={classes.error}>
-              Lütfen en az 6 karakterden oluşan parola giriniz.
-            </p>
+          {input.password.isBlur && input.password.value === "" && (
+            <p className={classes.error}>Bu alan boş bırakılamaz.</p>
           )}
+          {input.password.isBlur &&
+            input.password.value !== "" &&
+            !isPasswordValid && (
+              <p className={classes.error}>
+                Lütfen en az 6 karakterden oluşan parola giriniz.
+              </p>
+            )}
         </div>
 
         <div className={classes.nameSurnameDiv}>
@@ -190,8 +200,8 @@ export default function Register() {
               value={input.name.value}
               label="İsim"
             />
-            {!isNameValid && input.name.isBlur && (
-              <p className={classes.error}>Lütfen geçerli bir isim giriniz.</p>
+            {input.name.isBlur && !isNameValid && (
+              <p className={classes.error}>Bu alan boş bırakılamaz.</p>
             )}
           </div>
           <div className={classes.inputColumn}>
@@ -204,10 +214,8 @@ export default function Register() {
               value={input.surname.value}
               label="Soyisim"
             />
-            {!isSurnameValid && input.surname.isBlur && (
-              <p className={classes.error}>
-                Lütfen geçerli bir soyisim giriniz.
-              </p>
+            {input.surname.isBlur && !isSurnameValid && (
+              <p className={classes.error}>Bu alan boş bırakılamaz.</p>
             )}
           </div>
         </div>
@@ -222,11 +230,16 @@ export default function Register() {
             value={input.iban.value}
             label="IBAN"
           />
-          {!isIbanValid && input.iban.isBlur && (
-            <p className={classes.error}>
-              Lütfen 26 karakterden oluşan IBAN giriniz.
-            </p>
+          {input.iban.isBlur && input.iban.value.trim() === "" && (
+            <p className={classes.error}>Bu alan boş bırakılamaz.</p>
           )}
+          {input.iban.isBlur &&
+            input.iban.value.trim() !== "" &&
+            !isIbanValid && (
+              <p className={classes.error}>
+                Lütfen 26 karakterden oluşan IBAN giriniz.
+              </p>
+            )}
         </div>
 
         <div className={classes.telCityDiv}>
@@ -240,11 +253,17 @@ export default function Register() {
               value={input.tel_number.value}
               label="Telefon"
             />
-            {!isTelNumberValid && input.tel_number.isBlur && (
-              <p className={classes.error}>
-                Lütfen geçerli bir telefon giriniz.
-              </p>
-            )}
+            {input.tel_number.isBlur &&
+              input.tel_number.value.trim() === "" && (
+                <p className={classes.error}>Bu alan boş bırakılamaz.</p>
+              )}
+            {input.tel_number.isBlur &&
+              input.tel_number.value.trim() !== "" &&
+              !isTelNumberValid && (
+                <p className={classes.error}>
+                  Lütfen geçerli 11 haneli bir telefon giriniz.
+                </p>
+              )}
           </div>
           <div className={classes.inputColumn}>
             <Input
@@ -256,13 +275,15 @@ export default function Register() {
               value={input.city.value}
               label="Şehir"
             />
-            {!isCityValid && input.city.isBlur && (
-              <p className={classes.error}>Lütfen geçerli bir şehir giriniz.</p>
+            {input.city.isBlur && !isCityValid && (
+              <p className={classes.error}>Bu alan boş bırakılamaz.</p>
             )}
           </div>
         </div>
 
-        {error && <p className={classes.error}>{error}</p>}
+        <div className={classes.globalErrorWrapper}>
+          {error && <p className={classes.error}>{error}</p>}
+        </div>
 
         <SecondaryButton
           type="submit"

@@ -5,11 +5,7 @@ import { useRouter } from "next/navigation";
 import classes from "./Dropdown.module.css";
 import PrimaryButton from "./PrimaryButton";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  decodeBrandModel,
-  formatAndCleanBrand,
-  formatBrandModel,
-} from "../utils/helpers";
+import { decodeBrandModel, formatBrandModel } from "../utils/helpers";
 import {
   dropdownItemVariants,
   dropdownVariants,
@@ -52,12 +48,14 @@ export default function Dropdown() {
       model: value.modelValue === "Model",
       modelYear: value.modelYearValue === "Yıl",
     };
+
     setErrors(newErrors);
     setShake({
       shakeBrand: newErrors.brand,
       shakeModel: newErrors.model,
       shakeModelYear: newErrors.modelYear,
     });
+
     setTimeout(() => {
       setShake({
         shakeBrand: false,
@@ -65,9 +63,18 @@ export default function Dropdown() {
         shakeModelYear: false,
       });
     }, 250);
+
     if (newErrors.brand || newErrors.model || newErrors.modelYear) {
       return;
     }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
     router.push(
       `/ilan-olustur/${encodeURIComponent(
         decodeBrandModel(value.brandValue),

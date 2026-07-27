@@ -11,8 +11,8 @@ import {
   AlertCircle,
   ArrowLeft,
   BellDot,
+  CircleUserRound,
   FolderHeart,
-  LayoutGrid,
   LogOut,
   Tags,
   User,
@@ -23,9 +23,9 @@ import { usePatchNotificationRead } from "@/hooks/PATCH/usePatchNotificationRead
 import { headerLinks } from "../utils/helpers";
 
 export default function Header({ className }) {
-  const path = usePathname();
   const dispatch = useDispatch();
   const router = useRouter();
+  const pathname = usePathname();
   const [token, setToken] = useState(null);
 
   useEffect(() => {
@@ -89,10 +89,9 @@ export default function Header({ className }) {
   }
 
   const links = headerLinks;
+  const hideSearchBar = pathname === "/login" || pathname === "/register";
 
-  const isNotLoginRegisterPage = path !== "/login" && path !== "/register";
-
-  if (getPersonalNotificationsIsError) {
+  if (getPersonalNotificationsIsError && isLogin) {
     return (
       <div className="errorContainer">
         <AlertCircle size={48} className="iconSecondary" />
@@ -107,23 +106,37 @@ export default function Header({ className }) {
 
   return (
     <header className={`${classes.header} ${className ? className : ""} `}>
-      <nav
-        className={`${classes.nav} ${!isNotLoginRegisterPage ? classes.logoHideNav : ""}`}
-      >
-        {isNotLoginRegisterPage && (
-          <Link href="/">
-            <Image
-              className={classes.logo}
-              src="/images/logo.svg"
-              alt="logo"
-              width={55}
-              height={55}
-              priority
-            />
-          </Link>
-        )}
+      <nav className={classes.nav}>
+        <Link href="/">
+          <Image
+            className={classes.logo}
+            src="/images/logo.svg"
+            alt="logo"
+            width={55}
+            height={55}
+            priority
+          />
+        </Link>
         <ul className={classes.ul}>
-          {isLogin && <SearchBar />}
+          {!hideSearchBar && (
+            <li className={classes.searchLi}>
+              <SearchBar />
+            </li>
+          )}
+
+          {links.commonLinks.map((commonLink, index) => (
+            <li className={classes.li} key={index}>
+              <Link
+                title={commonLink.title}
+                className={`${classes[commonLink.className]}${
+                  className ? ` ${className}` : ""
+                }`}
+                href={commonLink.href}
+              >
+                {commonLink.label}
+              </Link>
+            </li>
+          ))}
 
           {!isLogin &&
             links.notLoginlinks.map((notLoginlink, index) => (
@@ -138,104 +151,77 @@ export default function Header({ className }) {
               </li>
             ))}
 
-          {isLogin &&
-            links.loginLinks.map((loginLink, index) => (
-              <li className={classes.li} key={index}>
-                <Link
-                  title={loginLink.title}
-                  className={`${classes[loginLink.className]}${
+          {isLogin && (
+            <li className={classes.li}>
+              <div className={classes.notificationContainer}>
+                <button
+                  className={`${classes.notificationButton}${
                     className ? ` ${className}` : ""
                   }`}
-                  href={loginLink.href}
+                  title="Bildirimler"
+                  type="button"
+                  onClick={notificationIconClickHandler}
                 >
-                  {loginLink.label}
-                </Link>
-              </li>
-            ))}
+                  <BellDot
+                    className={classes.icon}
+                    size={30}
+                    stroke="url(#header-icon-gold)"
+                  />
+                  {personalNotifications?.some((n) => !n.is_read) && (
+                    <span className={classes.notificationBadge}></span>
+                  )}
+                </button>
 
-          {isLogin && (
-            <div className={classes.notificationContainer}>
-              <button
-                className={`${classes.notificationButton}${
-                  className ? ` ${className}` : ""
-                }`}
-                title="Bildirimler"
-                type="button"
-                onClick={notificationIconClickHandler}
-              >
-                <BellDot
-                  className={classes.icon}
-                  size={30}
-                  stroke="url(#header-icon-gold)"
-                />
-                {personalNotifications?.some((n) => !n.is_read) && (
-                  <span className={classes.notificationBadge}></span>
-                )}
-              </button>
-
-              {clickNotificationIcon && (
-                <div className={classes.notificationDropdown}>
-                  <div className={classes.notificationHeader}>
-                    <h4>Bildirimler</h4>
-                  </div>
-                  <div className={classes.notificationList}>
-                    {personalNotifications?.length > 0 ? (
-                      personalNotifications.map((notification) => (
-                        <div
-                          key={notification.id}
-                          className={`${classes.notificationItem} ${
-                            !notification.is_read ? classes.unread : ""
-                          }`}
-                          onClick={() => notificationClickHandler(notification)}
-                        >
-                          <div className={classes.notificationTitle}>
-                            {notification.title}
+                {clickNotificationIcon && (
+                  <div className={classes.notificationDropdown}>
+                    <div className={classes.notificationHeader}>
+                      <h4>Bildirimler</h4>
+                    </div>
+                    <div className={classes.notificationList}>
+                      {personalNotifications?.length > 0 ? (
+                        personalNotifications.map((notification) => (
+                          <div
+                            key={notification.id}
+                            className={`${classes.notificationItem} ${
+                              !notification.is_read ? classes.unread : ""
+                            }`}
+                            onClick={() =>
+                              notificationClickHandler(notification)
+                            }
+                          >
+                            <div className={classes.notificationTitle}>
+                              {notification.title}
+                            </div>
+                            <div className={classes.notificationMessage}>
+                              {notification.message}
+                            </div>
+                            <div className={classes.notificationTime}>
+                              {new Date(
+                                notification.created_at,
+                              ).toLocaleDateString("tr-TR")}
+                            </div>
                           </div>
-                          <div className={classes.notificationMessage}>
-                            {notification.message}
-                          </div>
-                          <div className={classes.notificationTime}>
-                            {new Date(
-                              notification.created_at,
-                            ).toLocaleDateString("tr-TR")}
-                          </div>
+                        ))
+                      ) : (
+                        <div className={classes.emptyNotification}>
+                          Henüz bildiriminiz yok.
                         </div>
-                      ))
-                    ) : (
-                      <div className={classes.emptyNotification}>
-                        Henüz bildiriminiz yok.
-                      </div>
-                    )}
+                      )}
+                    </div>
+                    <Link
+                      href="/hesabim/bildirimler"
+                      className={classes.viewAllButton}
+                    >
+                      Tümünü Gör
+                    </Link>
                   </div>
-                  <Link
-                    href="/hesabim/bildirimler"
-                    className={classes.viewAllButton}
-                  >
-                    Tümünü Gör
-                  </Link>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            </li>
           )}
 
           {isLogin && (
-            <Link
-              className={`${classes.allAdvertsLink}${
-                className ? ` ${className}` : ""
-              }`}
-              title="Tüm İlanlar"
-              href="/tum-ilanlar"
-            >
-              <LayoutGrid
-                className={classes.icon}
-                size={30}
-                stroke="url(#header-icon-gold)"
-              />
-            </Link>
-          )}
-
-          {isLogin && (
-            <li className={classes.account}>
+            <li className={`${classes.li} ${classes.account}`}>
               <Link
                 className={`${classes.accountLink}${
                   className ? ` ${className}` : ""
@@ -243,7 +229,7 @@ export default function Header({ className }) {
                 title="Hesabım"
                 href="/hesabim"
               >
-                <User
+                <CircleUserRound
                   className={classes.icon}
                   size={30}
                   stroke="url(#header-icon-gold)"

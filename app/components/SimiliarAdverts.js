@@ -16,11 +16,15 @@ export default function SimilarAdverts({ currentAdvertId }) {
       if (!currentAdvertId) return;
       try {
         const token = localStorage.getItem("token");
+        const headers = {};
+
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_URL}/adverts/similar-by-ai/${currentAdvertId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
+          { headers },
         );
 
         if (response.ok) {

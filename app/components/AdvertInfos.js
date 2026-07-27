@@ -30,6 +30,9 @@ import Loading from "./Loading";
 export default function AdvertInfos() {
   const params = useParams();
   const router = useRouter();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+
   const [token, setToken] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
@@ -39,14 +42,14 @@ export default function AdvertInfos() {
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showSimilarAdverts, setShowSimilarAdverts] = useState(false);
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+  const [isTokenLoaded, setIsTokenLoaded] = useState(false);
 
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
     if (currentToken) {
       setToken(currentToken);
     }
+    setIsTokenLoaded(true);
   }, []);
 
   const {
@@ -54,7 +57,7 @@ export default function AdvertInfos() {
     isLoading: getAdvertIsLoading,
     isError: getAdvertIsError,
     error: getAdvertError,
-  } = useGetAdvert(token, params.advertId);
+  } = useGetAdvert(token, params.advertId, isTokenLoaded);
 
   const { mutateAsync: postFavorite } = usePostFavoriteAdvert();
 
@@ -84,21 +87,17 @@ export default function AdvertInfos() {
       setIsShowingSummary(false);
       return;
     }
-
     if (summaryText) {
       setIsShowingSummary(true);
       return;
     }
-
     try {
       setIsSummarizing(true);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_FAST_API_URL}/description-summarization`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ description: advert?.description }),
         },
       );
@@ -110,6 +109,7 @@ export default function AdvertInfos() {
       setIsShowingSummary(true);
     } catch (err) {
       console.error(err.message);
+      alert("Özet çıkarılırken bir hata oluştu.");
     } finally {
       setIsSummarizing(false);
     }
@@ -117,7 +117,7 @@ export default function AdvertInfos() {
 
   async function toggleFavoriteClick() {
     if (!token) {
-      router.push("/admin/login");
+      router.push("/login");
       return;
     }
 
@@ -146,89 +146,109 @@ export default function AdvertInfos() {
 
   function advertBuyHandler() {
     if (!token) {
-      router.push("/admin/login");
+      router.push("/login");
       return;
     }
-
     router.push(
       `/ilan/${params["brand-model-modelYear"]}/${params.advertId}/randevu`,
     );
   }
 
-  const advertDetails = advert
-    ? [
-        {
-          id: 1,
-          label: "Fiyat",
-          value: `${formatPrice(advert.price)} ₺`,
-          priceClassName: classes.price,
-        },
-        { id: 2, label: "Şehir", value: capitalizeWords(advert.city) },
-        {
-          id: 3,
-          label: "İlan No",
-          value: advert.id,
-          spanClassName: classes.advertNo,
-        },
-        {
-          id: 4,
-          label: "İlan Tarihi",
-          value: advert.created_at
-            ? new Date(advert.created_at).toLocaleDateString("tr-TR")
-            : "",
-        },
-        { id: 5, label: "Marka", value: formatBrandModel(advert.brand) },
-        { id: 6, label: "Seri", value: formatBrandModel(advert.model) },
-        {
-          id: 7,
-          label: "Model",
-          value: `
-          ${engineCapacityFormat(advert.engine_capacity)} ${carTypeMap.trimLevelMap[advert.trim_level]}`,
-        },
-        { id: 8, label: "Yıl", value: advert.model_year },
-        {
-          id: 9,
-          label: "Yakıt Tipi",
-          value: carTypeMap.fuelTypeMap[advert.fuel_type] || "",
-        },
-        {
-          id: 10,
-          label: "Vites Tipi",
-          value: carTypeMap.transmissionTypeMap[advert.transmission] || "",
-        },
-        { id: 11, label: "Araç Durumu", value: "İkinci El" },
-        {
-          id: 12,
-          label: "Kilometre",
-          value: advert.kilometer?.toLocaleString("tr-TR") || 0,
-        },
-        {
-          id: 13,
-          label: "Kasa Tipi",
-          value: bodyTypeParser(advert.body_type),
-        },
-        { id: 14, label: "Motor Gücü", value: `${advert.horsepower} hp` },
-        {
-          id: 15,
-          label: "Motor Hacmi",
-          value: engineCapacityFormat(advert.engine_capacity),
-        },
-        {
-          id: 16,
-          label: "Hasar Durumu",
-          value: `${advert.has_dent == true ? "Var" : "Yok"}`,
-        },
-        {
-          id: 17,
-          label: "Çizik Durumu",
-          value: `${advert.has_scratch == true ? "Var" : "Yok"}`,
-        },
-      ]
-    : [];
+  if (!isTokenLoaded || getAdvertIsLoading) {
+    return <Loading />;
+  }
+
+  if (getAdvertIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getAdvertError?.message || "Sunucu kaynaklı bir hata oluştu."}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
+      </div>
+    );
+  }
+
+  if (!advert) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>İlan Bulunamadı</h2>
+        <p>Aradığınız ilan yayından kaldırılmış veya sistemde mevcut değil.</p>
+        <button onClick={() => router.push("/")} className="backButton">
+          <ArrowLeft size={20} /> Ana Sayfaya Dön
+        </button>
+      </div>
+    );
+  }
+
+  const advertDetails = [
+    {
+      id: 1,
+      label: "Fiyat",
+      value: `${formatPrice(advert.price)} ₺`,
+      priceClassName: classes.price,
+    },
+    { id: 2, label: "Şehir", value: capitalizeWords(advert.city) },
+    {
+      id: 3,
+      label: "İlan No",
+      value: advert.id,
+      spanClassName: classes.advertNo,
+    },
+    {
+      id: 4,
+      label: "İlan Tarihi",
+      value: advert.created_at
+        ? new Date(advert.created_at).toLocaleDateString("tr-TR")
+        : "",
+    },
+    { id: 5, label: "Marka", value: formatBrandModel(advert.brand) },
+    { id: 6, label: "Seri", value: formatBrandModel(advert.model) },
+    {
+      id: 7,
+      label: "Model",
+      value: `${engineCapacityFormat(advert.engine_capacity)} ${carTypeMap.trimLevelMap[advert.trim_level] || ""}`,
+    },
+    { id: 8, label: "Yıl", value: advert.model_year },
+    {
+      id: 9,
+      label: "Yakıt Tipi",
+      value: carTypeMap.fuelTypeMap[advert.fuel_type] || "",
+    },
+    {
+      id: 10,
+      label: "Vites Tipi",
+      value: carTypeMap.transmissionTypeMap[advert.transmission] || "",
+    },
+    { id: 11, label: "Araç Durumu", value: "İkinci El" },
+    {
+      id: 12,
+      label: "Kilometre",
+      value: advert.kilometer?.toLocaleString("tr-TR") || 0,
+    },
+    { id: 13, label: "Kasa Tipi", value: bodyTypeParser(advert.body_type) },
+    { id: 14, label: "Motor Gücü", value: `${advert.horsepower} hp` },
+    {
+      id: 15,
+      label: "Motor Hacmi",
+      value: engineCapacityFormat(advert.engine_capacity),
+    },
+    { id: 16, label: "Hasar Durumu", value: advert.has_dent ? "Var" : "Yok" },
+    {
+      id: 17,
+      label: "Çizik Durumu",
+      value: advert.has_scratch ? "Var" : "Yok",
+    },
+  ];
 
   const advertImages =
-    advert && advert.images && advert.images.length > 0
-      ? advert.images.map((img) => img.image_data || "/images/no-image.png")
+    advert.images && advert.images.length > 0
+      ? advert.images.map(
+          (img) => img.image_data || img.image_url || "/images/no-image.png",
+        )
       : ["/images/no-image.png"];
 
   const nextImage = (e) => {
@@ -244,36 +264,6 @@ export default function AdvertInfos() {
       prev === 0 ? advertImages.length - 1 : prev - 1,
     );
   };
-
-  if (getAdvertIsLoading) {
-    return <Loading />;
-  }
-
-  if (getAdvertIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{getAdvertError?.message || "Sunucu hatası oluştu."}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
-  }
-
-  if (!advert) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>İlan Bulunamadı</h2>
-        <p>Aradığınız ilan yayından kaldırılmış veya bulunamıyor.</p>
-        <button onClick={() => router.push("/")} className="backButton">
-          <ArrowLeft size={20} /> Ana Sayfaya Dön
-        </button>
-      </div>
-    );
-  }
 
   return (
     <motion.div
@@ -293,8 +283,7 @@ export default function AdvertInfos() {
           >
             <div className={classes.titleFavoriteDiv}>
               <h2 className={classes.title}>{advert.title?.toUpperCase()}</h2>
-              {(!user ||
-                (user && Number(user.id) !== Number(advert.user_id))) && (
+              {(!user || Number(user.id) !== Number(advert.user_id)) && (
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.95 }}
@@ -337,7 +326,6 @@ export default function AdvertInfos() {
                     >
                       <ChevronLeft size={24} />
                     </motion.button>
-
                     <motion.button
                       whileTap={{ scale: 0.9 }}
                       type="button"
@@ -346,7 +334,6 @@ export default function AdvertInfos() {
                     >
                       <ChevronRight size={24} />
                     </motion.button>
-
                     <div className={classes.sliderDots}>
                       {advertImages.map((_, idx) => (
                         <span
@@ -361,11 +348,11 @@ export default function AdvertInfos() {
               </div>
 
               <div className={classes.advertInfoWrapper2}>
-                <ul className={`${classes.ul} `}>
+                <ul className={classes.ul}>
                   {advertDetails.map((detail) => (
                     <li
                       key={detail.id}
-                      className={`${classes.li} ${detail.priceClassName || ""} ${user && advert && Number(user.id) == Number(advert.user_id) ? classes.expandedLi : classes.expandlessLi}`}
+                      className={`${classes.li} ${detail.priceClassName || ""} ${user && advert && Number(user.id) === Number(advert.user_id) ? classes.expandedLi : classes.expandlessLi}`}
                     >
                       <strong className={classes.strong}>{detail.label}</strong>
                       <span className={detail.spanClassName || ""}>
@@ -374,8 +361,8 @@ export default function AdvertInfos() {
                     </li>
                   ))}
                 </ul>
-                {(!user ||
-                  (user && Number(user.id) !== Number(advert.user_id))) && (
+
+                {(!user || Number(user.id) !== Number(advert.user_id)) && (
                   <div className={classes.buyButtonContainer}>
                     <PrimaryButton
                       type="button"
@@ -390,12 +377,8 @@ export default function AdvertInfos() {
 
             <div className={classes.descriptionContainer}>
               <div
-                onClick={() => setShowDescription((prevValue) => !prevValue)}
-                className={`${classes.descriptionTextDiv} ${
-                  showDescription
-                    ? classes.semiBorderRadius
-                    : classes.fullBorderRadius
-                }`}
+                onClick={() => setShowDescription((prev) => !prev)}
+                className={`${classes.descriptionTextDiv} ${showDescription ? classes.semiBorderRadius : classes.fullBorderRadius}`}
               >
                 Açıklama
               </div>
@@ -443,14 +426,13 @@ export default function AdvertInfos() {
                   ? "Benzer Araçları Gizle"
                   : "Yapay Zekâ Önerisi Benzer Araçları Gör ✨"}
               </motion.button>
-
               <AnimatePresence>
                 {showSimilarAdverts && (
                   <motion.div
                     initial={{ opacity: 0, height: 0, y: -20 }}
                     animate={{ opacity: 1, height: "auto", y: 0 }}
                     exit={{ opacity: 0, height: 0, y: -20 }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    transition={{ duration: 0.4 }}
                     style={{ width: "100%", overflow: "hidden" }}
                   >
                     <SimilarAdverts currentAdvertId={advert.id} />

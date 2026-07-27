@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import classes from "./Arama.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";

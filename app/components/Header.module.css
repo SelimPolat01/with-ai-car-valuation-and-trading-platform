@@ -3,7 +3,7 @@
 }
 
 .nav {
-  padding: 0 3.5rem;
+  padding: 0 7rem;
   display: flex;
   justify-content: space-between;
   min-height: 65px;
@@ -28,6 +28,15 @@
   height: 30px;
 }
 
+/* Arama Çubuğu için özel liste ögesi sınıfı (Genişliği 30px ile sınırlandırmaz) */
+.searchLi {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: auto;
+}
+
 .logo {
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   filter: drop-shadow(0px 0px 6px rgba(0, 242, 254, 0.3));
@@ -38,10 +47,6 @@
   transform: scale(1.05);
   filter: brightness(1.1) drop-shadow(0px 0px 15px rgba(0, 242, 254, 0.8))
     drop-shadow(0px 0px 5px rgba(0, 85, 255, 0.6));
-}
-
-.registerLink {
-  margin: 0 1.5rem 0 0;
 }
 
 .homeLink,
@@ -74,7 +79,7 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  margin: 0 40px 0 0;
+  margin: 0;
 }
 
 .account::after {
@@ -310,9 +315,8 @@
 }
 
 .logoHideNav {
-  padding: 0;
+  padding: 0 7rem 0 0;
   justify-content: flex-end;
-  padding: 0 40px 0 0;
 }
 
 @media (max-width: 1024px) {
@@ -347,12 +351,11 @@
     margin: 0;
   }
 
-  .searchBar {
+  .searchLi {
     flex: 1 1 auto;
     min-width: 80px;
     max-width: 180px;
-    height: 32px !important;
-    margin: 0;
+    height: 32px;
   }
 
   .ul {
@@ -411,7 +414,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin: 0 5px 0 0;
+    margin: 0;
   }
 
   .accountMenu {

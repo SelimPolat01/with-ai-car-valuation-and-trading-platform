@@ -1,12 +1,11 @@
 "use client";
 
 import AdvertItem from "../components/AdvertItem.js";
-import { setAdverts } from "@/store/advertsSlice.js";
+import { setAdverts, setFilterAdverts } from "@/store/advertsSlice.js";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import classes from "./TumIlanlar.module.css";
 import { useRouter } from "next/navigation.js";
-import { useCheckAuth } from "@/backend/utils/useCheckAuth.js";
 import ConfirmDialog from "../components/ConfirmDialog.js";
 import { AnimatePresence } from "framer-motion";
 import FilterBrand from "../components/FilterBrand.js";
@@ -19,23 +18,20 @@ export default function AllAdverts() {
   const dispatch = useDispatch();
   const router = useRouter();
   const deleteDialogRef = useRef(null);
-
   const [token, setToken] = useState(null);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
-
+  const [isTokenLoaded, setIsTokenLoaded] = useState(false);
   const allAdverts = useSelector((state) => state.adverts.allAdverts);
+  const filteredAdverts = useSelector((state) => state.adverts.filteredAdverts);
+  const selectedBrand = useSelector((state) => state.adverts.selectedBrand);
   const user = useSelector((state) => state.auth.user);
-  const filteredAdverts = useSelector(
-    (state) => state.adverts.filteredAdverts || [],
-  );
-  const displayAdverts =
-    filteredAdverts.length > 0 ? filteredAdverts : allAdverts;
-
-  useCheckAuth();
 
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
+    if (currentToken) {
+      setToken(currentToken);
+    }
+    setIsTokenLoaded(true);
   }, []);
 
   const {
@@ -43,7 +39,7 @@ export default function AllAdverts() {
     isLoading: getAdvertsIsLoading,
     isError: getAdvertsDataIsError,
     error: getAdvertsDataError,
-  } = useGetAdverts(token);
+  } = useGetAdverts(token, isTokenLoaded);
 
   const {
     mutate: deleteAdvertMutate,
@@ -60,11 +56,13 @@ export default function AllAdverts() {
 
   const { uniqueBrands, brandCounts } = useMemo(() => {
     const counts = {};
-    allAdverts.forEach((advert) => {
-      if (advert.brand) {
-        counts[advert.brand] = (counts[advert.brand] || 0) + 1;
-      }
-    });
+    if (allAdverts && allAdverts.length > 0) {
+      allAdverts.forEach((advert) => {
+        if (advert.brand) {
+          counts[advert.brand] = (counts[advert.brand] || 0) + 1;
+        }
+      });
+    }
     return {
       uniqueBrands: Object.keys(counts),
       brandCounts: counts,
@@ -81,6 +79,7 @@ export default function AllAdverts() {
           dispatch(
             setAdverts(allAdverts.filter((prevAdvert) => prevAdvert.id !== id)),
           );
+          deleteDialogRef.current?.close();
         },
       },
     );
@@ -91,18 +90,24 @@ export default function AllAdverts() {
     deleteDialogRef.current.showModal();
   }
 
-  if (!token || getAdvertsIsLoading || deleteAdvertIsPending) {
+  function brandFilterHandler(brand) {
+    if (selectedBrand === brand) {
+      dispatch(setFilterAdverts(null));
+    } else {
+      dispatch(setFilterAdverts(brand));
+    }
+  }
+
+  if (!isTokenLoaded || getAdvertsIsLoading) {
     return <Loading />;
   }
 
-  if (getAdvertsDataIsError || deleteAdvertIsError) {
+  if (getAdvertsDataIsError) {
     return (
       <div className="errorContainer">
         <AlertCircle size={48} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
-        <p className="error">
-          {getAdvertsDataError?.message || deleteAdvertError?.message}
-        </p>
+        <p className="error">{getAdvertsDataError?.message}</p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
@@ -110,19 +115,16 @@ export default function AllAdverts() {
     );
   }
 
-  if (!allAdverts || allAdverts.length === 0)
-    return (
-      <div className={classes.notFoundAdvertDiv}>
-        <p>İlan Bulunmamaktadır...</p>
-      </div>
-    );
-
   return (
     <div className={classes.mainDiv}>
       <ConfirmDialog
         ref={deleteDialogRef}
         onConfirm={() => advertDeleteHandler(selectedAdvertId)}
-        text="Bunu yapmak istediğinizden emin misiniz?"
+        text={
+          deleteAdvertIsPending
+            ? "Siliniyor..."
+            : "Bunu yapmak istediğinizden emin misiniz?"
+        }
         title="Kaldır"
       />
       <div className={classes.filterDiv}>
@@ -139,6 +141,8 @@ export default function AllAdverts() {
                   brand={brand}
                   count={brandCounts[brand]}
                   key={index}
+                  isActive={selectedBrand === brand}
+                  onClick={() => brandFilterHandler(brand)}
                 />
               ))}
             </ul>
@@ -148,41 +152,65 @@ export default function AllAdverts() {
 
       <div className={classes.advertsContainer}>
         <div className={classes.headerDiv}>
-          <h1>TÜM İLANLAR</h1>
+          <h1>TÜM İLANLAR {selectedBrand ? `- ${selectedBrand}` : ""}</h1>
         </div>
+
+        {deleteAdvertIsError && (
+          <div
+            style={{
+              color: "#ff4444",
+              marginBottom: "1rem",
+              textAlign: "center",
+              fontWeight: "bold",
+            }}
+          >
+            İlan silinirken bir hata oluştu: {deleteAdvertError?.message}
+          </div>
+        )}
+
         <div className={classes.div}>
-          <AnimatePresence>
-            {displayAdverts.map((advert) => {
-              const mainImgObj = advert.images
-                ? advert.images.find((img) => img.is_main) || advert.images[0]
-                : null;
+          {!filteredAdverts || filteredAdverts.length === 0 ? (
+            <div className={classes.notFoundAdvertDiv}>
+              <p>
+                {selectedBrand
+                  ? "Seçtiğiniz filtreye uygun ilan bulunamadı."
+                  : "Şu an için hiç ilan bulunmamaktadır."}
+              </p>
+            </div>
+          ) : (
+            <AnimatePresence>
+              {filteredAdverts.map((advert) => {
+                const mainImgObj = advert.images
+                  ? advert.images.find((img) => img.is_main) || advert.images[0]
+                  : null;
 
-              const coverImage = mainImgObj
-                ? mainImgObj.image_data || mainImgObj.image_url
-                : advert.image_src;
+                const coverImage = mainImgObj
+                  ? mainImgObj.image_data || mainImgObj.image_url
+                  : advert.image_src;
 
-              return (
-                <AdvertItem
-                  id={advert.id}
-                  key={advert.id}
-                  imgSrc={coverImage}
-                  brand={advert.brand}
-                  model={advert.model}
-                  engineCapacity={advert.engine_capacity}
-                  modelYear={advert.model_year}
-                  price={advert.price}
-                  city={advert.city}
-                  onDeleteDialog={() => openDeleteModal(advert.id)}
-                  showDeleteButton={
-                    user && Number(user.id) === Number(advert.user_id)
-                  }
-                  showEditButton={
-                    user && Number(user.id) === Number(advert.user_id)
-                  }
-                />
-              );
-            })}
-          </AnimatePresence>
+                return (
+                  <AdvertItem
+                    id={advert.id}
+                    key={advert.id}
+                    imgSrc={coverImage}
+                    brand={advert.brand}
+                    model={advert.model}
+                    engineCapacity={advert.engine_capacity}
+                    modelYear={advert.model_year}
+                    price={advert.price}
+                    city={advert.city}
+                    onDeleteDialog={() => openDeleteModal(advert.id)}
+                    showDeleteButton={
+                      user && Number(user.id) === Number(advert.user_id)
+                    }
+                    showEditButton={
+                      user && Number(user.id) === Number(advert.user_id)
+                    }
+                  />
+                );
+              })}
+            </AnimatePresence>
+          )}
         </div>
       </div>
     </div>

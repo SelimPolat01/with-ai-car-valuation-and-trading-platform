@@ -21,7 +21,6 @@ export default function robots() {
         "/ilan/odeme/",
       ],
     },
-    sitemap:
-      "https://with-ai-car-valuation-and-trading-p.vercel.app/sitemap.xml",
+    sitemap: "https://yapayoto.me/sitemap.xml",
   };
 }

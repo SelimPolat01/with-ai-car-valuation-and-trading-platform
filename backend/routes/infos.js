@@ -4,7 +4,6 @@ import verifyToken from "../middlewares/verifyToken.js";
 import bcrypt from "bcrypt";
 import multer from "multer";
 import path from "path";
-import { address } from "framer-motion/client";
 
 export const router = express.Router();
 

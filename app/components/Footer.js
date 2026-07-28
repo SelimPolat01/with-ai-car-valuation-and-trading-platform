@@ -33,7 +33,7 @@ export default function Footer() {
             <FaInstagram size={20} />
           </Link>
           <Link
-            href="https://www.linkedin.com/in/selim-polat-6245553a1/"
+            href="https://www.linkedin.com/in/selim-polat/1"
             title="LinkedIn"
             className={classes.iconCircleDiv}
             target="_blank"
@@ -41,7 +41,7 @@ export default function Footer() {
             <FaLinkedinIn size={20} />
           </Link>
           <Link
-            href="https://www.linkedin.com/in/selim-polat/"
+            href="https://github.com/SelimPolat01"
             title="Github"
             className={classes.iconCircleDiv}
             target="_blank"

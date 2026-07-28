@@ -33,14 +33,16 @@ export async function Fetch(
   if (response.status === 401) {
     if (typeof window !== "undefined") {
       const hasExpiredToken = !!localStorage.getItem("token");
+
       localStorage.removeItem("token");
       localStorage.removeItem("tokenExpire");
 
       const currentPath = window.location.pathname;
       const isPublicPage =
         currentPath === "/" ||
-        currentPath.startsWith("/tum-ilanlar") ||
-        currentPath.startsWith("/ilan/");
+        currentPath === "/tum-ilanlar" ||
+        currentPath.startsWith("/ilan/") ||
+        currentPath === "/hakkimizda";
 
       if (!isPublicPage) {
         window.location.href = "/login";

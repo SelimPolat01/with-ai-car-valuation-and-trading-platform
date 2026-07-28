@@ -9,8 +9,6 @@ export function useCheckAuth() {
   const path = usePathname();
 
   useEffect(() => {
-    if (path == "/login" || path == "/register") return;
-
     const check = () => {
       const token = localStorage.getItem("token");
       const expire = localStorage.getItem("tokenExpire");
@@ -19,7 +17,21 @@ export function useCheckAuth() {
         localStorage.removeItem("token");
         localStorage.removeItem("tokenExpire");
         dispatch(logout());
-        router.replace("/login");
+
+        const publicPaths = [
+          "/",
+          "/tum-ilanlar",
+          "/hakkimizda",
+          "/login",
+          "/register",
+        ];
+
+        const isPublicPage =
+          publicPaths.includes(path) || path.startsWith("/ilan/");
+
+        if (!isPublicPage) {
+          router.replace("/login");
+        }
       }
     };
 

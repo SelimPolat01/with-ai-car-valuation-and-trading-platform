@@ -32,8 +32,10 @@ export default function Iletisim() {
   const [touched, setTouched] = useState({});
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [formHeight, setFormHeight] = useState(null);
 
   const dropdownRef = useRef(null);
+  const formSectionRef = useRef(null);
 
   const subjectOptions = [
     "Teknik Destek",
@@ -142,6 +144,10 @@ export default function Iletisim() {
     const hasErrors = Object.values(newErrors).some((err) => err !== "");
 
     if (!hasErrors) {
+      if (formSectionRef.current) {
+        setFormHeight(formSectionRef.current.offsetHeight);
+      }
+
       const payload = {
         name: value.name.trim(),
         surname: value.surname.trim(),
@@ -215,6 +221,7 @@ export default function Iletisim() {
 
         {!isSuccess ? (
           <motion.div
+            ref={formSectionRef}
             className={classes.formSection}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -372,6 +379,7 @@ export default function Iletisim() {
         ) : (
           <motion.div
             className={`${classes.formSection} ${classes.successSection}`}
+            style={{ height: formHeight ? `${formHeight}px` : "auto" }}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4 }}

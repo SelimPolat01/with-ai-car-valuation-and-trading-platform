@@ -13,7 +13,7 @@ export const metadata = {
     title: "Ekspertiz Randevusu | Aracını Hemen Sat",
     description:
       "Satın almak istediğiniz araç için size en uygun tarih ve saati seçerek ekspertiz randevunuzu hemen oluşturun.",
-    url: "https://yapayoto.me/randevu",
+    url: "https://yapayoto.com.tr/randevu",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

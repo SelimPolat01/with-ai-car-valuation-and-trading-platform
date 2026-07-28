@@ -34,7 +34,7 @@ export const metadata = {
   openGraph: {
     title: "YapayOto | Yapay Zeka Araç Değerleme",
     description: "Aracınızın değerini anında öğrenin.",
-    url: "https://yapayoto.me",
+    url: "https://yapayoto.com.tr",
     siteName: "YapayOto",
     locale: "tr_TR",
     type: "website",

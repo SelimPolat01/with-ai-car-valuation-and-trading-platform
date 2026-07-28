@@ -15,7 +15,7 @@ export const metadata = {
     title: "İlanlarım | Aracını Hemen Sat",
     description:
       "Satışa çıkardığınız araç ilanlarınızı yönetin, fiyatları güncelleyin veya ilanlarınızı anında yayından kaldırın.",
-    url: "https://yapayoto.me/ilanlarim",
+    url: "https://yapayoto.com.tr/ilanlarim",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

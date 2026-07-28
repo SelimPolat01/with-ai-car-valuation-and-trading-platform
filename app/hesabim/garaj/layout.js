@@ -14,7 +14,7 @@ export const metadata = {
     title: "Garajım | Aracını Hemen Sat",
     description:
       "İlan istatistiklerinizi, favori araçlarınızı ve alım-satım işlemlerinden elde ettiğiniz gelir tablonuzu görüntüleyin.",
-    url: "https://yapayoto.me/hesabim/garajim",
+    url: "https://yapayoto.com.tr/hesabim/garajim",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

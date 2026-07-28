@@ -14,7 +14,7 @@ export const metadata = {
     title: "Kişisel Bilgilerim | Aracını Hemen Sat",
     description:
       "Profil bilgilerinizi, iletişim detaylarınızı ve ödemeleriniz için IBAN numaranızı güvenle güncelleyin.",
-    url: "https://yapayoto.me/hesabim/kisisel-bilgiler",
+    url: "https://yapayoto.com.tr/hesabim/kisisel-bilgiler",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

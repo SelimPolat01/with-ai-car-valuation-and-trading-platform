@@ -13,7 +13,7 @@ export const metadata = {
     title: "Fiyat Teklifi | Aracını Hemen Sat",
     description:
       "Aracınıza özel olarak hesaplanan güncel fiyat teklifini inceleyin ve anında satış adımlarına geçin.",
-    url: "https://yapayoto.me/fiyat-teklifi",
+    url: "https://yapayoto.com.tr/fiyat-teklifi",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

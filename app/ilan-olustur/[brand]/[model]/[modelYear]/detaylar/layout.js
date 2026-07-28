@@ -13,7 +13,7 @@ export const metadata = {
     title: "İlan Detayları ve Fotoğraflar | Aracını Hemen Sat",
     description:
       "Aracınızın fotoğraflarını yükleyin ve detaylı bir açıklama yazarak ilanınızı hemen yayına alın.",
-    url: "https://yapayoto.me/detaylar",
+    url: "https://yapayoto.com.tr/detaylar",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

@@ -26,7 +26,7 @@ export async function generateMetadata({ params }) {
 
     const imageUrl = mainImgObj
       ? mainImgObj.image_data || mainImgObj.image_url
-      : "https://yapayoto.me/images/default-car.svg";
+      : "https://yapayoto.com.tr/images/default-car.svg";
 
     return {
       title: pageTitle,
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: pageTitle,
         description: pageDescription,
-        url: `https://yapayoto.me/ilan/${params["brand-model-modelYear"]}/${advertId}`,
+        url: `https://yapayoto.com.tr/ilan/${params["brand-model-modelYear"]}/${advertId}`,
         siteName: "Aracını Sat",
         locale: "tr_TR",
         type: "website",

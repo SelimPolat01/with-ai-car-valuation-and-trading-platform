@@ -12,19 +12,19 @@ export const metadata = {
     "aracını sat vizyon",
   ],
   alternates: {
-    canonical: "https://yapayoto.me/hakkimizda", // Google'a orijinal sayfanın bu olduğunu belirtir
+    canonical: "https://yapayoto.com.tr/hakkimizda",
   },
   openGraph: {
     title: "Hakkımızda | YapayOto",
     description:
       "Yapay zeka destekli güvenilir ikinci el araç platformu YapayOto'yu yakından tanıyın.",
-    url: "https://yapayoto.me/hakkimizda",
+    url: "https://yapayoto.com.tr/hakkimizda",
     siteName: "YapayOto",
     locale: "tr_TR",
     type: "website",
     images: [
       {
-        url: "https://yapayoto.me/icon.png",
+        url: "https://yapayoto.com.tr/icon.png",
         width: 1200,
         height: 630,
         alt: "Hakkımızda - YapayOto",
@@ -36,7 +36,7 @@ export const metadata = {
     title: "Hakkımızda | YapayOto",
     description:
       "Yapay zeka destekli güvenilir ikinci el araç platformu YapayOto'yu yakından tanıyın.",
-    images: ["https://yapayoto.me/icon.png"],
+    images: ["https://yapayoto.com.tr/icon.png"],
   },
 };
 

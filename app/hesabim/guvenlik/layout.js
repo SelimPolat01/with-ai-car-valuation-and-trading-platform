@@ -14,7 +14,7 @@ export const metadata = {
     title: "Güvenlik Ayarları | Aracını Hemen Sat",
     description:
       "Hesabınızın güvenliğini en üst düzeye çıkarın. E-posta adresinizi, parolanızı ve oturum ayarlarınızı güvenle güncelleyin.",
-    url: "https://yapayoto.me/hesabim/guvenlik",
+    url: "https://yapayoto.com.tr/hesabim/guvenlik",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

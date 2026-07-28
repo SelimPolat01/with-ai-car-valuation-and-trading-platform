@@ -16,7 +16,7 @@ export async function generateMetadata({ params }) {
       title: `Randevu Detayları #${randevuId} | Aracını Hemen Sat`,
       description:
         "Araç alım-satım ve ekspertiz randevunuzun saat, konum ve işlem detaylarını güvenle inceleyin.",
-      url: `https://yapayoto.me/hesabim/randevular/${randevuId}`,
+      url: `https://yapayoto.com.tr/hesabim/randevular/${randevuId}`,
       siteName: "Aracını Sat",
       locale: "tr_TR",
       type: "website",

@@ -14,7 +14,7 @@ export const metadata = {
     title: "Favori İlanlarım | Aracını Hemen Sat",
     description:
       "Beğendiğiniz ve favorilerinize eklediğiniz ikinci el araç ilanlarını tek bir yerden takip edin.",
-    url: "https://yapayoto.me/hesabim/favori-ilanlar",
+    url: "https://yapayoto.com.tr/hesabim/favorilerim",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

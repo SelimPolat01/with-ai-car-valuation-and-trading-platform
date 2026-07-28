@@ -17,7 +17,7 @@ export async function generateMetadata({ params }) {
       title: `İşlem Detayları #${islemId} | Aracını Hemen Sat`,
       description:
         "Araç alım-satım sürecinizin tüm adımlarını ve ödeme/noter durumunu detaylı olarak takip edin.",
-      url: `https://yapayoto.me/hesabim/alis-satis-islemleri/${islemId}`,
+      url: `https://yapayoto.com.tr/hesabim/alis-satis-islemleri/${islemId}`,
       siteName: "Aracını Sat",
       locale: "tr_TR",
       type: "website",

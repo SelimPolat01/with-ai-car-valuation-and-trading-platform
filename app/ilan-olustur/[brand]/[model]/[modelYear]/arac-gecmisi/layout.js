@@ -14,7 +14,7 @@ export const metadata = {
     title: "Araç Geçmişi ve Ekspertiz | Aracını Hemen Sat",
     description:
       "Aracınızın geçmiş bilgilerini ve ekspertiz belgelerini ekleyerek satış sürecini hızlandırın.",
-    url: "https://yapayoto.me/arac-gecmisi",
+    url: "https://yapayoto.com.tr/arac-gecmisi",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

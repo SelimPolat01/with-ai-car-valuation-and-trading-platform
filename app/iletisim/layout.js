@@ -15,7 +15,7 @@ export const metadata = {
     title: "İletişim | Aracını Hemen Sat",
     description:
       "Yapay zeka destekli ikinci el araç platformumuz hakkında soru, görüş ve önerileriniz için bizimle iletişime geçin.",
-    url: "https://yapayoto.me/iletisim",
+    url: "https://yapayoto.com.tr/iletisim",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

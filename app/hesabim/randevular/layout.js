@@ -13,7 +13,7 @@ export const metadata = {
     title: "Randevularım | Aracını Hemen Sat",
     description:
       "Alıcı veya satıcı olarak oluşturduğunuz araç ekspertiz ve alım-satım randevularınızı takip edin, detayları kolayca inceleyin.",
-    url: "https://yapayoto.me/hesabim/randevular",
+    url: "https://yapayoto.com.tr/hesabim/randevular",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

@@ -13,7 +13,7 @@ export const metadata = {
     title: "Alış-Satış İşlemleri | Aracını Hemen Sat",
     description:
       "Alıcı veya satıcı rolünde olduğunuz tüm araç alış-satış işlemlerinizi ve detaylarını güvenli bir şekilde takip edin.",
-    url: "https://yapayoto.me/hesabim/alis-satis-islemleri",
+    url: "https://yapayoto.com.tr/hesabim/alis-satis-islemleri",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

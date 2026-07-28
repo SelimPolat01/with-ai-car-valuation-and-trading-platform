@@ -14,7 +14,7 @@ export const metadata = {
     title: "Ödemeler ve Faturalar | Aracını Hemen Sat",
     description:
       "Gerçekleştirdiğiniz işlemlere ait ödeme geçmişinizi güvenle görüntüleyin ve faturalarınızı inceleyin.",
-    url: "https://yapayoto.me/hesabim/odemeler-faturalar",
+    url: "https://yapayoto.com.tr/hesabim/odemeler-faturalar",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

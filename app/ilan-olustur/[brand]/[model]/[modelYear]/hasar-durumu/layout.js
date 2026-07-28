@@ -13,7 +13,7 @@ export const metadata = {
     title: "Hasar Durumu Tespiti | Aracını Hemen Sat",
     description:
       "Aracınızın dört farklı cepheden fotoğraflarını yükleyin, yapay zeka hasar durumunu otomatik analiz etsin.",
-    url: "https://yapayoto.me/hasar-durumu",
+    url: "https://yapayoto.com.tr/hasar-durumu",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

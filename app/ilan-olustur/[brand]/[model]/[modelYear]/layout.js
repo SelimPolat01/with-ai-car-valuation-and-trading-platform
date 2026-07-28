@@ -13,7 +13,7 @@ export const metadata = {
     title: "Araç Bilgilerini Gir | Aracını Hemen Sat",
     description:
       "Aracınızın teknik detaylarını ve kilometre bilgisini girerek en doğru fiyat tahminini anında öğrenin.",
-    url: "https://yapayoto.me/tahmin-yap",
+    url: "https://yapayoto.com.tr/tahmin-yap",
     siteName: "Aracını Sat",
     locale: "tr_TR",
     type: "website",

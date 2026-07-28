@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `İlanı Düzenle (#${id}) | YapayOto`,
       description: "Araç ilanınızı güncelleyin.",
-      url: `https://yapayoto.me/ilani-duzenle/${id}`,
+      url: `https://yapayoto.com.tr/ilani-duzenle/${id}`,
       siteName: "YapayOto",
       locale: "tr_TR",
       type: "website",

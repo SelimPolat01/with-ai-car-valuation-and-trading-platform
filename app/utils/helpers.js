@@ -9,9 +9,9 @@ import {
   Calendar,
   Clock,
   XCircle,
-  LayoutGrid,
   Building2,
   Store,
+  Mail,
 } from "lucide-react";
 import headerClasses from "@/app/components/Header.module.css";
 
@@ -301,6 +301,19 @@ export const headerLinks = {
       ),
       className: "allAdvertsLink",
       title: "Hakkımızda",
+    },
+    {
+      href: "/iletisim",
+      label: (
+        <Mail
+          className={headerClasses.icon}
+          size={30}
+          stroke="url(#header-icon-gold)"
+          fill="none"
+        />
+      ),
+      className: "allAdvertsLink",
+      title: "İletişim",
     },
   ],
   notLoginlinks: [

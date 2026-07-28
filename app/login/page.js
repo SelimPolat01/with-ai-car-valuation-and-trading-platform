@@ -71,21 +71,17 @@ export default function Login() {
     }));
   }
 
-  // Geçerlilik kontrollerini sadece "value" üzerinden yapıyoruz
   const isEmailValid = input.email.value.includes("@");
   const isPasswordValid = input.password.value.length >= 6;
 
   async function submitHandler(event) {
     event.preventDefault();
 
-    // Submit'e basıldığında her iki alanı da blur edilmiş (dokunulmuş) gibi işaretliyoruz ki
-    // eğer alanlar boşsa uyarı mesajları ekranda belirebilsin.
     setInput((prevInput) => ({
       email: { ...prevInput.email, isBlur: true },
       password: { ...prevInput.password, isBlur: true },
     }));
 
-    // Eğer validasyonlardan geçemiyorsa API'ye istek atma
     if (!input.email.value.includes("@") || input.password.value.length < 6) {
       return;
     }
@@ -144,11 +140,9 @@ export default function Login() {
               autoFocus
               autoComplete="email"
             />
-            {/* Boşsa ve dışarı tıklandıysa: */}
             {input.email.isBlur && input.email.value.trim().length === 0 && (
               <p className={classes.error}>E-posta alanı boş bırakılamaz.</p>
             )}
-            {/* Boş değilse ve geçersizse: */}
             {!isEmailValid &&
               input.email.isBlur &&
               input.email.value.trim().length > 0 && (
@@ -172,12 +166,10 @@ export default function Login() {
               className={classes.input}
               autoComplete="current-password"
             />
-            {/* Boşsa ve dışarı tıklandıysa: */}
             {input.password.isBlur &&
               input.password.value.trim().length === 0 && (
                 <p className={classes.error}>Parola alanı boş bırakılamaz.</p>
               )}
-            {/* Boş değilse ve geçersizse: */}
             {!isPasswordValid &&
               input.password.isBlur &&
               input.password.value.trim().length > 0 && (

@@ -21,6 +21,6 @@ export default function robots() {
         "/ilan/odeme/",
       ],
     },
-    sitemap: "https://yapayoto.me/sitemap.xml",
+    sitemap: "https://yapayoto.com.tr/sitemap.xml",
   };
 }

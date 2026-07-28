@@ -1,5 +1,5 @@
 export default async function sitemap() {
-  const baseUrl = "https://yapayoto.me";
+  const baseUrl = "https://yapayoto.com.tr";
 
   const staticRoutes = [
     {

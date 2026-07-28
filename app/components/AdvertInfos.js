@@ -191,7 +191,6 @@ export default function AdvertInfos() {
       value: `${formatPrice(advert.price)} ₺`,
       priceClassName: classes.price,
     },
-    { id: 2, label: "Şehir", value: capitalizeWords(advert.city) },
     {
       id: 3,
       label: "İlan No",

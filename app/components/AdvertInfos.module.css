@@ -155,11 +155,11 @@
 }
 
 .expandedLi {
-  padding: 6.1px 0;
+  padding: 6.9px 0;
 }
 
 .expandlessLi {
-  padding: 4px 0;
+  padding: 4.7px 0;
 }
 
 .li:last-child {
@@ -513,7 +513,7 @@
   }
 
   .buyButtonContainer {
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
   }
 
   .description {

@@ -30,7 +30,7 @@
 }
 
 .nameSurnameDiv,
-.telCityDiv {
+.addressDiv {
   display: flex;
   gap: 1.5rem;
   width: 100%;
@@ -79,7 +79,7 @@
   }
 
   .nameSurnameDiv,
-  .telCityDiv {
+  .addressDiv {
     flex-direction: column;
     gap: 0;
   }

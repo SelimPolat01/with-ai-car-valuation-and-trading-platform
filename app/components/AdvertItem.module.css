@@ -54,61 +54,6 @@
   height: 150px;
 }
 
-.brandModel,
-.modelYear,
-.price,
-.engineCapacity,
-.city {
-  margin: 0;
-}
-
-.modelYearDiv,
-.priceDiv {
-  display: flex;
-  justify-content: flex-end;
-  margin: 0 0 0.5rem 0;
-}
-
-.modelYearDiv {
-  justify-content: space-between;
-}
-
-.brandModelEngineCapacityDiv {
-  margin: 0 0 0.5rem 0;
-}
-
-.price {
-  color: #ff8fa3;
-  font-weight: bold;
-}
-
-.modelYear,
-.city {
-  font-weight: bold;
-  color: #68ffed;
-}
-
-.brandModel,
-.engineCapacity {
-  color: black;
-}
-
-.city,
-.brandModel,
-.engineCapacity {
-  margin: 0 0 0 0.5rem;
-}
-
-.brandModel,
-.engineCapacity {
-  color: white;
-}
-
-.modelYear,
-.price {
-  margin: 0 0.5rem 0 0;
-}
-
 .deleteAdvertButton {
   background: url("/images/cancel1.jpg");
   background-color: white;
@@ -161,6 +106,58 @@
 .imgDiv:hover .editAdvertButton {
   opacity: 1;
   box-shadow: 0 0 4px 1px rgba(251, 192, 45, 0.5);
+}
+
+.content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.brandModel {
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
+}
+
+.modelYear {
+  color: #68ffed;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.engineCapacity {
+  color: #aaa;
+  font-size: 0.85rem;
+  margin: 0 0 12px 0;
+}
+
+.priceDiv {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.price {
+  color: #ff8fa3;
+  font-weight: bold;
+  font-size: 1.15rem;
+  margin: 0;
 }
 
 @media (max-width: 1024px) {

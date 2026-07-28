@@ -149,7 +149,6 @@ export default function MyAdverts() {
                   engineCapacity={myAdvert.engine_capacity}
                   modelYear={myAdvert.model_year}
                   price={myAdvert.price}
-                  city={myAdvert.city}
                   onDeleteDialog={() => openDeleteModal(myAdvert.id)}
                   onEditDialog={() => openEditModal(myAdvert.id)}
                   showDeleteButton={true}

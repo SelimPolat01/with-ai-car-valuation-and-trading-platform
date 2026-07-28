@@ -19,7 +19,7 @@ export default function Register() {
     name: { value: "", isBlur: false },
     surname: { value: "", isBlur: false },
     tel_number: { value: "", isBlur: false },
-    city: { value: "", isBlur: false },
+    address: { value: "", isBlur: false },
     iban: { value: "", isBlur: false },
   });
 
@@ -55,7 +55,9 @@ export default function Register() {
   const isNameValid = input.name.value.trim().length !== 0;
   const isSurnameValid = input.surname.value.trim().length !== 0;
   const isTelNumberValid = input.tel_number.value.trim().length === 11;
-  const isCityValid = input.city.value.trim().length !== 0;
+  const isAddressValid =
+    input.address.value.trim().length >= 20 ||
+    input.address.value.trim().length <= 150;
   const isIbanValid = input.iban.value.trim().length === 26;
 
   async function submitHandler(event) {
@@ -68,7 +70,7 @@ export default function Register() {
       !isPasswordValid ||
       !isNameValid ||
       !isSurnameValid ||
-      !isCityValid ||
+      !isAddressValid ||
       !isIbanValid ||
       !isTelNumberValid
     ) {
@@ -78,7 +80,7 @@ export default function Register() {
         name: { ...prevInput.name, isBlur: true },
         surname: { ...prevInput.surname, isBlur: true },
         tel_number: { ...prevInput.tel_number, isBlur: true },
-        city: { ...prevInput.city, isBlur: true },
+        address: { ...prevInput.address, isBlur: true },
         iban: { ...prevInput.iban, isBlur: true },
       }));
       setIsLoading(false);
@@ -99,7 +101,7 @@ export default function Register() {
             name: input.name.value,
             surname: input.surname.value,
             tel_number: input.tel_number.value,
-            city: input.city.value,
+            address: input.address.value,
             iban: input.iban.value,
           }),
         },
@@ -223,26 +225,24 @@ export default function Register() {
         <div className={classes.inputColumn}>
           <Input
             type="text"
-            identifier="iban"
-            className={classes.input}
+            className={classes.halfInput}
+            identifier="address"
             onChange={inputChangeHandler}
             onBlur={inputBlurHandler}
-            value={input.iban.value}
-            label="IBAN"
+            value={input.address.value}
+            label="Adres"
           />
-          {input.iban.isBlur && input.iban.value.trim() === "" && (
+          {input.address.isBlur && input.address.value.trim() === "" && (
             <p className={classes.error}>Bu alan boş bırakılamaz.</p>
           )}
-          {input.iban.isBlur &&
-            input.iban.value.trim() !== "" &&
-            !isIbanValid && (
-              <p className={classes.error}>
-                Lütfen 26 karakterden oluşan IBAN giriniz.
-              </p>
+          {input.address.isBlur &&
+            input.address.value.trim() !== "" &&
+            !isTelNumberValid && (
+              <p className={classes.error}>Lütfen geçerli bir adres giriniz.</p>
             )}
         </div>
 
-        <div className={classes.telCityDiv}>
+        <div className={classes.addressDiv}>
           <div className={classes.inputColumn}>
             <Input
               type="tel"
@@ -268,16 +268,23 @@ export default function Register() {
           <div className={classes.inputColumn}>
             <Input
               type="text"
-              className={classes.halfInput}
-              identifier="city"
+              identifier="iban"
+              className={classes.input}
               onChange={inputChangeHandler}
               onBlur={inputBlurHandler}
-              value={input.city.value}
-              label="Şehir"
+              value={input.iban.value}
+              label="IBAN"
             />
-            {input.city.isBlur && !isCityValid && (
+            {input.iban.isBlur && input.iban.value.trim() === "" && (
               <p className={classes.error}>Bu alan boş bırakılamaz.</p>
             )}
+            {input.iban.isBlur &&
+              input.iban.value.trim() !== "" &&
+              !isIbanValid && (
+                <p className={classes.error}>
+                  Lütfen 26 karakterden oluşan IBAN giriniz.
+                </p>
+              )}
           </div>
         </div>
 

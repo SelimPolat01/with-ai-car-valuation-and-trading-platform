@@ -18,7 +18,6 @@ export default function AdvertItem({
   engineCapacity,
   modelYear,
   price,
-  city,
   onDeleteDialog,
   showDeleteButton = false,
   showEditButton = false,
@@ -72,24 +71,25 @@ export default function AdvertItem({
               ></button>
             )}
           </>
-          <img className={classes.img} src={imgSrc} />
+          <img className={classes.img} src={imgSrc} alt="Araç Görseli" />
         </div>
-        <div className={classes.modelYearDiv}>
-          <p className={classes.city}>{capitalizeWords(city)}</p>
-          <p className={classes.modelYear}>{modelYear}</p>
-        </div>
-        <div className={classes.brandModelEngineCapacityDiv}>
-          <p className={classes.brandModel}>
-            {decodeURIComponent(brandParser(brand))}{" "}
-            {decodeURIComponent(modelParser(model))}
-          </p>
+
+        <div className={classes.content}>
+          <div className={classes.titleRow}>
+            <p className={classes.brandModel}>
+              {decodeURIComponent(brandParser(brand))}{" "}
+              {decodeURIComponent(modelParser(model))}
+            </p>
+            <p className={classes.modelYear}>{modelYear}</p>
+          </div>
+
           <p className={classes.engineCapacity}>
             {engineCapacityFormat(engineCapacity)} TDI
           </p>
-        </div>
 
-        <div className={classes.priceDiv}>
-          <p className={classes.price}>{formatPrice(price)} ₺</p>
+          <div className={classes.priceDiv}>
+            <p className={classes.price}>{formatPrice(price)} ₺</p>
+          </div>
         </div>
       </div>
     </motion.div>

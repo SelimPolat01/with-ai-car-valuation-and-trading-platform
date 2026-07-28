@@ -43,7 +43,7 @@ export default function Hesabim() {
   const [input, setInput] = useState({
     name: { letters: "", isBlur: false },
     surname: { letters: "", isBlur: false },
-    city: { letters: "", isBlur: false },
+    address: { letters: "", isBlur: false },
     iban: { letters: "", isBlur: false },
   });
 
@@ -73,8 +73,8 @@ export default function Hesabim() {
           letters: data?.surname || "",
           isBlur: false,
         },
-        city: {
-          letters: data?.city || "",
+        address: {
+          letters: data?.address || "",
           isBlur: false,
         },
         iban: {
@@ -128,7 +128,7 @@ export default function Hesabim() {
     const formData = new FormData();
     formData.append("name", input.name.letters);
     formData.append("surname", input.surname.letters);
-    formData.append("city", input.city.letters);
+    formData.append("address", input.address.letters);
     formData.append("iban", finalIban);
     if (selectedFile) {
       formData.append("image", selectedFile);
@@ -226,10 +226,10 @@ export default function Hesabim() {
               <div className={classes.row}>
                 <Input
                   type="text"
-                  name="city"
-                  label="Şehir"
+                  name="address"
+                  label="Adres"
                   onChange={changeHandler}
-                  value={input.city.letters}
+                  value={input.address.letters}
                   className={classes.input}
                 />
               </div>

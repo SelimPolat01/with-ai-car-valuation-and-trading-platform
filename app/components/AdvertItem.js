@@ -6,7 +6,6 @@ import {
   brandParser,
   engineCapacityFormat,
   formatPrice,
-  capitalizeWords,
 } from "@/app/utils/helpers";
 import { advertItemVariants } from "@/app/utils/animations";
 

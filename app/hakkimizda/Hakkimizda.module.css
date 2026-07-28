@@ -151,7 +151,7 @@
   }
 
   .mainTitle {
-    font-size: 1.77rem;
+    font-size: clamp(1.77rem, 7.5vw, 2.5rem);
     margin-top: 0;
   }
 
@@ -162,7 +162,7 @@
   }
 
   .subTitle {
-    font-size: 1.37rem;
+    font-size: clamp(1.37rem, 5.8vw, 1.8rem);
   }
 
   .subTitleIcon {

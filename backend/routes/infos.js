@@ -4,6 +4,7 @@ import verifyToken from "../middlewares/verifyToken.js";
 import bcrypt from "bcrypt";
 import multer from "multer";
 import path from "path";
+import { address } from "framer-motion/client";
 
 export const router = express.Router();
 
@@ -26,7 +27,7 @@ router.get("/personal-infos", verifyToken, async (req, res) => {
   const id = req.user.id;
   try {
     const queryText =
-      "SELECT name, surname, city, iban, image_src FROM USERS WHERE id = $1";
+      "SELECT name, surname, address, iban, image_src FROM USERS WHERE id = $1";
     const result = await db.query(queryText, [id]);
 
     if (result.rows.length === 0)
@@ -111,19 +112,15 @@ router.patch(
     console.log("GELEN RESİM:", req.file);
 
     const id = req.user.id;
-    // DİKKAT: "title" kelimesini buradan sildik (Veritabanında yoktu)
-    const { name, surname, city, iban } = req.body;
+    const { name, surname, address: address, iban } = req.body;
 
     try {
-      let query = "UPDATE users SET "; // Küçük harf users daha güvenlidir
+      let query = "UPDATE users SET ";
       const values = [];
       const sets = [];
       let counter = 1;
+      const fields = { name, surname, address: address, iban };
 
-      // DİKKAT: "title" kelimesini fields içinden de sildik
-      const fields = { name, surname, city, iban };
-
-      // Eğer resim frontend'den başarıyla geldiyse:
       if (req.file) {
         fields.image_src = `/uploads/${req.file.filename}`;
       }

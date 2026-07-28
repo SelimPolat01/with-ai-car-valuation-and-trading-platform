@@ -146,7 +146,7 @@ router.get("/:advertId", async (req, res) => {
         u.name AS user_name, 
         u.surname AS user_surname, 
         u.tel_number AS user_tel, 
-        u.city AS city,
+        u.adress AS adress,
         u.created_at AS user_created, 
         EXISTS (
           SELECT 1 FROM favorite_adverts AS fa 

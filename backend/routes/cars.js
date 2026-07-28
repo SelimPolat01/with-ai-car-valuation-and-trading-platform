@@ -1,6 +1,5 @@
 import express from "express";
 import { db } from "../lib/db.js";
-import verifyToken from "../middlewares/verifyToken.js";
 
 export const router = express.Router();
 

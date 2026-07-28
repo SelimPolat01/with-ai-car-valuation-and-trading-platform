@@ -9,7 +9,8 @@ const SECRET = process.env.SECRET;
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, name, surname, tel_number, city, iban } = req.body;
+    const { email, password, name, surname, tel_number, address, iban } =
+      req.body;
     if (!email || !password) {
       return res.status(400).json({ message: "Email ve password gerekli!" });
     }
@@ -25,8 +26,8 @@ router.post("/register", async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await db.query(
-      "INSERT INTO users (email, password, name, surname, tel_number, city, iban) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, email, name, surname, tel_number, city, iban",
-      [email, hashedPassword, name, surname, tel_number, city, iban],
+      "INSERT INTO users (email, password, name, surname, tel_number, address, iban) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, email, name, surname, tel_number, address, iban",
+      [email, hashedPassword, name, surname, tel_number, address, iban],
     );
     const user = result.rows[0];
     const token = jwt.sign(
@@ -36,7 +37,7 @@ router.post("/register", async (req, res) => {
         name: user.name,
         surname: user.surname,
         tel_number: user.tel_number,
-        city: user.city,
+        addresss: user.addresss,
       },
       SECRET,
       {
@@ -75,7 +76,7 @@ router.post("/login", async (req, res) => {
           name: user.name,
           surname: user.surname,
           tel_number: user.tel_number,
-          city: user.city,
+          address: user.address,
         },
         SECRET,
         {

@@ -8,7 +8,7 @@
 .wrapper {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 4rem;
   width: 100%;
 }
@@ -99,6 +99,11 @@
 .formSection {
   flex: 1;
   width: 100%;
+  min-height: 680px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
   background: rgba(15, 5, 25, 0.55);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -113,6 +118,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  width: 100%;
 }
 
 .row {
@@ -214,24 +220,13 @@
   align-items: center !important;
   justify-content: flex-start !important;
   text-align: left !important;
-  text-indent: 0 !important;
-  letter-spacing: normal !important;
   font-family: inherit;
   -webkit-appearance: none;
   appearance: none;
 }
 
-.customDropdown::before,
-.customDropdown::after {
-  content: none !important;
-  display: none !important;
-}
-
 .selected {
   color: #150a29;
-  padding: clamp(8px, 1.5vw, 12px) clamp(10px, 2vw, 16px) !important;
-  margin: 0 0 0.1rem 0 !important;
-  text-indent: 0 !important;
 }
 
 .boxShadow {
@@ -244,23 +239,6 @@
   margin: 0;
   display: flex;
   justify-content: flex-end;
-}
-
-.button {
-  margin: 0 !important;
-}
-
-.errorText {
-  color: #ff4d4d;
-  font-size: 0.95rem;
-  background: rgba(255, 77, 77, 0.1);
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  text-align: center;
-  font-weight: 500;
-  border: 1px solid rgba(255, 77, 77, 0.2);
-  white-space: pre-line;
 }
 
 .fieldErrorText {
@@ -282,31 +260,17 @@
   font-weight: 500;
   text-align: center;
   margin-bottom: 0.5rem;
-  box-shadow: 0 2px 8px rgba(255, 77, 77, 0.2);
-  white-space: pre-line;
 }
 
-.serverSuccessBox {
-  color: #2ed573;
-  background: rgba(46, 213, 115, 0.15);
-  border: 1px solid rgba(46, 213, 115, 0.4);
-  padding: 0.85rem 1rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  box-shadow: 0 2px 8px rgba(46, 213, 115, 0.2);
-  white-space: pre-line;
-}
-
-.successSection {
+.successWrapper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  box-sizing: border-box;
+  justify-content: center;
   width: 100%;
+  flex: 1;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .successMessage {
@@ -316,8 +280,6 @@
   justify-content: center;
   gap: 1.5rem;
   width: 100%;
-  height: 100%;
-  flex: 1;
 }
 
 .successMessage button {
@@ -333,11 +295,13 @@
 @media (max-width: 900px) {
   .wrapper {
     flex-direction: column;
+    align-items: stretch;
     gap: 3rem;
   }
 
   .formSection {
     padding: 1.5rem;
+    min-height: 700px;
   }
 }
 
@@ -363,36 +327,18 @@
     width: 100%;
   }
 
-  .selectDiv label,
-  .textareaDiv label {
-    margin: 0.4rem 0 0 0;
-  }
-
   .textarea,
   .customDropdown {
     border-radius: 8px;
   }
+
+  .formSection {
+    min-height: 750px;
+  }
 }
 
 @media (max-width: 480px) {
-  .selectDiv label,
-  .textareaDiv label {
-    margin: 0.3rem 0 0 0;
-  }
-
   .formSection {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .inputWrapper input {
-    width: 100% !important;
-  }
-
-  .textarea,
-  .customDropdown {
-    border-radius: 6px;
-    width: 100%;
+    min-height: 750px;
   }
 }

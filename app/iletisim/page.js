@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Headphones, Mail, MessageSquare } from "lucide-react";
 import Input from "../components/Input";
@@ -32,10 +32,6 @@ export default function Iletisim() {
   const [touched, setTouched] = useState({});
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [formHeight, setFormHeight] = useState(null);
-
-  const dropdownRef = useRef(null);
-  const formSectionRef = useRef(null);
 
   const subjectOptions = [
     "Teknik Destek",
@@ -44,20 +40,6 @@ export default function Iletisim() {
     "Genel Görüş / Öneri",
     "Şikayet Bildirimi",
   ];
-
-  useEffect(() => {
-    if (!isSuccess && formSectionRef.current) {
-      const updateHeight = () => {
-        if (formSectionRef.current) {
-          setFormHeight(formSectionRef.current.offsetHeight);
-        }
-      };
-      updateHeight();
-      const resizeObserver = new ResizeObserver(updateHeight);
-      resizeObserver.observe(formSectionRef.current);
-      return () => resizeObserver.disconnect();
-    }
-  }, [isSuccess, errors, touched]);
 
   useEffect(() => {
     if (user) {
@@ -80,44 +62,18 @@ export default function Iletisim() {
     return () => clearTimeout(timer);
   }, [isSuccess]);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        if (openDropdown === "subject") {
-          setTouched((prev) => ({ ...prev, subject: true }));
-          setErrors((prev) => ({
-            ...prev,
-            subject: validate("subject", value.subject),
-          }));
-        }
-        setOpenDropdown(null);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [openDropdown, value.subject]);
-
   const validate = (name, val) => {
     let error = "";
-    if (name === "name" && !val.trim()) {
-      error = "İsim alanı zorunludur.";
-    }
-    if (name === "surname" && !val.trim()) {
-      error = "Soyisim alanı zorunludur.";
-    }
+    if (name === "name" && !val.trim()) error = "İsim alanı zorunludur.";
+    if (name === "surname" && !val.trim()) error = "Soyisim alanı zorunludur.";
     if (name === "email") {
-      if (!val.trim()) {
-        error = "E-posta alanı zorunludur.";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+      if (!val.trim()) error = "E-posta alanı zorunludur.";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val))
         error = "Geçerli bir e-posta adresi giriniz.";
-      }
     }
-    if (name === "subject" && val === "Konu") {
+    if (name === "subject" && val === "Konu")
       error = "Lütfen bir konu seçiniz.";
-    }
-    if (name === "message" && !val.trim()) {
-      error = "Mesaj alanı zorunludur.";
-    }
+    if (name === "message" && !val.trim()) error = "Mesaj alanı zorunludur.";
     return error;
   };
 
@@ -158,10 +114,6 @@ export default function Iletisim() {
     const hasErrors = Object.values(newErrors).some((err) => err !== "");
 
     if (!hasErrors) {
-      if (formSectionRef.current) {
-        setFormHeight(formSectionRef.current.offsetHeight);
-      }
-
       const payload = {
         name: value.name.trim(),
         surname: value.surname.trim(),
@@ -233,21 +185,18 @@ export default function Iletisim() {
           </div>
         </motion.div>
 
-        <AnimatePresence mode="wait">
-          {!isSuccess ? (
-            <motion.div
-              key="contact-form-section"
-              ref={formSectionRef}
-              className={classes.formSection}
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.4 }}
-            >
-              <form
+        <div className={classes.formSection}>
+          <AnimatePresence mode="wait">
+            {!isSuccess ? (
+              <motion.form
+                key="contact-form"
                 method="POST"
                 onSubmit={submitHandler}
                 className={classes.form}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
               >
                 {postContactIsError && (
                   <div className={classes.serverErrorBox}>
@@ -309,14 +258,13 @@ export default function Iletisim() {
 
                 <div className={classes.selectDiv}>
                   <label>Konu</label>
-
-                  <div className={classes.dropdownWrapper} ref={dropdownRef}>
+                  <div className={classes.dropdownWrapper}>
                     <div
-                      onClick={() => {
+                      onClick={() =>
                         setOpenDropdown(
                           openDropdown === "subject" ? null : "subject",
-                        );
-                      }}
+                        )
+                      }
                       className={`dropdown ${classes.customDropdown} ${
                         value.subject !== "Konu" ? classes.selected : ""
                       } ${openDropdown === "subject" ? classes.boxShadow : ""}`}
@@ -338,8 +286,8 @@ export default function Iletisim() {
                               key={option}
                               onClick={() => {
                                 setOpenDropdown(null);
-                                setValue((prevValue) => ({
-                                  ...prevValue,
+                                setValue((prev) => ({
+                                  ...prev,
                                   subject: option,
                                 }));
                                 setTouched((prev) => ({
@@ -395,29 +343,27 @@ export default function Iletisim() {
                     disabled={postContactIsPending}
                   />
                 </div>
-              </form>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="contact-success-section"
-              className={`${classes.formSection} ${classes.successSection}`}
-              style={{ minHeight: formHeight ? `${formHeight}px` : "auto" }}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4 }}
-            >
-              <SuccessMessage
-                key="success-message"
-                onClick={() => setIsSuccess(false)}
-                title="Mesajınız Gönderildi"
-                text="Mesajınız başarılı bir şekilde tarafımıza ulaştı. En kısa sürede sizinle iletişime geçeceğiz."
-                buttonText="Tamam"
-                className={classes.successMessage}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.form>
+            ) : (
+              <motion.div
+                key="contact-success"
+                className={classes.successWrapper}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+              >
+                <SuccessMessage
+                  onClick={() => setIsSuccess(false)}
+                  title="Mesajınız Gönderildi"
+                  text="Mesajınız başarılı bir şekilde tarafımıza ulaştı. En kısa sürede sizinle iletişime geçeceğiz."
+                  buttonText="Tamam"
+                  className={classes.successMessage}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

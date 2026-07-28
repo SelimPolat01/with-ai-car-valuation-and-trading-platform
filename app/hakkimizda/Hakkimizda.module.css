@@ -32,14 +32,14 @@
   color: #ffffff;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   display: flex;
-  align-items: flex-start;
   gap: 0.75rem;
+  align-items: flex-start;
 }
 
 .titleIcon {
   color: #f5af19;
   flex-shrink: 0;
-  margin-top: 0.35rem;
+  margin-top: 0.4rem;
 }
 
 .brandHighlight {
@@ -57,7 +57,7 @@
   position: relative;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
   line-height: 1.4;
 }
@@ -65,7 +65,6 @@
 .subTitleIcon {
   color: #00f4ff;
   flex-shrink: 0;
-  margin-top: 0.25rem;
 }
 
 .subTitle::after {
@@ -83,7 +82,7 @@
 .paragraph {
   font-size: 1.1rem;
   line-height: 1.8;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.85);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
   margin: 0;
 }
@@ -97,7 +96,7 @@
 .list li {
   margin-bottom: 1.5rem;
   line-height: 1.7;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.85);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
   padding-left: 2rem;
   position: relative;
@@ -158,17 +157,16 @@
   .titleIcon {
     width: 28px;
     height: 28px;
-    margin-top: 0.15rem;
   }
 
   .subTitle {
     font-size: clamp(1.37rem, 5.8vw, 1.8rem);
+    white-space: nowrap;
   }
 
   .subTitleIcon {
     width: 24px;
     height: 24px;
-    margin-top: 0.15rem;
   }
 
   .paragraph {

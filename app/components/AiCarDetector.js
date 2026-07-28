@@ -197,7 +197,7 @@ export default function AiCarDetector() {
             >
               <Image
                 width={400}
-                height={250}
+                height={225}
                 src={preview}
                 alt="preview"
                 className={classes.preview}

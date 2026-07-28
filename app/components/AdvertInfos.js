@@ -11,7 +11,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import PrimaryButton from "./PrimaryButton";
 import SuccessMessage from "./SuccessMessage";
 import SimilarAdverts from "./SimiliarAdverts";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,12 +19,12 @@ import { usePostFavoriteAdvert } from "@/hooks/POST/usePostFavoriteAdvert";
 import {
   formatBrandModel,
   engineCapacityFormat,
-  capitalizeWords,
   carTypeMap,
   bodyTypeParser,
   formatPrice,
 } from "@/app/utils/helpers";
 import Loading from "./Loading";
+import SecondaryButton from "./SecondaryButton";
 
 export default function AdvertInfos() {
   const params = useParams();
@@ -363,7 +362,7 @@ export default function AdvertInfos() {
 
                 {(!user || Number(user.id) !== Number(advert.user_id)) && (
                   <div className={classes.buyButtonContainer}>
-                    <PrimaryButton
+                    <SecondaryButton
                       type="button"
                       text="Bu Aracı Satın Al"
                       className={classes.buyButton}

@@ -15,7 +15,7 @@ export default function AuthInitializer({ children }) {
 
       if (!token || token === "null" || token === "undefined") {
         localStorage.removeItem("token");
-        localStorage.removeItem("expireToken"); // 🧹 EKLENDİ
+        localStorage.removeItem("tokenExpire");
         dispatch(initAuth({ isLogin: false, user: null }));
         setLoading(false);
         return;
@@ -30,7 +30,7 @@ export default function AuthInitializer({ children }) {
 
         if (!res.ok) {
           localStorage.removeItem("token");
-          localStorage.removeItem("expireToken");
+          localStorage.removeItem("tokenExpire");
           dispatch(initAuth({ isLogin: false, user: null }));
           setLoading(false);
           return;
@@ -41,7 +41,7 @@ export default function AuthInitializer({ children }) {
       } catch (err) {
         console.error(err);
         localStorage.removeItem("token");
-        localStorage.removeItem("expireToken");
+        localStorage.removeItem("tokenExpire");
         dispatch(initAuth({ isLogin: false, user: null }));
       } finally {
         setLoading(false);

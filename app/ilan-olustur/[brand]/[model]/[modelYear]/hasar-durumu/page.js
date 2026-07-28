@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import classes from "./HasarDurumu.module.css";
 import { useRouter } from "next/navigation";
-import PrimaryButton from "@/app/components/PrimaryButton";
 import { AnimatePresence, motion } from "framer-motion";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import { AlertTriangle } from "lucide-react";
@@ -18,6 +17,7 @@ import {
   hasarDurumuContainerVariants,
   innerStateVariants,
 } from "@/app/utils/animations";
+import SecondaryButton from "@/app/components/SecondaryButton";
 
 export default function HasarDurumu() {
   const router = useRouter();
@@ -465,7 +465,7 @@ export default function HasarDurumu() {
                 className={classes.buttonContainer}
                 style={{}}
               >
-                <PrimaryButton
+                <SecondaryButton
                   type="submit"
                   text="Fiyat Teklifi Al"
                   onClick={() => router.push("fiyat-teklifi")}

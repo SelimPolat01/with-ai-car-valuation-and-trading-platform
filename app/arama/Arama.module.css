@@ -33,12 +33,24 @@
 }
 
 .highlightText {
-  color: #ffb703;
+  background: linear-gradient(135deg, #ffe066, #f5af19, #e65c00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-weight: bold;
 }
 
 .countText {
-  color: #00f5d4;
+  background: linear-gradient(
+    105.66deg,
+    #00b7ff 10%,
+    #00f7ff 45%,
+    #9cf0fd 75%,
+    #ffffff 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-weight: bold;
 }
 
@@ -165,14 +177,14 @@
 }
 
 .loading {
-  color: #a0a0a0;
+  color: #ffffff;
   text-align: center;
   font-size: 1.1rem;
   padding: 3rem;
 }
 
 .noResult {
-  color: #a0a0a0;
+  color: #ffffff;
   text-align: center;
   padding: 3rem;
   font-size: 1.1rem;

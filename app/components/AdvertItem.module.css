@@ -1,7 +1,7 @@
 .advertWrapper {
   background-color: transparent;
   border-radius: 8px;
-  height: 290px;
+  height: 250px;
   width: 220px;
   cursor: pointer;
 }
@@ -51,7 +51,8 @@
 
 .img {
   width: 100%;
-  height: 150px;
+  aspect-ratio: 16 / 9;
+  display: block;
 }
 
 .deleteAdvertButton {
@@ -109,7 +110,7 @@
 }
 
 .content {
-  padding: 12px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -119,13 +120,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .brandModel {
   color: white;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.95rem;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -136,15 +137,15 @@
 .modelYear {
   color: #68ffed;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin: 0;
   flex-shrink: 0;
 }
 
 .engineCapacity {
   color: #aaa;
-  font-size: 0.85rem;
-  margin: 0 0 12px 0;
+  font-size: 0.8rem;
+  margin: 0;
 }
 
 .priceDiv {
@@ -156,13 +157,14 @@
 .price {
   color: #ff8fa3;
   font-weight: bold;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   margin: 0;
 }
 
 @media (max-width: 1024px) {
   .advertWrapper {
     width: calc(33.333% - 0.5rem);
+    height: auto;
   }
 }
 
@@ -170,11 +172,6 @@
   .advertWrapper {
     width: calc(50% - 0.5rem);
     height: auto;
-    min-height: 290px;
-  }
-
-  .img {
-    height: 160px;
   }
 
   .editAdvertButton,
@@ -187,11 +184,6 @@
   .advertWrapper {
     width: 100%;
     height: auto;
-    min-height: 340px;
     margin-bottom: 0.5rem;
-  }
-
-  .img {
-    height: 240px;
   }
 }

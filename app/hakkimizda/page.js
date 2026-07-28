@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Rocket, BookOpen, Cpu, Target, Telescope } from "lucide-react";
 import classes from "./Hakkimizda.module.css";
 import {
   hakkimizdaItemVariants,
@@ -21,8 +22,11 @@ export default function Hakkimizda() {
           className={classes.mainTitle}
           variants={hakkimizdaItemVariants}
         >
-          YapayOto: İkinci El Araç Piyasasında Veri, Yapay Zeka ve Güvenin Yeni
-          Adresi
+          <Rocket className={classes.titleIcon} size={40} />
+          <span>
+            <span className={classes.brandHighlight}>YapayOto:</span> İkinci El
+            Araç Piyasasında Veri, Yapay Zeka ve Güvenin Yeni Adresi
+          </span>
         </motion.h1>
         <motion.p
           className={classes.paragraph}
@@ -49,7 +53,8 @@ export default function Hakkimizda() {
           className={classes.subTitle}
           variants={hakkimizdaItemVariants}
         >
-          Hikayemiz
+          <BookOpen className={classes.subTitleIcon} size={28} />
+          <span>Hikayemiz</span>
         </motion.h2>
         <motion.p
           className={classes.paragraph}
@@ -77,7 +82,8 @@ export default function Hakkimizda() {
           className={classes.subTitle}
           variants={hakkimizdaItemVariants}
         >
-          Teknolojimiz ve Farkımız
+          <Cpu className={classes.subTitleIcon} size={28} />
+          <span>Teknolojimiz ve Farkımız</span>
         </motion.h2>
         <motion.p
           className={classes.paragraph}
@@ -136,7 +142,8 @@ export default function Hakkimizda() {
           className={classes.subTitle}
           variants={hakkimizdaItemVariants}
         >
-          Misyonumuz
+          <Target className={classes.subTitleIcon} size={28} />
+          <span>Misyonumuz</span>
         </motion.h2>
         <motion.p
           className={classes.paragraph}
@@ -159,7 +166,8 @@ export default function Hakkimizda() {
           className={classes.subTitle}
           variants={hakkimizdaItemVariants}
         >
-          Vizyonumuz
+          <Telescope className={classes.subTitleIcon} size={28} />
+          <span>Vizyonumuz</span>
         </motion.h2>
         <motion.p
           className={classes.paragraph}

@@ -35,7 +35,7 @@ export default function Hesabim() {
     if (isSuccess) {
       timer = setTimeout(() => {
         setIsSuccess(false);
-      }, 1000);
+      }, 5000);
     }
     return () => clearTimeout(timer);
   }, [isSuccess]);

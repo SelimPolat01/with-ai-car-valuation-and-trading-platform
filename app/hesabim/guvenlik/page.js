@@ -57,7 +57,7 @@ export default function Guvenlik() {
           email: false,
           password: false,
         });
-      }, 1000);
+      }, 5000);
     }
     return () => clearTimeout(timer);
   }, [isSuccess]);

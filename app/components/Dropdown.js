@@ -134,20 +134,6 @@ export default function Dropdown() {
     }
   }
 
-  useEffect(() => {
-    function handleOutsideClick(event) {
-      if (!event.target.closest(".dropdownWrapper")) {
-        setOpenDropdown(null);
-      }
-    }
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
-
   return (
     <motion.form
       variants={formContainerVariants}
@@ -156,9 +142,27 @@ export default function Dropdown() {
       className={classes.form}
       onSubmit={submitHandler}
     >
+      {openDropdown !== null && (
+        <div
+          onClick={() => setOpenDropdown(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 10,
+          }}
+        />
+      )}
+
       <motion.div
         variants={dropdownItemVariants}
         className={`${classes.brandWrapper} dropdownWrapper`}
+        style={{
+          position: "relative",
+          zIndex: openDropdown === "brand" ? 20 : 1,
+        }}
       >
         <div
           onClick={() => {
@@ -205,7 +209,15 @@ export default function Dropdown() {
         )}
         <input type="hidden" name="brand" value={value.brandValue} />
       </motion.div>
-      <motion.div variants={dropdownItemVariants} className="dropdownWrapper">
+
+      <motion.div
+        variants={dropdownItemVariants}
+        className="dropdownWrapper"
+        style={{
+          position: "relative",
+          zIndex: openDropdown === "model" ? 20 : 1,
+        }}
+      >
         <div
           onClick={() => {
             setOpenDropdown(openDropdown === "model" ? null : "model");
@@ -252,7 +264,15 @@ export default function Dropdown() {
         )}
         <input type="hidden" name="modelYear" value={value.modelValue} />
       </motion.div>
-      <motion.div variants={dropdownItemVariants} className="dropdownWrapper">
+
+      <motion.div
+        variants={dropdownItemVariants}
+        className="dropdownWrapper"
+        style={{
+          position: "relative",
+          zIndex: openDropdown === "modelYear" ? 20 : 1,
+        }}
+      >
         <div
           onClick={() => {
             setOpenDropdown(openDropdown === "modelYear" ? null : "modelYear");
@@ -297,6 +317,7 @@ export default function Dropdown() {
         )}
         <input type="hidden" name="modelYear" value={value.modelYearValue} />
       </motion.div>
+
       <PrimaryButton
         className={classes.sellerButton}
         type="submit"

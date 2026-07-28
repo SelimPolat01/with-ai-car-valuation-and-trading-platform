@@ -26,22 +26,36 @@
 .text {
   font-size: 1rem;
   line-height: 1.6;
-  color: #a3b0ae;
   max-width: 85%;
   margin: 0;
   height: max-content;
+  background: linear-gradient(
+    105.66deg,
+    #ffd445 10%,
+    #fbd867 30%,
+    #ffe590 50%,
+    #fff4d0 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .buttonWrapper {
   margin: 0;
 }
 
-.buttonWrapper button {
+.button {
   width: max-content;
   margin: 0;
+  padding: 10px 18px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.buttonWrapper button:hover {
+.button button:hover {
   transform: scale(1.05);
 }
 

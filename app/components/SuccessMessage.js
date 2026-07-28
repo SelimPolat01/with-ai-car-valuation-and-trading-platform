@@ -35,6 +35,7 @@ export default function SuccessMessage({
           onClick={onClick}
           whileTap={{ scale: 0.95 }}
           text={buttonText}
+          className={classes.button}
         />
       </div>
     </motion.div>

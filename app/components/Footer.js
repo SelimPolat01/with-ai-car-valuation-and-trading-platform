@@ -8,6 +8,25 @@ export default function Footer() {
   return (
     <footer className={classes.footer}>
       <hr className={classes.hr} />
+
+      <ul className={classes.navUl}>
+        <li>
+          <Link href="/hakkimizda" className={classes.navLink}>
+            Hakkımızda
+          </Link>
+        </li>
+        <li>
+          <Link href="/iletisim" className={classes.navLink}>
+            İletişim
+          </Link>
+        </li>
+        <li>
+          <Link href="/sikca-sorulan-sorular" className={classes.navLink}>
+            Sıkça Sorulan Sorular
+          </Link>
+        </li>
+      </ul>
+
       <ul className={classes.iconUl}>
         <li className={classes.iconLi}>
           <Link href="#!" title="Instagram" className={classes.iconCircleDiv}>
@@ -31,6 +50,7 @@ export default function Footer() {
           </Link>
         </li>
       </ul>
+
       <div className={classes.copyright}>
         {`Copyright © 2025 - ${currentYear} Selim POLAT`}{" "}
       </div>

@@ -41,7 +41,7 @@ export default function Footer() {
             <FaLinkedinIn size={20} />
           </Link>
           <Link
-            href="https://www.linkedin.com/in/selim-polat/1"
+            href="https://www.linkedin.com/in/selim-polat/"
             title="Github"
             className={classes.iconCircleDiv}
             target="_blank"

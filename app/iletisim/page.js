@@ -46,6 +46,20 @@ export default function Iletisim() {
   ];
 
   useEffect(() => {
+    if (!isSuccess && formSectionRef.current) {
+      const updateHeight = () => {
+        if (formSectionRef.current) {
+          setFormHeight(formSectionRef.current.offsetHeight);
+        }
+      };
+      updateHeight();
+      const resizeObserver = new ResizeObserver(updateHeight);
+      resizeObserver.observe(formSectionRef.current);
+      return () => resizeObserver.disconnect();
+    }
+  }, [isSuccess, errors, touched]);
+
+  useEffect(() => {
     if (user) {
       setValue((prev) => ({
         ...prev,
@@ -219,181 +233,191 @@ export default function Iletisim() {
           </div>
         </motion.div>
 
-        {!isSuccess ? (
-          <motion.div
-            ref={formSectionRef}
-            className={classes.formSection}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <form
-              method="POST"
-              onSubmit={submitHandler}
-              className={classes.form}
+        <AnimatePresence mode="wait">
+          {!isSuccess ? (
+            <motion.div
+              key="contact-form-section"
+              ref={formSectionRef}
+              className={classes.formSection}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4 }}
             >
-              {postContactIsError && (
-                <div className={classes.serverErrorBox}>{apiErrorMessage}</div>
-              )}
-
-              <div className={classes.row}>
-                <div className={classes.inputWrapper}>
-                  <Input
-                    identifier="name"
-                    name="name"
-                    type="text"
-                    onChange={inputChangeHandler}
-                    onBlur={handleBlur}
-                    value={value.name}
-                    label="İsim"
-                  />
-                  {touched.name && errors.name && (
-                    <span className={classes.fieldErrorText}>
-                      {errors.name}
-                    </span>
-                  )}
-                </div>
-                <div className={classes.inputWrapper}>
-                  <Input
-                    identifier="surname"
-                    name="surname"
-                    type="text"
-                    onChange={inputChangeHandler}
-                    onBlur={handleBlur}
-                    value={value.surname}
-                    label="Soyisim"
-                  />
-                  {touched.surname && errors.surname && (
-                    <span className={classes.fieldErrorText}>
-                      {errors.surname}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className={classes.inputWrapper}>
-                <Input
-                  identifier="email"
-                  name="email"
-                  type="email"
-                  onChange={inputChangeHandler}
-                  onBlur={handleBlur}
-                  value={value.email}
-                  label="E-Posta"
-                />
-                {touched.email && errors.email && (
-                  <span className={classes.fieldErrorText}>{errors.email}</span>
+              <form
+                method="POST"
+                onSubmit={submitHandler}
+                className={classes.form}
+              >
+                {postContactIsError && (
+                  <div className={classes.serverErrorBox}>
+                    {apiErrorMessage}
+                  </div>
                 )}
-              </div>
 
-              <div className={classes.selectDiv}>
-                <label>Konu</label>
+                <div className={classes.row}>
+                  <div className={classes.inputWrapper}>
+                    <Input
+                      identifier="name"
+                      name="name"
+                      type="text"
+                      onChange={inputChangeHandler}
+                      onBlur={handleBlur}
+                      value={value.name}
+                      label="İsim"
+                    />
+                    {touched.name && errors.name && (
+                      <span className={classes.fieldErrorText}>
+                        {errors.name}
+                      </span>
+                    )}
+                  </div>
+                  <div className={classes.inputWrapper}>
+                    <Input
+                      identifier="surname"
+                      name="surname"
+                      type="text"
+                      onChange={inputChangeHandler}
+                      onBlur={handleBlur}
+                      value={value.surname}
+                      label="Soyisim"
+                    />
+                    {touched.surname && errors.surname && (
+                      <span className={classes.fieldErrorText}>
+                        {errors.surname}
+                      </span>
+                    )}
+                  </div>
+                </div>
 
-                <div className={classes.dropdownWrapper} ref={dropdownRef}>
-                  <div
-                    onClick={() => {
-                      setOpenDropdown(
-                        openDropdown === "subject" ? null : "subject",
-                      );
-                    }}
-                    className={`dropdown ${classes.customDropdown} ${
-                      value.subject !== "Konu" ? classes.selected : ""
-                    } ${openDropdown === "subject" ? classes.boxShadow : ""}`}
-                  >
-                    {value.subject}
+                <div className={classes.inputWrapper}>
+                  <Input
+                    identifier="email"
+                    name="email"
+                    type="email"
+                    onChange={inputChangeHandler}
+                    onBlur={handleBlur}
+                    value={value.email}
+                    label="E-Posta"
+                  />
+                  {touched.email && errors.email && (
+                    <span className={classes.fieldErrorText}>
+                      {errors.email}
+                    </span>
+                  )}
+                </div>
+
+                <div className={classes.selectDiv}>
+                  <label>Konu</label>
+
+                  <div className={classes.dropdownWrapper} ref={dropdownRef}>
+                    <div
+                      onClick={() => {
+                        setOpenDropdown(
+                          openDropdown === "subject" ? null : "subject",
+                        );
+                      }}
+                      className={`dropdown ${classes.customDropdown} ${
+                        value.subject !== "Konu" ? classes.selected : ""
+                      } ${openDropdown === "subject" ? classes.boxShadow : ""}`}
+                    >
+                      {value.subject}
+                    </div>
+
+                    <AnimatePresence>
+                      {openDropdown === "subject" && (
+                        <motion.ul
+                          variants={dropdownVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          className={`dropdownList ${classes.dropdownMenu}`}
+                        >
+                          {subjectOptions.map((option) => (
+                            <li
+                              key={option}
+                              onClick={() => {
+                                setOpenDropdown(null);
+                                setValue((prevValue) => ({
+                                  ...prevValue,
+                                  subject: option,
+                                }));
+                                setTouched((prev) => ({
+                                  ...prev,
+                                  subject: true,
+                                }));
+                                setErrors((prev) => ({
+                                  ...prev,
+                                  subject: validate("subject", option),
+                                }));
+                              }}
+                            >
+                              {option}
+                            </li>
+                          ))}
+                        </motion.ul>
+                      )}
+                    </AnimatePresence>
                   </div>
 
-                  <AnimatePresence>
-                    {openDropdown === "subject" && (
-                      <motion.ul
-                        variants={dropdownVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        className={`dropdownList ${classes.dropdownMenu}`}
-                      >
-                        {subjectOptions.map((option) => (
-                          <li
-                            key={option}
-                            onClick={() => {
-                              setOpenDropdown(null);
-                              setValue((prevValue) => ({
-                                ...prevValue,
-                                subject: option,
-                              }));
-                              setTouched((prev) => ({
-                                ...prev,
-                                subject: true,
-                              }));
-                              setErrors((prev) => ({
-                                ...prev,
-                                subject: validate("subject", option),
-                              }));
-                            }}
-                          >
-                            {option}
-                          </li>
-                        ))}
-                      </motion.ul>
-                    )}
-                  </AnimatePresence>
+                  <input type="hidden" name="subject" value={value.subject} />
+                  {touched.subject && errors.subject && (
+                    <span className={classes.fieldErrorText}>
+                      {errors.subject}
+                    </span>
+                  )}
                 </div>
 
-                <input type="hidden" name="subject" value={value.subject} />
-                {touched.subject && errors.subject && (
-                  <span className={classes.fieldErrorText}>
-                    {errors.subject}
-                  </span>
-                )}
-              </div>
+                <div className={classes.textareaDiv}>
+                  <label htmlFor="message">Mesajınız</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    onChange={inputChangeHandler}
+                    onBlur={handleBlur}
+                    value={value.message}
+                    className={classes.textarea}
+                    rows={5}
+                    placeholder="Mesajınızı buraya yazabilirsiniz..."
+                  />
+                  {touched.message && errors.message && (
+                    <span className={classes.fieldErrorText}>
+                      {errors.message}
+                    </span>
+                  )}
+                </div>
 
-              <div className={classes.textareaDiv}>
-                <label htmlFor="message">Mesajınız</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  onChange={inputChangeHandler}
-                  onBlur={handleBlur}
-                  value={value.message}
-                  className={classes.textarea}
-                  rows={5}
-                  placeholder="Mesajınızı buraya yazabilirsiniz..."
-                />
-                {touched.message && errors.message && (
-                  <span className={classes.fieldErrorText}>
-                    {errors.message}
-                  </span>
-                )}
-              </div>
-
-              <div className={classes.buttonDiv}>
-                <SecondaryButton
-                  text={postContactIsPending ? "Gönderiliyor..." : "Gönder"}
-                  type="submit"
-                  className={classes.button}
-                  disabled={postContactIsPending}
-                />
-              </div>
-            </form>
-          </motion.div>
-        ) : (
-          <motion.div
-            className={`${classes.formSection} ${classes.successSection}`}
-            style={{ height: formHeight ? `${formHeight}px` : "auto" }}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            <SuccessMessage
-              key="success-message"
-              onClick={() => setIsSuccess(false)}
-              title="Mesajınız Gönderildi"
-              text="Mesajınız başarılı bir şekilde tarafımıza ulaştı. En kısa sürede sizinle iletişime geçeceğiz."
-              buttonText="Tamam"
-              className={classes.successMessage}
-            />
-          </motion.div>
-        )}
+                <div className={classes.buttonDiv}>
+                  <SecondaryButton
+                    text={postContactIsPending ? "Gönderiliyor..." : "Gönder"}
+                    type="submit"
+                    className={classes.button}
+                    disabled={postContactIsPending}
+                  />
+                </div>
+              </form>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="contact-success-section"
+              className={`${classes.formSection} ${classes.successSection}`}
+              style={{ minHeight: formHeight ? `${formHeight}px` : "auto" }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.4 }}
+            >
+              <SuccessMessage
+                key="success-message"
+                onClick={() => setIsSuccess(false)}
+                title="Mesajınız Gönderildi"
+                text="Mesajınız başarılı bir şekilde tarafımıza ulaştı. En kısa sürede sizinle iletişime geçeceğiz."
+                buttonText="Tamam"
+                className={classes.successMessage}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

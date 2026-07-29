@@ -93,6 +93,21 @@
   gap: 1.5rem;
 }
 
+.blockForm input {
+  width: 100% !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  padding: 0.75rem 1rem !important;
+  box-sizing: border-box !important;
+}
+
+.blockForm label {
+  font-size: 16px !important;
+  margin: 0 !important;
+  font-weight: 700 !important;
+}
+
 .row {
   display: flex;
   gap: 1.5rem;
@@ -156,7 +171,7 @@
 .button {
   background: linear-gradient(to right, #a7b8d4, #934b8e, #2d1457) !important;
   color: whitesmoke !important;
-  border: #2d1457 1px solid;
+  border: #2d1457 1px solid !important;
   margin: 0 !important;
 }
 
@@ -170,17 +185,20 @@
 }
 
 .emailSuccessMessage {
-  height: 406.2px;
+  min-height: 406.2px;
+  height: auto;
 }
 
 .passwordSuccessMessage {
-  height: 293.2px;
+  min-height: 293.2px;
+  height: auto;
   justify-content: flex-start !important;
   gap: 1.4rem !important;
 }
 
 .tokenDurationSuccessMessage {
-  height: 180.2px;
+  min-height: 250px;
+  height: auto;
 }
 
 .errorDiv p {

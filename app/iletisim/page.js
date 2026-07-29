@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Headphones, Mail, MessageSquare } from "lucide-react";
+import { Headphones, Mail, MessageSquare, ChevronDown } from "lucide-react";
 import Input from "../components/Input";
 import classes from "./Iletisim.module.css";
 import { dropdownVariants } from "../utils/animations";
@@ -260,11 +260,17 @@ export default function Iletisim() {
                       openDropdown === "subject" ? null : "subject",
                     )
                   }
-                  className={`dropdown ${classes.customDropdown} ${
+                  className={`${classes.customDropdown} ${
                     value.subject !== "Konu" ? classes.selected : ""
                   } ${openDropdown === "subject" ? classes.boxShadow : ""}`}
                 >
-                  {value.subject}
+                  <span>{value.subject}</span>
+                  <ChevronDown
+                    size={20}
+                    className={`${classes.chevronIcon} ${
+                      openDropdown === "subject" ? classes.chevronOpen : ""
+                    }`}
+                  />
                 </div>
 
                 <AnimatePresence>
@@ -274,11 +280,14 @@ export default function Iletisim() {
                       initial="hidden"
                       animate="visible"
                       exit="exit"
-                      className={`dropdownList ${classes.dropdownMenu}`}
+                      className={classes.dropdownMenu}
                     >
                       {subjectOptions.map((option) => (
                         <li
                           key={option}
+                          className={
+                            value.subject === option ? classes.activeOption : ""
+                          }
                           onClick={() => {
                             setOpenDropdown(null);
                             setValue((prev) => ({

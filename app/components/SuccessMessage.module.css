@@ -46,17 +46,18 @@
 }
 
 .button {
-  width: max-content;
-  margin: 0;
-  padding: 10px 18px;
-  min-height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  width: max-content !important;
+  margin: 0 !important;
+  padding: 10px 18px !important;
+  min-height: 40px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: #2d1457 1px solid !important;
 }
 
 .button button:hover {
-  transform: scale(1.05);
+  transform: scale(1.05) !important;
 }
 
 @media (max-width: 768px) {

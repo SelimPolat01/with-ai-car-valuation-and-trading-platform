@@ -198,12 +198,33 @@ export default function Guvenlik() {
 
   function passwordSubmitHandler(event) {
     event.preventDefault();
-    if (input.password.letters !== input.confirmPassword.letters) {
+
+    if (input.currentPassword.letters.trim().length < 6) {
       setError({
-        password: "Girdiğiniz parolalar eşleşmiyor. Lütfen tekrar deneyiniz.",
+        password:
+          "Lütfen mevcut parolanızı en az 6 karakter olacak şekilde giriniz.",
       });
       return;
     }
+
+    if (
+      input.password.letters.trim().length < 6 ||
+      input.confirmPassword.letters.trim().length < 6
+    ) {
+      setError({
+        password: "Yeni parolanız en az 6 karakter uzunluğunda olmalıdır.",
+      });
+      return;
+    }
+
+    if (input.password.letters !== input.confirmPassword.letters) {
+      setError({
+        password:
+          "Girdiğiniz yeni parolalar eşleşmiyor. Lütfen tekrar deneyiniz.",
+      });
+      return;
+    }
+
     const token = localStorage.getItem("token");
     patchPasswordMutate(
       {

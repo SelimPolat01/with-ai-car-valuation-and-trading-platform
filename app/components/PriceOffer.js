@@ -425,7 +425,10 @@ export default function PriceOffer({ advertId }) {
           )}
         </AnimatePresence>
 
-        <motion.div variants={priceOfferItemVariants}>
+        <motion.div
+          className={classes.inputDiv}
+          variants={priceOfferItemVariants}
+        >
           <Input
             className={classes.input}
             type="text"

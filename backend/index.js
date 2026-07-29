@@ -10,6 +10,7 @@ import { router as slotsRoutes } from "./routes/slots.js";
 import { router as appointmentsRoutes } from "./routes/appointments.js";
 import { router as notificationsRoutes } from "./routes/notifications.js";
 import { router as transactionRoutes } from "./routes/transactions.js";
+import { router as faqsRoutes } from "./routes/faqs.js";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
 // import { createTable } from "./lib/db.js";
@@ -40,6 +41,8 @@ app.use(
       "https://with-ai-car-valuation-and-trading-p.vercel.app",
       "https://yapayoto.me",
       "https://www.yapayoto.me",
+      "https://yapayoto.tr",
+      "https://www.yapayoto.tr",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -63,6 +66,7 @@ app.use("/slots", globalLimiter, slotsRoutes);
 app.use("/appointments", appointmentsRoutes);
 app.use("/notifications", notificationsRoutes);
 app.use("/transactions", transactionRoutes);
+app.use("/faqs", faqsRoutes);
 
 // await createTable();
 

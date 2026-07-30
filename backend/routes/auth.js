@@ -249,17 +249,26 @@ router.post("/otp", async (req, res) => {
 
     const user = result.rows[0];
 
-    if (!user.otp || user.otp !== otp) {
+    if (new Date() > new Date(user.otp_expires_at)) {
+      const clearOtpQuery =
+        "UPDATE users SET otp = NULL, otp_expires_at = NULL WHERE email = $1";
+      await db.query(clearOtpQuery, [email]);
+
+      return res.status(400).json({
+        message:
+          "Doğrulama kodunun süresi dolmuş. Lütfen yeni bir kod isteyin.",
+      });
+    }
+
+    if (!user.otp || String(user.otp) !== String(otp)) {
       return res
         .status(400)
         .json({ message: "Girilen doğrulama kodu hatalı." });
     }
 
-    if (new Date() > new Date(user.otp_expires_at)) {
-      return res
-        .status(400)
-        .json({ message: "Doğrulama kodunun süresi dolmuş." });
-    }
+    const successClearOtpQuery =
+      "UPDATE users SET otp = NULL, otp_expires_at = NULL WHERE email = $1";
+    await db.query(successClearOtpQuery, [email]);
 
     return res.status(200).json({
       success: true,

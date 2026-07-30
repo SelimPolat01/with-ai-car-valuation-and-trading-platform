@@ -200,7 +200,7 @@ router.post("/email", async (req, res) => {
       );
 
       const mailOptions = {
-        from: '"Destek Ekibi" <info@yapayoto.com.tr>',
+        from: '"Destek Ekibi" <support@yapayoto.com.tr>',
         to: email,
         subject: "Şifre Sıfırlama Doğrulama Kodunuz",
         html: `

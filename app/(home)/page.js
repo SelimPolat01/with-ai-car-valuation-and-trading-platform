@@ -2,7 +2,7 @@ import Dropdown from "@/app/components/Dropdown";
 import AiCarDetector from "@/app/components/AiCarDetector";
 
 export const metadata = {
-  title: "Yapay Zeka ile Araç Değerleme ve Satış Platformu",
+  title: "Yapay Zeka ile  Araç Değerleme ve Alım-Satım Platformu | YapayOto",
   description:
     "Aracınızın fotoğrafını yükleyin, yapay zeka marka, model ve yılını anında tespit etsin. İster AI araç tespiti ister manuel form ile aracınızı hemen satabilirsiniz.",
   keywords: [
@@ -14,7 +14,7 @@ export const metadata = {
     "oto alım satım",
   ],
   openGraph: {
-    title: "Yapay Zeka ile Araç Değerleme ve Satış Platformu",
+    title: "Yapay Zeka ile Araç Değerleme ve Alış-Satış Platformu",
     description:
       "Fotoğraftan araç tanıyan yapay zeka teknolojisi ile aracınızın değerini öğrenin ve hızlıca satım ilanınızı oluşturun.",
     url: "https://yapayoto.com.tr",

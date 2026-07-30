@@ -60,20 +60,20 @@
 .cancelButton {
   color: #ff6b6b !important;
   border: 1px solid rgba(255, 107, 107, 0.3) !important;
-  font-weight: 600;
+  font-weight: 600 !important;
   font-size: 18px !important;
   background: rgba(0, 0, 0, 0.6) !important;
   height: 50px !important;
   padding: 0 24px !important;
   box-sizing: border-box !important;
-  border-radius: 8px;
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  border-radius: 8px !important;
+  backdrop-filter: blur(8px) !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
 }
 
 .cancelButton:hover {
@@ -86,25 +86,25 @@
 
 .button {
   margin: 0 !important;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease !important;
   background: rgba(152, 103, 255, 0.8) !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 600 !important;
+  font-size: 15px !important;
   height: 50px !important;
   padding: 0 24px !important;
   box-sizing: border-box !important;
-  border-radius: 8px;
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 8px !important;
+  backdrop-filter: blur(8px) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .button:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) !important;
   background: rgba(152, 103, 255, 1) !important;
   box-shadow: 0 8px 20px rgba(152, 103, 255, 0.4) !important;
 }
@@ -289,6 +289,7 @@
     box-sizing: border-box;
     flex-wrap: wrap;
     text-align: center;
+    max-width: 334.23px;
   }
 
   .carModel h2 {
@@ -330,9 +331,9 @@
   .buttonDiv {
     flex-direction: row;
     width: 100%;
-    max-width: 100%;
+    max-width: 334.23px;
     gap: 0.5rem;
-    padding: 0 0.5rem;
+    padding: 0;
     box-sizing: border-box;
   }
 

@@ -45,6 +45,7 @@ h6 {
   flex-direction: column;
   flex: 1;
 }
+
 .mainBg {
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4) !important;
   display: flex;
@@ -79,7 +80,6 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 85vh;
   gap: 0px;
   padding: 2rem 0;
 }
@@ -323,7 +323,6 @@ a {
   background-size: cover;
   display: flex;
   flex-direction: column;
-  min-height: 90vh;
 }
 
 .bgAiCarDetector {
@@ -336,10 +335,8 @@ a {
   background-position: top center;
   background-repeat: no-repeat;
   width: 100%;
-  min-height: 390px;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   flex: 1;
 }
 
@@ -374,7 +371,6 @@ a {
 
 .bgGetPriceOffer {
   position: relative;
-  min-height: 85vh;
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
   display: flex;
   flex-direction: column;
@@ -520,8 +516,6 @@ a {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 78vh;
-  max-height: 100vh;
   gap: 1rem;
   color: #ffffff;
   text-align: center;

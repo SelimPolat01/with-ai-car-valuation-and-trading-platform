@@ -1,4 +1,7 @@
-html,
+html {
+  height: 100%;
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -9,6 +12,7 @@ body {
   box-sizing: border-box;
   overflow-x: clip;
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
+  overscroll-behavior-y: none;
 }
 
 input,
@@ -32,7 +36,6 @@ h6 {
 .appLayout {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
   flex: 1;
   width: 100%;
 }
@@ -42,7 +45,6 @@ h6 {
   flex-direction: column;
   flex: 1;
 }
-
 .mainBg {
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4) !important;
   display: flex;

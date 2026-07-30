@@ -155,9 +155,9 @@ router.post("/contact", async (req, res) => {
     );
 
     await transporter.sendMail({
-      from: `"${name} ${surname}" <support@yapayoto.com.tr>`,
+      from: `"${name} ${surname}" ${process.env.CONTACT_RECEIVER_EMAIL_SUPPORT}`,
       replyTo: email,
-      to: process.env.CONTACT_RECEIVER_EMAIL,
+      to: process.env.CONTACT_RECEIVER_EMAIL_SUPPORT,
       subject: `[İletişim Formu] ${subject}`,
       html: `
         <h2>Yeni İletişim Formu Mesajı</h2>
@@ -200,7 +200,7 @@ router.post("/email", async (req, res) => {
       );
 
       const mailOptions = {
-        from: '"Destek Ekibi" <support@yapayoto.com.tr>',
+        from: `"Güvenlik Ekibi" ${process.env.CONTACT_RECEIVER_EMAIL_AUTH}`,
         to: email,
         subject: "Şifre Sıfırlama Doğrulama Kodunuz",
         html: `

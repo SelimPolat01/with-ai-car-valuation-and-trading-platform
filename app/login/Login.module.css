@@ -5,6 +5,7 @@
   width: 100%;
   box-sizing: border-box;
   padding: 42px 0 5rem 0;
+  flex: 1;
 }
 
 .pageHeading,

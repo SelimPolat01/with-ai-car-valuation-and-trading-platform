@@ -18,7 +18,8 @@ const josefin = Josefin_Sans({
 
 export const metadata = {
   title: {
-    default: "YapayOto | Yapay Zeka Araç Değerleme ve Alım-Satım",
+    default:
+      "Yapay Zeka ile  Araç Değerleme ve Alım-Satım Platformu | YapayOto",
     template: "%s | YapayOto",
   },
   description:
@@ -32,7 +33,7 @@ export const metadata = {
     "araç fiyat teklifi",
   ],
   openGraph: {
-    title: "YapayOto | Yapay Zeka Araç Değerleme",
+    title: "YapayOto | Yapay Zeka ile Araç Değerleme",
     description: "Aracınızın değerini anında öğrenin.",
     url: "https://yapayoto.com.tr",
     siteName: "YapayOto",

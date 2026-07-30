@@ -161,8 +161,6 @@
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem 27px 1rem;
-    justify-content: center;
-    flex: 1;
   }
 
   .pageHeading {

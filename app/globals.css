@@ -131,6 +131,14 @@ a {
 }
 
 @media (max-width: 768px) {
+  .appLayout {
+    min-height: 100dvh;
+  }
+
+  .mainRoot {
+    flex: 1;
+  }
+
   .dropdownDiv {
     width: 100%;
     padding: 0;

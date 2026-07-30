@@ -2,6 +2,7 @@ import express from "express";
 import { db } from "../lib/db.js";
 import verifyToken from "../middlewares/verifyToken.js";
 import multer from "multer";
+import jwt from "jsonwebtoken";
 
 export const router = express.Router();
 
@@ -126,16 +127,23 @@ router.post("/favoriteAdverts/:advertId", verifyToken, async (req, res) => {
 
 router.get("/:advertId", async (req, res) => {
   const { advertId } = req.params;
-  let userId = 0;
+
+  if (!advertId || advertId === "undefined" || isNaN(Number(advertId))) {
+    return res.status(400).json({ message: "ID bekleniyor" });
+  }
+
+  let userId = 9999;
 
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer ")) {
     const token = authHeader.split(" ")[1];
-    if (token) {
+    if (token && token !== "null" && token !== "undefined") {
       try {
         const decoded = jwt.verify(token, process.env.SECRET);
-        userId = Number(decoded.id);
-      } catch (err) {}
+        userId = Number(decoded.id) || 9999;
+      } catch (err) {
+        console.error("Token doğrulama hatası:", err.message);
+      }
     }
   }
 
@@ -169,7 +177,7 @@ router.get("/:advertId", async (req, res) => {
       FROM adverts AS a 
       JOIN users AS u ON u.id = a.user_id 
       WHERE a.id = $2 AND a.is_sold = false`,
-      [userId, advertId],
+      [userId, Number(advertId)],
     );
 
     if (!result.rows.length) {
@@ -717,6 +725,21 @@ router.get("/similar-by-ai/:advertId", async (req, res) => {
   } catch (err) {
     console.error("Yapay Zeka Benzer İlan Hatası:", err);
     res.status(500).json({ message: "Benzer araçlar getirilemedi." });
+  }
+});
+
+router.get("/favoriteCount/:advertId", async (req, res) => {
+  const advertId = Number(req.params.advertId);
+  const queryText =
+    "SELECT COUNT(*)::int AS count FROM favorite_adverts WHERE advert_id = $1";
+  try {
+    const result = await db.query(queryText, [advertId]);
+    return res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error(err?.message);
+    return res.status(500).json({
+      message: "Favori sayısı getirilirken sunucu hatası meydana geldi.",
+    });
   }
 });
 

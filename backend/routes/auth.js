@@ -8,6 +8,19 @@ import verifyToken from "../middlewares/verifyToken.js";
 export const router = express.Router();
 const SECRET = process.env.SECRET;
 
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: process.env.SMTP_SECURE === "true",
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+
+/* ==========================================================================
+   1. KAYIT OL (REGISTER)
+   ========================================================================== */
 router.post("/register", async (req, res) => {
   try {
     const { email, password, name, surname, tel_number, address, iban } =
@@ -55,23 +68,28 @@ router.post("/register", async (req, res) => {
   }
 });
 
+/* ==========================================================================
+   2. GİRİŞ YAP (LOGIN)
+   ========================================================================== */
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
 
   try {
-    const result = await db.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
+    const existingUser = await db.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email],
+    );
 
-    if (result.rows.length > 0) {
-      const user = result.rows[0];
+    if (existingUser.rows.length > 0) {
+      const user = existingUser.rows[0];
+
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
         return res.status(400).json({ message: "Girilen parola hatalı." });
       }
 
-      const durationDays = user.token_duration || 1;
+      const durationDays = rememberMe === true ? 30 : 1;
 
       const token = jwt.sign(
         {
@@ -95,7 +113,7 @@ router.post("/login", async (req, res) => {
       });
     } else {
       return res
-        .status(400)
+        .status(404)
         .json({ message: "Girilen e-postaya ait kullanıcı bulunamadı." });
     }
   } catch (err) {
@@ -104,6 +122,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
+/* ==========================================================================
+   3. KULLANICI BİLGİSİ (ME)
+   ========================================================================== */
 router.get("/me", verifyToken, async (req, res) => {
   try {
     const result = await db.query(
@@ -142,18 +163,8 @@ router.post("/contact", async (req, res) => {
       [name, surname, email, subject, message],
     );
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      secure: process.env.SMTP_SECURE === "true",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
     await transporter.sendMail({
-      from: `"${name} ${surname}" <info@yapayoto.com.tr>`,
+      from: `"${name} ${surname}" <support@yapayoto.com.tr>`,
       replyTo: email,
       to: process.env.CONTACT_RECEIVER_EMAIL,
       subject: `[İletişim Formu] ${subject}`,
@@ -175,5 +186,151 @@ router.post("/contact", async (req, res) => {
   } catch (err) {
     console.error("İletişim Formu Hatası: ", err);
     return res.status(500).json({ message: "Sunucu hatası." });
+  }
+});
+
+router.post("/email", async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "E-posta adresi gerekli." });
+  }
+
+  const queryText = "SELECT 1 FROM users WHERE email = $1";
+
+  try {
+    const existingEmail = await db.query(queryText, [email]);
+    if (existingEmail.rows.length > 0) {
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const expireTime = new Date(Date.now() + 5 * 60000);
+
+      await db.query(
+        "UPDATE users SET otp = $1, otp_expires_at = $2 WHERE email = $3",
+        [otpCode, expireTime, email],
+      );
+
+      const mailOptions = {
+        from: '"Destek Ekibi" <info@yapayoto.com.tr>',
+        to: email,
+        subject: "Şifre Sıfırlama Doğrulama Kodunuz",
+        html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+          <h2>Şifre Sıfırlama Talebi</h2>
+          <p>Şifrenizi sıfırlamak için aşağıdaki 6 haneli doğrulama kodunu kullanabilirsiniz:</p>
+          <h1 style="color: #934b8e; letter-spacing: 4px;">${otpCode}</h1>
+          <p>Bu kod <strong>5 dakika</strong> boyunca geçerlidir.</p>
+          <p>Eğer bu talebi siz yapmadıysanız, bu e-postayı dikkate almayınız.</p>
+        </div>
+      `,
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      return res.status(200).json({
+        success: true,
+        message: "Doğrulama kodu e-postanıza gönderildi.",
+      });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Girilen e-postaya ait kullanıcı bulunamadı." });
+    }
+  } catch (err) {
+    console.error(err?.message);
+    return res.status(500).json({
+      message: "E-posta kontrol edilirken sunucu hatası meydana geldi.",
+    });
+  }
+});
+
+router.post("/otp", async (req, res) => {
+  const { email, otp } = req.body;
+  const queryText = "SELECT otp, otp_expires_at FROM users WHERE email = $1";
+
+  try {
+    const result = await db.query(queryText, [email]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    }
+
+    const user = result.rows[0];
+
+    if (!user.otp || user.otp !== otp) {
+      return res
+        .status(400)
+        .json({ message: "Girilen doğrulama kodu hatalı." });
+    }
+
+    if (new Date() > new Date(user.otp_expires_at)) {
+      return res
+        .status(400)
+        .json({ message: "Doğrulama kodunun süresi dolmuş." });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Doğrulama başarılı.",
+    });
+  } catch (err) {
+    console.error(err?.message);
+    return res.status(500).json({
+      message: "OTP doğrulanırken sunucu hatası meydana geldi.",
+    });
+  }
+});
+
+router.patch("/reset-password", async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  if (!email || !otp || !newPassword) {
+    return res.status(400).json({ message: "Lütfen tüm alanları doldurun." });
+  }
+
+  if (newPassword.length < 6) {
+    return res
+      .status(400)
+      .json({ message: "Yeni şifre en az 6 karakter olmalıdır." });
+  }
+
+  try {
+    const result = await db.query(
+      "SELECT otp, otp_expires_at FROM users WHERE email = $1",
+      [email],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    }
+
+    const user = result.rows[0];
+
+    if (!user.otp || user.otp !== otp) {
+      return res
+        .status(400)
+        .json({ message: "Geçersiz veya hatalı doğrulama kodu." });
+    }
+
+    if (new Date() > new Date(user.otp_expires_at)) {
+      return res
+        .status(400)
+        .json({ message: "Doğrulama kodunun süresi dolmuş." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await db.query(
+      "UPDATE users SET password = $1, otp = NULL, otp_expires_at = NULL WHERE email = $2",
+      [hashedPassword, email],
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Şifreniz başarıyla güncellendi.",
+    });
+  } catch (err) {
+    console.error("Şifre Sıfırlama Hatası: ", err);
+    return res.status(500).json({
+      message: "Şifre güncellenirken sunucu hatası meydana geldi.",
+    });
   }
 });

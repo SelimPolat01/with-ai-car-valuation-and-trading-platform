@@ -199,7 +199,7 @@ router.post("/email", async (req, res) => {
         [otpCode, expireTime, email],
       );
 
-      const mailOptions = {
+      await transporter.sendMail({
         from: `"Güvenlik Ekibi" ${process.env.CONTACT_RECEIVER_EMAIL_AUTH}`,
         to: email,
         subject: "Şifre Sıfırlama Doğrulama Kodunuz",
@@ -212,9 +212,7 @@ router.post("/email", async (req, res) => {
           <p>Eğer bu talebi siz yapmadıysanız, bu e-postayı dikkate almayınız.</p>
         </div>
       `,
-      };
-
-      await transporter.sendMail(mailOptions);
+      });
 
       return res.status(200).json({
         success: true,

@@ -166,6 +166,10 @@
     padding: 0 1rem;
   }
 
+  .div {
+    margin-bottom: auto;
+  }
+
   .pageHeading {
     min-height: 160px;
     padding: 0 0 1.75rem 0;

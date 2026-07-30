@@ -163,11 +163,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 1rem;
-  }
-
-  .div {
-    margin-bottom: auto;
+    padding: 0 1rem 2rem 1rem;
   }
 
   .pageHeading {

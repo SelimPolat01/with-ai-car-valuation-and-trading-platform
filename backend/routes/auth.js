@@ -18,9 +18,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-/* ==========================================================================
-   1. KAYIT OL (REGISTER)
-   ========================================================================== */
 router.post("/register", async (req, res) => {
   try {
     const { email, password, name, surname, tel_number, address, iban } =
@@ -68,9 +65,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-/* ==========================================================================
-   2. GİRİŞ YAP (LOGIN)
-   ========================================================================== */
 router.post("/login", async (req, res) => {
   const { email, password, rememberMe } = req.body;
 
@@ -122,9 +116,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-/* ==========================================================================
-   3. KULLANICI BİLGİSİ (ME)
-   ========================================================================== */
 router.get("/me", verifyToken, async (req, res) => {
   try {
     const result = await db.query(

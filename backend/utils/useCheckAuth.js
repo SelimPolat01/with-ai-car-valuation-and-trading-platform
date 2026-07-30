@@ -24,6 +24,8 @@ export function useCheckAuth() {
           "/hakkimizda",
           "/login",
           "/register",
+          "/sikca-sorulan-sorular",
+          "/iletisim",
         ];
 
         const isPublicPage =

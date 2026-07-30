@@ -43,6 +43,9 @@ export async function Fetch(
         currentPath === "/tum-ilanlar" ||
         currentPath.startsWith("/ilan/") ||
         currentPath === "/hakkimizda";
+      currentPath === "/sikca-sorulan-sorular";
+      currentPath === "/iletisim";
+      currentPath === "/register";
 
       if (!isPublicPage) {
         window.location.href = "/login";

@@ -38,6 +38,7 @@ export default function SifremiUnuttum() {
     isPending: postEmailVerifyIsPending,
     isError: postEmailVerifyIsError,
     error: postEmailVerifyError,
+    reset: resetEmailVerify,
   } = usePostEmailVerify();
 
   const {
@@ -45,6 +46,7 @@ export default function SifremiUnuttum() {
     isPending: postOtpVerifyIsPending,
     isError: postOtpVerifyIsError,
     error: postOtpVerifyError,
+    reset: resetOtpVerify,
   } = usePostOtpVerify();
 
   const {
@@ -52,6 +54,7 @@ export default function SifremiUnuttum() {
     isPending: patchResetPasswordIsPending,
     isError: patchResetPasswordIsError,
     error: patchResetPasswordError,
+    reset: resetPatchPassword,
   } = usePatchResetPassword();
 
   const isEmailValid = input.email.value.includes("@");
@@ -62,10 +65,19 @@ export default function SifremiUnuttum() {
 
   function inputChangeHandler(event) {
     const { name, value } = event.target;
+
     setInput((prevInput) => ({
       ...prevInput,
       [name]: { value, isBlur: false },
     }));
+
+    if (name === "email" && postEmailVerifyIsError) resetEmailVerify();
+    if (name === "otp" && postOtpVerifyIsError) resetOtpVerify();
+    if (
+      (name === "password" || name === "confirmPassword") &&
+      patchResetPasswordIsError
+    )
+      resetPatchPassword();
   }
 
   function inputBlurHandler(event) {

@@ -18,7 +18,7 @@ export default function Odeme() {
     const currentToken = localStorage.getItem("token");
     setToken(currentToken);
     if (!currentToken) {
-      router.replace("/admin/login");
+      router.replace("/login");
       return;
     }
   }, [router]);

@@ -25,7 +25,7 @@ export default function Hesabim() {
     const currentToken = localStorage.getItem("token");
     setToken(currentToken);
     if (!currentToken) {
-      router.replace("/admin/login");
+      router.replace("/login");
       return;
     }
   }, [router]);

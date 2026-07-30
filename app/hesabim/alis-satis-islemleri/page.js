@@ -33,7 +33,7 @@ export default function AlisSatisiIslemleri() {
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
     if (!currentToken) {
-      router.replace("/admin/login");
+      router.replace("/login");
       return;
     }
     setToken(currentToken);

@@ -15,7 +15,7 @@ export default function ChartBar({ text, optionsIcon, width, height, data }) {
     const currentToken = localStorage.getItem("token");
     setToken(currentToken);
     if (!currentToken) {
-      router.replace("/admin/login");
+      router.replace("/login");
       return;
     }
   }, [router]);

@@ -2,21 +2,12 @@ import express from "express";
 import { db } from "../lib/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import verifyToken from "../middlewares/verifyToken.js";
 
 export const router = express.Router();
 const SECRET = process.env.SECRET;
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: process.env.SMTP_SECURE === "true",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+const resend = new Resend(process.env.SMTP_PASS);
 
 router.post("/register", async (req, res) => {
   try {
@@ -154,9 +145,9 @@ router.post("/contact", async (req, res) => {
       [name, surname, email, subject, message],
     );
 
-    await transporter.sendMail({
-      from: `"${name} ${surname}" <${process.env.CONTACT_RECEIVER_EMAIL_SUPPORT}>`,
-      replyTo: email,
+    const { error } = await resend.emails.send({
+      from: `İletişim Formu <${process.env.CONTACT_RECEIVER_EMAIL_SUPPORT}>`,
+      reply_to: email,
       to: process.env.CONTACT_RECEIVER_EMAIL_SUPPORT,
       subject: `[İletişim Formu] ${subject}`,
       html: `
@@ -169,6 +160,13 @@ router.post("/contact", async (req, res) => {
         </div>
       `,
     });
+
+    if (error) {
+      console.error("Resend Gönderim Hatası:", error);
+      return res
+        .status(500)
+        .json({ message: "Mail gönderilirken sunucu hatası oluştu." });
+    }
 
     return res.status(200).json({
       message: "Mesajınız başarıyla iletildi.",
@@ -199,8 +197,8 @@ router.post("/email", async (req, res) => {
         [otpCode, expireTime, email],
       );
 
-      await transporter.sendMail({
-        from: `"Güvenlik Ekibi" <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
+      const { error } = await resend.emails.send({
+        from: `Güvenlik Ekibi <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
         to: email,
         subject: "Şifre Sıfırlama Doğrulama Kodunuz",
         html: `
@@ -213,6 +211,13 @@ router.post("/email", async (req, res) => {
         </div>
       `,
       });
+
+      if (error) {
+        console.error("Resend OTP Hatası:", error);
+        return res
+          .status(500)
+          .json({ message: "Doğrulama kodu gönderilemedi." });
+      }
 
       return res.status(200).json({
         success: true,

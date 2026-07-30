@@ -60,7 +60,7 @@ router.post("/register", async (req, res) => {
 
     res.status(200).json({ message: "Kayıt başarılı!", user, token });
   } catch (err) {
-    console.log("Kayıt Hatası: ", err);
+    console.error(err?.message);
     res.status(500).json({ message: "Sunucu hatası!" });
   }
 });
@@ -111,7 +111,7 @@ router.post("/login", async (req, res) => {
         .json({ message: "Girilen e-postaya ait kullanıcı bulunamadı." });
     }
   } catch (err) {
-    console.error("Login Hatası: ", err);
+    console.error(err?.message);
     return res.status(500).json({ message: "Sunucu hatası." });
   }
 });
@@ -128,7 +128,7 @@ router.get("/me", verifyToken, async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
+    console.error(err?.message);
     res.status(500).json({ message: "Sunucu hatası." });
   }
 });
@@ -175,7 +175,7 @@ router.post("/contact", async (req, res) => {
       data: result.rows[0],
     });
   } catch (err) {
-    console.error("İletişim Formu Hatası: ", err);
+    console.error(err?.message);
     return res.status(500).json({ message: "Sunucu hatası." });
   }
 });

@@ -165,7 +165,8 @@
 
   .pageHeading {
     max-height: 118.4px;
-    padding: 0 0 2rem 0;
+    padding: 0 0 2.25rem 0;
+    gap: 0.75rem;
     box-sizing: border-box;
   }
 

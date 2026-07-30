@@ -69,8 +69,10 @@ export default function Login() {
     }));
   }
 
-  const isEmailValid = input.email.value.includes("@");
-  const isPasswordValid = input.password.value.length >= 6;
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+    input.email.value.trim(),
+  );
+  const isPasswordValid = input.password.value.trim().length >= 6;
 
   async function submitHandler(event) {
     event.preventDefault();

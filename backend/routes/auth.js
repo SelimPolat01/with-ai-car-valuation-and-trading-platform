@@ -35,6 +35,8 @@ router.post("/register", async (req, res) => {
       [email, hashedPassword, name, surname, tel_number, address, iban],
     );
 
+    await db.query("DELETE FROM otp_codes WHERE email = $1", [email]);
+
     const user = result.rows[0];
     const token = jwt.sign(
       {
@@ -149,14 +151,36 @@ router.post("/contact", async (req, res) => {
       from: `İletişim Formu <${process.env.CONTACT_RECEIVER_EMAIL_SUPPORT}>`,
       reply_to: email,
       to: process.env.CONTACT_RECEIVER_EMAIL_SUPPORT,
-      subject: `[İletişim Formu] ${subject}`,
+      subject: `[İletişim] ${subject} - ${name} ${surname}`,
       html: `
-        <h2>Yeni İletişim Formu Mesajı</h2>
-        <p><strong>Gönderen:</strong> ${name} ${surname} (${email})</p>
-        <p><strong>Konu:</strong> ${subject}</p>
-        <p><strong>Mesaj:</strong></p>
-        <div style="background: #f4f4f4; padding: 12px; border-left: 4px solid #00f4ff;">
-          ${message.replace(/\n/g, "<br>")}
+        <div style="font-family: Arial, sans-serif; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+          <h2 style="color: #333; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">Yeni İletişim Mesajı</h2>
+          
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+            <tr>
+              <td style="padding: 10px 0; color: #666; width: 100px; border-bottom: 1px solid #f9f9f9;"><strong>Gönderen:</strong></td>
+              <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;">${name} ${surname}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #666; border-bottom: 1px solid #f9f9f9;"><strong>E-posta:</strong></td>
+              <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;"><a href="mailto:${email}" style="color: #934b8e; text-decoration: none;">${email}</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #666; border-bottom: 1px solid #f9f9f9;"><strong>Konu:</strong></td>
+              <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;">${subject}</td>
+            </tr>
+          </table>
+          
+          <h3 style="color: #444; margin-bottom: 12px; font-size: 16px;">Mesaj Detayı:</h3>
+          <div style="background: #f8f9fa; padding: 18px; border-left: 4px solid #934b8e; color: #333; line-height: 1.6; border-radius: 0 4px 4px 0; font-size: 15px;">
+            ${message.replace(/\n/g, "<br>")}
+          </div>
+          
+          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0 15px 0;" />
+          <p style="color: #999; font-size: 12px; line-height: 1.5; text-align: center; margin: 0;">
+            Bu e-posta sistem tarafından otomatik olarak iletilmiştir.<br>
+            Doğrudan bu e-postayı yanıtlayarak göndericiye (<strong>${email}</strong>) cevap verebilirsiniz.
+          </p>
         </div>
       `,
     });
@@ -165,7 +189,7 @@ router.post("/contact", async (req, res) => {
       console.error("Resend Gönderim Hatası:", error);
       return res
         .status(500)
-        .json({ message: "Mail gönderilirken sunucu hatası oluştu." });
+        .json({ message: "Mail gönderilerken sunucu hatası oluştu." });
     }
 
     return res.status(200).json({
@@ -180,17 +204,25 @@ router.post("/contact", async (req, res) => {
 
 router.post("/email", async (req, res) => {
   const { email } = req.body;
+  const { forLogin } = req.query;
+
   if (!email) {
     return res.status(400).json({ message: "E-posta adresi gerekli." });
   }
 
-  const queryText = "SELECT 1 FROM users WHERE email = $1";
-
   try {
-    const existingEmail = await db.query(queryText, [email]);
-    if (existingEmail.rows.length > 0) {
-      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-      const expireTime = new Date(Date.now() + 5 * 60000);
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expireTime = new Date(Date.now() + 5 * 60000);
+
+    if (forLogin === "true") {
+      const userCheck = await db.query("SELECT 1 FROM users WHERE email = $1", [
+        email,
+      ]);
+      if (userCheck.rows.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Girilen e-postaya ait kullanıcı bulunamadı." });
+      }
 
       await db.query(
         "UPDATE users SET otp = $1, otp_expires_at = $2 WHERE email = $3",
@@ -200,16 +232,19 @@ router.post("/email", async (req, res) => {
       const { error } = await resend.emails.send({
         from: `Güvenlik Ekibi <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
         to: email,
-        subject: "Şifre Sıfırlama Doğrulama Kodunuz",
+        subject: "Giriş ve Şifre Sıfırlama Doğrulama Kodu",
         html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-          <h2>Şifre Sıfırlama Talebi</h2>
-          <p>Şifrenizi sıfırlamak için aşağıdaki 6 haneli doğrulama kodunu kullanabilirsiniz:</p>
-          <h1 style="color: #934b8e; letter-spacing: 4px;">${otpCode}</h1>
-          <p>Bu kod <strong>5 dakika</strong> boyunca geçerlidir.</p>
-          <p>Eğer bu talebi siz yapmadıysanız, bu e-postayı dikkate almayınız.</p>
-        </div>
-      `,
+          <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 500px; margin: 0 auto;">
+            <h2 style="color: #333;">Hesap Doğrulama Talebi</h2>
+            <p style="color: #555; line-height: 1.5;">Hesabınıza giriş yapmak veya şifrenizi sıfırlamak için aşağıdaki 6 haneli doğrulama kodunu kullanabilirsiniz:</p>
+            <div style="text-align: center; margin: 20px 0;">
+              <h1 style="color: #934b8e; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
+            </div>
+            <p style="color: #555;">Bu kodun geçerlilik süresi <strong>5 dakikadır</strong>.</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+            <p style="color: #dc2626; font-size: 13px; line-height: 1.4; font-weight: 600; background-color: #fef2f2; padding: 10px; border-radius: 6px; border: 1px solid #fecaca; margin: 0;">Eğer bu işlemi siz başlatmadıysanız, hesabınızın güvenliği için lütfen bu e-postayı dikkate almayınız ve şifrenizi güncelleyiniz.</p>
+          </div>
+        `,
       });
 
       if (error) {
@@ -224,12 +259,56 @@ router.post("/email", async (req, res) => {
         message: "Doğrulama kodu e-postanıza gönderildi.",
       });
     } else {
-      return res
-        .status(404)
-        .json({ message: "Girilen e-postaya ait kullanıcı bulunamadı." });
+      const existingUser = await db.query(
+        "SELECT 1 FROM users WHERE email = $1",
+        [email],
+      );
+      if (existingUser.rows.length > 0) {
+        return res
+          .status(409)
+          .json({ message: "Bu e-posta adresi zaten kullanımda." });
+      }
+
+      await db.query(
+        `INSERT INTO otp_codes (email, otp, expires_at) 
+         VALUES ($1, $2, $3)
+         ON CONFLICT (email) 
+         DO UPDATE SET otp = EXCLUDED.otp, expires_at = EXCLUDED.expires_at`,
+        [email, otpCode, expireTime],
+      );
+
+      const { error } = await resend.emails.send({
+        from: `Güvenlik Ekibi <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
+        to: email,
+        subject: "Yeni Kayıt Doğrulama Kodu",
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 500px; margin: 0 auto;">
+            <h2 style="color: #333;">Aramıza Hoş Geldiniz!</h2>
+            <p style="color: #555; line-height: 1.5;">Kayıt işleminizi tamamlamak ve e-posta adresinizi doğrulamak için aşağıdaki 6 haneli kodu kullanabilirsiniz:</p>
+            <div style="text-align: center; margin: 20px 0;">
+              <h1 style="color: #934b8e; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
+            </div>
+            <p style="color: #555;">Bu kodun geçerlilik süresi <strong>5 dakikadır</strong>.</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+            <p style="color: #dc2626; font-size: 13px; line-height: 1.4; font-weight: 600; background-color: #fef2f2; padding: 10px; border-radius: 6px; border: 1px solid #fecaca; margin: 0;">Bu talebi siz oluşturmadıysanız, herhangi bir işlem yapmanıza gerek yoktur.</p>
+          </div>
+        `,
+      });
+
+      if (error) {
+        console.error("Resend OTP Hatası:", error);
+        return res
+          .status(500)
+          .json({ message: "Doğrulama kodu gönderilemedi." });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Kayıt doğrulama kodu e-postanıza gönderildi.",
+      });
     }
   } catch (err) {
-    console.error(err?.message);
+    console.error("Sunucu Hatası Detayı:", err?.message);
     return res.status(500).json({
       message: "E-posta kontrol edilirken sunucu hatası meydana geldi.",
     });
@@ -238,44 +317,86 @@ router.post("/email", async (req, res) => {
 
 router.post("/otp", async (req, res) => {
   const { email, otp } = req.body;
-  const queryText = "SELECT otp, otp_expires_at FROM users WHERE email = $1";
+  const { forLogin } = req.query;
+
+  if (!email || !otp) {
+    return res
+      .status(400)
+      .json({ message: "E-posta ve doğrulama kodu gerekli." });
+  }
 
   try {
-    const result = await db.query(queryText, [email]);
+    if (forLogin === "true") {
+      const queryText =
+        "SELECT otp, otp_expires_at FROM users WHERE email = $1";
+      const result = await db.query(queryText, [email]);
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
-    }
+      if (result.rows.length === 0) {
+        return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+      }
 
-    const user = result.rows[0];
+      const user = result.rows[0];
 
-    if (new Date() > new Date(user.otp_expires_at)) {
-      const clearOtpQuery =
-        "UPDATE users SET otp = NULL, otp_expires_at = NULL WHERE email = $1";
-      await db.query(clearOtpQuery, [email]);
+      if (new Date() > new Date(user.otp_expires_at)) {
+        await db.query(
+          "UPDATE users SET otp = NULL, otp_expires_at = NULL WHERE email = $1",
+          [email],
+        );
+        return res.status(400).json({
+          message:
+            "Doğrulama kodunun süresi dolmuş. Lütfen yeni bir kod isteyin.",
+        });
+      }
 
-      return res.status(400).json({
-        message:
-          "Doğrulama kodunun süresi dolmuş. Lütfen yeni bir kod isteyin.",
+      if (!user.otp || String(user.otp) !== String(otp)) {
+        return res
+          .status(400)
+          .json({ message: "Girilen doğrulama kodu hatalı." });
+      }
+
+      await db.query(
+        "UPDATE users SET otp = NULL, otp_expires_at = NULL WHERE email = $1",
+        [email],
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: "Doğrulama başarılı.",
+      });
+    } else {
+      const queryText =
+        "SELECT otp, expires_at FROM otp_codes WHERE email = $1";
+      const result = await db.query(queryText, [email]);
+
+      if (result.rows.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Bu e-posta için doğrulama kodu bulunamadı." });
+      }
+
+      const otpRecord = result.rows[0];
+
+      if (new Date() > new Date(otpRecord.expires_at)) {
+        await db.query("DELETE FROM otp_codes WHERE email = $1", [email]);
+        return res.status(400).json({
+          message:
+            "Doğrulama kodunun süresi dolmuş. Lütfen yeni bir kod isteyin.",
+        });
+      }
+
+      if (!otpRecord.otp || String(otpRecord.otp) !== String(otp)) {
+        return res
+          .status(400)
+          .json({ message: "Girilen doğrulama kodu hatalı." });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Doğrulama başarılı.",
       });
     }
-
-    if (!user.otp || String(user.otp) !== String(otp)) {
-      return res
-        .status(400)
-        .json({ message: "Girilen doğrulama kodu hatalı." });
-    }
-
-    const successClearOtpQuery =
-      "UPDATE users SET otp = NULL, otp_expires_at = NULL WHERE email = $1";
-    await db.query(successClearOtpQuery, [email]);
-
-    return res.status(200).json({
-      success: true,
-      message: "Doğrulama başarılı.",
-    });
   } catch (err) {
-    console.error(err?.message);
+    console.error("OTP Doğrulama Hatası:", err?.message);
     return res.status(500).json({
       message: "OTP doğrulanırken sunucu hatası meydana geldi.",
     });

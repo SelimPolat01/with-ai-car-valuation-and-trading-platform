@@ -22,11 +22,12 @@
 
 .input:focus {
   outline: none;
-  box-shadow: 0 0 2px 2px #ccc;
+  box-shadow: 0 0 1px 1px #ccc;
 }
 
 .input:focus + .button {
-  box-shadow: 0 0 2px 2px #ccc;
+  outline: none;
+  box-shadow: 0 0 1px 1px #ccc;
 }
 
 .button {

@@ -172,7 +172,7 @@ export default function Iletisim() {
               <Mail className={classes.cardIcon} size={28} />
               <div>
                 <strong>Genel Destek</strong>
-                <span>info@yapayoto.com.tr</span>
+                <span>support@yapayoto.com.tr</span>
               </div>
             </div>
             <div className={classes.contactCard}>

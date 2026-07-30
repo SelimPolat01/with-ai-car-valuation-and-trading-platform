@@ -126,15 +126,15 @@ export default function SikcaSorulanSorular() {
 
                     <AnimatePresence initial={false}>
                       {isOpen && (
-                        <motion.p
-                          className={classes.faqAnswer}
+                        <motion.div
+                          className={classes.faqAnswerWrapper}
                           variants={faqsAnswerVariants}
                           initial="hidden"
                           animate="visible"
                           exit="exit"
                         >
-                          {faq.answer}
-                        </motion.p>
+                          <p className={classes.faqAnswer}>{faq.answer}</p>
+                        </motion.div>
                       )}
                     </AnimatePresence>
                   </motion.div>

@@ -33,6 +33,46 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.actionButtonsWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.favoriteCountBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(167, 184, 212, 0.18);
+  border: 1px solid rgba(167, 184, 212, 0.35);
+  padding: 6px 14px;
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.favoriteCountBadge:hover {
+  background: rgba(167, 184, 212, 0.3);
+  border-color: rgba(167, 184, 212, 0.6);
+  box-shadow: 0 4px 20px rgba(167, 184, 212, 0.25);
+}
+
+.favoriteIcon {
+  color: #ff4b6e;
+  fill: rgba(255, 75, 110, 0.3);
+  filter: drop-shadow(0 0 6px rgba(255, 75, 110, 0.4));
+}
+
+.favoriteCountText {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
 .advertInfoWrapper1 {
   display: flex;
   gap: 2rem;
@@ -195,7 +235,7 @@
   color: #f1ef71;
   border: 1px solid rgba(241, 239, 113, 0.3);
   border-radius: 8px;
-  padding: 6px;
+  padding: 6px 12px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -216,7 +256,7 @@
   color: #1a1a1a;
   border: 1px solid #c2c047;
   border-radius: 8px;
-  padding: 6px;
+  padding: 6px 12px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -469,11 +509,20 @@
     width: 100%;
   }
 
+  .actionButtonsWrapper {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .defaultButton,
   .favoriteButton {
-    width: 100%;
+    flex: 1;
     text-align: center;
     box-sizing: border-box;
+  }
+
+  .favoriteCountBadge {
+    padding: 6px 12px;
   }
 
   .advertInfoWrapper1 {

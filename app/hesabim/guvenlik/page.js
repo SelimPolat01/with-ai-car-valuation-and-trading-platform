@@ -6,7 +6,6 @@ import {
   AlertCircle,
   AlertTriangle,
   ArrowLeft,
-  Clock,
   KeyRound,
   Mail,
 } from "lucide-react";
@@ -19,8 +18,6 @@ import SuccessMessage from "@/app/components/SuccessMessage";
 import { useGetEmail } from "@/hooks/GET/useGetEmail";
 import { usePatchEmail } from "@/hooks/PATCH/usePatchEmail";
 import { usePatchPassword } from "@/hooks/PATCH/usePatchPassword";
-import { usePatchTokenDuration } from "@/hooks/PATCH/usePatchTokenDuration";
-import { useGetTokenDuration } from "@/hooks/GET/useGetTokenDuration";
 import { useDeleteAccount } from "@/hooks/DELETE/useDeleteAccount";
 import Loading from "@/app/loading";
 
@@ -30,13 +27,11 @@ export default function Guvenlik() {
   const [error, setError] = useState({
     email: false,
     password: false,
-    tokenDuration: false,
     account: false,
   });
   const [isSuccess, setIsSuccess] = useState({
     email: false,
     password: false,
-    tokenDuration: false,
   });
   const deleteAccountInputRef = useRef();
 
@@ -51,7 +46,7 @@ export default function Guvenlik() {
 
   useEffect(() => {
     let timer;
-    if (isSuccess.email || isSuccess.password || isSuccess.tokenDuration) {
+    if (isSuccess.email || isSuccess.password) {
       timer = setTimeout(() => {
         setIsSuccess({
           email: false,
@@ -84,7 +79,6 @@ export default function Guvenlik() {
       letters: "",
       isBlur: false,
     },
-    tokenDuration: { letters: "1", isBlur: false },
   });
 
   const {
@@ -93,33 +87,23 @@ export default function Guvenlik() {
     isError: getEmailInfoIsError,
     error: getEmailInfoError,
   } = useGetEmail(token);
-  const {
-    data: getTokenDuration,
-    isLoading: getTokenDurationIsLoading,
-    isError: getTokenDurationIsError,
-    error: getTokenDurationError,
-  } = useGetTokenDuration(token);
+
   const {
     mutate: patchEmailMutate,
     isPending: patchEmailIsPending,
     isError: patchEmailIsError,
     error: patchEmailError,
   } = usePatchEmail();
+
   const {
     mutate: patchPasswordMutate,
     isPending: patchPasswordIsPending,
     isError: patchPasswordIsError,
     error: patchPasswordError,
   } = usePatchPassword();
-  const {
-    mutate: patchTokenDurationMutate,
-    isPending: patchTokenDurationIsPending,
-    isError: patchTokenDurationIsError,
-    error: patchTokenDurationError,
-  } = usePatchTokenDuration();
+
   const {
     mutate: deleteAccountMutate,
-    isPending: deleteAccountIsPending,
     isError: deleteAccountIsError,
     error: deleteAccountError,
   } = useDeleteAccount();
@@ -133,18 +117,6 @@ export default function Guvenlik() {
     }
   }, [getEmailInfo, isSuccess]);
 
-  useEffect(() => {
-    if (getTokenDuration) {
-      setInput((prev) => ({
-        ...prev,
-        tokenDuration: {
-          letters: getTokenDuration?.result?.token_duration || "1",
-          isBlur: false,
-        },
-      }));
-    }
-  }, [getTokenDuration, isSuccess]);
-
   function changeHandler(event) {
     const { name, value } = event.target;
     setInput((prev) => ({
@@ -155,25 +127,30 @@ export default function Guvenlik() {
 
   function emailSubmitHandler(event) {
     event.preventDefault();
-    if (input.email.letters.trim().length == 0) {
-      setError({
+    setError((prev) => ({ ...prev, email: false }));
+
+    if (input.email.letters.trim().length === 0) {
+      setError((prev) => ({
+        ...prev,
         email: "Lütfen geçerli bir e-posta adresi girip tekrar deneyiniz.",
-      });
+      }));
       return;
     } else if (input.currentEmail === input.email.letters) {
-      setError({
+      setError((prev) => ({
+        ...prev,
         email:
           "Yeni e-posta adresiniz mevcut e-posta adresinizle aynı olamaz. Lütfen farklı bir adres giriniz.",
-      });
+      }));
       return;
     } else if (input.email.letters !== input.confirmEmail.letters) {
-      setError({
+      setError((prev) => ({
+        ...prev,
         email:
           "Girdiğiniz e-posta adresleri eşleşmiyor. Lütfen tekrar deneyiniz.",
-      });
+      }));
       return;
     }
-    const token = localStorage.getItem("token");
+
     patchEmailMutate(
       {
         token,
@@ -182,7 +159,7 @@ export default function Guvenlik() {
         },
       },
       {
-        onSuccess: (data) => {
+        onSuccess: () => {
           setIsSuccess((prev) => ({ ...prev, email: true }));
           setInput((prev) => ({
             ...prev,
@@ -191,19 +168,22 @@ export default function Guvenlik() {
           }));
           setError((prev) => ({ ...prev, email: false }));
         },
-        onError: (err) => setError({ email: err?.message }),
+        onError: (err) =>
+          setError((prev) => ({ ...prev, email: err?.message })),
       },
     );
   }
 
   function passwordSubmitHandler(event) {
     event.preventDefault();
+    setError((prev) => ({ ...prev, password: false }));
 
     if (input.currentPassword.letters.trim().length < 6) {
-      setError({
+      setError((prev) => ({
+        ...prev,
         password:
           "Lütfen mevcut parolanızı en az 6 karakter olacak şekilde giriniz.",
-      });
+      }));
       return;
     }
 
@@ -211,21 +191,22 @@ export default function Guvenlik() {
       input.password.letters.trim().length < 6 ||
       input.confirmPassword.letters.trim().length < 6
     ) {
-      setError({
+      setError((prev) => ({
+        ...prev,
         password: "Yeni parolanız en az 6 karakter uzunluğunda olmalıdır.",
-      });
+      }));
       return;
     }
 
     if (input.password.letters !== input.confirmPassword.letters) {
-      setError({
+      setError((prev) => ({
+        ...prev,
         password:
           "Girdiğiniz yeni parolalar eşleşmiyor. Lütfen tekrar deneyiniz.",
-      });
+      }));
       return;
     }
 
-    const token = localStorage.getItem("token");
     patchPasswordMutate(
       {
         token,
@@ -235,7 +216,7 @@ export default function Guvenlik() {
         },
       },
       {
-        onSuccess: (data) => {
+        onSuccess: () => {
           setIsSuccess((prev) => ({ ...prev, password: true }));
           setInput((prev) => ({
             ...prev,
@@ -245,27 +226,8 @@ export default function Guvenlik() {
           }));
           setError((prev) => ({ ...prev, password: false }));
         },
-        onError: (err) => setError({ password: err?.message }),
-      },
-    );
-  }
-
-  function tokenDurationSubmitHandler(event) {
-    event.preventDefault();
-    const token = localStorage.getItem("token");
-    patchTokenDurationMutate(
-      {
-        token,
-        body: {
-          tokenDuration: input.tokenDuration.letters,
-        },
-      },
-      {
-        onSuccess: (data) => {
-          setIsSuccess((prev) => ({ ...prev, tokenDuration: true }));
-          setError((prev) => ({ ...prev, tokenDuration: false }));
-        },
-        onError: (err) => setError({ tokenDuration: err?.message }),
+        onError: (err) =>
+          setError((prev) => ({ ...prev, password: err?.message })),
       },
     );
   }
@@ -276,13 +238,14 @@ export default function Guvenlik() {
   }
 
   function confirmDeleteHandler() {
-    const token = localStorage.getItem("token");
+    setError((prev) => ({ ...prev, account: false }));
     deleteAccountMutate(
       { token },
       {
-        onSuccess: (data) => {
+        onSuccess: () => {
           localStorage.removeItem("token");
           localStorage.removeItem("tokenExpire");
+          router.replace("/admin/login");
         },
         onError: (err) =>
           setError((prev) => ({ ...prev, account: err?.message })),
@@ -290,22 +253,29 @@ export default function Guvenlik() {
     );
   }
 
-  if (!token || getEmailInfoIsLoading || getTokenDurationIsLoading) {
+  if (!token || getEmailInfoIsLoading) {
     return <Loading />;
   }
 
-  if (getEmailInfoIsError || getTokenDurationIsError) {
+  if (getEmailInfoIsError) {
     return (
       <div className="errorContainer">
         <AlertCircle size={48} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getEmailInfoError?.message || getTokenDurationError?.message}</p>
+        <p>{getEmailInfoError?.message}</p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
       </div>
     );
   }
+
+  const emailErrorMessage =
+    error.email || (patchEmailIsError && patchEmailError?.message);
+  const passwordErrorMessage =
+    error.password || (patchPasswordIsError && patchPasswordError?.message);
+  const accountErrorMessage =
+    error.account || (deleteAccountIsError && deleteAccountError?.message);
 
   return (
     <div className={classes.div}>
@@ -356,9 +326,9 @@ export default function Guvenlik() {
                 onChange={changeHandler}
                 className={classes.input}
               />
-              {error.email && (
+              {emailErrorMessage && (
                 <div className={classes.errorDiv}>
-                  <p>{error.email}</p>
+                  <p>{emailErrorMessage}</p>
                 </div>
               )}
               <div className={classes.submitContainer}>
@@ -385,6 +355,7 @@ export default function Guvenlik() {
             />
           )}
         </div>
+
         <div className={classes.settingBlock}>
           <div className={classes.blockInfo}>
             <h3>
@@ -426,9 +397,9 @@ export default function Guvenlik() {
                   className={classes.input}
                 />
               </div>
-              {error.password && (
+              {passwordErrorMessage && (
                 <div className={classes.errorDiv}>
-                  <p>{error.password}</p>
+                  <p>{passwordErrorMessage}</p>
                 </div>
               )}
               <div className={classes.submitContainer}>
@@ -457,59 +428,7 @@ export default function Guvenlik() {
             />
           )}
         </div>
-        <div className={classes.settingBlock}>
-          <div className={classes.blockInfo}>
-            <h3>
-              <Clock size={20} className={classes.icon} /> Oturum Ayarları
-            </h3>
-            <p>
-              Oturumunuz açık kaldıktan sonra tekrar kimlik doğrulaması yapmanız
-              gereken süreyi ayarlayın.
-            </p>
-          </div>
-          {!isSuccess.tokenDuration ? (
-            <form
-              onSubmit={tokenDurationSubmitHandler}
-              className={classes.blockForm}
-            >
-              <Input
-                type="number"
-                name="tokenDuration"
-                label="Token Geçerlilik Süresi (Gün)"
-                min="1"
-                max="30"
-                className={classes.input}
-                value={input.tokenDuration.letters}
-                onChange={changeHandler}
-              />
 
-              <div className={classes.submitContainer}>
-                <SecondaryButton
-                  type="submit"
-                  text={
-                    patchTokenDurationIsPending
-                      ? "Güncelleniyor"
-                      : "Oturum Süresini Güncelle"
-                  }
-                  className={classes.button}
-                  disabled={patchTokenDurationIsPending}
-                />
-              </div>
-            </form>
-          ) : (
-            <SuccessMessage
-              key="success-message"
-              onClick={() =>
-                setIsSuccess((prev) => ({ ...prev, tokenDuration: false }))
-              }
-              title="Oturum Süresi Güncellendi"
-              text="Oturum süreniz başarıyla güncellendi. Belirlediğiniz yeni süre, bir sonraki giriş işleminizle birlikte aktif hale gelecektir."
-              buttonText="Kapat"
-              iconSize={50}
-              className={classes.tokenDurationSuccessMessage}
-            />
-          )}
-        </div>
         <div className={`${classes.settingBlock} ${classes.dangerZone}`}>
           <div className={classes.blockInfo}>
             <h3 className={classes.dangerText}>
@@ -535,6 +454,11 @@ export default function Guvenlik() {
                 text="Hesabı Sil"
               />
             </div>
+            {accountErrorMessage && (
+              <div className={classes.errorDiv}>
+                <p>{accountErrorMessage}</p>
+              </div>
+            )}
           </form>
         </div>
       </div>

@@ -3,28 +3,32 @@ import { useEffect, useState } from "react";
 import Input from "@/app/components/Input";
 import classes from "./Login.module.css";
 import { useRouter } from "next/navigation";
+import SecondaryButton from "../components/SecondaryButton";
+import Link from "next/link";
+import { usePostLogin } from "@/hooks/POST/usePostLogin";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/store/authSlice";
-import SecondaryButton from "../components/SecondaryButton";
 
 export default function Login() {
   const [input, setInput] = useState({
-    email: {
-      value: "",
-      isBlur: false,
-    },
-    password: {
-      value: "",
-      isBlur: false,
-    },
+    email: { value: "", isBlur: false },
+    password: { value: "", isBlur: false },
   });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const {
+    mutate: postLoginMutate,
+    isPending: postLoginIsPending,
+    isError: postLoginIsError,
+    error: postLoginError,
+    reset: resetLoginMutation,
+  } = usePostLogin();
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token =
+      sessionStorage.getItem("token") || localStorage.getItem("token");
 
     if (token) {
       router.replace("/");
@@ -51,20 +55,14 @@ export default function Login() {
       ...prevInput,
       [name]: { value, isBlur: false },
     }));
-    if (
-      error === "Girilen e-postaya ait kullanıcı bulunamadı." &&
-      name === "email"
-    ) {
-      setError("");
-    }
-    if (error === "Girilen parola hatalı." && name === "password") {
-      setError("");
+
+    if (postLoginIsError) {
+      resetLoginMutation();
     }
   }
 
   function inputBlurHandler(event) {
     const { name } = event.target;
-
     setInput((prevInput) => ({
       ...prevInput,
       [name]: { ...prevInput[name], isBlur: true },
@@ -82,42 +80,40 @@ export default function Login() {
       password: { ...prevInput.password, isBlur: true },
     }));
 
-    if (!input.email.value.includes("@") || input.password.value.length < 6) {
+    if (!isEmailValid || !isPasswordValid) {
       return;
     }
 
-    setLoading(true);
+    const formData = new FormData(event.target);
+    const isRememberMe = formData.get("rememberMe") === "on";
 
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+    postLoginMutate(
+      {
+        body: {
           email: input.email.value,
           password: input.password.value,
-        }),
-      });
+        },
+      },
+      {
+        onSuccess: (data) => {
+          const token = data?.result?.token;
 
-      const data = await response.json();
+          const decodedToken = JSON.parse(atob(token.split(".")[1]));
+          const expire = decodedToken.exp * 1000;
 
-      if (!response.ok) {
-        setError(data.message);
-        setLoading(false);
-        return;
-      }
-      const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
-      const expire = decodedToken.exp * 1000;
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("tokenExpire", expire);
-      dispatch(loginSuccess(data.user));
-      router.push("/");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+          if (isRememberMe) {
+            localStorage.setItem("token", token);
+            localStorage.setItem("tokenExpire", expire.toString());
+          } else {
+            sessionStorage.setItem("token", token);
+            sessionStorage.setItem("tokenExpire", expire.toString());
+          }
+
+          dispatch(loginSuccess(data?.result?.user));
+          router.replace("/");
+        },
+      },
+    );
   }
 
   return (
@@ -133,6 +129,7 @@ export default function Login() {
               className={classes.input}
               type="text"
               identifier="email"
+              name="email"
               onChange={inputChangeHandler}
               onBlur={inputBlurHandler}
               value={input.email.value}
@@ -150,15 +147,18 @@ export default function Login() {
                   Lütfen geçerli bir e-posta girin.
                 </p>
               )}
-            {error === "Girilen e-postaya ait kullanıcı bulunamadı." && (
-              <p className={classes.error}>{error}</p>
-            )}
+            {postLoginIsError &&
+              postLoginError?.message ===
+                "Girilen e-postaya ait kullanıcı bulunamadı." && (
+                <p className={classes.error}>{postLoginError.message}</p>
+              )}
           </div>
 
           <div className={classes.inputColumn}>
             <Input
               type="password"
               identifier="password"
+              name="password"
               onChange={inputChangeHandler}
               onBlur={inputBlurHandler}
               value={input.password.value}
@@ -177,20 +177,45 @@ export default function Login() {
                   Parola en az 6 karakterden oluşmalı.
                 </p>
               )}
-            {error === "Girilen parola hatalı." && (
-              <p className={classes.error}>{error}</p>
-            )}
-            {error &&
-              error !== "Girilen e-postaya ait kullanıcı bulunamadı." &&
-              error !== "Girilen parola hatalı." && (
-                <p className={classes.error}>{error}</p>
+            {postLoginIsError &&
+              postLoginError?.message === "Girilen parola hatalı." && (
+                <p className={classes.error}>{postLoginError.message}</p>
               )}
+            {postLoginIsError &&
+              postLoginError?.message !==
+                "Girilen e-postaya ait kullanıcı bulunamadı." &&
+              postLoginError?.message !== "Girilen parola hatalı." && (
+                <p className={classes.error}>
+                  {postLoginError?.message || "Bir hata oluştu."}
+                </p>
+              )}
+          </div>
+
+          <div className={classes.rememberMeForgetPasswordDiv}>
+            <div className={classes.checkboxWrapper}>
+              <input
+                className={classes.rememberMeCheckbox}
+                id="remember-me"
+                name="rememberMe"
+                type="checkbox"
+              />
+              <label htmlFor="remember-me" className={classes.checkboxLabel}>
+                Oturumu açık tut
+              </label>
+            </div>
+            <Link
+              className={classes.forgetPasswordLink}
+              href="/sifremi-unuttum"
+            >
+              Şifremi unuttum
+            </Link>
           </div>
 
           <SecondaryButton
             type="submit"
-            text={loading ? "Yükleniyor..." : "Giriş Yap"}
+            text={postLoginIsPending ? "Giriş Yapılıyor..." : "Giriş Yap"}
             className={classes.button}
+            disabled={postLoginIsPending}
           />
         </form>
       </div>

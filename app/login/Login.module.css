@@ -6,6 +6,7 @@
   width: 100%;
   box-sizing: border-box;
   padding: 53px 0 5rem 0;
+  flex: 1;
 }
 
 .pageHeading,
@@ -159,7 +160,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 13px 1rem 27px 1rem;
+    padding: 0 1rem 27px 1rem;
   }
 
   .pageHeading {

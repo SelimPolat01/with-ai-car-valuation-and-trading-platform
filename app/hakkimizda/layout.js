@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Hakkımızda | YapayOto",
+  title: "Hakkımızda",
   description:
     "Yapay zeka destekli araç değerlemesi yapan, yenilikçi ve güvenilir ikinci el araç alım-satım platformu YapayOto'nun hikayesini, misyonunu ve vizyonunu keşfedin.",
   keywords: [

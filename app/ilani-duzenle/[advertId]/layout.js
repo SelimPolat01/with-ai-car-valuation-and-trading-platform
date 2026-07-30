@@ -2,7 +2,7 @@ export async function generateMetadata({ params }) {
   const { id } = await params;
 
   return {
-    title: `İlanı Düzenle (#${id}) | YapayOto`,
+    title: `İlanı Düzenle (#${id})`,
     description:
       "Araç ilanınızı oluşturun, fotoğraflarını yükleyin veya bilgilerinizi güncelleyin.",
     keywords: [

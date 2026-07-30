@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Yapay Zeka ile İlan Arama | YapayOto",
+  title: "Yapay Zeka ile İlan Arama",
   description:
     "Yapay zeka destekli akıllı arama motorumuz ile aradığınız ikinciel aracı doğal dilde tarif edin. İhtiyacınıza ve bütçenize en uygun araç ilanlarını saniyeler içinde listeleyin.",
   keywords: [

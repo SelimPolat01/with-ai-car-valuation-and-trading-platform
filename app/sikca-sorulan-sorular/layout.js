@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Sıkça Sorulan Sorular | YapayOto",
+  title: "Sıkça Sorulan Sorular",
   description:
     "Yapay zeka destekli araç değerleme ve alım-satım platformumuz hakkında merak ettiğiniz soruların cevapları. Sistem nasıl çalışır, yapay zeka ve randevu süreci nasıl işler öğrenin.",
   keywords: [

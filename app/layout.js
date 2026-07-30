@@ -58,9 +58,6 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet"
         />
-        <title>
-          Yapay Zeka ile Araç Değerleme ve Satış Platformu | YapayOto
-        </title>
       </head>
       <body className={`rootBody ${inter.variable} ${josefin.variable}`}>
         <Providers>

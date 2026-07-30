@@ -155,7 +155,7 @@ router.post("/contact", async (req, res) => {
     );
 
     await transporter.sendMail({
-      from: `"${name} ${surname}" ${process.env.CONTACT_RECEIVER_EMAIL_SUPPORT}`,
+      from: `"${name} ${surname}" <${process.env.CONTACT_RECEIVER_EMAIL_SUPPORT}>`,
       replyTo: email,
       to: process.env.CONTACT_RECEIVER_EMAIL_SUPPORT,
       subject: `[İletişim Formu] ${subject}`,
@@ -200,7 +200,7 @@ router.post("/email", async (req, res) => {
       );
 
       await transporter.sendMail({
-        from: `"Güvenlik Ekibi" ${process.env.CONTACT_RECEIVER_EMAIL_AUTH}`,
+        from: `"Güvenlik Ekibi" <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
         to: email,
         subject: "Şifre Sıfırlama Doğrulama Kodunuz",
         html: `

@@ -52,9 +52,7 @@ h6 {
 }
 
 .authLoadingSpinner {
-  height: 100vh !important;
-  padding-top: 50px;
-  padding-bottom: 202.2px;
+  min-height: 100dvh !important;
 }
 
 .mainBg {
@@ -149,9 +147,7 @@ a {
 
 @media (max-width: 768px) {
   .authLoadingSpinner {
-    height: 100dvh !important;
-    padding-top: 40px !important;
-    padding-bottom: 181.4px !important;
+    min-height: 100dvh !important;
   }
 
   .dropdownDiv {

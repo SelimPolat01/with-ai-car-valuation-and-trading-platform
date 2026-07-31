@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: calc(100dvh - 252.2px);
+  flex: 1;
 }
 
 .spinner {
@@ -17,10 +17,6 @@
 }
 
 @media (max-width: 768px) {
-  .loadingContainer {
-    height: calc(100dvh - 221.4px);
-  }
-
   .spinner {
     width: 32px;
     height: 32px;

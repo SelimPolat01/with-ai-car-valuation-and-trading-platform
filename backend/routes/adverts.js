@@ -77,24 +77,6 @@ router.get("/myAdverts", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/myMessageAdverts", verifyToken, async (req, res) => {
-  const userId = Number(req.user.id);
-  try {
-    const result = await db.query(
-      `SELECT DISTINCT a.id AS advert_id, a.brand, a.model, a.model_year, a.engine_capacity, a.price, a.image_src, a.title, a.user_id AS advert_owner_id 
-       FROM adverts AS a 
-       JOIN messages AS m ON a.id = m.advert_id 
-       WHERE (m.user_id = $1 OR m.receiver_id = $1) AND a.is_sold = false 
-       ORDER BY a.id ASC`,
-      [userId],
-    );
-    return res.status(200).json(result.rows);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: "Sunucu hatası!" });
-  }
-});
-
 router.post("/favoriteAdverts/:advertId", verifyToken, async (req, res) => {
   const advertId = Number(req.params.advertId);
   const userId = Number(req.user.id);

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { setFavorites } from "@/store/advertsSlice";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import classes from "./AdvertInfos.module.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,6 +16,7 @@ import SimilarAdverts from "./SimiliarAdverts";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetAdvert } from "@/hooks/GET/useGetAdvert";
 import { usePostFavoriteAdvert } from "@/hooks/POST/usePostFavoriteAdvert";
+import { useGetCheckFavoriteAdvert } from "@/hooks/GET/useGetCheckFavoriteAdvert";
 import {
   formatBrandModel,
   engineCapacityFormat,
@@ -27,13 +27,15 @@ import {
 import Loading from "./Loading";
 import SecondaryButton from "./SecondaryButton";
 import useGetAdvertFavoriteCount from "@/hooks/GET/useGetAdvertFavoriteCount";
-import { useGetFavoriteAdverts } from "@/hooks/GET/useGetFavoriteAdverts";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function AdvertInfos() {
   const params = useParams();
   const router = useRouter();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const user = useSelector((state) => state.auth.user);
+
   const [isSuccess, setIsSuccess] = useState(false);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
@@ -49,46 +51,31 @@ export default function AdvertInfos() {
     error: getAdvertError,
   } = useGetAdvert(params.advertId);
 
-  const {
-    data: getFavoriteAdvertsData,
-    isLoading: getFavoriteAdvertsIsLoading,
-    isError: getFavoriteAdvertsIsError,
-    error: getFavoriteAdvertsError,
-  } = useGetFavoriteAdverts();
-
-  const { mutate: postFavorite, isPending: isFavoritePending } =
-    usePostFavoriteAdvert();
-
   const advert = Array.isArray(getAdvertData?.result)
     ? getAdvertData.result[0]
     : getAdvertData?.result;
 
-  const { data: getAdvertFavoriteCountData } = useGetAdvertFavoriteCount(
-    advert?.id,
-  );
+  const {
+    data: checkFavoriteData,
+    isLoading: checkFavoriteIsLoading,
+    isError: checkFavoriteIsError,
+    error: checkFavoriteError,
+  } = useGetCheckFavoriteAdvert(user ? advert?.id : null);
 
-  const favoriteAdvertsList = useMemo(() => {
-    if (Array.isArray(getFavoriteAdvertsData?.result))
-      return getFavoriteAdvertsData.result;
-    if (Array.isArray(getFavoriteAdvertsData)) return getFavoriteAdvertsData;
-    return [];
-  }, [getFavoriteAdvertsData]);
+  const {
+    data: getAdvertFavoriteCountData,
+    isLoading: favoriteCountIsLoading,
+    isError: favoriteCountIsError,
+    error: favoriteCountError,
+  } = useGetAdvertFavoriteCount(advert?.id);
 
-  useEffect(() => {
-    if (favoriteAdvertsList.length > 0) {
-      dispatch(setFavorites(favoriteAdvertsList));
-    }
-  }, [favoriteAdvertsList, dispatch]);
+  const { mutate: postFavorite, isPending: isFavoritePending } =
+    usePostFavoriteAdvert();
 
-  const isFavorite = favoriteAdvertsList.some(
-    (fav) => String(fav.id || fav.advert_id) === String(advert?.id),
-  );
-
-  const [localIsFavorite, setLocalIsFavorite] = useState(false);
-
-  useEffect(() => {
-    setLocalIsFavorite(isFavorite);
-  }, [isFavorite]);
+  const isFavorite =
+    checkFavoriteData?.result?.isFavorite ??
+    checkFavoriteData?.isFavorite ??
+    false;
 
   const favoriteCount =
     getAdvertFavoriteCountData?.result?.count ??
@@ -146,13 +133,16 @@ export default function AdvertInfos() {
 
     if (!advert || !advert.id) return;
 
-    setLocalIsFavorite((prev) => !prev);
-
     postFavorite(
       { advertId: advert.id },
       {
-        onError: () => {
-          setLocalIsFavorite(isFavorite);
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["checkFavorite", advert.id],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["advertFavoriteCount", advert.id],
+          });
         },
       },
     );
@@ -168,14 +158,23 @@ export default function AdvertInfos() {
     );
   }
 
-  if (getAdvertIsLoading || (user && getFavoriteAdvertsIsLoading)) {
+  if (
+    getAdvertIsLoading ||
+    (user && checkFavoriteIsLoading) ||
+    favoriteCountIsLoading
+  ) {
     return <Loading />;
   }
 
-  if (getAdvertIsError || getFavoriteAdvertsIsError) {
+  if (
+    getAdvertIsError ||
+    (user && checkFavoriteIsError) ||
+    favoriteCountIsError
+  ) {
     const errorMessage =
       getAdvertError?.message ||
-      getFavoriteAdvertsError?.message ||
+      (user && checkFavoriteError?.message) ||
+      favoriteCountError?.message ||
       "Sunucu kaynaklı bir hata oluştu.";
 
     return (
@@ -313,7 +312,7 @@ export default function AdvertInfos() {
                       whileTap={{ scale: 0.95 }}
                       disabled={isFavoritePending}
                       className={
-                        localIsFavorite
+                        isFavorite
                           ? classes.favoriteButton
                           : classes.defaultButton
                       }
@@ -322,7 +321,7 @@ export default function AdvertInfos() {
                     >
                       {isFavoritePending
                         ? "İşleniyor..."
-                        : localIsFavorite
+                        : isFavorite
                           ? "Favorilerimden Çıkar"
                           : "Favorilerime Ekle"}
                     </motion.button>
@@ -334,7 +333,7 @@ export default function AdvertInfos() {
                   >
                     <Heart
                       size={20}
-                      className={`${classes.favoriteIcon} ${localIsFavorite ? classes.favoriteIconActive : ""}`}
+                      className={`${classes.favoriteIcon} ${isFavorite ? classes.favoriteIconActive : ""}`}
                     />
                     <span className={classes.favoriteCountText}>
                       {favoriteCount}

@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/favoriteAdverts", async (req, res) => {
+router.get("/favoriteAdverts", verifyToken, async (req, res) => {
   const userId = Number(req.user.id);
   try {
     const result = await db.query(
@@ -51,6 +51,21 @@ router.get("/favoriteAdverts", async (req, res) => {
     res.status(200).json(result.rows);
   } catch (err) {
     console.error("Favori Getirme Hatası:", err);
+    res.status(500).json({ message: "Sunucu hatası!" });
+  }
+});
+
+router.get("/check-favorite/:advertId", verifyToken, async (req, res) => {
+  const userId = Number(req.user.id);
+  const { advertId } = req.params;
+  try {
+    const result = await db.query(
+      `SELECT EXISTS(SELECT 1 FROM favorite_adverts WHERE user_id = $1 AND advert_id = $2)`,
+      [userId, advertId],
+    );
+    res.status(200).json({ isFavorite: result.rows[0].exists });
+  } catch (err) {
+    console.error("Favori Kontrol Hatası:", err);
     res.status(500).json({ message: "Sunucu hatası!" });
   }
 });

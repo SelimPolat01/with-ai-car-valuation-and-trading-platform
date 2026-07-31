@@ -73,12 +73,13 @@
   margin: 0;
 }
 
+/* Taşmayı önlemek için right: 0 yapıldı, köprü işlevi korundu */
 .account::after {
   content: "";
   position: absolute;
   top: 100%;
-  left: -20px;
-  right: -20px;
+  left: -10px;
+  right: 0;
   height: 20px;
 }
 
@@ -339,26 +340,27 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: nowrap;
   }
 
   .logo {
-    height: 40px !important;
-    width: 40px !important;
-    min-width: 40px !important;
+    height: 38px !important;
+    width: 38px !important;
+    min-width: 38px !important;
     margin: 0;
   }
 
   .searchLi {
     flex: 1 1 auto;
-    min-width: 80px;
-    max-width: 180px;
+    min-width: 60px;
+    max-width: 135px;
     height: 32px;
   }
 
+  /* Giriş yapılınca ikonların sığması için gap 6px yapıldı */
   .ul {
-    gap: 12px;
+    gap: 6px;
     height: 100%;
     align-items: center;
     margin: 0;
@@ -397,8 +399,8 @@
   .allAdvertsLink i,
   .accountLink i,
   .icon {
-    width: 24px !important;
-    height: 24px !important;
+    width: 22px !important;
+    height: 22px !important;
     margin: 0 !important;
     padding: 0 !important;
     display: flex !important;
@@ -416,17 +418,20 @@
     margin: 0;
   }
 
+  /* Menü sağ sınıra sıfırlanır (Ekrandan taşmaz) */
   .accountMenu {
     top: 35px;
     left: auto;
-    right: -10px;
+    right: 0;
     transform: translateY(10px);
-    min-width: 180px;
+    min-width: 170px;
+    max-width: calc(100vw - 20px);
   }
 
+  /* Ok işareti (::before) İkonun Tam Ortasına Hizalanır (right: 7px) */
   .accountMenu::before {
     left: auto;
-    right: 17px;
+    right: 7px;
     transform: none;
   }
 
@@ -435,37 +440,39 @@
     transform: translateY(0);
   }
 
+  /* Bildirim menüsü sağ sınıra sıfırlanır */
   .notificationDropdown {
-    width: 290px;
+    width: 280px;
     max-width: calc(100vw - 20px);
     left: auto;
-    right: -10px;
+    right: 0;
     transform: none;
   }
 
+  /* Ok işareti Bildirim İkonunun Tam Ortasına Hizalanır (right: 7px) */
   .notificationDropdown::before {
     left: auto;
-    right: 14px;
+    right: 7px;
     transform: none;
   }
 }
 
 @media (max-width: 480px) {
   .nav {
-    padding: 0 16px 0 0.5rem;
-    gap: 8px;
+    padding: 0 8px;
+    gap: 4px;
   }
 
   .logo {
-    height: 40px !important;
-    width: 40px !important;
-    min-width: 40px !important;
-    margin: 8px 0 0 0;
+    height: 34px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    margin: 0;
   }
 
   .icon {
-    width: 22px !important;
-    height: 22px !important;
+    width: 20px !important;
+    height: 20px !important;
   }
 
   .ul {
@@ -476,11 +483,12 @@
   .notificationDropdown {
     width: 260px;
     max-width: calc(100vw - 16px);
-    right: -15px;
+    right: -6px;
   }
 
+  /* Küçük ekranda küçülen ikon için ok ortalaması (right: 5px) */
   .notificationDropdown::before {
-    right: 17px;
+    right: 7px;
   }
 
   .notificationHeader h4 {
@@ -506,11 +514,12 @@
 
   .accountMenu {
     min-width: 150px;
-    right: -15px;
+    right: -4px;
   }
 
+  /* Küçük ekranda küçülen ikon için ok ortalaması (right: 5px) */
   .accountMenu::before {
-    right: 21px;
+    right: 7px;
   }
 
   .accountMenu a {

@@ -8,8 +8,6 @@ import { logout } from "@/store/authSlice";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
 import {
-  AlertCircle,
-  ArrowLeft,
   BellDot,
   FolderHeart,
   LogOut,
@@ -17,40 +15,27 @@ import {
   User,
   UserCog,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useGetPersonalNotifications } from "@/hooks/GET/useGetPersonalNotifications";
 import { usePatchNotificationRead } from "@/hooks/PATCH/usePatchNotificationRead";
 import { headerLinks } from "../utils/helpers";
+import { usePostLogout } from "@/hooks/POST/usePostLogout";
 
 export default function Header({ className }) {
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    if (currentToken) {
-      setToken(currentToken);
-    }
-  }, []);
-
   const [clickNotificationIcon, setClickNotificationIcon] = useState(false);
   const { isInitialized, isLogin } = useSelector((state) => state.auth);
+  const { mutate: logoutMutate } = usePostLogout();
 
   const {
     data: getPersonalNotificationsData,
     isLoading: getPersonalNotificationsIsLoading,
     isError: getPersonalNotificationsIsError,
-    error: getPersonalNotificationsError,
-  } = useGetPersonalNotifications(token);
+  } = useGetPersonalNotifications(isLogin);
 
-  const {
-    mutate: patchPersonalNotificationRead,
-    isPending: patchPersonalNotificationPending,
-    isError: patchPersonalNotificationIsError,
-    error: patchPersonalNotificationError,
-  } = usePatchNotificationRead();
+  const { mutate: patchPersonalNotificationRead } = usePatchNotificationRead();
 
   if (!isInitialized) return null;
 
@@ -60,11 +45,9 @@ export default function Header({ className }) {
 
   function notificationClickHandler(notification) {
     setClickNotificationIcon(false);
-    const currentToken = localStorage.getItem("token");
 
     if (!notification.is_read) {
       patchPersonalNotificationRead({
-        token: currentToken,
         notificationId: notification.id,
       });
     }
@@ -83,26 +66,16 @@ export default function Header({ className }) {
   }
 
   function logoutHandler() {
-    dispatch(logout());
-    router.replace("/login");
-    localStorage.removeItem("token");
+    logoutMutate(undefined, {
+      onSettled: () => {
+        dispatch(logout());
+        router.replace("/login");
+      },
+    });
   }
 
   const links = headerLinks;
   const hideSearchBar = pathname === "/login" || pathname === "/register";
-
-  if (getPersonalNotificationsIsError && isLogin) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{getPersonalNotificationsError?.message}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
-  }
 
   return (
     <header className={`${classes.header} ${className ? className : ""} `}>
@@ -174,7 +147,15 @@ export default function Header({ className }) {
                       <h4>Bildirimler</h4>
                     </div>
                     <div className={classes.notificationList}>
-                      {personalNotifications?.length > 0 ? (
+                      {getPersonalNotificationsIsLoading ? (
+                        <div className={classes.emptyNotification}>
+                          Yükleniyor...
+                        </div>
+                      ) : getPersonalNotificationsIsError ? (
+                        <div className={classes.emptyNotification}>
+                          Bildirimler yüklenemedi.
+                        </div>
+                      ) : personalNotifications?.length > 0 ? (
                         personalNotifications.map((notification) => (
                           <div
                             key={notification.id}
@@ -275,10 +256,10 @@ export default function Header({ className }) {
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/login"
+                  <button
+                    type="button"
                     onClick={logoutHandler}
-                    className={classes.logoutLink}
+                    className={classes.logoutButton}
                     title="Çıkış Yap"
                   >
                     <LogOut
@@ -287,7 +268,7 @@ export default function Header({ className }) {
                       stroke="currentColor"
                     />
                     Çıkış Yap
-                  </Link>
+                  </button>
                 </li>
               </ul>
             </li>

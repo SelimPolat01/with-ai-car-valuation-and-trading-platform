@@ -1,6 +1,6 @@
 import Link from "next/link";
 import classes from "./ManagementNav.module.css";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function ManagementNav({ className }) {
   const path = usePathname();

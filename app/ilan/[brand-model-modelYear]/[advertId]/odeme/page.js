@@ -8,32 +8,25 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import SuccessMessage from "@/app/components/SuccessMessage";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSelector } from "react-redux";
 
 export default function Odeme() {
   const router = useRouter();
   const params = useParams();
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-  }, [router]);
-
+  const { isInitialized, isLogin } = useSelector((state) => state.auth);
   const creditCardRef = useRef();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     const appointmentData = sessionStorage.getItem("appointmentData");
-    if (!appointmentData)
+    if (!appointmentData) {
       router.replace(
         `/ilan/${params["brand-model-modelYear"]}/${params.advertId}`,
       );
-    else setIsAuthorized(true);
+    } else {
+      setIsAuthorized(true);
+    }
   }, [router, params]);
 
   useEffect(() => {
@@ -58,14 +51,14 @@ export default function Odeme() {
   function advertBuyHandler() {
     const isFormValid = creditCardRef.current.validateForm();
     if (!isFormValid) return;
+
     const appointmentDataStr = sessionStorage.getItem("appointmentData");
     if (!appointmentDataStr) return;
+
     const appointmentData = JSON.parse(appointmentDataStr);
-    const token = localStorage.getItem("token");
 
     patchSoldAdvertMutate(
       {
-        token,
         body: {
           advertId: params.advertId,
           slot_date: appointmentData.date,
@@ -85,7 +78,7 @@ export default function Odeme() {
     );
   }
 
-  if (!isAuthorized) return null;
+  if (!isInitialized || !isLogin || !isAuthorized) return null;
 
   return (
     <div className={classes.div}>

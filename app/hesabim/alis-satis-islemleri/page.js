@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import classes from "./AlisSatisİslemleri.module.css";
 import { usePathname, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import {
   AlertCircle,
   ArrowLeft,
@@ -26,25 +27,17 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function AlisSatisiIslemleri() {
   const router = useRouter();
   const pathName = usePathname();
-  const [token, setToken] = useState(null);
   const [role, setRole] = useState("buyer");
   const [activeTab, setActiveTab] = useState("active");
 
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-    setToken(currentToken);
-  }, [router]);
+  const { isInitialized, isLogin } = useSelector((state) => state.auth);
 
   const {
     data: getTradingValuesData,
     isLoading: getTradingValuesIsLoading,
     isError: getTradingValuesIsError,
     error: getTradingValuesError,
-  } = useGetPersonalTransactions(token);
+  } = useGetPersonalTransactions();
 
   const currentData = useMemo(() => {
     if (!getTradingValuesData) return [];
@@ -72,8 +65,12 @@ export default function AlisSatisiIslemleri() {
     });
   }, [getTradingValuesData, role, activeTab]);
 
-  if (!token || getTradingValuesIsLoading) {
+  if (!isInitialized || getTradingValuesIsLoading) {
     return <Loading />;
+  }
+
+  if (!isLogin) {
+    return null;
   }
 
   if (getTradingValuesIsError) {

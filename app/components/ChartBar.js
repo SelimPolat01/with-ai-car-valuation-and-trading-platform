@@ -1,25 +1,11 @@
 "use client";
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 import classes from "./ChartBar.module.css";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { chartVariants } from "@/app/utils/animations";
 import { generateChartData } from "@/app/utils/helpers";
 
 export default function ChartBar({ text, optionsIcon, width, height, data }) {
-  const router = useRouter();
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-  }, [router]);
-
   const chartData = generateChartData(data);
 
   return (

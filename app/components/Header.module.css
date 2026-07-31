@@ -128,7 +128,8 @@
   margin-top: 4px;
 }
 
-.accountMenu a {
+.accountMenu a,
+.accountMenu button {
   width: 100%;
   display: flex;
   align-items: center;
@@ -141,7 +142,8 @@
   transition: all 0.2s ease;
 }
 
-.accountMenu a:hover {
+.accountMenu a:hover,
+.accountMenu button:hover {
   color: #00f4ff;
   background-color: rgba(0, 244, 255, 0.1);
   transform: translateX(4px);
@@ -149,10 +151,16 @@
 
 .myAdvertsLink,
 .favoriteAdvertsLink,
-.logoutLink,
+.logoutButton,
 .juniorAccountLink {
   font-size: 14px;
   height: auto;
+}
+
+.logoutButton {
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
 .juniorIcon {

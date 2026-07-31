@@ -13,6 +13,8 @@ export default function SearchAdvert() {
   const searchText = searchParams.get("q") || "";
 
   useEffect(() => {
+    let isMounted = true;
+
     if (!searchText || !searchText.trim()) {
       setSimilarAdverts([]);
       setLoading(false);
@@ -31,7 +33,9 @@ export default function SearchAdvert() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ text: searchText.toLowerCase() }),
+            body: JSON.stringify({
+              text: searchText.toLocaleLowerCase("tr-TR"),
+            }),
           },
         );
 
@@ -41,33 +45,47 @@ export default function SearchAdvert() {
 
         const data = await response.json();
 
-        if (data.success) {
-          setSimilarAdverts(data.results);
-        } else {
-          setError(data.message);
+        if (isMounted) {
+          if (data.success) {
+            setSimilarAdverts(data.results || []);
+          } else {
+            setError(data.message || "Arama başarısız oldu.");
+          }
         }
       } catch (err) {
-        console.error("FastAPI Bağlantı Hatası:", err);
-        setError(err.message);
+        if (isMounted) {
+          console.error("FastAPI Bağlantı Hatası:", err);
+          setError(err.message || "Bir bağlantı hatası oluştu.");
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
 
     fetchSimilarAdverts();
+
+    return () => {
+      isMounted = false;
+    };
   }, [searchText]);
 
   function capitalize(text) {
-    if (typeof text !== "string") return "";
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    if (typeof text !== "string" || !text) return "";
+    return (
+      text.charAt(0).toLocaleUpperCase("tr-TR") +
+      text.slice(1).toLocaleLowerCase("tr-TR")
+    );
   }
 
-  if (error)
+  if (error) {
     return (
       <div className={classes.errorDiv}>
         <p className="error">{error}</p>
       </div>
     );
+  }
 
   return (
     <div className={classes.div}>
@@ -100,29 +118,37 @@ export default function SearchAdvert() {
               Eşleşen benzer bir ilan bulunamadı.
             </p>
           ) : (
-            similarAdverts.map((advert) => (
-              <Link
-                key={advert.id}
-                href={`/ilan/detay/${advert.id}`}
-                className={classes.listItem}
-              >
-                <img
-                  className={classes.img}
-                  src={advert.image_src || "/default-car.png"}
-                  alt={advert.title}
-                />
+            similarAdverts.map((advert) => {
+              const matchPercentage =
+                typeof advert.distance === "number"
+                  ? ((1 - advert.distance) * 100).toFixed(1)
+                  : "0";
 
-                <span className={classes.title}>{advert.title}</span>
+              const safeTitle = advert.title || "İlan Başlığı Yok";
+              const safeDescription = (
+                advert.description || ""
+              ).toLocaleUpperCase("tr-TR");
 
-                <span className={classes.price}>
-                  % {((1 - advert.distance) * 100).toFixed(1)}
-                </span>
+              return (
+                <Link
+                  key={advert.id}
+                  href={`/ilan/detay/${advert.id}`}
+                  className={classes.listItem}
+                >
+                  <img
+                    className={classes.img}
+                    src={advert.image_src || "/default-car.png"}
+                    alt={safeTitle}
+                  />
 
-                <span className={classes.description}>
-                  {advert.description.toUpperCase()}
-                </span>
-              </Link>
-            ))
+                  <span className={classes.title}>{safeTitle}</span>
+
+                  <span className={classes.price}>% {matchPercentage}</span>
+
+                  <span className={classes.description}>{safeDescription}</span>
+                </Link>
+              );
+            })
           )}
         </div>
       </div>

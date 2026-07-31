@@ -3,11 +3,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import classes from "./Register.module.css";
-
 import { usePostEmailVerify } from "@/hooks/POST/usePostEmailVerify";
 import { usePostOtpVerify } from "@/hooks/POST/usePostOtpVerify";
 import { usePostRegister } from "@/hooks/POST/usePostRegister";
-
 import VerifyEmailStep from "@/app/components/VerifyEmailStep";
 import VerifyOtpStep from "@/app/components/VerifyOtpStep";
 import RegisterDetailsStep from "@/app/components/RegisterDetailsStep";
@@ -15,7 +13,6 @@ import RegisterDetailsStep from "@/app/components/RegisterDetailsStep";
 export default function Register() {
   const router = useRouter();
   const dispatch = useDispatch();
-
   const [step, setStep] = useState(1);
   const [isConflict, setIsConflict] = useState(false);
 

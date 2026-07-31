@@ -12,40 +12,32 @@ import {
 } from "lucide-react";
 import Frame from "../../components/Frame";
 import classes from "./Garaj.module.css";
-import { useEffect, useState } from "react";
 import ChartBar from "../../components/ChartBar";
 import HalfCircleProgress from "../../components/HalfCircleProgress";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useGetPersonalAdvertsInfos } from "@/hooks/GET/useGetPersonalAdvertsInfos";
 import { useGetPersonalSoldAdverts } from "@/hooks/GET/usePersonalSoldAdverts";
 import { formatMaliDeger, getAylikIlanVerileri } from "@/app/utils/helpers";
 import Loading from "@/app/loading";
 
-export default function Garajim() {
+export default function Garaj() {
   const router = useRouter();
-  const [token, setToken] = useState(null);
 
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-  }, [router]);
+  const { isInitialized, isLogin } = useSelector((state) => state.auth);
 
   const {
     data: getPersonalAdvertsData,
     isLoading: getPersonalAdvertsIsLoading,
     isError: getPersonalAdvertsIsError,
     error: getPersonalAdvertsError,
-  } = useGetPersonalAdvertsInfos(token);
+  } = useGetPersonalAdvertsInfos();
 
   const {
     data: personalSoldAdvertsData,
     isLoading: personalSoldAdvertsIsLoading,
-  } = useGetPersonalSoldAdverts(token);
+  } = useGetPersonalSoldAdverts();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -57,6 +49,31 @@ export default function Garajim() {
       },
     },
   };
+
+  if (
+    !isInitialized ||
+    getPersonalAdvertsIsLoading ||
+    personalSoldAdvertsIsLoading
+  ) {
+    return <Loading />;
+  }
+
+  if (!isLogin) {
+    return null;
+  }
+
+  if (getPersonalAdvertsIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getPersonalAdvertsError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
+      </div>
+    );
+  }
 
   const kisiselİlanlar = getPersonalAdvertsData?.result?.personalAdverts || [];
   const favoriIlanSayisi =
@@ -84,23 +101,6 @@ export default function Garajim() {
   const netKar = toplamGelir - toplamGider;
 
   const aylikIlanVerileri = getAylikIlanVerileri(kisiselİlanlar);
-
-  if (!token || personalSoldAdvertsIsLoading) {
-    return <Loading />;
-  }
-
-  if (getPersonalAdvertsIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{getPersonalAdvertsError?.message}</p>
-        <button get={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className={classes.div}>

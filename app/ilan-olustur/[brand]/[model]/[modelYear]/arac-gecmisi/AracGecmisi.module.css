@@ -314,6 +314,11 @@
     padding: 1.5rem;
   }
 
+  .fileWrapper,
+  .selectWrapper {
+    gap: 2px;
+  }
+
   .inputGrid {
     grid-template-columns: 1fr;
     gap: 1.5rem;

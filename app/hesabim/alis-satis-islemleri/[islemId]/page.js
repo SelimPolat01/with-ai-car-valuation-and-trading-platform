@@ -10,7 +10,8 @@ import {
   ShieldX,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import classes from "./İslem.module.css";
 import {
   capitalizeWords,
@@ -40,39 +41,27 @@ export default function IslemDetaylar() {
   const router = useRouter();
   const params = useParams();
   const cancelDialogRef = useRef(null);
-  const [token, setToken] = useState(null);
-  const [ruhsatVisible, setRuhsatVisible] = useState(true);
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-    }
-  }, [router]);
+  const [permitVisible, setPermitVisible] = useState(true);
+  const { isInitialized, isLogin } = useSelector((state) => state.auth);
 
   const {
     data: getPersonalTransactionsData,
     isLoading: getPersonalTransactionsIsLoading,
     isError: getPersonalTransactionsIsError,
     error: getPersonalTransactionsError,
-  } = useGetPersonalTransactions(token);
+  } = useGetPersonalTransactions();
 
   const {
     mutate: patchPersonalTransactionMutate,
     isPending: patchPersonalTransactionIsPending,
   } = usePatchPersonalTransactionCancel();
 
-  const transactionList = Array.isArray(getPersonalTransactionsData)
-    ? getPersonalTransactionsData
-    : getPersonalTransactionsData?.result || [];
-
-  const transaction = transactionList.find(
-    (transaction) => String(transaction.payment_id) === String(params.islemId),
-  );
-
-  if (!token || getPersonalTransactionsIsLoading) {
+  if (!isInitialized || getPersonalTransactionsIsLoading) {
     return <Loading />;
+  }
+
+  if (!isLogin) {
+    return null;
   }
 
   if (getPersonalTransactionsIsError) {
@@ -87,6 +76,14 @@ export default function IslemDetaylar() {
       </div>
     );
   }
+
+  const transactionList = Array.isArray(getPersonalTransactionsData)
+    ? getPersonalTransactionsData
+    : getPersonalTransactionsData?.result || [];
+
+  const transaction = transactionList.find(
+    (transaction) => String(transaction.payment_id) === String(params.islemId),
+  );
 
   if (!transaction) {
     return (
@@ -109,7 +106,7 @@ export default function IslemDetaylar() {
 
   function cancelTransactionConfirmHandler(transactionId) {
     patchPersonalTransactionMutate(
-      { token: token, transactionId: transactionId },
+      { transactionId: transactionId },
       {
         onSuccess: (data) => console.log(data?.message),
         onError: (err) => console.log(err?.message),
@@ -118,7 +115,7 @@ export default function IslemDetaylar() {
   }
 
   const currentStep = getStepFromStatus(transaction.payment_status);
-  const canViewPermit = transaction.role === "seller" || ruhsatVisible;
+  const canViewPermit = transaction.role === "seller" || permitVisible;
   const statusData = getTransactionStatusData(transaction.payment_status);
 
   return (
@@ -526,11 +523,11 @@ export default function IslemDetaylar() {
                   <span>Ruhsat Bilgilerini Alıcıya Göster:</span>
                   <button
                     className={`${classes.toggleBtn} ${
-                      ruhsatVisible ? classes.toggleActive : ""
+                      permitVisible ? classes.toggleActive : ""
                     }`}
-                    onClick={() => setRuhsatVisible(!ruhsatVisible)}
+                    onClick={() => setPermitVisible(!permitVisible)}
                   >
-                    {ruhsatVisible ? "AÇIK" : "KAPALI"}
+                    {permitVisible ? "AÇIK" : "KAPALI"}
                   </button>
                 </div>
 

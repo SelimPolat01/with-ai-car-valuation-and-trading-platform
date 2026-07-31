@@ -5,6 +5,8 @@
   align-items: center;
   justify-content: center;
   padding: 3rem 0 5rem 0;
+  box-sizing: border-box;
+  min-height: 460px;
   flex: 1;
 }
 
@@ -60,11 +62,15 @@
 .cancelButton {
   color: #ff6b6b !important;
   border: 1px solid rgba(255, 107, 107, 0.3) !important;
-  font-weight: 600 !important;
-  font-size: 18px !important;
   background: rgba(0, 0, 0, 0.6) !important;
-  height: 50px !important;
-  padding: 0 24px !important;
+}
+
+.cancelButton,
+.button {
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  height: 48px !important;
+  padding: 12px !important;
   box-sizing: border-box !important;
   border-radius: 8px !important;
   backdrop-filter: blur(8px) !important;
@@ -74,6 +80,7 @@
   align-items: center !important;
   justify-content: center !important;
   width: 100% !important;
+  margin: 0 !important;
 }
 
 .cancelButton:hover {
@@ -85,22 +92,9 @@
 }
 
 .button {
-  margin: 0 !important;
-  transition: all 0.3s ease !important;
   background: rgba(152, 103, 255, 0.8) !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  font-weight: 600 !important;
-  font-size: 15px !important;
-  height: 50px !important;
-  padding: 0 24px !important;
-  box-sizing: border-box !important;
-  border-radius: 8px !important;
-  backdrop-filter: blur(8px) !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
 }
 
 .button:hover {
@@ -339,10 +333,10 @@
 
   .cancelButton,
   .button {
-    width: 50% !important;
-    flex: 1;
-    height: 50px !important;
-    padding: 0 12px !important;
+    max-width: 135px !important;
+    flex: 1 !important;
+    height: 40px !important;
+    padding: 0 !important;
     font-size: 12px !important;
     text-align: center !important;
     white-space: nowrap !important;

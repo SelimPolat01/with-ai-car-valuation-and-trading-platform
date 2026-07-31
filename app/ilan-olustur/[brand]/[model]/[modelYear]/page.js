@@ -34,16 +34,6 @@ export default function TahminYap() {
     (state) => state.prediction.prediction,
   );
   const dispatch = useDispatch();
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-  }, [router]);
 
   const {
     mutate: carValuePredictMutate,
@@ -76,6 +66,7 @@ export default function TahminYap() {
   });
 
   const [isKmFocused, setIsKmFocused] = useState(false);
+
   const [errors, setErrors] = useState({
     trimLevel: false,
     bodyType: false,
@@ -167,7 +158,6 @@ export default function TahminYap() {
       return;
     }
 
-    const token = localStorage.getItem("token");
     const payload = {
       brand: params.brand.toLowerCase(),
       model: params.model.toLowerCase(),
@@ -182,7 +172,7 @@ export default function TahminYap() {
     };
 
     carValuePredictMutate(
-      { token, body: payload },
+      { body: payload },
       {
         onSuccess: (data) => {
           const reduxData = {
@@ -214,7 +204,6 @@ export default function TahminYap() {
         return;
 
       try {
-        const token = localStorage.getItem("token");
         const encodedBrand = encodeURIComponent(brand);
         const encodedModel = encodeURIComponent(model);
 
@@ -226,13 +215,11 @@ export default function TahminYap() {
         const response = await fetch(url, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
 
         if (response.status === 401) {
-          localStorage.removeItem("token");
           router.replace("/login");
           return;
         }
@@ -250,7 +237,6 @@ export default function TahminYap() {
         }));
       } catch (err) {
         setError(err.message);
-      } finally {
       }
     }
     fetchEngineCapacities(
@@ -262,7 +248,6 @@ export default function TahminYap() {
 
   async function fetchFuelTypes(selectedEngineCapacity) {
     try {
-      const token = localStorage.getItem("token");
       const brandEnc = encodeURIComponent(
         formatBrandLowerParser(params.brand.toLowerCase()),
       );
@@ -276,13 +261,11 @@ export default function TahminYap() {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
       );
       if (response.status === 401) {
-        localStorage.removeItem("token");
         router.replace("/login");
         return;
       }
@@ -299,13 +282,11 @@ export default function TahminYap() {
       }));
     } catch (err) {
       setError(err.message);
-    } finally {
     }
   }
 
   async function fetchHorsepowers(selectedEngineCapacity, selectedFuelType) {
     try {
-      const token = localStorage.getItem("token");
       const brandEnc = encodeURIComponent(formatBrandLowerParser(params.brand));
       const modelEnc = encodeURIComponent(formatModelForApi(params.model));
       const engineEnc = encodeURIComponent(selectedEngineCapacity);
@@ -316,13 +297,12 @@ export default function TahminYap() {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          credentials: "include",
         },
       );
       if (response.status === 401) {
-        localStorage.removeItem("token");
         router.replace("/login");
         return;
       }
@@ -339,7 +319,6 @@ export default function TahminYap() {
       }));
     } catch (err) {
       setError(err.message);
-    } finally {
     }
   }
 
@@ -349,7 +328,6 @@ export default function TahminYap() {
     selectedHorsepower,
   ) {
     try {
-      const token = localStorage.getItem("token");
       const brandEnc = encodeURIComponent(formatBrandLowerParser(params.brand));
       const modelEnc = encodeURIComponent(formatModelForApi(params.model));
       const engineEnc = encodeURIComponent(selectedEngineCapacity);
@@ -361,13 +339,11 @@ export default function TahminYap() {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
       );
       if (response.status === 401) {
-        localStorage.removeItem("token");
         router.replace("/login");
         return;
       }
@@ -394,7 +370,6 @@ export default function TahminYap() {
     selecedTransmission,
   ) {
     try {
-      const token = localStorage.getItem("token");
       const brandEnc = encodeURIComponent(formatBrandLowerParser(params.brand));
       const modelEnc = encodeURIComponent(formatModelForApi(params.model));
       const engineEnc = encodeURIComponent(selectedEngineCapacity);
@@ -407,13 +382,11 @@ export default function TahminYap() {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
       );
       if (response.status === 401) {
-        localStorage.removeItem("token");
         router.replace("/login");
         return;
       }
@@ -441,7 +414,6 @@ export default function TahminYap() {
     selectedBodyType,
   ) {
     try {
-      const token = localStorage.getItem("token");
       const brandEnc = encodeURIComponent(formatBrandLowerParser(params.brand));
       const modelEnc = encodeURIComponent(formatModelForApi(params.model));
       const engineEnc = encodeURIComponent(selectedEngineCapacity);
@@ -455,13 +427,11 @@ export default function TahminYap() {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
       );
       if (response.status === 401) {
-        localStorage.removeItem("token");
         router.replace("/login");
         return;
       }

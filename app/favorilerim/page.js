@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import { useSelector } from "react-redux";
 import classes from "./Favorilerim.module.css";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -18,26 +17,14 @@ export default function Favorilerim() {
   const router = useRouter();
   const deleteDialogRef = useRef(null);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
-  const [token, setToken] = useState(null);
-
-  const user = useSelector((state) => state.auth.user);
-  useCheckAuth();
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-    setToken(currentToken);
-  }, [router]);
+  const { user, isInitialized, isLogin } = useSelector((state) => state.auth);
 
   const {
     data: getFavoriteAdvertsData,
     isLoading: getFavoriteAdvertsIsLoading,
     isError: getFavoriteAdvertsIsError,
     error: getFavoriteAdvertsError,
-  } = useGetFavoriteAdverts(token);
+  } = useGetFavoriteAdverts();
 
   const {
     mutate: deleteFavoriteAdvertMutate,
@@ -48,10 +35,8 @@ export default function Favorilerim() {
   } = usePostFavoriteAdvert();
 
   function removeFavoriteAdvertHandler(id) {
-    if (!token) return;
-
     deleteFavoriteAdvertMutate(
-      { token, advertId: id },
+      { advertId: id },
       {
         onSuccess: () => {
           setSelectedAdvertId(null);
@@ -71,8 +56,12 @@ export default function Favorilerim() {
     deleteDialogRef.current.showModal();
   }
 
-  if (!token || getFavoriteAdvertsIsLoading) {
+  if (!isInitialized || getFavoriteAdvertsIsLoading) {
     return <Loading />;
+  }
+
+  if (!isLogin) {
+    return null;
   }
 
   if (getFavoriteAdvertsIsError) {

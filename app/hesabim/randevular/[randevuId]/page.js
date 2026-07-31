@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import { useGetPersonalAppointments } from "@/hooks/GET/useGetPersonalAppointments";
 import Image from "next/image";
 import classes from "./Randevu.module.css";
@@ -34,28 +35,31 @@ import {
   getAppointmentStatusData,
 } from "@/app/utils/helpers";
 import Loading from "@/app/loading";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import {
+  randevuContainerVariants,
+  randevuItemVariants,
+} from "@/app/utils/animations";
 
 export default function RandevuDetaylar() {
   const router = useRouter();
   const params = useParams();
-  const [token, setToken] = useState(null);
   const cancelDialogRef = useRef(null);
 
+  const { isInitialized, isLogin } = useSelector((state) => state.auth);
+
   useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
+    if (isInitialized && !isLogin) {
       router.replace("/login");
     }
-  }, [router]);
+  }, [isInitialized, isLogin, router]);
 
   const {
     data: getPersonalAppointmentsData,
     isLoading: getPersonalAppointmentsIsLoading,
     isError: getPersonalAppointmentsIsError,
     error: getPersonalAppointmentsError,
-  } = useGetPersonalAppointments(token);
+  } = useGetPersonalAppointments();
 
   const {
     mutate: patchPersonalAppointmentCancelMutate,
@@ -64,31 +68,12 @@ export default function RandevuDetaylar() {
     error: patchPersonalAppointmentCancelError,
   } = usePatchPersonalAppointmentCancel();
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 260,
-        damping: 20,
-      },
-    },
-  };
-
-  if (!token || getPersonalAppointmentsIsLoading) {
+  if (!isInitialized || getPersonalAppointmentsIsLoading) {
     return <Loading />;
+  }
+
+  if (!isLogin) {
+    return null;
   }
 
   if (getPersonalAppointmentsIsError) {
@@ -96,7 +81,10 @@ export default function RandevuDetaylar() {
       <div className="errorContainer">
         <AlertCircle size={30} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getPersonalAppointmentsError?.message}</p>
+        <p>
+          {getPersonalAppointmentsError?.message ||
+            "Randevular yüklenirken bir sorun oluştu."}
+        </p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
@@ -131,7 +119,7 @@ export default function RandevuDetaylar() {
 
   function cancelAppointmentConfirmHandler(appointmentId) {
     patchPersonalAppointmentCancelMutate(
-      { token: token, appointmentId: appointmentId },
+      { appointmentId: appointmentId },
       {
         onSuccess: (data) => {
           console.log(data?.message);
@@ -193,14 +181,14 @@ export default function RandevuDetaylar() {
       </div>
 
       <motion.div
-        variants={containerVariants}
+        variants={randevuContainerVariants}
         initial="hidden"
         animate="show"
         className={classes.contentWrapper}
       >
         <div className={classes.leftColumn}>
           <motion.div
-            variants={itemVariants}
+            variants={randevuItemVariants}
             className={`${classes.card} ${classes.flexGrow1}`}
           >
             <div className={classes.carHeaderSection}>
@@ -317,7 +305,7 @@ export default function RandevuDetaylar() {
           </motion.div>
 
           <div className={classes.alertsGrid}>
-            <motion.div variants={itemVariants} className={classes.card}>
+            <motion.div variants={randevuItemVariants} className={classes.card}>
               <div className={classes.boxHeader}>
                 <AlertCircle className={classes.iconWarning} size={20} />
                 <h3>Önemli Hatırlatmalar</h3>
@@ -342,7 +330,7 @@ export default function RandevuDetaylar() {
         </div>
 
         <div className={classes.rightColumn}>
-          <motion.div variants={itemVariants} className={classes.card}>
+          <motion.div variants={randevuItemVariants} className={classes.card}>
             <div className={classes.boxHeader}>
               <Info className={classes.iconPrimary} size={20} />
               <h3>Sizin Rolünüz</h3>
@@ -360,7 +348,7 @@ export default function RandevuDetaylar() {
           </motion.div>
 
           <motion.div
-            variants={itemVariants}
+            variants={randevuItemVariants}
             className={`${classes.card} ${classes.flexGrow1}`}
           >
             <div className={classes.boxHeader}>
@@ -404,7 +392,7 @@ export default function RandevuDetaylar() {
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className={classes.card}>
+          <motion.div variants={randevuItemVariants} className={classes.card}>
             <div className={classes.qrWrapper}>
               <div className={classes.qrBox}>
                 <QrCode size={48} className={classes.qrIcon} />
@@ -435,7 +423,7 @@ export default function RandevuDetaylar() {
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className={classes.card}>
+          <motion.div variants={randevuItemVariants} className={classes.card}>
             <div className={classes.boxHeader}>
               <ShieldAlert className={classes.iconSecondary} size={20} />
               <h3>İşlemler</h3>
@@ -444,6 +432,29 @@ export default function RandevuDetaylar() {
               Randevunuzu, başlama saatine son 24 saat kalana kadar ücretsiz
               iptal edebilirsiniz.
             </p>
+
+            {/* MUTATION İPTAL İŞLEMİNDEKİ HATA GÖSTERİMİ EKLENDİ */}
+            {patchPersonalAppointmentCancelIsError && (
+              <div
+                style={{
+                  color: "#ef4444",
+                  backgroundColor: "#fef2f2",
+                  padding: "10px",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  marginBottom: "15px",
+                  fontSize: "14px",
+                }}
+              >
+                <AlertCircle size={18} />
+                <span>
+                  {patchPersonalAppointmentCancelError?.message ||
+                    "İptal işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin."}
+                </span>
+              </div>
+            )}
 
             <div className={classes.actionButtonsContainer}>
               {appointment.appointment_status === "pending" && (

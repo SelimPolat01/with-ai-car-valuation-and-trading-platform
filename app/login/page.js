@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import SecondaryButton from "../components/SecondaryButton";
 import Link from "next/link";
 import { usePostLogin } from "@/hooks/POST/usePostLogin";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "@/store/authSlice";
 
 export default function Login() {
@@ -18,6 +18,8 @@ export default function Login() {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const { isLogin } = useSelector((state) => state.auth);
+
   const {
     mutate: postLoginMutate,
     isPending: postLoginIsPending,
@@ -27,13 +29,10 @@ export default function Login() {
   } = usePostLogin();
 
   useEffect(() => {
-    const token =
-      sessionStorage.getItem("token") || localStorage.getItem("token");
-
-    if (token) {
+    if (isLogin) {
       router.replace("/");
     }
-  }, [router]);
+  }, [isLogin, router]);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("email");
@@ -94,23 +93,11 @@ export default function Login() {
         body: {
           email: input.email.value,
           password: input.password.value,
+          rememberMe: isRememberMe,
         },
       },
       {
         onSuccess: (data) => {
-          const token = data?.result?.token;
-
-          const decodedToken = JSON.parse(atob(token.split(".")[1]));
-          const expire = decodedToken.exp * 1000;
-
-          if (isRememberMe) {
-            localStorage.setItem("token", token);
-            localStorage.setItem("tokenExpire", expire.toString());
-          } else {
-            sessionStorage.setItem("token", token);
-            sessionStorage.setItem("tokenExpire", expire.toString());
-          }
-
           dispatch(loginSuccess(data?.result?.user));
           router.replace("/");
         },

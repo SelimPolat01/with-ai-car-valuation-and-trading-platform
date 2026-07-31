@@ -18,28 +18,18 @@ export default function AllAdverts() {
   const dispatch = useDispatch();
   const router = useRouter();
   const deleteDialogRef = useRef(null);
-  const [token, setToken] = useState(null);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
-  const [isTokenLoaded, setIsTokenLoaded] = useState(false);
   const allAdverts = useSelector((state) => state.adverts.allAdverts);
   const filteredAdverts = useSelector((state) => state.adverts.filteredAdverts);
   const selectedBrand = useSelector((state) => state.adverts.selectedBrand);
   const user = useSelector((state) => state.auth.user);
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    if (currentToken) {
-      setToken(currentToken);
-    }
-    setIsTokenLoaded(true);
-  }, []);
 
   const {
     data: getAdvertsData,
     isLoading: getAdvertsIsLoading,
     isError: getAdvertsDataIsError,
     error: getAdvertsDataError,
-  } = useGetAdverts(token, isTokenLoaded);
+  } = useGetAdverts();
 
   const {
     mutate: deleteAdvertMutate,
@@ -70,10 +60,8 @@ export default function AllAdverts() {
   }, [allAdverts]);
 
   function advertDeleteHandler(id) {
-    if (!token) return;
-
     deleteAdvertMutate(
-      { token, advertId: id },
+      { advertId: id },
       {
         onSuccess: () => {
           dispatch(
@@ -98,7 +86,7 @@ export default function AllAdverts() {
     }
   }
 
-  if (!isTokenLoaded || getAdvertsIsLoading) {
+  if (getAdvertsIsLoading) {
     return <Loading />;
   }
 

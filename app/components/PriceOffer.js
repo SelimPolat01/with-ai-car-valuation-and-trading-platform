@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import classes from "./PriceOffer.module.css";
 import { useRouter } from "next/navigation";
-import { useCheckAuth } from "@/backend/utils/useCheckAuth";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "@/store/authSlice";
 import Input from "@/app/components/Input";
 import PrimaryButton from "@/app/components/PrimaryButton";
 import { Camera, Trash2 } from "lucide-react";
@@ -32,11 +32,11 @@ export default function PriceOffer({ advertId }) {
     title: null,
     description: null,
   });
+
   const router = useRouter();
+  const dispatch = useDispatch();
   const reduxData = useSelector((state) => state.prediction.prediction);
   const fileInputRefs = useRef([]);
-
-  useCheckAuth();
 
   const {
     mutateAsync: postAdvertValidateContentMutateAsync,
@@ -86,7 +86,6 @@ export default function PriceOffer({ advertId }) {
 
   async function formSubmitHandler(event) {
     event.preventDefault();
-    const token = localStorage.getItem("token");
     const uploadedFiles = images.filter((img) => img !== null);
 
     let hasValidationErrors = false;
@@ -125,7 +124,6 @@ export default function PriceOffer({ advertId }) {
       setLoading(true);
 
       const validationData = await postAdvertValidateContentMutateAsync({
-        token,
         body: {
           title: inputTextareValue.title,
           description: inputTextareValue.description,
@@ -310,14 +308,12 @@ export default function PriceOffer({ advertId }) {
 
       const response = await fetch(URL, {
         method: method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include",
         body: formData,
       });
 
       if (response.status === 401) {
-        localStorage.removeItem("token");
+        dispatch(logout());
         router.replace("/login");
         return;
       }
@@ -339,19 +335,15 @@ export default function PriceOffer({ advertId }) {
 
   useEffect(() => {
     if (isEdit) {
-      const token = localStorage.getItem("token");
       async function fetchAdvertData() {
         try {
           setLoading(true);
           const response = await fetch(
             `${process.env.NEXT_PUBLIC_URL}/adverts/${advertId}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
           );
 
           if (response.status === 401) {
-            localStorage.removeItem("token");
+            dispatch(logout());
             router.replace("/login");
             return;
           }
@@ -399,7 +391,7 @@ export default function PriceOffer({ advertId }) {
       }
       fetchAdvertData();
     }
-  }, [advertId, router]);
+  }, [advertId, router, dispatch]);
 
   return (
     <div className={classes.div}>

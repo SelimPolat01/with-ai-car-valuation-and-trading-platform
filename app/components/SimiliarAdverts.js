@@ -15,16 +15,8 @@ export default function SimilarAdverts({ currentAdvertId }) {
     async function fetchSimilar() {
       if (!currentAdvertId) return;
       try {
-        const token = localStorage.getItem("token");
-        const headers = {};
-
-        if (token) {
-          headers["Authorization"] = `Bearer ${token}`;
-        }
-
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_URL}/adverts/similar-by-ai/${currentAdvertId}`,
-          { headers },
         );
 
         if (response.ok) {

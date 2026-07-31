@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import classes from "./Ilanlarim.module.css";
-import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import AdvertItem from "../components/AdvertItem";
 import { useRouter } from "next/navigation";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -18,25 +17,13 @@ export default function MyAdverts() {
   const deleteDialogRef = useRef(null);
   const editDialogRef = useRef(null);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
-  const [token, setToken] = useState(null);
-
-  useCheckAuth();
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-  }, [router]);
 
   const {
     data: getPersonalAdvertsData,
     isLoading: getPersonalAdvertsIsLoading,
     isError: getPersonalAdvertsIsError,
     error: getPersonalAdvertsError,
-  } = useGetPersonalAdverts(token);
+  } = useGetPersonalAdverts();
 
   const {
     mutate: deleteAdvertMutate,
@@ -47,10 +34,8 @@ export default function MyAdverts() {
   } = useDeleteAdvert();
 
   function advertDeleteHandler(id) {
-    if (!token) return;
-
     deleteAdvertMutate(
-      { token, advertId: id },
+      { advertId: id },
       {
         onSuccess: () => {
           setSelectedAdvertId(null);
@@ -79,7 +64,7 @@ export default function MyAdverts() {
     editDialogRef.current.showModal();
   }
 
-  if (!token || getPersonalAdvertsIsLoading) {
+  if (getPersonalAdvertsIsLoading) {
     return <Loading />;
   }
 

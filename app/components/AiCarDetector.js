@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import SecondaryButton from "./SecondaryButton";
 import { Camera, ChevronDown } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setPrediction as setPredictionAction } from "@/store/predictionSlice";
 import { motion } from "framer-motion";
 import { usePostCarDetection } from "@/hooks/POST/usePostCarDetection";
@@ -25,7 +25,8 @@ import {
 export default function AiCarDetector() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [token, setToken] = useState(null);
+  const isLogin = useSelector((state) => state.auth.isLogin);
+
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
@@ -52,20 +53,13 @@ export default function AiCarDetector() {
   } = usePostCarDetection();
 
   useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-  }, []);
-
-  useEffect(() => {
     return () => {
       if (preview) URL.revokeObjectURL(preview);
     };
   }, [preview]);
 
   function handleClick() {
-    const currentToken = localStorage.getItem("token") || token;
-
-    if (!currentToken) {
+    if (!isLogin) {
       router.push("/login");
       return;
     }
@@ -76,7 +70,7 @@ export default function AiCarDetector() {
   }
 
   function handleChange(event) {
-    const selectedFile = event.target.files[0];
+    const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
       setError(null);
@@ -99,9 +93,7 @@ export default function AiCarDetector() {
   }
 
   function handleUpload() {
-    const currentToken = localStorage.getItem("token") || token;
-
-    if (!currentToken) {
+    if (!isLogin) {
       router.push("/login");
       return;
     }
@@ -111,34 +103,47 @@ export default function AiCarDetector() {
     setError(null);
     const formData = new FormData();
     formData.append("file", file);
+
     postCarDetectionMutate(
-      { token: currentToken, body: formData },
+      { body: formData },
       {
         onSuccess: (data) => {
-          const parsedPrediction = data.result.prediction.split("-");
+          const rawPrediction = data?.result?.prediction;
+          if (!rawPrediction) {
+            setError("API'den geçerli bir tahmin verisi alınamadı.");
+            return;
+          }
+
+          const parsedPrediction = rawPrediction.split("-");
           setPrediction({
             prediction: parsedPrediction,
             predictionPercent: data.result.prediction_percent,
           });
 
           if (parsedPrediction && parsedPrediction.length >= 4) {
-            const startYearShort = parsedPrediction[3];
-            const endYearShort =
+            const startYearRaw = parsedPrediction[3]?.trim() || "";
+            const endYearRaw =
               parsedPrediction[4] && parsedPrediction[4].trim() !== ""
-                ? parsedPrediction[4]
-                : startYearShort;
+                ? parsedPrediction[4].trim()
+                : startYearRaw;
 
-            const calculatedYearFull = Number(`20${startYearShort}`);
-            const isSingleYear = startYearShort === endYearShort;
+            const formatYear = (yearStr) => {
+              if (!yearStr) return "";
+              return yearStr.length === 2 ? `20${yearStr}` : yearStr;
+            };
+
+            const startYearFull = formatYear(startYearRaw);
+            const endYearFull = formatYear(endYearRaw);
+            const isSingleYear = startYearFull === endYearFull;
 
             setCar({
               brand: capitalizeWords(parsedPrediction[0]),
               model: capitalizeWords(parsedPrediction[1]),
               bodyType: capitalizeWords(parsedPrediction[2]),
               yearInterval: isSingleYear
-                ? `20${startYearShort}`
-                : `20${startYearShort}-20${endYearShort}`,
-              selectedYear: isSingleYear ? calculatedYearFull : null,
+                ? `${startYearFull}`
+                : `${startYearFull}-${endYearFull}`,
+              selectedYear: isSingleYear ? Number(startYearFull) : null,
             });
           } else {
             setError("API'den gelen veri formatı geçersiz (Eksik parametre).");
@@ -150,7 +155,12 @@ export default function AiCarDetector() {
 
   const generateYearList = () => {
     if (!car.yearInterval) return [];
-    const [startYear, endYear] = car.yearInterval.split("-").map(Number);
+    const parts = car.yearInterval.split("-").map(Number);
+    const startYear = parts[0];
+    const endYear = parts[1] || startYear;
+
+    if (isNaN(startYear) || isNaN(endYear)) return [];
+
     const years = [];
     for (let i = startYear; i <= endYear; i++) {
       years.push(i);
@@ -312,14 +322,14 @@ export default function AiCarDetector() {
                 onClick={() => {
                   dispatch(
                     setPredictionAction({
-                      brand: car.brand.toLowerCase(),
-                      model: car.model.toLowerCase(),
-                      bodyType: car.bodyType.toLowerCase(),
+                      brand: car.brand.toLocaleLowerCase("tr-TR"),
+                      model: car.model.toLocaleLowerCase("tr-TR"),
+                      bodyType: car.bodyType.toLocaleLowerCase("tr-TR"),
                     }),
                   );
                   router.push(
-                    `/ilan-olustur/${car.brand.toLowerCase()}/${encodeURIComponent(
-                      modelParser(car.model.toLowerCase(), "url"),
+                    `/ilan-olustur/${car.brand.toLocaleLowerCase("tr-TR")}/${encodeURIComponent(
+                      modelParser(car.model.toLocaleLowerCase("tr-TR"), "url"),
                     )}/${car.selectedYear}?fromImage=true`,
                   );
                 }}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useGetPersonalAppointments } from "@/hooks/GET/useGetPersonalAppointments";
 import classes from "./Randevular.module.css";
 import {
@@ -22,27 +22,17 @@ import Loading from "@/app/loading";
 export default function RandevularPage() {
   const router = useRouter();
   const pathName = usePathname();
-  const [token, setToken] = useState(null);
   const [roleTab, setRoleTab] = useState("buyer");
   const [activeTab, setActiveTab] = useState("active");
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-  }, [router]);
 
   const {
     data: getPersonalAppointmentsData,
     isLoading: getPersonalAppointmentsIsLoading,
     isError: getPersonalAppointmentsIsError,
     error: getPersonalAppointmentsError,
-  } = useGetPersonalAppointments(token);
+  } = useGetPersonalAppointments();
 
-  if (!token || getPersonalAppointmentsIsLoading) {
+  if (getPersonalAppointmentsIsLoading) {
     return <Loading />;
   }
 
@@ -51,7 +41,10 @@ export default function RandevularPage() {
       <div className="errorContainer">
         <AlertCircle size={48} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getPersonalAppointmentsError?.message}</p>
+        <p>
+          {getPersonalAppointmentsError?.message ||
+            "Randevularınız yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyiniz."}
+        </p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>

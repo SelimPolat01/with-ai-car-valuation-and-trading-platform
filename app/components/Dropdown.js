@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import classes from "./Dropdown.module.css";
 import PrimaryButton from "./PrimaryButton";
 import { AnimatePresence, motion } from "framer-motion";
@@ -13,6 +14,8 @@ import {
 } from "../utils/animations";
 
 export default function Dropdown() {
+  const isLogin = useSelector((state) => state.auth.isLogin);
+
   const [value, setValue] = useState({
     brandValue: "Marka",
     modelValue: "Model",
@@ -68,9 +71,7 @@ export default function Dropdown() {
       return;
     }
 
-    const token = localStorage.getItem("token");
-
-    if (!token) {
+    if (!isLogin) {
       router.push("/login");
       return;
     }
@@ -262,7 +263,8 @@ export default function Dropdown() {
             </motion.ul>
           </AnimatePresence>
         )}
-        <input type="hidden" name="modelYear" value={value.modelValue} />
+        {/* Hata Düzeltildi: name="modelYear" değil name="model" olmalı */}
+        <input type="hidden" name="model" value={value.modelValue} />
       </motion.div>
 
       <motion.div

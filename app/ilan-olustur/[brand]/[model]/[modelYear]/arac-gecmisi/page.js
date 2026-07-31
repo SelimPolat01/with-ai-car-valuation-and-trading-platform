@@ -1,22 +1,84 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { AnimatePresence, motion } from "framer-motion";
+import { setPrediction } from "@/store/predictionSlice";
 import SecondaryButton from "@/app/components/SecondaryButton";
 import Input from "@/app/components/Input";
 import classes from "./AracGecmisi.module.css";
-import { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { setPrediction } from "@/store/predictionSlice";
 import {
   aracGecmisiContainerVariants,
   aracGecmisiItemVariants,
 } from "@/app/utils/animations";
 
+const CustomDropdown = ({
+  label,
+  name,
+  options,
+  value,
+  isOpen,
+  onToggle,
+  onChange,
+}) => {
+  const selectedOption =
+    options.find((opt) => opt.value === value) || options[0];
+
+  return (
+    <div className={`${classes.selectWrapper} dropdownWrapper`}>
+      <label className={classes.selectLabel}>{label}</label>
+      <div
+        className={`${classes.dropdownHeader} ${
+          isOpen ? classes.dropdownHeaderActive : ""
+        }`}
+        onClick={() => onToggle(name)}
+      >
+        <span className={classes.selectedText}>{selectedOption.label}</span>
+        <svg
+          className={isOpen ? classes.rotate : ""}
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.ul
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className={classes.dropdownList}
+          >
+            {options.map((opt) => (
+              <li
+                key={opt.value}
+                onClick={() => onChange({ target: { name, value: opt.value } })}
+                className={classes.dropdownItem}
+              >
+                {opt.label}
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 export default function AracGecmisi() {
   const router = useRouter();
-  const prediction = useSelector((state) => state.prediction.prediction);
   const dispatch = useDispatch();
+  const prediction = useSelector((state) => state.prediction.prediction);
+
   const [openDropdown, setOpenDropdown] = useState(null);
   const [errors, setErrors] = useState({});
   const [selectedFiles, setSelectedFiles] = useState({
@@ -169,64 +231,13 @@ export default function AracGecmisi() {
     { id: "permit-1", label: "Ruhsat Fotoğrafı (Gizli)" },
   ];
 
-  const CustomDropdown = ({ label, name, options }) => {
-    const isOpen = openDropdown === name;
-    const currentValue = carDetails[name];
-    const selectedOption =
-      options.find((opt) => opt.value === currentValue) || options[0];
+  const handleDropdownToggle = (name) => {
+    setOpenDropdown(openDropdown === name ? null : name);
+  };
 
-    return (
-      <div className={`${classes.selectWrapper} dropdownWrapper`}>
-        <label className={classes.selectLabel}>{label}</label>
-        <div
-          className={`${classes.dropdownHeader} ${
-            isOpen ? classes.dropdownHeaderActive : ""
-          }`}
-          onClick={() => setOpenDropdown(isOpen ? null : name)}
-        >
-          <span className={classes.selectedText}>{selectedOption.label}</span>
-          <svg
-            className={isOpen ? classes.rotate : ""}
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </div>
-        <AnimatePresence>
-          {isOpen && (
-            <motion.ul
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              className={classes.dropdownList}
-            >
-              {options.map((opt) => (
-                <li
-                  key={opt.value}
-                  onClick={() => {
-                    detailsChangeHandler({
-                      target: { name, value: opt.value },
-                    });
-                    setOpenDropdown(null);
-                  }}
-                  className={classes.dropdownItem}
-                >
-                  {opt.label}
-                </li>
-              ))}
-            </motion.ul>
-          )}
-        </AnimatePresence>
-      </div>
-    );
+  const handleDropdownChange = (e) => {
+    detailsChangeHandler(e);
+    setOpenDropdown(null);
   };
 
   return (
@@ -342,6 +353,10 @@ export default function AracGecmisi() {
               { label: "Yok", value: false },
               { label: "Var", value: true },
             ]}
+            value={carDetails.hasPledge}
+            isOpen={openDropdown === "hasPledge"}
+            onToggle={handleDropdownToggle}
+            onChange={handleDropdownChange}
           />
           <CustomDropdown
             label="LPG Durumu"
@@ -354,6 +369,10 @@ export default function AracGecmisi() {
                 value: "not registered license",
               },
             ]}
+            value={carDetails.lpgStatus}
+            isOpen={openDropdown === "lpgStatus"}
+            onToggle={handleDropdownToggle}
+            onChange={handleDropdownChange}
           />
         </div>
       </motion.div>
@@ -394,6 +413,10 @@ export default function AracGecmisi() {
               { label: "Evet", value: "yes" },
               { label: "Hayır", value: "no" },
             ]}
+            value={carDetails.hasServiceMaintence}
+            isOpen={openDropdown === "hasServiceMaintence"}
+            onToggle={handleDropdownToggle}
+            onChange={handleDropdownChange}
           />
           <CustomDropdown
             label="Garanti Durumu"
@@ -402,6 +425,10 @@ export default function AracGecmisi() {
               { label: "Devam Etmiyor", value: false },
               { label: "Devam Ediyor", value: true },
             ]}
+            value={carDetails.hasWarrenty}
+            isOpen={openDropdown === "hasWarrenty"}
+            onToggle={handleDropdownToggle}
+            onChange={handleDropdownChange}
           />
           <CustomDropdown
             label="Yedek Anahtar"
@@ -410,6 +437,10 @@ export default function AracGecmisi() {
               { label: "Var", value: true },
               { label: "Yok", value: false },
             ]}
+            value={carDetails.hasSpareKey}
+            isOpen={openDropdown === "hasSpareKey"}
+            onToggle={handleDropdownToggle}
+            onChange={handleDropdownChange}
           />
         </div>
       </motion.div>
@@ -428,6 +459,10 @@ export default function AracGecmisi() {
               { label: "Kışlık", value: "winter" },
               { label: "Dört Mevsim", value: "four seasons" },
             ]}
+            value={carDetails.tireType}
+            isOpen={openDropdown === "tireType"}
+            onToggle={handleDropdownToggle}
+            onChange={handleDropdownChange}
           />
           <CustomDropdown
             label="Lastik Durumu"
@@ -437,6 +472,10 @@ export default function AracGecmisi() {
               { label: "İyi", value: "good" },
               { label: "Değişim Vakti Gelmiş", value: "change has come" },
             ]}
+            value={carDetails.tireCondition}
+            isOpen={openDropdown === "tireCondition"}
+            onToggle={handleDropdownToggle}
+            onChange={handleDropdownChange}
           />
           <div className={classes.inputWrapper}>
             <Input

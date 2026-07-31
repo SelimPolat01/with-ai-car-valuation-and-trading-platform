@@ -210,6 +210,10 @@
     min-height: 140px;
   }
 
+  .imageSection {
+    gap: 2px;
+  }
+
   .imageGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;

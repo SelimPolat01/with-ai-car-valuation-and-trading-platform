@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "@/store/authSlice";
 import { AnimatePresence } from "framer-motion";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import SecondaryButton from "@/app/components/SecondaryButton";
@@ -23,7 +25,9 @@ import Loading from "@/app/loading";
 
 export default function Guvenlik() {
   const router = useRouter();
-  const [token, setToken] = useState(null);
+  const dispatch = useDispatch();
+  const { isInitialized, isLogin } = useSelector((state) => state.auth);
+
   const [error, setError] = useState({
     email: false,
     password: false,
@@ -34,15 +38,6 @@ export default function Guvenlik() {
     password: false,
   });
   const deleteAccountInputRef = useRef();
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-  }, [router]);
 
   useEffect(() => {
     let timer;
@@ -86,7 +81,7 @@ export default function Guvenlik() {
     isLoading: getEmailInfoIsLoading,
     isError: getEmailInfoIsError,
     error: getEmailInfoError,
-  } = useGetEmail(token);
+  } = useGetEmail();
 
   const {
     mutate: patchEmailMutate,
@@ -153,7 +148,6 @@ export default function Guvenlik() {
 
     patchEmailMutate(
       {
-        token,
         body: {
           email: input.email.letters,
         },
@@ -209,7 +203,6 @@ export default function Guvenlik() {
 
     patchPasswordMutate(
       {
-        token,
         body: {
           currentPassword: input.currentPassword.letters,
           password: input.password.letters,
@@ -240,12 +233,11 @@ export default function Guvenlik() {
   function confirmDeleteHandler() {
     setError((prev) => ({ ...prev, account: false }));
     deleteAccountMutate(
-      { token },
+      {},
       {
         onSuccess: () => {
-          localStorage.removeItem("token");
-          localStorage.removeItem("tokenExpire");
-          router.replace("/admin/login");
+          dispatch(logout());
+          router.replace("/login");
         },
         onError: (err) =>
           setError((prev) => ({ ...prev, account: err?.message })),
@@ -253,8 +245,12 @@ export default function Guvenlik() {
     );
   }
 
-  if (!token || getEmailInfoIsLoading) {
+  if (!isInitialized || getEmailInfoIsLoading) {
     return <Loading />;
+  }
+
+  if (!isLogin) {
+    return null;
   }
 
   if (getEmailInfoIsError) {

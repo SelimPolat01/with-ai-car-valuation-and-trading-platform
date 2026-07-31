@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { toggleFavorite } from "@/store/advertsSlice";
 import { useParams, useRouter } from "next/navigation";
 import classes from "./AdvertInfos.module.css";
@@ -33,57 +33,38 @@ export default function AdvertInfos() {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  const [token, setToken] = useState(null);
+
   const [isSuccess, setIsSuccess] = useState(false);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
   const [summaryText, setSummaryText] = useState(null);
   const [isShowingSummary, setIsShowingSummary] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [localFavoriteCount, setLocalFavoriteCount] = useState(0);
   const [showSimilarAdverts, setShowSimilarAdverts] = useState(false);
-  const [isTokenLoaded, setIsTokenLoaded] = useState(false);
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    if (currentToken) {
-      setToken(currentToken);
-    }
-    setIsTokenLoaded(true);
-  }, []);
 
   const {
     data: getAdvertData,
     isLoading: getAdvertIsLoading,
     isError: getAdvertIsError,
     error: getAdvertError,
-  } = useGetAdvert(token, params.advertId, isTokenLoaded);
+  } = useGetAdvert(params.advertId);
 
-  const { mutateAsync: postFavorite } = usePostFavoriteAdvert();
+  const { mutate: postFavorite, isPending: isFavoritePending } =
+    usePostFavoriteAdvert();
 
   const advert = Array.isArray(getAdvertData?.result)
     ? getAdvertData.result[0]
     : getAdvertData?.result;
 
-  const {
-    data: getAdvertFavoriteCountData,
-    isLoading: getAdvertFavoriteCountIsLoading,
-    isError: getAdvertFavoriteCountIsError,
-    error: getAdvertFavoriteCountError,
-  } = useGetAdvertFavoriteCount(token, advert?.id, isTokenLoaded);
+  const { data: getAdvertFavoriteCountData } = useGetAdvertFavoriteCount(
+    advert?.id,
+  );
 
-  useEffect(() => {
-    if (getAdvertFavoriteCountData?.result?.count !== undefined) {
-      setLocalFavoriteCount(getAdvertFavoriteCountData.result.count);
-    }
-  }, [getAdvertFavoriteCountData]);
-
-  useEffect(() => {
-    if (advert && advert.isFavorite !== undefined) {
-      setIsFavorite(advert.isFavorite);
-    }
-  }, [advert]);
+  const isFavorite = Boolean(advert?.isFavorite);
+  const favoriteCount =
+    getAdvertFavoriteCountData?.result?.count ??
+    getAdvertFavoriteCountData?.count ??
+    0;
 
   useEffect(() => {
     let timer;
@@ -112,7 +93,7 @@ export default function AdvertInfos() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ description: advert?.description }),
+          body: JSON.stringify({ description: advert?.description || "" }),
         },
       );
 
@@ -129,44 +110,36 @@ export default function AdvertInfos() {
     }
   }
 
-  async function toggleFavoriteClick() {
-    if (!token) {
+  function toggleFavoriteClick() {
+    if (!user) {
       router.push("/login");
       return;
     }
 
     if (!advert || !advert.id) return;
 
-    const previousFavoriteState = isFavorite;
-
-    setIsFavorite(!previousFavoriteState);
-    setLocalFavoriteCount((prev) =>
-      !previousFavoriteState ? prev + 1 : prev - 1,
+    postFavorite(
+      { advertId: advert.id },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            dispatch(
+              toggleFavorite({
+                advert: advert,
+                isFavorite: data.result?.isFavorite ?? !isFavorite,
+              }),
+            );
+          }
+        },
+        onError: (err) => {
+          console.error("Favori işlemi başarısız:", err);
+        },
+      },
     );
-
-    try {
-      const data = await postFavorite({ token, advertId: advert.id });
-
-      if (data && data.isFavorite !== undefined) {
-        setIsFavorite(data.isFavorite);
-        dispatch(
-          toggleFavorite({
-            advert: advert,
-            isFavorite: data.isFavorite,
-          }),
-        );
-      }
-    } catch (err) {
-      setIsFavorite(previousFavoriteState);
-      setLocalFavoriteCount((prev) =>
-        previousFavoriteState ? prev + 1 : prev - 1,
-      );
-      console.error(err);
-    }
   }
 
   function advertBuyHandler() {
-    if (!token) {
+    if (!user) {
       router.push("/login");
       return;
     }
@@ -175,7 +148,7 @@ export default function AdvertInfos() {
     );
   }
 
-  if (!isTokenLoaded || getAdvertIsLoading) {
+  if (getAdvertIsLoading) {
     return <Loading />;
   }
 
@@ -302,13 +275,16 @@ export default function AdvertInfos() {
             className={classes.advertInfoDiv}
           >
             <div className={classes.titleFavoriteDiv}>
-              <h2 className={classes.title}>{advert.title?.toUpperCase()}</h2>
+              <h2 className={classes.title}>
+                {advert.title?.toLocaleUpperCase("tr-TR")}
+              </h2>
 
               <div className={classes.actionButtonsWrapper}>
                 {(!user || Number(user.id) !== Number(advert.user_id)) && (
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.95 }}
+                    disabled={isFavoritePending}
                     className={
                       isFavorite
                         ? classes.favoriteButton
@@ -317,7 +293,11 @@ export default function AdvertInfos() {
                     type="button"
                     onClick={toggleFavoriteClick}
                   >
-                    {isFavorite ? "Favorilerimden Çıkar" : "Favorilerime Ekle"}
+                    {isFavoritePending
+                      ? "İşleniyor..."
+                      : isFavorite
+                        ? "Favorilerimden Çıkar"
+                        : "Favorilerime Ekle"}
                   </motion.button>
                 )}
 
@@ -327,7 +307,7 @@ export default function AdvertInfos() {
                 >
                   <Heart size={20} className={classes.favoriteIcon} />
                   <span className={classes.favoriteCountText}>
-                    {localFavoriteCount}
+                    {favoriteCount}
                   </span>
                 </motion.div>
               </div>

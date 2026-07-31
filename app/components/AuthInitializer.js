@@ -11,37 +11,24 @@ export default function AuthInitializer({ children }) {
 
   useEffect(() => {
     async function fetchUser() {
-      const token = localStorage.getItem("token");
-
-      if (!token || token === "null" || token === "undefined") {
-        localStorage.removeItem("token");
-        localStorage.removeItem("tokenExpire");
-        dispatch(initAuth({ isLogin: false, user: null }));
-        setLoading(false);
-        return;
-      }
-
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/me`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/auth/me`, {
+          method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
+          credentials: "include",
         });
 
         if (!res.ok) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("tokenExpire");
           dispatch(initAuth({ isLogin: false, user: null }));
-          setLoading(false);
           return;
         }
 
         const user = await res.json();
         dispatch(initAuth({ isLogin: true, user }));
       } catch (err) {
-        console.error(err);
-        localStorage.removeItem("token");
-        localStorage.removeItem("tokenExpire");
+        console.error("Auth Error:", err);
         dispatch(initAuth({ isLogin: false, user: null }));
       } finally {
         setLoading(false);
@@ -52,5 +39,6 @@ export default function AuthInitializer({ children }) {
   }, [dispatch]);
 
   if (loading) return <LoadingSpinner />;
+
   return <>{children}</>;
 }

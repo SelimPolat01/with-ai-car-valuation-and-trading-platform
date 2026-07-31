@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import { useGetPersonalNotifications } from "@/hooks/GET/useGetPersonalNotifications";
 import { usePatchNotificationRead } from "@/hooks/PATCH/usePatchNotificationRead";
 import classes from "./Bildirimler.module.css";
@@ -23,24 +24,18 @@ import {
 
 export default function Bildirimler() {
   const router = useRouter();
-  const [token, setToken] = useState(null);
   const [readFilter, setReadFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    if (currentToken) {
-      setToken(currentToken);
-    }
-  }, []);
+  const { isInitialized, isLogin } = useSelector((state) => state.auth);
 
   const {
     data: getPersonalNotificationsData,
     isLoading: getPersonalNotificationsIsLoading,
     isError: getPersonalNotificationsIsError,
     error: getPersonalNotificationsError,
-  } = useGetPersonalNotifications(token);
+  } = useGetPersonalNotifications();
 
   const { mutate: patchPersonalNotificationRead } = usePatchNotificationRead();
 
@@ -69,9 +64,7 @@ export default function Bildirimler() {
 
   function notificationClickHandler(notification) {
     if (!notification.is_read) {
-      const currentToken = localStorage.getItem("token");
       patchPersonalNotificationRead({
-        token: currentToken,
         notificationId: notification.id,
       });
     }
@@ -85,18 +78,20 @@ export default function Bildirimler() {
 
   function markAllAsReadHandler() {
     const unreadNotifications = personalNotifications.filter((n) => !n.is_read);
-    const currentToken = localStorage.getItem("token");
 
     unreadNotifications.forEach((notification) => {
       patchPersonalNotificationRead({
-        token: currentToken,
         notificationId: notification.id,
       });
     });
   }
 
-  if (!token || getPersonalNotificationsIsLoading) {
+  if (!isInitialized || getPersonalNotificationsIsLoading) {
     return <Loading />;
+  }
+
+  if (!isLogin) {
+    return null;
   }
 
   if (getPersonalNotificationsIsError) {

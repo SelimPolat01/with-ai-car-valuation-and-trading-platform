@@ -24,7 +24,7 @@ export default function HasarDurumu() {
   const dispatch = useDispatch();
   const prediction = useSelector((state) => state.prediction.prediction);
   const dialogRef = useRef();
-  const [token, setToken] = useState(null);
+
   const [error, setError] = useState(null);
   const [images, setImages] = useState({
     front: null,
@@ -55,12 +55,10 @@ export default function HasarDurumu() {
   const sideLabelsTr = { front: "ön", back: "arka", left: "sol", right: "sağ" };
 
   useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
+    if (!prediction || Object.keys(prediction).length === 0) {
+      router.replace("/");
     }
-  }, [router]);
+  }, [router, prediction]);
 
   const {
     mutate: carDirectionDetectionMutate,
@@ -92,6 +90,8 @@ export default function HasarDurumu() {
     images.front && images.back && images.right && images.left;
 
   const calculateFinalPriceAndShowDialog = (currentDamages) => {
+    if (!prediction?.price) return;
+
     let scratchCount = 0;
     let dentCount = 0;
 
@@ -121,11 +121,15 @@ export default function HasarDurumu() {
     const file = event.target.files[0];
     if (!file) return;
 
+    if (images[side]) {
+      URL.revokeObjectURL(images[side]);
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 
     carDirectionDetectionMutate(
-      { token, body: formData },
+      { body: formData },
       {
         onSuccess: (carDirectionDetectionData) => {
           if (carDirectionDetectionData.result?.prediction !== side) {
@@ -155,7 +159,7 @@ export default function HasarDurumu() {
             }));
 
             carScratchDentDetectionMutate(
-              { token, body: formData },
+              { body: formData },
               {
                 onSuccess: (carScratchDentDetectionData) => {
                   const updatedDamages = {
@@ -190,25 +194,25 @@ export default function HasarDurumu() {
                     currentImages.right &&
                     currentImages.left;
 
-                  if (isAllImagesUploadedNow) {
+                  if (isAllImagesUploadedNow && prediction) {
                     const payload = {
-                      brand: prediction.brand,
-                      model: prediction.model,
-                      model_year: Number(prediction.modelYear),
-                      body_type: prediction.bodyType,
-                      engine_capacity: Number(prediction.engineCapacity),
-                      horsepower: Number(prediction.horsepower),
-                      transmission: prediction.transmission,
-                      kilometer: Number(prediction.kilometer),
-                      fuel_type: prediction.fuelType,
-                      trim_level: prediction.trimLevel,
-                      price: Number(prediction.price),
+                      brand: prediction.brand || "",
+                      model: prediction.model || "",
+                      model_year: Number(prediction.modelYear) || 0,
+                      body_type: prediction.bodyType || "",
+                      engine_capacity: Number(prediction.engineCapacity) || 0,
+                      horsepower: Number(prediction.horsepower) || 0,
+                      transmission: prediction.transmission || "",
+                      kilometer: Number(prediction.kilometer) || 0,
+                      fuel_type: prediction.fuelType || "",
+                      trim_level: prediction.trimLevel || "",
+                      price: Number(prediction.price) || 0,
                       has_scratch: isScratch,
                       has_dent: isDent,
                     };
 
                     carSellTimePredictMutate(
-                      { token, body: payload },
+                      { body: payload },
                       {
                         onSuccess: (carSellPredictData) => {
                           setAvarageSellPrediction(
@@ -265,6 +269,11 @@ export default function HasarDurumu() {
 
   const handleRemoveImage = (side, event) => {
     event.preventDefault();
+
+    if (images[side]) {
+      URL.revokeObjectURL(images[side]);
+    }
+
     setImages((prev) => ({ ...prev, [side]: null }));
     setImagePredictions((prev) => ({ ...prev, [side]: null }));
     setCardErrors((prev) => ({ ...prev, [side]: null }));
@@ -273,7 +282,11 @@ export default function HasarDurumu() {
   };
 
   function dialogConfirmHandler() {
-    dialogRef.current.close();
+    dialogRef.current?.close();
+  }
+
+  if (!prediction) {
+    return null;
   }
 
   const views = viewsList;
@@ -463,7 +476,6 @@ export default function HasarDurumu() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 20, scale: 0.8 }}
                 className={classes.buttonContainer}
-                style={{}}
               >
                 <SecondaryButton
                   type="submit"

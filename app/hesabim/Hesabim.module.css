@@ -104,19 +104,22 @@
   line-height: 1.2;
 }
 
+.logoutText {
+  line-height: 1.2;
+  font-size: 16px;
+}
+
 .mainContent {
   flex: 1;
   padding: 0.5rem 2rem 5rem 2rem;
   color: #f8f8f8;
 }
 
-.logoutBtn {
-  background: none;
+.logoutButton {
+  background: transparent;
   border: none;
-  color: inherit;
-  font: inherit;
+  width: 100%;
   cursor: pointer;
-  padding: 0;
   text-align: left;
 }
 

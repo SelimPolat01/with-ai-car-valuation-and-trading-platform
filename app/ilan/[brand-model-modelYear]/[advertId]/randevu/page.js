@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import classes from "./Randevu.module.css";
 import SecondaryButton from "@/app/components/SecondaryButton";
 import { useParams, useRouter } from "next/navigation";
@@ -37,16 +38,7 @@ const ALL_HOURS = [
 export default function Randevu() {
   const router = useRouter();
   const params = useParams();
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const currentToken = localStorage.getItem("token");
-    setToken(currentToken);
-    if (!currentToken) {
-      router.replace("/login");
-      return;
-    }
-  }, [router]);
+  const { isInitialized, isLogin } = useSelector((state) => state.auth);
 
   const days = Array.from({ length: 17 }, (_, i) => {
     const d = new Date();
@@ -62,7 +54,7 @@ export default function Randevu() {
     isLoading: getAvailableSlotsIsLoading,
     isError: getAvailableSlotsIsError,
     error: getAvailableSlotsError,
-  } = useGetAvailableSlots(token);
+  } = useGetAvailableSlots();
 
   function appointmentClickHandler() {
     const appointmentData = {
@@ -79,8 +71,12 @@ export default function Randevu() {
 
   const dbSlots = getAvailableSlotsData?.result || [];
 
-  if (!token || getAvailableSlotsIsLoading) {
+  if (!isInitialized || getAvailableSlotsIsLoading) {
     return <Loading />;
+  }
+
+  if (!isLogin) {
+    return null;
   }
 
   if (getAvailableSlotsIsError) {
@@ -88,7 +84,10 @@ export default function Randevu() {
       <div className="errorContainer">
         <AlertCircle size={48} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getAvailableSlotsError?.message}</p>
+        <p>
+          {getAvailableSlotsError?.message ||
+            "Slotlar yüklenirken bir hata oluştu."}
+        </p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>

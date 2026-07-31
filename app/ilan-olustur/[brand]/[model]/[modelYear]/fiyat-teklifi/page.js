@@ -4,7 +4,7 @@ import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import { useSelector } from "react-redux";
 import classes from "./FiyatTeklifi.module.css";
 import { animate, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import CancelButton from "@/app/components/CancelButton";
 import SecondaryButton from "@/app/components/SecondaryButton";
@@ -22,11 +22,14 @@ export default function PriceOffer() {
   const [animationFinished, setAnimationFinished] = useState(false);
   const carDetails = useSelector((state) => state.prediction.prediction);
   const router = useRouter();
-  const today = new Date();
-  const validatyDate = new Date();
-  validatyDate.setDate(today.getDate() + 3);
-  const formattedValidatyDate = formatDate(validatyDate);
-  const priceOffer = Number(carDetails.price);
+
+  const formattedValidatyDate = useMemo(() => {
+    const validatyDate = new Date();
+    validatyDate.setDate(validatyDate.getDate() + 3);
+    return formatDate(validatyDate);
+  }, []);
+
+  const priceOffer = Number(carDetails?.price || 0);
 
   useEffect(() => {
     const controls = animate(0, priceOffer, {
@@ -48,9 +51,15 @@ export default function PriceOffer() {
         className={classes.carModel}
       >
         <h2>
-          {decodeURIComponent(carDetails.brand.toUpperCase())}{" "}
-          {decodeURIComponent(carDetails.model.toUpperCase())}{" "}
-          {engineCapacityFormat(carDetails.engineCapacity)}
+          {carDetails?.brand
+            ? decodeURIComponent(carDetails.brand.toUpperCase())
+            : ""}{" "}
+          {carDetails?.model
+            ? decodeURIComponent(carDetails.model.toUpperCase())
+            : ""}{" "}
+          {carDetails?.engineCapacity
+            ? engineCapacityFormat(carDetails.engineCapacity)
+            : ""}
         </h2>
         <div className={classes.svgTechParamsWrapper}>
           <svg
@@ -73,43 +82,56 @@ export default function PriceOffer() {
               <li>
                 <strong>Marka: </strong>
                 <span>
-                  {decodeURIComponent(capitalizeWords(carDetails.brand))}
+                  {carDetails?.brand
+                    ? decodeURIComponent(capitalizeWords(carDetails.brand))
+                    : "-"}
                 </span>
               </li>
               <li>
                 <strong>Model: </strong>
                 <span>
-                  {decodeURIComponent(capitalizeWords(carDetails.model))}
+                  {carDetails?.model
+                    ? decodeURIComponent(capitalizeWords(carDetails.model))
+                    : "-"}
                 </span>
               </li>
               <li>
                 <strong>Yıl: </strong>
-                <span>{carDetails.modelYear}</span>
+                <span>{carDetails?.modelYear || "-"}</span>
               </li>
               <li>
                 <strong>Motor Hacmi: </strong>
-                <span>{carDetails.engineCapacity} cc</span>
+                <span>{carDetails?.engineCapacity || "-"} cc</span>
               </li>
               <li>
                 <strong>Motor Gücü: </strong>
-                <span>{carDetails.horsepower} hp</span>
+                <span>{carDetails?.horsepower || "-"} hp</span>
               </li>
               <li>
                 <strong>Kilometre: </strong>
-                <span>{carDetails.kilometer} km</span>
+                <span>{carDetails?.kilometer || "-"} km</span>
               </li>
               <li>
                 <strong>Yakıt Tipi: </strong>
-                <span>{fuelTypeFormat(carDetails.fuelType)}</span>
+                <span>
+                  {carDetails?.fuelType
+                    ? fuelTypeFormat(carDetails.fuelType)
+                    : "-"}
+                </span>
               </li>
               <li>
                 <strong>Paket: </strong>
-                <span>{capitalizeWords(carDetails.trimLevel)}</span>
+                <span>
+                  {carDetails?.trimLevel
+                    ? capitalizeWords(carDetails.trimLevel)
+                    : "-"}
+                </span>
               </li>
             </ul>
           </div>
         </div>
       </motion.div>
+
       <div className={classes.div}>
         <div className={classes.svgCircleDiv}>
           <motion.div
@@ -159,6 +181,7 @@ export default function PriceOffer() {
             )}
           </motion.div>
         </div>
+
         {animationFinished && (
           <motion.div
             className={classes.validatyDateDiv}

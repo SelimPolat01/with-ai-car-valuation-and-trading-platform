@@ -12,14 +12,16 @@ import {
   Handshake,
   Receipt,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { logout } from "@/store/authSlice";
 import { useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function SettingsLayout({ children }) {
   const pathName = usePathname();
+  const router = useRouter();
   const dispatch = useDispatch();
+
   const icons = [
     Handshake,
     CalendarClock,
@@ -29,6 +31,7 @@ export default function SettingsLayout({ children }) {
     Settings,
     Receipt,
   ];
+
   const links = [
     { href: "/hesabim/alis-satis-islemleri", text: "Alış-Satış İşlemleri" },
     { href: "/hesabim/randevular", text: "Randevular" },
@@ -39,10 +42,18 @@ export default function SettingsLayout({ children }) {
     { href: "/hesabim/odemeler-faturalar", text: "Ödemeler Faturalar" },
   ];
 
-  function logoutHandler() {
+  async function logoutHandler(e) {
+    e.preventDefault();
+
+    try {
+      await fetch("/api/logout", { method: "POST", credentials: "include" });
+    } catch (error) {
+      console.error("Çıkış yapılırken bir hata oluştu:", error);
+    }
+
     dispatch(logout());
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
+
+    router.replace("/login");
   }
 
   return (
@@ -71,15 +82,15 @@ export default function SettingsLayout({ children }) {
                 </li>
               );
             })}
+
             <li className={classes.list}>
-              <Link
-                href="/login"
+              <button
                 onClick={logoutHandler}
-                className={`${classes.logoutLink} ${classes.link}`}
+                className={`${classes.logoutButton} ${classes.link}`}
               >
                 <LogOut size={22} className={classes.icon} />
-                <span className={classes.linkText}>Çıkış Yap</span>
-              </Link>
+                <span className={classes.logoutText}>Çıkış Yap</span>
+              </button>
             </li>
           </ul>
         </div>

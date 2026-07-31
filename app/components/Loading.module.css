@@ -17,6 +17,10 @@
 }
 
 @media (max-width: 768px) {
+  .loadingContainer {
+    height: calc(100dvh - 221.4px);
+  }
+
   .spinner {
     width: 32px;
     height: 32px;
@@ -31,4 +35,7 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+@media (max-width: 768px) {
 }

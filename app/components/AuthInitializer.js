@@ -1,11 +1,13 @@
 "use client";
 
 import { initAuth } from "@/store/authSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import LoadingSpinner from "./Loading";
 
 export default function AuthInitializer({ children }) {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchUser() {
@@ -28,11 +30,15 @@ export default function AuthInitializer({ children }) {
       } catch (err) {
         console.error("Auth Error:", err);
         dispatch(initAuth({ isLogin: false, user: null }));
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchUser();
   }, [dispatch]);
+
+  if (loading) return <LoadingSpinner className="authLoadingSpinner" />;
 
   return <>{children}</>;
 }

@@ -51,6 +51,12 @@ h6 {
   flex: 1;
 }
 
+.authLoadingSpinner {
+  height: 100vh !important;
+  padding-top: 50px;
+  padding-bottom: 202.2px;
+}
+
 .mainBg {
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4) !important;
   display: flex;
@@ -142,6 +148,12 @@ a {
 }
 
 @media (max-width: 768px) {
+  .authLoadingSpinner {
+    height: 100dvh !important;
+    padding-top: 40px !important;
+    padding-bottom: 181.4px !important;
+  }
+
   .dropdownDiv {
     width: 100%;
     padding: 0;

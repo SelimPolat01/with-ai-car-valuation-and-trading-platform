@@ -23,7 +23,7 @@
 .searchTextDiv {
   width: 100%;
   max-width: 1055px;
-  margin-bottom: 1rem;
+  margin: 0;
   box-sizing: border-box;
 }
 
@@ -192,12 +192,12 @@
 
 @media (max-width: 768px) {
   .div {
-    padding: 1rem 1rem 2.5rem 1rem;
+    padding: 1.25rem 1rem 2.5rem 1rem;
   }
 
   .searchText {
     margin: 0;
-    padding: 0 0 1rem 0;
+    padding: 0 0 1.25rem 0;
   }
 
   .listWrapper,

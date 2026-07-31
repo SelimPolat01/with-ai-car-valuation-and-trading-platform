@@ -160,7 +160,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 1rem 27px 1rem;
+    padding: 0 1rem 1.25rem 1rem;
   }
 
   .pageHeading {

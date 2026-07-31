@@ -73,8 +73,6 @@ app.use("/notifications", notificationsRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/faqs", faqsRoutes);
 
-// await createTable();
-
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server ${PORT} portunda başarıyla çalışıyor.`);
 });

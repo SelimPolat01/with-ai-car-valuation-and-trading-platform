@@ -7,7 +7,6 @@ import verifyToken from "../middlewares/verifyToken.js";
 
 export const router = express.Router();
 
-const SECRET = process.env.JWT_SECRET;
 const resend = new Resend(process.env.SMTP_PASS);
 
 const cookieOptions = {
@@ -54,7 +53,7 @@ router.post("/register", async (req, res) => {
         tel_number: user.tel_number,
         address: user.address,
       },
-      SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "1d" },
     );
 
@@ -100,7 +99,7 @@ router.post("/login", async (req, res) => {
           tel_number: user.tel_number,
           address: user.address,
         },
-        SECRET,
+        process.env.JWT_SECRET,
         { expiresIn: `${durationDays}d` },
       );
 

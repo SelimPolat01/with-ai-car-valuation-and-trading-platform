@@ -4,8 +4,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  flex: 1;
-  min-height: calc(100vh - 237.2px);
+  min-height: calc(100dvh - 252.2px);
 }
 
 .spinner {
@@ -22,10 +21,6 @@
     width: 32px;
     height: 32px;
     border-width: 4px;
-  }
-
-  .loadingContainer {
-    min-height: calc(100vh - 214.2px);
   }
 }
 

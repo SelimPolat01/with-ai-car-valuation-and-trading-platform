@@ -1,9 +1,8 @@
 import { FastApiFetch } from "@/backend/lib/fastApiFetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-async function postCarScratchDentDection(token, body) {
+async function postCarScratchDentDection(body) {
   return await FastApiFetch(
-    token,
     "car-scratch-dent-detection-upload",
     null,
     "POST",
@@ -14,10 +13,10 @@ async function postCarScratchDentDection(token, body) {
 export function usePostCarScratchDentDection() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ token, body }) => postCarScratchDentDection(token, body),
-    onSuccess: (_, variables) => {
+    mutationFn: ({ body }) => postCarScratchDentDection(body),
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["carScratchDentDetection", variables.token],
+        queryKey: ["carScratchDentDetection"],
       });
     },
   });

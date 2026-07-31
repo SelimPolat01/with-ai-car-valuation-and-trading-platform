@@ -1,25 +1,18 @@
 import { Fetch } from "@/backend/lib/fetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-async function patchNotificationRead(token, notificationId) {
-  return await Fetch(
-    token,
-    "notifications",
-    `${notificationId}/read`,
-    "PATCH",
-    null,
-  );
+async function patchNotificationRead(notificationId) {
+  return await Fetch("notifications", `${notificationId}/read`, "PATCH", null);
 }
 
 export function usePatchNotificationRead() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ token, notificationId }) =>
-      patchNotificationRead(token, notificationId),
-    onSuccess: (_, variables) => {
+    mutationFn: ({ notificationId }) => patchNotificationRead(notificationId),
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["personalNotifications", variables.token],
+        queryKey: ["personalNotifications"],
       });
     },
   });

@@ -1,22 +1,22 @@
 import { Fetch } from "@/backend/lib/fetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-async function deleteAdvert(token, advertId) {
-  return await Fetch(token, "adverts", `${advertId}`, "DELETE");
+async function deleteAdvert(advertId) {
+  return await Fetch("adverts", `${advertId}`, "DELETE");
 }
 
 export function useDeleteAdvert() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ token, advertId }) => deleteAdvert(token, advertId),
+    mutationFn: ({ advertId }) => deleteAdvert(advertId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["adverts", variables.token] });
+      queryClient.invalidateQueries({ queryKey: ["adverts"] });
       queryClient.invalidateQueries({
-        queryKey: ["personalAdverts", variables.token],
+        queryKey: ["personalAdverts"],
       });
       queryClient.removeQueries({
-        queryKey: ["advert", variables.advertId, variables.token],
+        queryKey: ["advert", variables.advertId],
       });
     },
   });

@@ -1,9 +1,8 @@
 import { FastApiFetch } from "@/backend/lib/fastApiFetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-async function postCarDirectionDetection(token, body) {
+async function postCarDirectionDetection(body) {
   return await FastApiFetch(
-    token,
     "car-direction-detection-upload",
     null,
     "POST",
@@ -14,10 +13,10 @@ async function postCarDirectionDetection(token, body) {
 export function usePostCarDirectionDetection() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ token, body }) => postCarDirectionDetection(token, body),
-    onSuccess: (_, variables) => {
+    mutationFn: ({ body }) => postCarDirectionDetection(body),
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["carDirectionDetection", variables.token],
+        queryKey: ["carDirectionDetection"],
       });
     },
   });

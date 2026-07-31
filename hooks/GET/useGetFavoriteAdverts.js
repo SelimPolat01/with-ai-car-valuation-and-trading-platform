@@ -1,20 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { Fetch } from "@/backend/lib/fetch";
 
-export async function getFavoriteAdverts(token) {
-  if (!token || token === "null" || token === "undefined" || token === "") {
-    return null;
-  }
-  return await Fetch(token, "adverts", "favoriteAdverts", "GET", null);
+export async function getFavoriteAdverts() {
+  return await Fetch("adverts", "favoriteAdverts", "GET", null);
 }
 
-export function useGetFavoriteAdverts(token) {
-  const isValidToken = !!token && token !== "null" && token !== "undefined";
-
+export function useGetFavoriteAdverts() {
   return useQuery({
-    queryKey: ["favoriteAdverts", token],
-    queryFn: () => getFavoriteAdverts(token),
-    enabled: isValidToken,
+    queryKey: ["favoriteAdverts"],
+    queryFn: () => getFavoriteAdverts(),
     retry: false,
   });
 }

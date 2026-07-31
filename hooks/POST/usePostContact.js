@@ -2,7 +2,7 @@ import { Fetch } from "@/backend/lib/fetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 async function postContact(body) {
-  return await Fetch(null, "api", "contact", "POST", body);
+  return await Fetch("api", "contact", "POST", body);
 }
 
 export function usePostContact() {

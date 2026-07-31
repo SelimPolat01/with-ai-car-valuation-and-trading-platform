@@ -1,17 +1,17 @@
 import { Fetch } from "@/backend/lib/fetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-async function patchSoldAdvert(token, body) {
-  return await Fetch(token, "adverts", `soldAdvert`, "PATCH", body);
+async function patchSoldAdvert(body) {
+  return await Fetch("adverts", `soldAdvert`, "PATCH", body);
 }
 
 export function usePatchSoldAdvert() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ token, body }) => patchSoldAdvert(token, body),
-    onSuccess: (_, variables) => {
+    mutationFn: ({ body }) => patchSoldAdvert(body),
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["adverts", variables.token],
+        queryKey: ["adverts"],
       });
     },
   });

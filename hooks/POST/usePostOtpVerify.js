@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 
 async function postOtpVerify(body, forLogin) {
   const queryString = forLogin ? "forLogin=true" : "forLogin=false";
-  return await Fetch(null, "api", `otp?${queryString}`, "POST", body);
+  return await Fetch("api", `otp?${queryString}`, "POST", body);
 }
 
 export function usePostOtpVerify() {

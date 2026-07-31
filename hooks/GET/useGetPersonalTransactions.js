@@ -1,26 +1,14 @@
 import { Fetch } from "@/backend/lib/fetch";
 import { useQuery } from "@tanstack/react-query";
 
-export async function getPersonalTransactions(token) {
-  if (!token || token === "null" || token === "undefined" || token === "") {
-    return null;
-  }
-  return await Fetch(
-    token,
-    "transactions",
-    "personal-transactions",
-    "GET",
-    null,
-  );
+export async function getPersonalTransactions() {
+  return await Fetch("transactions", "personal-transactions", "GET", null);
 }
 
-export default function useGetPersonalTransactions(token) {
-  const isValidToken = !!token && token !== "null" && token !== "undefined";
-
+export default function useGetPersonalTransactions() {
   return useQuery({
-    queryKey: ["personalTransactions", token],
-    queryFn: () => getPersonalTransactions(token),
-    enabled: isValidToken,
+    queryKey: ["personalTransactions"],
+    queryFn: () => getPersonalTransactions(),
     retry: false,
   });
 }

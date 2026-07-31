@@ -1,9 +1,8 @@
 import { Fetch } from "@/backend/lib/fetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-async function patchPersonalTransactionCancel(token, transactionId) {
+async function patchPersonalTransactionCancel(transactionId) {
   return await Fetch(
-    token,
     "transactions",
     `personal-transactions/${transactionId}?cancel=true`,
     "PATCH",
@@ -14,11 +13,11 @@ async function patchPersonalTransactionCancel(token, transactionId) {
 export function usePatchPersonalTransactionCancel() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ token, transactionId }) =>
-      patchPersonalTransactionCancel(token, transactionId),
-    onSuccess: (_, variables) => {
+    mutationFn: ({ transactionId }) =>
+      patchPersonalTransactionCancel(transactionId),
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["personalTransactions", variables.token],
+        queryKey: ["personalTransactions"],
       });
     },
   });

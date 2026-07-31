@@ -1,7 +1,7 @@
 .header {
   margin: 0 0 0.5rem 0;
   width: 100%;
-  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .nav {
@@ -454,14 +454,13 @@
   .nav {
     padding: 0 16px 0 0.5rem;
     gap: 8px;
-    width: 100%;
   }
 
   .logo {
     height: 40px !important;
     width: 40px !important;
     min-width: 40px !important;
-    margin: 6px 0 0 0;
+    margin: 8px 0 0 0;
   }
 
   .icon {

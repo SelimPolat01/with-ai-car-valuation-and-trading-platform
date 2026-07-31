@@ -80,7 +80,7 @@ export default function Header({ className }) {
   return (
     <header className={`${classes.header} ${className ? className : ""} `}>
       <nav className={classes.nav}>
-        <Link href="/">
+        <Link href="/" className={classes.logoLink}>
           <Image
             className={classes.logo}
             src="/images/logo.svg"

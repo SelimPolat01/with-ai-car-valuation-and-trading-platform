@@ -334,7 +334,7 @@
   .nav {
     margin: 0;
     padding: 0 10px;
-    min-height: 60px;
+    min-height: 55px;
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -358,7 +358,6 @@
     height: 32px;
   }
 
-  /* Giriş yapılınca ikonların sığması için gap 6px yapıldı */
   .ul {
     gap: 6px;
     height: 100%;
@@ -418,7 +417,6 @@
     margin: 0;
   }
 
-  /* Menü sağ sınıra sıfırlanır (Ekrandan taşmaz) */
   .accountMenu {
     top: 35px;
     left: auto;
@@ -428,7 +426,6 @@
     max-width: calc(100vw - 20px);
   }
 
-  /* Ok işareti (::before) İkonun Tam Ortasına Hizalanır (right: 7px) */
   .accountMenu::before {
     left: auto;
     right: 7px;
@@ -440,7 +437,6 @@
     transform: translateY(0);
   }
 
-  /* Bildirim menüsü sağ sınıra sıfırlanır */
   .notificationDropdown {
     width: 280px;
     max-width: calc(100vw - 20px);
@@ -460,13 +456,18 @@
   .nav {
     padding: 0 1rem 0 8px;
     gap: 4px;
+    min-height: 40px;
+  }
+
+  .logoLink {
+    height: 40px;
   }
 
   .logo {
-    height: 40px !important;
-    width: 40px !important;
-    min-width: 40px !important;
-    margin: 8px 0 0 0;
+    height: 35px !important;
+    width: 35px !important;
+    min-width: 35px !important;
+    margin: 4.5px 0 0 0;
   }
 
   .icon {
@@ -476,7 +477,7 @@
 
   .ul {
     gap: 4px;
-    height: 22px;
+    height: 20px;
   }
 
   .notificationDropdown {

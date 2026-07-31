@@ -597,7 +597,7 @@
   }
 
   .input {
-    width: 132px;
+    flex: 1;
     height: 22px;
     font-size: 13px;
     padding: 2px 4px;

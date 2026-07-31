@@ -1,5 +1,4 @@
 export async function FastApiFetch(
-  token = null,
   param1 = null,
   param2 = null,
   method = "GET",
@@ -11,9 +10,7 @@ export async function FastApiFetch(
 
   const isFormData = body instanceof FormData;
 
-  const headers = {
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
+  const headers = {};
 
   if (!isFormData) {
     headers["Content-Type"] = "application/json";
@@ -22,6 +19,7 @@ export async function FastApiFetch(
   const response = await fetch(url, {
     method: method,
     headers: headers,
+    credentials: "include",
     body:
       method !== "GET" && body
         ? isFormData
@@ -32,8 +30,20 @@ export async function FastApiFetch(
 
   if (response.status === 401) {
     if (typeof window !== "undefined") {
-      localStorage.removeItem("token");
-      window.location.href = "/login";
+      const currentPath = window.location.pathname;
+      const isPublicPage =
+        currentPath === "/" ||
+        currentPath === "/tum-ilanlar" ||
+        currentPath.startsWith("/ilan/") ||
+        currentPath === "/hakkimizda" ||
+        currentPath === "/sikca-sorulan-sorular" ||
+        currentPath === "/iletisim" ||
+        currentPath === "/register" ||
+        currentPath === "/login";
+
+      if (!isPublicPage) {
+        window.location.href = "/login";
+      }
     }
     throw { ok: false, status: 401, message: "Oturum süresi doldu." };
   }

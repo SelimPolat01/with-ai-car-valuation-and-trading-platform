@@ -1,7 +1,7 @@
 .contactContainer {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 3rem 0 5rem 0;
+  padding: 70px 0 5rem 0;
   color: #ffffff;
 }
 
@@ -389,7 +389,7 @@
 
 @media (max-width: 768px) {
   .contactContainer {
-    padding: 1.25rem 1rem 2.5rem 1rem;
+    padding: 2rem 1rem 2.5rem 1rem;
   }
 
   .mainTitle {

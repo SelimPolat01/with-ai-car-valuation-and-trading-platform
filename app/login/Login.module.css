@@ -5,7 +5,7 @@
   justify-content: center;
   width: 100%;
   box-sizing: border-box;
-  padding: 53px 0 5rem 0;
+  padding: 70px 0 5rem 0;
   flex: 1;
 }
 
@@ -164,7 +164,7 @@
   }
 
   .pageHeading {
-    padding: 0 0 1.5rem 0;
+    padding: 0 0 2rem 0;
     gap: 0.5rem;
   }
 

@@ -1,7 +1,7 @@
 .pageWrapper {
   min-height: 100vh;
   background: linear-gradient(to right, #2d1457, #934b8e, #a7b8d4);
-  padding: 53px 0 5rem 0;
+  padding: 70px 0 5rem 0;
 }
 
 .faqPageContainer {
@@ -221,7 +221,7 @@
 
 @media (max-width: 768px) {
   .pageWrapper {
-    padding: 1.25rem 1rem 2.5rem 1rem;
+    padding: 2rem 1rem 2.5rem 1rem;
   }
 
   .mainTitle {

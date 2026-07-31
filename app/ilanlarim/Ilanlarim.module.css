@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   flex: 1;
+  padding: 1rem 0 0 0;
 }
 
 .div {
@@ -43,7 +44,7 @@
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
-    padding: 1.25rem 0 0 0;
+    padding: 1rem 0 0 0;
     gap: 1rem;
   }
 

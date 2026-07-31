@@ -482,6 +482,7 @@ export default function HasarDurumu() {
                   text="Fiyat Teklifi Al"
                   onClick={() => router.push("fiyat-teklifi")}
                   disabled={isAnyPending}
+                  className={classes.button}
                 />
               </motion.div>
             )}

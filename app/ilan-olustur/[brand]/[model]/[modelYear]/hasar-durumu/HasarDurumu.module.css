@@ -198,6 +198,10 @@
   font-weight: 600;
 }
 
+.button {
+  margin: 0.5rem 0 0 0 !important;
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -323,5 +327,9 @@
   .clickToTry {
     font-size: 0.6rem;
     margin-top: 2px;
+  }
+
+  .button {
+    margin: 0.25rem 0 0 0 !important;
   }
 }

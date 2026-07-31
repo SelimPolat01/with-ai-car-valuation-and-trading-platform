@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/favoriteAdverts", verifyToken, async (req, res) => {
+router.get("/favoriteAdverts", async (req, res) => {
   const userId = Number(req.user.id);
   try {
     const result = await db.query(

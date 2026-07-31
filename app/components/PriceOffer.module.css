@@ -234,4 +234,9 @@
     opacity: 1;
     padding: 6px;
   }
+
+  .inputDiv label,
+  .label {
+    font-weight: 600 !important;
+  }
 }

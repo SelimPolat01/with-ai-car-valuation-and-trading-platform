@@ -33,4 +33,8 @@
   .card {
     padding: 2rem;
   }
+
+  .inputColumn label {
+    font-weight: 600 !important;
+  }
 }

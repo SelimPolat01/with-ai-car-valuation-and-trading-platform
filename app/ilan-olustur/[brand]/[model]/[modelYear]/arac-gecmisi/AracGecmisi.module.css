@@ -337,4 +337,11 @@
     opacity: 1;
     padding: 6px;
   }
+
+  .inputWrapper label,
+  .dropdownHeader label,
+  .selectLabel,
+  .fileTitle {
+    font-weight: 600 !important;
+  }
 }

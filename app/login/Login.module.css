@@ -183,4 +183,8 @@
   .form {
     gap: 1rem;
   }
+
+  .inputColumn label {
+    font-weight: 600 !important;
+  }
 }

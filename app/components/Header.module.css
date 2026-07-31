@@ -449,7 +449,6 @@
     transform: none;
   }
 
-  /* Ok işareti Bildirim İkonunun Tam Ortasına Hizalanır (right: 7px) */
   .notificationDropdown::before {
     left: auto;
     right: 7px;
@@ -459,15 +458,15 @@
 
 @media (max-width: 480px) {
   .nav {
-    padding: 0 8px;
+    padding: 0 1rem 0 8px;
     gap: 4px;
   }
 
   .logo {
-    height: 34px !important;
-    width: 34px !important;
-    min-width: 34px !important;
-    margin: 0;
+    height: 40px !important;
+    width: 40px !important;
+    min-width: 40px !important;
+    margin: 8px 0 0 0;
   }
 
   .icon {
@@ -486,7 +485,6 @@
     right: -6px;
   }
 
-  /* Küçük ekranda küçülen ikon için ok ortalaması (right: 5px) */
   .notificationDropdown::before {
     right: 7px;
   }
@@ -517,7 +515,6 @@
     right: -4px;
   }
 
-  /* Küçük ekranda küçülen ikon için ok ortalaması (right: 5px) */
   .accountMenu::before {
     right: 7px;
   }

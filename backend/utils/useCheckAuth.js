@@ -9,27 +9,35 @@ export function useCheckAuth() {
   const path = usePathname();
 
   useEffect(() => {
-    const check = () => {
-      const token = localStorage.getItem("token");
-      const expire = localStorage.getItem("tokenExpire");
+    const publicPaths = [
+      "/",
+      "/tum-ilanlar",
+      "/hakkimizda",
+      "/login",
+      "/register",
+      "/sikca-sorulan-sorular",
+      "/iletisim",
+      "/sifremi-unuttum",
+    ];
 
-      if (!token || !expire || new Date().getTime() > Number(expire)) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("tokenExpire");
+    const isPublicPage =
+      publicPaths.includes(path) || path.startsWith("/ilan/");
+
+    const checkSession = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/auth/me`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Oturum geçersiz veya süresi dolmuş.");
+        }
+      } catch (error) {
         dispatch(logout());
-
-        const publicPaths = [
-          "/",
-          "/tum-ilanlar",
-          "/hakkimizda",
-          "/login",
-          "/register",
-          "/sikca-sorulan-sorular",
-          "/iletisim",
-        ];
-
-        const isPublicPage =
-          publicPaths.includes(path) || path.startsWith("/ilan/");
 
         if (!isPublicPage) {
           router.replace("/login");
@@ -37,10 +45,6 @@ export function useCheckAuth() {
       }
     };
 
-    const intervalId = setInterval(check, 60 * 1000);
-
-    check();
-
-    return () => clearInterval(intervalId);
-  }, [router, dispatch, path]);
+    checkSession();
+  }, [path, dispatch, router]);
 }

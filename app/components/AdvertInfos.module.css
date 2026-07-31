@@ -33,6 +33,17 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.titleFavoriteDiv h2 {
+  max-width: 741.96px;
+  word-break: break-word;
+}
+
+.actionButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-self: flex-start;
+}
+
 .actionButtonsWrapper {
   display: flex;
   align-items: center;
@@ -52,6 +63,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
   user-select: none;
+  width: 70.66px;
 }
 
 .favoriteCountBadge:hover {
@@ -252,6 +264,7 @@
   font-size: 14px;
   white-space: nowrap;
   flex-shrink: 0;
+  width: 165.45px;
 }
 
 .defaultButton:hover {

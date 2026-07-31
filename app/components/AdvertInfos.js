@@ -305,40 +305,42 @@ export default function AdvertInfos() {
                 {advert.title?.toLocaleUpperCase("tr-TR")}
               </h2>
 
-              <div className={classes.actionButtonsWrapper}>
-                {(!user || Number(user.id) !== Number(advert.user_id)) && (
-                  <motion.button
-                    whileHover={{ scale: 1 }}
-                    whileTap={{ scale: 0.95 }}
-                    disabled={isFavoritePending}
-                    className={
-                      localIsFavorite
-                        ? classes.favoriteButton
-                        : classes.defaultButton
-                    }
-                    type="button"
-                    onClick={toggleFavoriteClick}
-                  >
-                    {isFavoritePending
-                      ? "İşleniyor..."
-                      : localIsFavorite
-                        ? "Favorilerimden Çıkar"
-                        : "Favorilerime Ekle"}
-                  </motion.button>
-                )}
+              <div className={classes.actionButtonContainer}>
+                <div className={classes.actionButtonsWrapper}>
+                  {(!user || Number(user.id) !== Number(advert.user_id)) && (
+                    <motion.button
+                      whileHover={{ scale: 1 }}
+                      whileTap={{ scale: 0.95 }}
+                      disabled={isFavoritePending}
+                      className={
+                        localIsFavorite
+                          ? classes.favoriteButton
+                          : classes.defaultButton
+                      }
+                      type="button"
+                      onClick={toggleFavoriteClick}
+                    >
+                      {isFavoritePending
+                        ? "İşleniyor..."
+                        : localIsFavorite
+                          ? "Favorilerimden Çıkar"
+                          : "Favorilerime Ekle"}
+                    </motion.button>
+                  )}
 
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className={classes.favoriteCountBadge}
-                >
-                  <Heart
-                    size={20}
-                    className={`${classes.favoriteIcon} ${localIsFavorite ? classes.favoriteIconActive : ""}`}
-                  />
-                  <span className={classes.favoriteCountText}>
-                    {favoriteCount}
-                  </span>
-                </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className={classes.favoriteCountBadge}
+                  >
+                    <Heart
+                      size={20}
+                      className={`${classes.favoriteIcon} ${localIsFavorite ? classes.favoriteIconActive : ""}`}
+                    />
+                    <span className={classes.favoriteCountText}>
+                      {favoriteCount}
+                    </span>
+                  </motion.div>
+                </div>
               </div>
             </div>
 

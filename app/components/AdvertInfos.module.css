@@ -62,15 +62,24 @@
 
 .favoriteIcon {
   color: #ff4b6e;
-  fill: rgba(255, 75, 110, 0.3);
+  fill: none;
   filter: drop-shadow(0 0 6px rgba(255, 75, 110, 0.4));
+  transition:
+    fill 0.3s ease,
+    transform 0.2s ease;
+}
+
+.favoriteIconActive {
+  fill: #ff4b6e;
 }
 
 .favoriteCountText {
   color: #ffffff;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 20px;
   letter-spacing: 0.5px;
+  line-height: 1;
+  transform: translateY(1.75px);
 }
 
 .advertInfoWrapper1 {
@@ -238,7 +247,7 @@
   padding: 6px 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(4px);
   font-size: 14px;
   white-space: nowrap;
@@ -253,7 +262,7 @@
 
 .favoriteButton {
   background: #c2c047;
-  color: #1a1a1a;
+  color: #ffffff;
   border: 1px solid #c2c047;
   border-radius: 8px;
   padding: 6px 12px;
@@ -267,9 +276,10 @@
 }
 
 .favoriteButton:hover {
-  background: #f1ef71;
-  border-color: #f1ef71;
-  box-shadow: 0 0 20px rgba(241, 239, 113, 0.9);
+  background: #ffffff;
+  color: #c2c047;
+  border-color: #ffffff;
+  box-shadow: 0 0 20px rgba(194, 192, 71, 0.5);
 }
 
 .descriptionContainer {

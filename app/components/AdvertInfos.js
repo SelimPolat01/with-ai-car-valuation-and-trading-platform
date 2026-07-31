@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { toggleFavorite } from "@/store/advertsSlice";
+import { useState, useEffect, useMemo } from "react";
+import { setFavorites } from "@/store/advertsSlice";
 import { useParams, useRouter } from "next/navigation";
 import classes from "./AdvertInfos.module.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,13 +27,13 @@ import {
 import Loading from "./Loading";
 import SecondaryButton from "./SecondaryButton";
 import useGetAdvertFavoriteCount from "@/hooks/GET/useGetAdvertFavoriteCount";
+import { useGetFavoriteAdverts } from "@/hooks/GET/useGetFavoriteAdverts";
 
 export default function AdvertInfos() {
   const params = useParams();
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-
   const [isSuccess, setIsSuccess] = useState(false);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
@@ -49,6 +49,13 @@ export default function AdvertInfos() {
     error: getAdvertError,
   } = useGetAdvert(params.advertId);
 
+  const {
+    data: getFavoriteAdvertsData,
+    isLoading: getFavoriteAdvertsIsLoading,
+    isError: getFavoriteAdvertsIsError,
+    error: getFavoriteAdvertsError,
+  } = useGetFavoriteAdverts();
+
   const { mutate: postFavorite, isPending: isFavoritePending } =
     usePostFavoriteAdvert();
 
@@ -60,7 +67,29 @@ export default function AdvertInfos() {
     advert?.id,
   );
 
-  const isFavorite = Boolean(advert?.isFavorite);
+  const favoriteAdvertsList = useMemo(() => {
+    if (Array.isArray(getFavoriteAdvertsData?.result))
+      return getFavoriteAdvertsData.result;
+    if (Array.isArray(getFavoriteAdvertsData)) return getFavoriteAdvertsData;
+    return [];
+  }, [getFavoriteAdvertsData]);
+
+  useEffect(() => {
+    if (favoriteAdvertsList.length > 0) {
+      dispatch(setFavorites(favoriteAdvertsList));
+    }
+  }, [favoriteAdvertsList, dispatch]);
+
+  const isFavorite = favoriteAdvertsList.some(
+    (fav) => String(fav.id || fav.advert_id) === String(advert?.id),
+  );
+
+  const [localIsFavorite, setLocalIsFavorite] = useState(false);
+
+  useEffect(() => {
+    setLocalIsFavorite(isFavorite);
+  }, [isFavorite]);
+
   const favoriteCount =
     getAdvertFavoriteCountData?.result?.count ??
     getAdvertFavoriteCountData?.count ??
@@ -103,7 +132,6 @@ export default function AdvertInfos() {
       setSummaryText(data.summarizated_description);
       setIsShowingSummary(true);
     } catch (err) {
-      console.error(err.message);
       alert("Özet çıkarılırken bir hata oluştu.");
     } finally {
       setIsSummarizing(false);
@@ -118,21 +146,13 @@ export default function AdvertInfos() {
 
     if (!advert || !advert.id) return;
 
+    setLocalIsFavorite((prev) => !prev);
+
     postFavorite(
       { advertId: advert.id },
       {
-        onSuccess: (data) => {
-          if (data) {
-            dispatch(
-              toggleFavorite({
-                advert: advert,
-                isFavorite: data.result?.isFavorite ?? !isFavorite,
-              }),
-            );
-          }
-        },
-        onError: (err) => {
-          console.error("Favori işlemi başarısız:", err);
+        onError: () => {
+          setLocalIsFavorite(isFavorite);
         },
       },
     );
@@ -148,16 +168,21 @@ export default function AdvertInfos() {
     );
   }
 
-  if (getAdvertIsLoading) {
+  if (getAdvertIsLoading || (user && getFavoriteAdvertsIsLoading)) {
     return <Loading />;
   }
 
-  if (getAdvertIsError) {
+  if (getAdvertIsError || getFavoriteAdvertsIsError) {
+    const errorMessage =
+      getAdvertError?.message ||
+      getFavoriteAdvertsError?.message ||
+      "Sunucu kaynaklı bir hata oluştu.";
+
     return (
       <div className="errorContainer">
         <AlertCircle size={48} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getAdvertError?.message || "Sunucu kaynaklı bir hata oluştu."}</p>
+        <p>{errorMessage}</p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
@@ -260,6 +285,7 @@ export default function AdvertInfos() {
 
   return (
     <motion.div
+      layout
       className={classes.advertDiv}
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
@@ -282,11 +308,11 @@ export default function AdvertInfos() {
               <div className={classes.actionButtonsWrapper}>
                 {(!user || Number(user.id) !== Number(advert.user_id)) && (
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1 }}
                     whileTap={{ scale: 0.95 }}
                     disabled={isFavoritePending}
                     className={
-                      isFavorite
+                      localIsFavorite
                         ? classes.favoriteButton
                         : classes.defaultButton
                     }
@@ -295,7 +321,7 @@ export default function AdvertInfos() {
                   >
                     {isFavoritePending
                       ? "İşleniyor..."
-                      : isFavorite
+                      : localIsFavorite
                         ? "Favorilerimden Çıkar"
                         : "Favorilerime Ekle"}
                   </motion.button>
@@ -305,7 +331,10 @@ export default function AdvertInfos() {
                   whileHover={{ scale: 1.05 }}
                   className={classes.favoriteCountBadge}
                 >
-                  <Heart size={20} className={classes.favoriteIcon} />
+                  <Heart
+                    size={20}
+                    className={`${classes.favoriteIcon} ${localIsFavorite ? classes.favoriteIconActive : ""}`}
+                  />
                   <span className={classes.favoriteCountText}>
                     {favoriteCount}
                   </span>

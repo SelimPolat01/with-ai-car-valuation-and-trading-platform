@@ -63,8 +63,8 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "public/uploads")));
 app.use("/api", globalLimiter, apiRoutes);
-app.use("/cars", globalLimiter, carsRoutes);
-app.use("/adverts", globalLimiter, advertsRoutes);
+app.use("/cars", carsRoutes);
+app.use("/adverts", advertsRoutes);
 app.use("/predict", globalLimiter, predictRoutes);
 app.use("/infos", personalInfoRoutes);
 app.use("/slots", globalLimiter, slotsRoutes);

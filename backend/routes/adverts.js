@@ -116,16 +116,14 @@ router.get("/:advertId", async (req, res) => {
 
   let userId = 9999;
 
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith("Bearer ")) {
-    const token = authHeader.split(" ")[1];
-    if (token && token !== "null" && token !== "undefined") {
-      try {
-        const decoded = jwt.verify(token, process.env.SECRET);
-        userId = Number(decoded.id) || 9999;
-      } catch (err) {
-        console.error("Token doğrulama hatası:", err.message);
-      }
+  const token = req.cookies?.token;
+
+  if (token && token !== "null" && token !== "undefined") {
+    try {
+      const decoded = jwt.verify(token, process.env.SECRET);
+      userId = Number(decoded.id) || 9999;
+    } catch (err) {
+      console.error("Token doğrulama hatası:", err.message);
     }
   }
 

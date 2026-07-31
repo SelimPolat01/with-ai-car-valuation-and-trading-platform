@@ -451,6 +451,7 @@ def search_similar_advert(request: Request, body: searchRequest):
         conn = psycopg2.connect(DATABASE_URL)
         register_vector(conn)
         cur = conn.cursor()
+        
         query = """
             SELECT 
                 a.id, 
@@ -460,7 +461,8 @@ def search_similar_advert(request: Request, body: searchRequest):
                 a.description_summary_embedding <=> %s::vector AS distance
             FROM adverts a
             LEFT JOIN advert_images ai ON a.id = ai.advert_id AND ai.is_main = TRUE
-            WHERE a.description_embedding IS NOT NULL
+            WHERE a.description_summary_embedding IS NOT NULL
+              AND a.is_sold = FALSE
             ORDER BY distance ASC
             LIMIT 5;
         """

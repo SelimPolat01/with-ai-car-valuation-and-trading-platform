@@ -1,7 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { router as authRoutes } from "./routes/auth.js";
+import { router as apiRoutes } from "./routes/api.js";
 import { router as carsRoutes } from "./routes/cars.js";
 import { router as advertsRoutes } from "./routes/adverts.js";
 import { router as predictRoutes } from "./routes/predict.js";
@@ -52,12 +54,15 @@ app.use(
 
 app.use(express.json());
 
+app.use(cookieParser());
+
 app.get("/", (req, res) => {
   res.send("Node.js Backend Başarıyla Çalışıyor! 🚀");
 });
 
+app.use("/auth", authRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "public/uploads")));
-app.use("/api", globalLimiter, authRoutes);
+app.use("/api", globalLimiter, apiRoutes);
 app.use("/cars", globalLimiter, carsRoutes);
 app.use("/adverts", globalLimiter, advertsRoutes);
 app.use("/predict", globalLimiter, predictRoutes);

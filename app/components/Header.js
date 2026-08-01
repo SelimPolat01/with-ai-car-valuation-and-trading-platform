@@ -14,6 +14,8 @@ import {
   Tags,
   User,
   UserCog,
+  AlertCircle,
+  ArrowLeft,
 } from "lucide-react";
 import { useState } from "react";
 import { useGetPersonalNotifications } from "@/hooks/GET/useGetPersonalNotifications";
@@ -26,24 +28,29 @@ export default function Header({ className }) {
   const router = useRouter();
   const pathname = usePathname();
   const [clickNotificationIcon, setClickNotificationIcon] = useState(false);
-  const { isInitialized, isLogin } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
+
   const { mutate: logoutMutate } = usePostLogout();
 
   const {
     data: getPersonalNotificationsData,
     isLoading: getPersonalNotificationsIsLoading,
     isError: getPersonalNotificationsIsError,
-  } = useGetPersonalNotifications(isLogin);
+    error: getPersonalNotificationsError,
+  } = useGetPersonalNotifications(user);
 
   const { mutate: patchPersonalNotificationRead } = usePatchNotificationRead();
-
-  if (!isInitialized) return null;
 
   const personalNotifications = Array.isArray(getPersonalNotificationsData)
     ? getPersonalNotificationsData
     : getPersonalNotificationsData?.result || [];
 
   function notificationClickHandler(notification) {
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
     setClickNotificationIcon(false);
 
     if (!notification.is_read) {
@@ -62,10 +69,20 @@ export default function Header({ className }) {
   }
 
   function notificationIconClickHandler() {
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
     setClickNotificationIcon((prev) => !prev);
   }
 
   function logoutHandler() {
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
     logoutMutate(undefined, {
       onSettled: () => {
         dispatch(logout());
@@ -80,14 +97,14 @@ export default function Header({ className }) {
   return (
     <header className={`${classes.header} ${className ? className : ""} `}>
       <nav className={classes.nav}>
-        <Link href="/" className={classes.logoLink}>
+        <Link className={classes.logoLink} href="/">
           <Image
-            className={classes.logo}
-            src="/images/logo.svg"
             alt="logo"
-            width={55}
+            className={classes.logo}
             height={55}
             priority
+            src="/images/logo.svg"
+            width={55}
           />
         </Link>
         <ul className={classes.ul}>
@@ -96,31 +113,29 @@ export default function Header({ className }) {
           {links.commonLinks.map((commonLink, index) => (
             <li className={classes.li} key={index}>
               <Link
-                title={commonLink.title}
-                className={`${classes[commonLink.className]}${
-                  className ? ` ${className}` : ""
-                }`}
+                className={className || ""}
                 href={commonLink.href}
+                title={commonLink.title}
               >
                 {commonLink.label}
               </Link>
             </li>
           ))}
 
-          {!isLogin &&
+          {!user &&
             links.notLoginlinks.map((notLoginlink, index) => (
               <li className={classes.li} key={index}>
                 <Link
-                  title={notLoginlink.title}
                   className={classes[notLoginlink.className]}
                   href={notLoginlink.href}
+                  title={notLoginlink.title}
                 >
                   {notLoginlink.label}
                 </Link>
               </li>
             ))}
 
-          {isLogin && (
+          {user && (
             <li className={classes.li}>
               <div className={classes.notificationContainer}>
                 <button
@@ -152,8 +167,16 @@ export default function Header({ className }) {
                           Yükleniyor...
                         </div>
                       ) : getPersonalNotificationsIsError ? (
-                        <div className={classes.emptyNotification}>
-                          Bildirimler yüklenemedi.
+                        <div className="errorContainer">
+                          <AlertCircle className="iconSecondary" size={48} />
+                          <h2>Bir Hata Oluştu</h2>
+                          <p>{getPersonalNotificationsError?.message}</p>
+                          <button
+                            onClick={() => setClickNotificationIcon(false)}
+                            className="backButton"
+                          >
+                            <ArrowLeft size={20} /> Kapat
+                          </button>
                         </div>
                       ) : personalNotifications?.length > 0 ? (
                         personalNotifications.map((notification) => (
@@ -186,8 +209,8 @@ export default function Header({ className }) {
                       )}
                     </div>
                     <Link
-                      href="/hesabim/bildirimler"
                       className={classes.viewAllButton}
+                      href="/hesabim/bildirimler"
                     >
                       Tümünü Gör
                     </Link>
@@ -197,15 +220,9 @@ export default function Header({ className }) {
             </li>
           )}
 
-          {isLogin && (
+          {user && (
             <li className={`${classes.li} ${classes.account}`}>
-              <Link
-                className={`${classes.accountLink}${
-                  className ? ` ${className}` : ""
-                }`}
-                title="Hesabım"
-                href="/hesabim"
-              >
+              <Link className={className || ""} href="/hesabim" title="Hesabım">
                 <UserCog
                   className={classes.icon}
                   size={30}
@@ -215,8 +232,8 @@ export default function Header({ className }) {
               <ul className={classes.accountMenu}>
                 <li>
                   <Link
-                    href="/ilanlarim"
                     className={classes.myAdvertsLink}
+                    href="/ilanlarim"
                     title="İlanlarım"
                   >
                     <Tags
@@ -229,8 +246,8 @@ export default function Header({ className }) {
                 </li>
                 <li>
                   <Link
-                    href="/favorilerim"
                     className={classes.favoriteAdvertsLink}
+                    href="/favorilerim"
                     title="Favori İlanlarım"
                   >
                     <FolderHeart
@@ -243,8 +260,8 @@ export default function Header({ className }) {
                 </li>
                 <li>
                   <Link
-                    href="/hesabim"
                     className={classes.juniorAccountLink}
+                    href="/hesabim"
                     title="Hesabım"
                   >
                     <User

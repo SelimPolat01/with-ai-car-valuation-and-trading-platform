@@ -5,10 +5,11 @@ export async function getPersonalTransactions() {
   return await Fetch("transactions", "personal-transactions", "GET", null);
 }
 
-export default function useGetPersonalTransactions() {
+export default function useGetPersonalTransactions(user) {
   return useQuery({
-    queryKey: ["personalTransactions"],
+    queryKey: ["personalTransactions", user?.id],
     queryFn: () => getPersonalTransactions(),
+    enabled: !!user,
     retry: false,
   });
 }

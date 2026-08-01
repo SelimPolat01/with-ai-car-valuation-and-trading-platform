@@ -39,6 +39,7 @@ export default function VerifyEmailStep({
         onError: (err) => {
           if (err?.status === 409 || err?.message?.includes("kullanımda")) {
             setIsConflict(true);
+            localStorage.setItem("email", input.email.value);
           }
         },
       },

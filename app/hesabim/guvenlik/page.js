@@ -2,13 +2,7 @@
 
 import Input from "@/app/components/Input";
 import classes from "./Guvenlik.module.css";
-import {
-  AlertCircle,
-  AlertTriangle,
-  ArrowLeft,
-  KeyRound,
-  Mail,
-} from "lucide-react";
+import { AlertCircle, AlertTriangle, ArrowLeft, KeyRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,8 +11,6 @@ import { AnimatePresence } from "framer-motion";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import SecondaryButton from "@/app/components/SecondaryButton";
 import SuccessMessage from "@/app/components/SuccessMessage";
-import { useGetEmail } from "@/hooks/GET/useGetEmail";
-import { usePatchEmail } from "@/hooks/PATCH/usePatchEmail";
 import { usePatchPassword } from "@/hooks/PATCH/usePatchPassword";
 import { useDeleteAccount } from "@/hooks/DELETE/useDeleteAccount";
 import Loading from "@/app/loading";
@@ -26,25 +18,22 @@ import Loading from "@/app/loading";
 export default function Guvenlik() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { isInitialized, isLogin } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const [error, setError] = useState({
-    email: false,
     password: false,
     account: false,
   });
   const [isSuccess, setIsSuccess] = useState({
-    email: false,
     password: false,
   });
   const deleteAccountInputRef = useRef();
 
   useEffect(() => {
     let timer;
-    if (isSuccess.email || isSuccess.password) {
+    if (isSuccess.password) {
       timer = setTimeout(() => {
         setIsSuccess({
-          email: false,
           password: false,
         });
       }, 5000);
@@ -53,15 +42,6 @@ export default function Guvenlik() {
   }, [isSuccess]);
 
   const [input, setInput] = useState({
-    currentEmail: "",
-    email: {
-      letters: "",
-      isBlur: false,
-    },
-    confirmEmail: {
-      letters: "",
-      isBlur: false,
-    },
     currentPassword: {
       letters: "",
       isBlur: false,
@@ -77,20 +57,6 @@ export default function Guvenlik() {
   });
 
   const {
-    data: getEmailInfo,
-    isLoading: getEmailInfoIsLoading,
-    isError: getEmailInfoIsError,
-    error: getEmailInfoError,
-  } = useGetEmail();
-
-  const {
-    mutate: patchEmailMutate,
-    isPending: patchEmailIsPending,
-    isError: patchEmailIsError,
-    error: patchEmailError,
-  } = usePatchEmail();
-
-  const {
     mutate: patchPasswordMutate,
     isPending: patchPasswordIsPending,
     isError: patchPasswordIsError,
@@ -103,69 +69,12 @@ export default function Guvenlik() {
     error: deleteAccountError,
   } = useDeleteAccount();
 
-  useEffect(() => {
-    if (getEmailInfo) {
-      setInput((prev) => ({
-        ...prev,
-        currentEmail: getEmailInfo?.result?.email || "",
-      }));
-    }
-  }, [getEmailInfo, isSuccess]);
-
   function changeHandler(event) {
     const { name, value } = event.target;
     setInput((prev) => ({
       ...prev,
       [name]: { ...prev[name], letters: value },
     }));
-  }
-
-  function emailSubmitHandler(event) {
-    event.preventDefault();
-    setError((prev) => ({ ...prev, email: false }));
-
-    if (input.email.letters.trim().length === 0) {
-      setError((prev) => ({
-        ...prev,
-        email: "Lütfen geçerli bir e-posta adresi girip tekrar deneyiniz.",
-      }));
-      return;
-    } else if (input.currentEmail === input.email.letters) {
-      setError((prev) => ({
-        ...prev,
-        email:
-          "Yeni e-posta adresiniz mevcut e-posta adresinizle aynı olamaz. Lütfen farklı bir adres giriniz.",
-      }));
-      return;
-    } else if (input.email.letters !== input.confirmEmail.letters) {
-      setError((prev) => ({
-        ...prev,
-        email:
-          "Girdiğiniz e-posta adresleri eşleşmiyor. Lütfen tekrar deneyiniz.",
-      }));
-      return;
-    }
-
-    patchEmailMutate(
-      {
-        body: {
-          email: input.email.letters,
-        },
-      },
-      {
-        onSuccess: () => {
-          setIsSuccess((prev) => ({ ...prev, email: true }));
-          setInput((prev) => ({
-            ...prev,
-            email: { letters: "", isBlur: false },
-            confirmEmail: { letters: "", isBlur: false },
-          }));
-          setError((prev) => ({ ...prev, email: false }));
-        },
-        onError: (err) =>
-          setError((prev) => ({ ...prev, email: err?.message })),
-      },
-    );
   }
 
   function passwordSubmitHandler(event) {
@@ -245,20 +154,16 @@ export default function Guvenlik() {
     );
   }
 
-  if (!isInitialized || getEmailInfoIsLoading) {
+  if (patchPasswordIsPending) {
     return <Loading />;
   }
 
-  if (!isLogin) {
-    return null;
-  }
-
-  if (getEmailInfoIsError) {
+  if (patchPasswordIsError) {
     return (
       <div className="errorContainer">
         <AlertCircle size={48} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getEmailInfoError?.message}</p>
+        <p>{patchPasswordError?.message}</p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
@@ -266,8 +171,6 @@ export default function Guvenlik() {
     );
   }
 
-  const emailErrorMessage =
-    error.email || (patchEmailIsError && patchEmailError?.message);
   const passwordErrorMessage =
     error.password || (patchPasswordIsError && patchPasswordError?.message);
   const accountErrorMessage =
@@ -286,72 +189,6 @@ export default function Guvenlik() {
       </AnimatePresence>
       <h1 className={classes.pageTitle}>Güvenlik Ayarları</h1>
       <div className={classes.settingsContainer}>
-        <div className={classes.settingBlock}>
-          <div className={classes.blockInfo}>
-            <h3>
-              <Mail size={20} className={classes.icon} /> E-Posta
-            </h3>
-            <p>
-              Hesabınıza giriş yapmak ve bildirim almak için kullandığınız
-              e-posta adresini güncelleyin.
-            </p>
-          </div>
-          {!isSuccess.email ? (
-            <form onSubmit={emailSubmitHandler} className={classes.blockForm}>
-              <Input
-                disabled
-                type="email"
-                name="currentEmail"
-                label="Güncel E-Posta Adresi"
-                value={input.currentEmail}
-                className={`${classes.input} ${classes.currentEmailInput}`}
-              />
-              <Input
-                type="email"
-                name="email"
-                label="Yeni E-Posta Adresi"
-                value={input.email.letters}
-                onChange={changeHandler}
-                className={classes.input}
-              />
-              <Input
-                type="email"
-                name="confirmEmail"
-                label="E-Posta Doğrula"
-                value={input.confirmEmail.letters}
-                onChange={changeHandler}
-                className={classes.input}
-              />
-              {emailErrorMessage && (
-                <div className={classes.errorDiv}>
-                  <p>{emailErrorMessage}</p>
-                </div>
-              )}
-              <div className={classes.submitContainer}>
-                <SecondaryButton
-                  type="submit"
-                  text={
-                    patchEmailIsPending ? "Güncelleniyor" : "E-Postayı Güncelle"
-                  }
-                  className={classes.button}
-                  disabled={patchEmailIsPending}
-                />
-              </div>
-            </form>
-          ) : (
-            <SuccessMessage
-              key="success-message"
-              onClick={() =>
-                setIsSuccess((prev) => ({ ...prev, email: false }))
-              }
-              title="E-Posta Güncellendi"
-              text="E-posta adresiniz başarıyla güncellendi. Artık hesabınıza yeni adresinizle giriş yapabilirsiniz."
-              buttonText="Kapat"
-              className={classes.emailSuccessMessage}
-            />
-          )}
-        </div>
-
         <div className={classes.settingBlock}>
           <div className={classes.blockInfo}>
             <h3>

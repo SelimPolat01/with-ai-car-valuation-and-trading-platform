@@ -24,7 +24,7 @@ export default function Favorilerim() {
     isLoading: getFavoriteAdvertsIsLoading,
     isError: getFavoriteAdvertsIsError,
     error: getFavoriteAdvertsError,
-  } = useGetFavoriteAdverts();
+  } = useGetFavoriteAdverts(user);
 
   const {
     mutate: deleteFavoriteAdvertMutate,
@@ -35,6 +35,11 @@ export default function Favorilerim() {
   } = usePostFavoriteAdvert();
 
   function removeFavoriteAdvertHandler(id) {
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
     deleteFavoriteAdvertMutate(
       { advertId: id },
       {
@@ -51,6 +56,11 @@ export default function Favorilerim() {
   }
 
   function openDeleteModal(id) {
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
     resetRemoveMutation();
     setSelectedAdvertId(id);
     deleteDialogRef.current.showModal();

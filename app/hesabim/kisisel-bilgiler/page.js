@@ -12,10 +12,30 @@ import { usePatchPersonalInfos } from "@/hooks/PATCH/usePatchPersonalInfos";
 import SuccessMessage from "@/app/components/SuccessMessage";
 import Loading from "@/app/loading";
 
+const formatIBAN = (value) => {
+  if (!value) return value;
+
+  let cleaned = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+
+  if (/^\d/.test(cleaned)) {
+    cleaned = "TR" + cleaned;
+  } else if (cleaned.length > 0 && !cleaned.startsWith("T")) {
+    cleaned = "TR" + cleaned;
+  }
+
+  cleaned = cleaned.slice(0, 26);
+
+  const match = cleaned.match(/.{1,4}/g);
+  if (match) {
+    return match.join(" ");
+  }
+  return cleaned;
+};
+
 export default function Hesabim() {
   const router = useRouter();
   const imageInputRef = useRef();
-  const { isInitialized, isLogin } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const [isSuccess, setIsSuccess] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const DEFAULT_BLANK_AVATAR =
@@ -44,7 +64,7 @@ export default function Hesabim() {
     isLoading: getPersonalInfosIsLoading,
     isError: getPersonalInfosIsError,
     error: getPersonalInfosError,
-  } = useGetPersonalInfos();
+  } = useGetPersonalInfos(user);
 
   const {
     mutate: patchPersonalInfosMutate,
@@ -70,10 +90,7 @@ export default function Hesabim() {
           isBlur: false,
         },
         iban: {
-          letters:
-            data?.iban && data.iban.startsWith("TR")
-              ? data.iban.substring(2)
-              : data?.iban || "",
+          letters: formatIBAN(data?.iban || ""),
           isBlur: false,
         },
       });
@@ -95,8 +112,7 @@ export default function Hesabim() {
     const { name, value } = event.target;
     let finalValue = value;
     if (name === "iban") {
-      const rawNumbers = value.replace(/[^0-9]/g, "");
-      finalValue = rawNumbers.substring(0, 24);
+      finalValue = formatIBAN(value);
     }
     setInput((prev) => ({
       ...prev,
@@ -114,13 +130,13 @@ export default function Hesabim() {
 
   function submitHandler(event) {
     event.preventDefault();
-    const finalIban = input.iban.letters ? `TR${input.iban.letters}` : "";
+    const cleanIban = input.iban.letters.replace(/\s/g, "");
 
     const formData = new FormData();
     formData.append("name", input.name.letters);
     formData.append("surname", input.surname.letters);
     formData.append("address", input.address.letters);
-    formData.append("iban", finalIban);
+    formData.append("iban", cleanIban);
     if (selectedFile) {
       formData.append("image", selectedFile);
     }
@@ -139,12 +155,8 @@ export default function Hesabim() {
     );
   }
 
-  if (!isInitialized || getPersonalInfosIsLoading) {
+  if (getPersonalInfosIsLoading) {
     return <Loading />;
-  }
-
-  if (!isLogin) {
-    return null;
   }
 
   if (getPersonalInfosIsError) {
@@ -232,7 +244,8 @@ export default function Hesabim() {
                 name="iban"
                 label="IBAN"
                 onChange={changeHandler}
-                value={`TR${input.iban.letters}`}
+                value={input.iban.letters}
+                placeholder="TR00 0000 0000 0000 0000 0000 00"
                 className={classes.input}
               />
               <div className={classes.submitContainer}>

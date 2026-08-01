@@ -38,7 +38,7 @@ const ALL_HOURS = [
 export default function Randevu() {
   const router = useRouter();
   const params = useParams();
-  const { isInitialized, isLogin } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const days = Array.from({ length: 17 }, (_, i) => {
     const d = new Date();
@@ -54,7 +54,7 @@ export default function Randevu() {
     isLoading: getAvailableSlotsIsLoading,
     isError: getAvailableSlotsIsError,
     error: getAvailableSlotsError,
-  } = useGetAvailableSlots();
+  } = useGetAvailableSlots(user);
 
   function appointmentClickHandler() {
     const appointmentData = {
@@ -71,12 +71,8 @@ export default function Randevu() {
 
   const dbSlots = getAvailableSlotsData?.result || [];
 
-  if (!isInitialized || getAvailableSlotsIsLoading) {
+  if (getAvailableSlotsIsLoading) {
     return <Loading />;
-  }
-
-  if (!isLogin) {
-    return null;
   }
 
   if (getAvailableSlotsIsError) {

@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import classes from "./AdvertInfos.module.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   AlertCircle,
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
   Heart,
-  Eye,
+  MousePointerClick,
 } from "lucide-react";
 import SuccessMessage from "./SuccessMessage";
 import SimilarAdverts from "./SimiliarAdverts";
@@ -34,7 +34,6 @@ import { useQueryClient } from "@tanstack/react-query";
 export default function AdvertInfos() {
   const params = useParams();
   const router = useRouter();
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const user = useSelector((state) => state.auth.user);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -82,7 +81,7 @@ export default function AdvertInfos() {
     isPending: isFavoritePending,
     isError: postFavoriteIsError,
     error: postFavoriteError,
-  } = usePostFavoriteAdvert();
+  } = usePostFavoriteAdvert(user);
 
   const isFavorite =
     checkFavoriteData?.result?.isFavorite ??
@@ -165,9 +164,10 @@ export default function AdvertInfos() {
 
   function advertBuyHandler() {
     if (!user) {
-      router.push("/login");
+      router.replace("/login");
       return;
     }
+
     router.push(
       `/ilan/${params["brand-model-modelYear"]}/${params.advertId}/randevu`,
     );
@@ -324,7 +324,7 @@ export default function AdvertInfos() {
 
               <div className={classes.actionButtonContainer}>
                 <div className={classes.actionButtonsWrapper}>
-                  {(!user || Number(user.id) !== Number(advert.user_id)) && (
+                  {(!user || Number(user.id) !== Number(advert?.user_id)) && (
                     <motion.button
                       whileHover={{ scale: 1 }}
                       whileTap={{ scale: 0.95 }}
@@ -345,20 +345,17 @@ export default function AdvertInfos() {
                     </motion.button>
                   )}
 
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    className={classes.favoriteCountBadge}
-                  >
-                    <Eye className={classes.favoriteIcon} size={20} />
+                  <motion.div className={classes.favoriteCountBadge}>
+                    <MousePointerClick
+                      className={classes.clickIcon}
+                      size={20}
+                    />
                     <span className={classes.favoriteCountText}>
                       {viewCount}
                     </span>
                   </motion.div>
 
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    className={classes.favoriteCountBadge}
-                  >
+                  <motion.div className={classes.favoriteCountBadge}>
                     <Heart
                       className={`${classes.favoriteIcon} ${isFavorite ? classes.favoriteIconActive : ""}`}
                       size={20}

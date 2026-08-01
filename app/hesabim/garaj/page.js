@@ -21,53 +21,46 @@ import { useGetPersonalAdvertsInfos } from "@/hooks/GET/useGetPersonalAdvertsInf
 import { useGetPersonalSoldAdverts } from "@/hooks/GET/usePersonalSoldAdverts";
 import { formatMaliDeger, getAylikIlanVerileri } from "@/app/utils/helpers";
 import Loading from "@/app/loading";
+import { garajContainerVariants } from "@/app/utils/animations";
 
 export default function Garaj() {
   const router = useRouter();
-
-  const { isInitialized, isLogin } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const {
     data: getPersonalAdvertsData,
     isLoading: getPersonalAdvertsIsLoading,
+    isPending: getPersonalAdvertsIsPending,
     isError: getPersonalAdvertsIsError,
     error: getPersonalAdvertsError,
-  } = useGetPersonalAdvertsInfos();
+  } = useGetPersonalAdvertsInfos(user);
 
   const {
     data: personalSoldAdvertsData,
     isLoading: personalSoldAdvertsIsLoading,
-  } = useGetPersonalSoldAdverts();
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.1,
-      },
-    },
-  };
+    isPending: personalSoldAdvertsIsPending,
+    isError: personalSoldAdvertsIsError,
+    error: personalSoldAdvertsError,
+  } = useGetPersonalSoldAdverts(user);
 
   if (
-    !isInitialized ||
     getPersonalAdvertsIsLoading ||
-    personalSoldAdvertsIsLoading
+    getPersonalAdvertsIsPending ||
+    personalSoldAdvertsIsLoading ||
+    personalSoldAdvertsIsPending
   ) {
     return <Loading />;
   }
 
-  if (!isLogin) {
-    return null;
-  }
-
-  if (getPersonalAdvertsIsError) {
+  if (getPersonalAdvertsIsError || personalSoldAdvertsIsError) {
     return (
       <div className="errorContainer">
         <AlertCircle size={48} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getPersonalAdvertsError?.message}</p>
+        <p>
+          {getPersonalAdvertsError?.message ||
+            personalSoldAdvertsError?.message}
+        </p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
@@ -106,7 +99,7 @@ export default function Garaj() {
     <div className={classes.div}>
       <div className={classes.divContainer}>
         <motion.div
-          variants={containerVariants}
+          variants={garajContainerVariants}
           initial="hidden"
           animate="visible"
           className={classes.frameDiv}

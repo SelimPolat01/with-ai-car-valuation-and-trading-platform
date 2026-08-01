@@ -42,34 +42,35 @@ export default function IslemDetaylar() {
   const params = useParams();
   const cancelDialogRef = useRef(null);
   const [permitVisible, setPermitVisible] = useState(true);
-  const { isInitialized, isLogin } = useSelector((state) => state.auth);
+  const { isInitialized, user } = useSelector((state) => state.auth);
 
   const {
     data: getPersonalTransactionsData,
     isLoading: getPersonalTransactionsIsLoading,
     isError: getPersonalTransactionsIsError,
     error: getPersonalTransactionsError,
-  } = useGetPersonalTransactions();
+  } = useGetPersonalTransactions(user);
 
   const {
     mutate: patchPersonalTransactionMutate,
     isPending: patchPersonalTransactionIsPending,
+    isError: patchPersonalTransactionIsError,
+    error: patchPersonalTransactionError,
   } = usePatchPersonalTransactionCancel();
 
   if (!isInitialized || getPersonalTransactionsIsLoading) {
     return <Loading />;
   }
 
-  if (!isLogin) {
-    return null;
-  }
-
-  if (getPersonalTransactionsIsError) {
+  if (getPersonalTransactionsIsError || patchPersonalTransactionIsError) {
     return (
       <div className={classes.errorContainer}>
         <AlertCircle size={48} className={classes.iconSecondary} />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getPersonalTransactionsError?.message}</p>
+        <p>
+          {getPersonalTransactionsError?.message ||
+            patchPersonalTransactionError?.message}
+        </p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>

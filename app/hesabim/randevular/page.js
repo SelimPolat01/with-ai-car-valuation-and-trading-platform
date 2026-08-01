@@ -18,10 +18,12 @@ import {
   getAppointmentStatusData,
 } from "@/app/utils/helpers";
 import Loading from "@/app/loading";
+import { useSelector } from "react-redux";
 
 export default function RandevularPage() {
   const router = useRouter();
   const pathName = usePathname();
+  const { user } = useSelector((state) => state.auth);
   const [roleTab, setRoleTab] = useState("buyer");
   const [activeTab, setActiveTab] = useState("active");
 
@@ -30,7 +32,7 @@ export default function RandevularPage() {
     isLoading: getPersonalAppointmentsIsLoading,
     isError: getPersonalAppointmentsIsError,
     error: getPersonalAppointmentsError,
-  } = useGetPersonalAppointments();
+  } = useGetPersonalAppointments(user);
 
   if (getPersonalAppointmentsIsLoading) {
     return <Loading />;

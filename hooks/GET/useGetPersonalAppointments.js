@@ -5,10 +5,11 @@ export async function getPersonalAppointments() {
   return await Fetch("appointments", "personal-appointments", "GET", null);
 }
 
-export function useGetPersonalAppointments() {
+export function useGetPersonalAppointments(user) {
   return useQuery({
-    queryKey: ["personalAppointments"],
+    queryKey: ["personalAppointments", user?.id],
     queryFn: () => getPersonalAppointments(),
+    enabled: !!user,
     retry: false,
   });
 }

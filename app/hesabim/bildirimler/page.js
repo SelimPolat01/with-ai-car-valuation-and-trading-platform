@@ -27,17 +27,21 @@ export default function Bildirimler() {
   const [readFilter, setReadFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  const { isInitialized, isLogin } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const {
     data: getPersonalNotificationsData,
     isLoading: getPersonalNotificationsIsLoading,
     isError: getPersonalNotificationsIsError,
     error: getPersonalNotificationsError,
-  } = useGetPersonalNotifications();
+  } = useGetPersonalNotifications(user);
 
-  const { mutate: patchPersonalNotificationRead } = usePatchNotificationRead();
+  const {
+    mutate: patchPersonalNotificationRead,
+    isPending: patchPersonalNotificationIsPending,
+    isError: patchPersonalNotificationIsError,
+    error: patchPersonalNotificationError,
+  } = usePatchNotificationRead();
 
   const personalNotifications = Array.isArray(getPersonalNotificationsData)
     ? getPersonalNotificationsData
@@ -86,20 +90,19 @@ export default function Bildirimler() {
     });
   }
 
-  if (!isInitialized || getPersonalNotificationsIsLoading) {
+  if (getPersonalNotificationsIsLoading || patchPersonalNotificationIsPending) {
     return <Loading />;
   }
 
-  if (!isLogin) {
-    return null;
-  }
-
-  if (getPersonalNotificationsIsError) {
+  if (getPersonalNotificationsIsError || patchPersonalNotificationIsError) {
     return (
       <div className="errorContainer">
         <AlertCircle size={48} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getPersonalNotificationsError?.message}</p>
+        <p>
+          {getPersonalNotificationsError?.message ||
+            patchPersonalNotificationError?.message}
+        </p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>

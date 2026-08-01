@@ -5,10 +5,11 @@ export async function getPersonalAdvertsInfos() {
   return await Fetch("infos", "adverts", "GET", null);
 }
 
-export function useGetPersonalAdvertsInfos() {
+export function useGetPersonalAdvertsInfos(user) {
   return useQuery({
-    queryKey: ["personalAdvertsInfos"],
+    queryKey: ["personalAdvertsInfos", user?.id],
     queryFn: () => getPersonalAdvertsInfos(),
+    enabled: !!user,
     retry: false,
   });
 }

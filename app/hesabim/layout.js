@@ -14,13 +14,18 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { logout } from "@/store/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePostLogout } from "@/hooks/POST/usePostLogout";
 
 export default function SettingsLayout({ children }) {
   const pathName = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  const { mutate: postLogoutMutate, isPending: postLogoutIsPending } =
+    usePostLogout();
 
   const icons = [
     Handshake,
@@ -42,18 +47,23 @@ export default function SettingsLayout({ children }) {
     { href: "/hesabim/odemeler-faturalar", text: "Ödemeler Faturalar" },
   ];
 
-  async function logoutHandler(e) {
-    e.preventDefault();
+  function logoutHandler(event) {
+    event.preventDefault();
 
-    try {
-      await fetch("/api/logout", { method: "POST", credentials: "include" });
-    } catch (error) {
-      console.error("Çıkış yapılırken bir hata oluştu:", error);
+    if (!user) {
+      router.replace("/login");
+      return;
     }
 
-    dispatch(logout());
-
-    router.replace("/login");
+    postLogoutMutate(null, {
+      onSuccess: () => {
+        dispatch(logout());
+        router.replace("/login");
+      },
+      onError: (error) => {
+        console.error("Çıkış yapılırken bir hata oluştu:", error);
+      },
+    });
   }
 
   return (
@@ -86,10 +96,13 @@ export default function SettingsLayout({ children }) {
             <li className={classes.list}>
               <button
                 onClick={logoutHandler}
+                disabled={postLogoutIsPending}
                 className={`${classes.logoutButton} ${classes.link}`}
               >
                 <LogOut size={22} className={classes.icon} />
-                <span className={classes.logoutText}>Çıkış Yap</span>
+                <span className={classes.logoutText}>
+                  {postLogoutIsPending ? "Çıkış Yapılıyor..." : "Çıkış Yap"}
+                </span>
               </button>
             </li>
           </ul>

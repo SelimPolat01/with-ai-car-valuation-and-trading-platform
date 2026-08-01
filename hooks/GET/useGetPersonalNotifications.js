@@ -5,10 +5,11 @@ export async function getPersonalNotifications() {
   return await Fetch("notifications", "personal-notifications", "GET", null);
 }
 
-export function useGetPersonalNotifications(enabled = true) {
+export function useGetPersonalNotifications(user) {
   return useQuery({
-    queryKey: ["personalNotifications"],
+    queryKey: ["personalNotifications", user?.id],
     queryFn: () => getPersonalNotifications(),
-    enabled: !!enabled,
+    enabled: !!user,
+    retry: false,
   });
 }

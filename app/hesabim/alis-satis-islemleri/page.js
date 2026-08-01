@@ -29,15 +29,14 @@ export default function AlisSatisiIslemleri() {
   const pathName = usePathname();
   const [role, setRole] = useState("buyer");
   const [activeTab, setActiveTab] = useState("active");
-
-  const { isInitialized, isLogin } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const {
     data: getTradingValuesData,
     isLoading: getTradingValuesIsLoading,
     isError: getTradingValuesIsError,
     error: getTradingValuesError,
-  } = useGetPersonalTransactions();
+  } = useGetPersonalTransactions(user);
 
   const currentData = useMemo(() => {
     if (!getTradingValuesData) return [];
@@ -65,12 +64,8 @@ export default function AlisSatisiIslemleri() {
     });
   }, [getTradingValuesData, role, activeTab]);
 
-  if (!isInitialized || getTradingValuesIsLoading) {
+  if (getTradingValuesIsLoading) {
     return <Loading />;
-  }
-
-  if (!isLogin) {
-    return null;
   }
 
   if (getTradingValuesIsError) {

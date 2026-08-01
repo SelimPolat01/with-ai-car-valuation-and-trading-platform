@@ -25,8 +25,7 @@ import {
 export default function AiCarDetector() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const isLogin = useSelector((state) => state.auth.isLogin);
-
+  const { user } = useSelector((state) => state.auth);
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
@@ -59,8 +58,8 @@ export default function AiCarDetector() {
   }, [preview]);
 
   function handleClick() {
-    if (!isLogin) {
-      router.push("/login");
+    if (!user) {
+      router.replace("/login");
       return;
     }
 
@@ -93,8 +92,8 @@ export default function AiCarDetector() {
   }
 
   function handleUpload() {
-    if (!isLogin) {
-      router.push("/login");
+    if (!user) {
+      router.replace("/login");
       return;
     }
 

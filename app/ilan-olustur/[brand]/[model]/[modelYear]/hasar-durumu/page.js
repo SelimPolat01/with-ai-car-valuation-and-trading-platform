@@ -23,6 +23,7 @@ export default function HasarDurumu() {
   const router = useRouter();
   const dispatch = useDispatch();
   const prediction = useSelector((state) => state.prediction.prediction);
+  const { user } = useSelector((state) => state.auth);
   const dialogRef = useRef();
 
   const [error, setError] = useState(null);

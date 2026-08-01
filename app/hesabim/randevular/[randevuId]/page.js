@@ -45,21 +45,14 @@ export default function RandevuDetaylar() {
   const router = useRouter();
   const params = useParams();
   const cancelDialogRef = useRef(null);
-
-  const { isInitialized, isLogin } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (isInitialized && !isLogin) {
-      router.replace("/login");
-    }
-  }, [isInitialized, isLogin, router]);
+  const { user } = useSelector((state) => state.auth);
 
   const {
     data: getPersonalAppointmentsData,
     isLoading: getPersonalAppointmentsIsLoading,
     isError: getPersonalAppointmentsIsError,
     error: getPersonalAppointmentsError,
-  } = useGetPersonalAppointments();
+  } = useGetPersonalAppointments(user);
 
   const {
     mutate: patchPersonalAppointmentCancelMutate,
@@ -68,12 +61,8 @@ export default function RandevuDetaylar() {
     error: patchPersonalAppointmentCancelError,
   } = usePatchPersonalAppointmentCancel();
 
-  if (!isInitialized || getPersonalAppointmentsIsLoading) {
+  if (getPersonalAppointmentsIsLoading) {
     return <Loading />;
-  }
-
-  if (!isLogin) {
-    return null;
   }
 
   if (getPersonalAppointmentsIsError) {

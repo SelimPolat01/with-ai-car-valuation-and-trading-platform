@@ -8,6 +8,7 @@ import Link from "next/link";
 import { usePostLogin } from "@/hooks/POST/usePostLogin";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "@/store/authSlice";
+import Loading from "../loading";
 
 export default function Login() {
   const [input, setInput] = useState({
@@ -17,8 +18,7 @@ export default function Login() {
 
   const router = useRouter();
   const dispatch = useDispatch();
-
-  const { isLogin } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const {
     mutate: postLoginMutate,
@@ -29,10 +29,10 @@ export default function Login() {
   } = usePostLogin();
 
   useEffect(() => {
-    if (isLogin) {
+    if (user) {
       router.replace("/");
     }
-  }, [isLogin, router]);
+  }, [user, router]);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("email");
@@ -47,6 +47,10 @@ export default function Login() {
       localStorage.removeItem("email");
     }
   }, []);
+
+  if (user) {
+    return <Loading />;
+  }
 
   function inputChangeHandler(event) {
     const { name, value } = event.target;

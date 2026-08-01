@@ -72,17 +72,40 @@
   box-shadow: 0 4px 20px rgba(167, 184, 212, 0.25);
 }
 
+.clickIcon {
+  color: #2d1457;
+  fill: none;
+  filter: drop-shadow(0 2px 4px rgba(45, 20, 87, 0.4));
+  transition:
+    color 0.3s ease,
+    filter 0.3s ease;
+}
+
+.favoriteCountBadge:hover .clickIcon {
+  color: #ffffff;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+}
+
 .favoriteIcon {
   color: #ff4b6e;
-  fill: none;
+  fill: transparent;
   filter: drop-shadow(0 0 6px rgba(255, 75, 110, 0.4));
-  transition:
-    fill 0.3s ease,
-    transform 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .favoriteIconActive {
   fill: #ff4b6e;
+  filter: drop-shadow(0 0 8px rgba(255, 75, 110, 0.6));
+}
+
+.favoriteCountBadge:hover .favoriteIcon {
+  fill: rgba(255, 75, 110, 0.3);
+  filter: drop-shadow(0 0 12px rgba(255, 75, 110, 1));
+}
+
+.favoriteCountBadge:hover .favoriteIconActive {
+  fill: #ff4b6e;
+  filter: drop-shadow(0 0 16px rgba(255, 75, 110, 1));
 }
 
 .favoriteCountText {
@@ -251,10 +274,11 @@
   color: #1a1a1a !important;
 }
 
+/* --- BUTONLAR İÇİN ALTIN SARI GÜNCELLEMESİ --- */
 .defaultButton {
-  background: rgba(241, 239, 113, 0.1);
-  color: #f1ef71;
-  border: 1px solid rgba(241, 239, 113, 0.3);
+  background: rgba(255, 200, 0, 0.1);
+  color: #ffc800;
+  border: 1px solid rgba(255, 200, 0, 0.4);
   border-radius: 8px;
   padding: 6px 12px;
   font-weight: 500;
@@ -268,32 +292,35 @@
 }
 
 .defaultButton:hover {
-  background: rgba(241, 239, 113, 0.25);
-  border-color: rgba(241, 239, 113, 0.7);
+  background: rgba(255, 200, 0, 0.25);
+  border-color: #ffc800;
   color: #ffffff;
+  box-shadow: 0 0 15px rgba(255, 200, 0, 0.3);
 }
 
 .favoriteButton {
-  background: #c2c047;
-  color: #ffffff;
-  border: 1px solid #c2c047;
+  background: #ffc800;
+  color: #2d1457;
+  border: 1px solid #ffc800;
   border-radius: 8px;
   padding: 6px 12px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 14px;
-  box-shadow: 0 0 10px rgba(194, 192, 71, 0.5);
+  box-shadow: 0 4px 15px rgba(255, 200, 0, 0.4);
   white-space: nowrap;
   flex-shrink: 0;
+  width: 165.45px;
 }
 
 .favoriteButton:hover {
-  background: #ffffff;
-  color: #c2c047;
-  border-color: #ffffff;
-  box-shadow: 0 0 20px rgba(194, 192, 71, 0.5);
+  background: rgba(255, 200, 0, 0.15);
+  color: #ffc800;
+  border-color: #ffc800;
+  box-shadow: 0 0 20px rgba(255, 200, 0, 0.6);
 }
+/* ------------------------------------------- */
 
 .descriptionContainer {
   margin-top: 2rem;

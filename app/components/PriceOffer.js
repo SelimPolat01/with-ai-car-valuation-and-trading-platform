@@ -21,11 +21,14 @@ import {
 
 export default function PriceOffer({ advertId }) {
   const isEdit = !!advertId;
+
   const [inputTextareValue, setInputTextareaValue] = useState({
     title: "",
     description: "",
   });
+
   const [images, setImages] = useState(Array(10).fill(null));
+  const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({
@@ -52,6 +55,11 @@ export default function PriceOffer({ advertId }) {
   }
 
   const handleImageChange = (index, event) => {
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -73,6 +81,11 @@ export default function PriceOffer({ advertId }) {
   };
 
   const handleRemoveImage = (index, event) => {
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
     event.stopPropagation();
     setImages((prevImages) => {
       const newImages = [...prevImages];
@@ -85,6 +98,11 @@ export default function PriceOffer({ advertId }) {
   };
 
   async function formSubmitHandler(event) {
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
     event.preventDefault();
     const uploadedFiles = images.filter((img) => img !== null);
 

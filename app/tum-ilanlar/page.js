@@ -23,7 +23,7 @@ export default function AllAdverts() {
   const allAdverts = useSelector((state) => state.adverts.allAdverts);
   const filteredAdverts = useSelector((state) => state.adverts.filteredAdverts);
   const selectedBrand = useSelector((state) => state.adverts.selectedBrand);
-  const user = useSelector((state) => state.auth.user);
+  const { user } = useSelector((state) => state.auth);
 
   const {
     data: getAdvertsData,
@@ -68,6 +68,11 @@ export default function AllAdverts() {
   }, [allAdverts]);
 
   function advertDeleteHandler(id) {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
     deleteAdvertMutate(
       { advertId: id },
       {
@@ -82,6 +87,11 @@ export default function AllAdverts() {
   }
 
   function openDeleteModal(id) {
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
     setSelectedAdvertId(id);
     deleteDialogRef.current.showModal();
   }
@@ -101,7 +111,7 @@ export default function AllAdverts() {
     );
   }
 
-  if (getAdvertsIsLoading || postAdvertViewIsPending) {
+  if (getAdvertsIsLoading) {
     return <Loading />;
   }
 

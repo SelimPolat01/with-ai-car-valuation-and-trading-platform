@@ -1,6 +1,5 @@
 "use client";
 
-import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import { useSelector } from "react-redux";
 import classes from "./FiyatTeklifi.module.css";
 import { animate, motion } from "framer-motion";
@@ -16,8 +15,6 @@ import {
 } from "@/app/utils/helpers";
 
 export default function PriceOffer() {
-  useCheckAuth();
-
   const [displayPrice, setDisplayPrice] = useState(0);
   const [animationFinished, setAnimationFinished] = useState(false);
   const carDetails = useSelector((state) => state.prediction.prediction);

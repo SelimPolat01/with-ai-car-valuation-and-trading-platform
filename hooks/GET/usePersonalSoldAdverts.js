@@ -5,10 +5,11 @@ export async function getPersonalSoldAdverts() {
   return await Fetch("infos", "soldAdverts", "GET", null);
 }
 
-export function useGetPersonalSoldAdverts() {
+export function useGetPersonalSoldAdverts(user) {
   return useQuery({
-    queryKey: ["soldAdverts"],
+    queryKey: ["soldAdverts", user?.id],
     queryFn: () => getPersonalSoldAdverts(),
+    enabled: !!user,
     retry: false,
   });
 }

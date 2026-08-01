@@ -11,11 +11,13 @@ import { useGetPersonalAdverts } from "@/hooks/GET/useGetPersonalAdverts";
 import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import Loading from "../loading";
+import { useSelector } from "react-redux";
 
 export default function MyAdverts() {
   const router = useRouter();
   const deleteDialogRef = useRef(null);
   const editDialogRef = useRef(null);
+  const { user } = useSelector((state) => state.auth);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
 
   const {
@@ -23,7 +25,7 @@ export default function MyAdverts() {
     isLoading: getPersonalAdvertsIsLoading,
     isError: getPersonalAdvertsIsError,
     error: getPersonalAdvertsError,
-  } = useGetPersonalAdverts();
+  } = useGetPersonalAdverts(user);
 
   const {
     mutate: deleteAdvertMutate,

@@ -13,7 +13,6 @@ import { useSelector } from "react-redux";
 export default function Odeme() {
   const router = useRouter();
   const params = useParams();
-  const { isInitialized, isLogin } = useSelector((state) => state.auth);
   const creditCardRef = useRef();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -78,7 +77,7 @@ export default function Odeme() {
     );
   }
 
-  if (!isInitialized || !isLogin || !isAuthorized) return null;
+  if (!isAuthorized) return null;
 
   return (
     <div className={classes.div}>

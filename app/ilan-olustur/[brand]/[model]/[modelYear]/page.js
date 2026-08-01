@@ -6,7 +6,6 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPrediction } from "@/store/predictionSlice";
-import { useCheckAuth } from "@/backend/utils/useCheckAuth";
 import PrimaryButton from "@/app/components/PrimaryButton";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePostCarValuePredict } from "@/hooks/POST/usePostCarValuePredict";
@@ -26,7 +25,6 @@ import {
 } from "@/app/utils/animations";
 
 export default function TahminYap() {
-  useCheckAuth();
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();

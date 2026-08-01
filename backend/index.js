@@ -15,7 +15,6 @@ import { router as transactionRoutes } from "./routes/transactions.js";
 import { router as faqsRoutes } from "./routes/faqs.js";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
-// import { createTable } from "./lib/db.js";
 // import { dbInsertCars } from "./utils/dbInsertCars.js";
 
 const app = express();

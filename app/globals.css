@@ -507,6 +507,7 @@ a {
   gap: 1rem;
   color: #ffffff;
   text-align: center;
+  flex: 1;
 }
 
 .hr {

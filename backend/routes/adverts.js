@@ -3,6 +3,7 @@ import { db } from "../lib/db.js";
 import verifyToken from "../middlewares/verifyToken.js";
 import multer from "multer";
 import jwt from "jsonwebtoken";
+import redis from "../lib/redis.js";
 
 export const router = express.Router();
 
@@ -735,6 +736,68 @@ router.get("/favoriteCount/:advertId", async (req, res) => {
     return res.status(500).json({
       message: "Favori sayısı getirilirken sunucu hatası meydana geldi.",
     });
+  }
+});
+
+router.get("/:advertId/view", async (req, res) => {
+  try {
+    const { advertId } = req.params;
+
+    const result = await db.query(
+      "SELECT view_count FROM adverts WHERE id = $1",
+      [advertId],
+    );
+
+    if (!result.rows || result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "İlan bulunamadı.",
+      });
+    }
+
+    const viewCount = result.rows[0].view_count || 0;
+
+    return res.status(200).json({
+      viewCount: viewCount,
+    });
+  } catch (error) {
+    console.error("Görüntülenme sayısı çekilirken hata oluştu:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Sunucu kaynaklı bir hata oluştu.",
+    });
+  }
+});
+
+router.post("/:advertId/view", async (req, res) => {
+  const { advertId } = req.params;
+  const userId = req.user ? req.user.id : null;
+  const ipAddress = req.headers["x-forwarded-for"] || req.ip || "127.0.0.1";
+  const identifier = userId ? `user:${userId}` : `ip:${ipAddress}`;
+  const redisKey = `view:advert${advertId}:${identifier}`;
+
+  try {
+    const redisResult = await redis.set(redisKey, "1", "EX", 86400, "NX");
+    if (redisResult === "OK") {
+      await Promise.all([
+        db.query(
+          "UPDATE adverts SET view_count = view_count + 1 WHERE id = $1",
+          [advertId],
+        ),
+
+        db.query(
+          "INSERT INTO advert_views (advert_id, user_id, ip_address) VALUES ($1, $2, $3)",
+          [advertId, userId, ipAddress],
+        ),
+      ]);
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Görüntüleme işlendi." });
+  } catch (err) {
+    console.error("Görüntüleme kaydedilirken hata meydana geldi", err);
+    return res.status(500).json({ success: false, message: "Sunucu hatası" });
   }
 });
 

@@ -13,6 +13,7 @@ import { useGetAdverts } from "@/hooks/GET/useGetAdverts";
 import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import Loading from "../loading.js";
+import { usePostAdvertView } from "@/hooks/POST/usePostAdvertView.js";
 
 export default function AllAdverts() {
   const dispatch = useDispatch();
@@ -37,6 +38,13 @@ export default function AllAdverts() {
     isError: deleteAdvertIsError,
     error: deleteAdvertError,
   } = useDeleteAdvert();
+
+  const {
+    mutate: postAdvertViewMutate,
+    isPending: postAdvertViewIsPending,
+    isError: postAdvertViewIsError,
+    error: postAdvertViewError,
+  } = usePostAdvertView();
 
   useEffect(() => {
     if (getAdvertsData) {
@@ -86,16 +94,29 @@ export default function AllAdverts() {
     }
   }
 
-  if (getAdvertsIsLoading) {
+  function handleAdvertClick(advertId) {
+    postAdvertViewMutate(
+      { advertId },
+      { onSuccess: (data) => {}, onError: (err) => console.log(err?.message) },
+    );
+  }
+
+  if (getAdvertsIsLoading || postAdvertViewIsPending) {
     return <Loading />;
   }
 
-  if (getAdvertsDataIsError) {
+  if (getAdvertsDataIsError || deleteAdvertIsError || postAdvertViewIsError) {
+    const errorMessage =
+      getAdvertsDataError?.message ||
+      deleteAdvertError?.message ||
+      postAdvertViewError?.message ||
+      "Sunucu kaynaklı bir hata oluştu.";
+
     return (
       <div className="errorContainer">
         <AlertCircle size={48} className="iconSecondary" />
         <h2>Bir Hata Oluştu</h2>
-        <p className="error">{getAdvertsDataError?.message}</p>
+        <p className="error">{errorMessage}</p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
@@ -143,19 +164,6 @@ export default function AllAdverts() {
           <h1>TÜM İLANLAR {selectedBrand ? `- ${selectedBrand}` : ""}</h1>
         </div>
 
-        {deleteAdvertIsError && (
-          <div
-            style={{
-              color: "#ff4444",
-              marginBottom: "1rem",
-              textAlign: "center",
-              fontWeight: "bold",
-            }}
-          >
-            İlan silinirken bir hata oluştu: {deleteAdvertError?.message}
-          </div>
-        )}
-
         <div className={classes.div}>
           {!filteredAdverts || filteredAdverts.length === 0 ? (
             <div className={classes.notFoundAdvertDiv}>
@@ -180,6 +188,7 @@ export default function AllAdverts() {
                   <AdvertItem
                     id={advert.id}
                     key={advert.id}
+                    onClick={() => handleAdvertClick(advert.id)}
                     imgSrc={coverImage}
                     brand={advert.brand}
                     model={advert.model}

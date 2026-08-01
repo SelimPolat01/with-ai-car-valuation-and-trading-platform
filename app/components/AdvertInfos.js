@@ -402,7 +402,6 @@ export default function AdvertInfos() {
                 {advertImages.length > 1 && (
                   <>
                     <motion.button
-                      whileTap={{ scale: 0.9 }}
                       type="button"
                       className={`${classes.sliderBtn} ${classes.prevBtn}`}
                       onClick={prevImage}
@@ -410,7 +409,6 @@ export default function AdvertInfos() {
                       <ChevronLeft size={24} />
                     </motion.button>
                     <motion.button
-                      whileTap={{ scale: 0.9 }}
                       type="button"
                       className={`${classes.sliderBtn} ${classes.nextBtn}`}
                       onClick={nextImage}

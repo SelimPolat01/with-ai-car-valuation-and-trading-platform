@@ -12,6 +12,8 @@ import {
   Banknote,
   Calendar,
   CreditCard,
+  ShieldCheck,
+  Ban,
 } from "lucide-react";
 import {
   formatBrandModel,
@@ -34,8 +36,8 @@ export default function AlisSatisiIslemleri() {
   const {
     data: getTradingValuesData,
     isLoading: getTradingValuesIsLoading,
-    isError: getTradingValuesIsError,
-    error: getTradingValuesError,
+    isError: getTradingValuesError,
+    error: getTradingValuesErrObj,
   } = useGetPersonalTransactions(user);
 
   const currentData = useMemo(() => {
@@ -52,15 +54,16 @@ export default function AlisSatisiIslemleri() {
     );
 
     return roleFilteredData.filter((t) => {
+      const status = t.payment_status || t.appointment_status;
+
       if (activeTab === "active") {
-        return (
-          t.payment_status !== "completed" && t.payment_status !== "canceled"
-        );
+        return status === "pending";
       } else if (activeTab === "past") {
-        return t.payment_status === "completed";
-      } else {
-        return t.payment_status === "canceled";
+        return status === "completed";
+      } else if (activeTab === "cancel") {
+        return status === "canceled";
       }
+      return true;
     });
   }, [getTradingValuesData, role, activeTab]);
 
@@ -68,12 +71,15 @@ export default function AlisSatisiIslemleri() {
     return <Loading />;
   }
 
-  if (getTradingValuesIsError) {
+  if (getTradingValuesError) {
     return (
       <div className={classes.errorContainer}>
         <AlertCircle size={48} className={classes.iconSecondary} />
         <h2>Bir Hata Oluştu</h2>
-        <p>{getTradingValuesError?.message}</p>
+        <p>
+          {getTradingValuesErrObj?.message ||
+            "İşlemleriniz yüklenirken bir sorun oluştu."}
+        </p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
@@ -88,41 +94,51 @@ export default function AlisSatisiIslemleri() {
       <div className={classes.tabs}>
         <motion.button
           whileTap={{ scale: 0.95 }}
-          className={`${classes.tabButton} ${role === "buyer" ? classes.activeTab : ""}`}
+          className={`${classes.tabButton} ${
+            role === "buyer" ? classes.activeTab : ""
+          }`}
           onClick={() => setRole("buyer")}
         >
-          Alıcı Olduğum
+          Alıcı Olduğum İşlemler
         </motion.button>
         <motion.button
           whileTap={{ scale: 0.95 }}
-          className={`${classes.tabButton} ${role === "seller" ? classes.activeTab : ""}`}
+          className={`${classes.tabButton} ${
+            role === "seller" ? classes.activeTab : ""
+          }`}
           onClick={() => setRole("seller")}
         >
-          Satıcı Olduğum
+          Satıcı Olduğum İşlemler
         </motion.button>
       </div>
 
       <div className={classes.tabs} style={{ marginBottom: "2rem" }}>
         <motion.button
           whileTap={{ scale: 0.95 }}
-          className={`${classes.tabButton} ${activeTab === "active" ? classes.activeTab : ""}`}
+          className={`${classes.tabButton} ${
+            activeTab === "active" ? classes.activeTab : ""
+          }`}
           onClick={() => setActiveTab("active")}
         >
-          Aktif İşlemlerim
+          Aktif İşlemler
         </motion.button>
         <motion.button
           whileTap={{ scale: 0.95 }}
-          className={`${classes.tabButton} ${activeTab === "past" ? classes.activeTab : ""}`}
+          className={`${classes.tabButton} ${
+            activeTab === "past" ? classes.activeTab : ""
+          }`}
           onClick={() => setActiveTab("past")}
         >
-          Geçmiş İşlemlerim
+          Tamamlanan İşlemler
         </motion.button>
         <motion.button
           whileTap={{ scale: 0.95 }}
-          className={`${classes.tabButton} ${activeTab === "cancel" ? classes.activeTab : ""}`}
+          className={`${classes.tabButton} ${
+            activeTab === "cancel" ? classes.activeTab : ""
+          }`}
           onClick={() => setActiveTab("cancel")}
         >
-          İptal İşlemlerim
+          İptal işlemler
         </motion.button>
       </div>
 
@@ -137,13 +153,18 @@ export default function AlisSatisiIslemleri() {
         >
           {currentData.length === 0 ? (
             <div className={classes.emptyState}>
-              Şu anda bu kategoride bir işlem bulunmamaktadır.
+              Şu anda bu kategoride bir işlem kaydı bulunmamaktadır.
             </div>
           ) : (
             currentData.map((transaction, index) => {
-              const statusData = getTransactionStatusData(
-                transaction.payment_status,
-              );
+              const currentStatus =
+                transaction.payment_status || transaction.appointment_status;
+              const statusData = getTransactionStatusData(currentStatus);
+              const detailTargetId =
+                transaction.payment_id || transaction.appointment_id;
+
+              const isCanceledOrDeleted =
+                transaction.is_advert_deleted || currentStatus === "canceled";
 
               return (
                 <motion.div
@@ -151,7 +172,11 @@ export default function AlisSatisiIslemleri() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.2, delay: index * 0.05 }}
-                  key={transaction.transaction_reference || index}
+                  key={
+                    transaction.transaction_reference ||
+                    transaction.appointment_id ||
+                    index
+                  }
                   className={classes.card}
                 >
                   <div className={classes.cardHeader}>
@@ -165,45 +190,58 @@ export default function AlisSatisiIslemleri() {
                         {transaction.model_year}
                       </span>
                     </div>
-                    <div className={`${classes.badge} ${statusData.className}`}>
-                      {statusData.icon}
-                      <span>{statusData.text}</span>
+                    <div
+                      className={`${classes.badge} ${
+                        statusData?.className || ""
+                      }`}
+                    >
+                      {statusData?.icon}
+                      <span>
+                        {transaction.is_advert_deleted
+                          ? "İlan Silindi"
+                          : statusData?.text || "İşlemde"}
+                      </span>
                     </div>
                   </div>
 
                   <div className={classes.cardBody}>
-                    {transaction.image_url && (
+                    {transaction.image_url ? (
                       <img
                         src={transaction.image_url}
                         alt={`${transaction.brand} ${transaction.model}`}
                         className={classes.carThumbnail}
                       />
+                    ) : (
+                      <div className={classes.carThumbnailPlaceholder}>
+                        <CarFront size={32} opacity={0.3} />
+                      </div>
                     )}
+
                     <div className={classes.infoCol}>
                       <div className={classes.infoRow}>
                         <Banknote size={18} className={classes.iconSecondary} />
                         <span>
-                          Fiyat:{" "}
+                          Araç Fiyatı:{" "}
                           <strong>
                             {formatPrice(transaction.total_price)} ₺
                           </strong>
                         </span>
                       </div>
 
-                      {transaction.deposit_amount ? (
+                      {transaction.deposit_amount && (
                         <div className={classes.infoRow}>
                           <CreditCard
                             size={18}
                             className={classes.iconSecondary}
                           />
                           <span>
-                            Kapora:{" "}
+                            Ödenen Kapora:{" "}
                             <strong>
                               {formatPrice(transaction.deposit_amount)} ₺
                             </strong>
                           </span>
                         </div>
-                      ) : null}
+                      )}
 
                       {(transaction.slot_date || transaction.created_at) && (
                         <div className={classes.infoRow}>
@@ -212,6 +250,7 @@ export default function AlisSatisiIslemleri() {
                             className={classes.iconSecondary}
                           />
                           <span>
+                            Randevu:{" "}
                             {transaction.slot_date
                               ? formatAppointmentDateTime(
                                   transaction.slot_date,
@@ -221,27 +260,55 @@ export default function AlisSatisiIslemleri() {
                           </span>
                         </div>
                       )}
+
+                      <div className={classes.infoRow}>
+                        <ShieldCheck size={18} style={{ color: "#16a34a" }} />
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            color: "#16a34a",
+                            fontWeight: 500,
+                          }}
+                        >
+                          Güvenli Köprü İşlemi (Tarafların Gizliliği
+                          Korunmaktadır)
+                        </span>
+                      </div>
                     </div>
                   </div>
 
                   <div className={classes.cardFooter}>
                     <span className={classes.transactionId}>
-                      #
+                      Ref No: #
                       {transaction.transaction_reference ||
-                        transaction.payment_id}
+                        `RND-${transaction.appointment_id}`}
                     </span>
 
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() =>
-                        router.push(`${pathName}/${transaction.payment_id}`)
-                      }
-                      className={classes.actionButton}
-                    >
-                      Detayları Gör
-                      <ChevronRight size={16} />
-                    </motion.button>
+                    {isCanceledOrDeleted ? (
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() =>
+                          router.push(`${pathName}/${detailTargetId}`)
+                        }
+                        className={`${classes.actionButton} ${classes.mutedButton}`}
+                      >
+                        İptal/Özet Detayı
+                        <ChevronRight size={16} />
+                      </motion.button>
+                    ) : (
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() =>
+                          router.push(`${pathName}/${detailTargetId}`)
+                        }
+                        className={classes.actionButton}
+                      >
+                        İşlem Detayı
+                        <ChevronRight size={16} />
+                      </motion.button>
+                    )}
                   </div>
                 </motion.div>
               );

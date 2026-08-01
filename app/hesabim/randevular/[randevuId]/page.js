@@ -22,6 +22,7 @@ import {
   Navigation,
   CheckCircle2,
   CalendarX,
+  FileText,
 } from "lucide-react";
 import { usePatchPersonalAppointmentCancel } from "@/hooks/PATCH/usePatchPersonalAppointmentCancel";
 import ConfirmDialog from "../../../components/ConfirmDialog.js";
@@ -89,12 +90,29 @@ export default function RandevuDetaylar() {
     (app) => String(app.appointment_id) === String(params.randevuId),
   );
 
+  // 1. KONTROL: Randevu Veritabanında Yoksa
   if (!appointment) {
     return (
       <div className={classes.errorContainer}>
         <Ban size={48} className={classes.iconSecondary} />
         <h2>Randevu Bulunamadı</h2>
         <p>Randevu bulunamadı veya bu randevuyu görüntüleme yetkiniz yok.</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
+      </div>
+    );
+  }
+
+  if (appointment.is_deleted) {
+    return (
+      <div className={classes.errorContainer}>
+        <CalendarX size={48} style={{ color: "#ef4444" }} />
+        <h2>İlan Silinmiş</h2>
+        <p>
+          Bu randevuya ait ilan yayından kaldırıldığı veya silindiği için
+          detaylar görüntülenemiyor.
+        </p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
@@ -399,7 +417,7 @@ export default function RandevuDetaylar() {
                 <Hash size={18} className={classes.iconSubtle} />
                 <div className={classes.statusItemText}>
                   <span>Referans / PNR No</span>
-                  <strong>RND-2026-X89</strong>
+                  <strong>RND-2026-{appointment.appointment_id}</strong>
                 </div>
               </div>
               <div className={classes.statusItem}>
@@ -422,7 +440,6 @@ export default function RandevuDetaylar() {
               iptal edebilirsiniz.
             </p>
 
-            {/* MUTATION İPTAL İŞLEMİNDEKİ HATA GÖSTERİMİ EKLENDİ */}
             {patchPersonalAppointmentCancelIsError && (
               <div
                 style={{

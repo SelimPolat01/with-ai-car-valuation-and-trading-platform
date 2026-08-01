@@ -65,6 +65,7 @@ export default function Guvenlik() {
 
   const {
     mutate: deleteAccountMutate,
+    isPending: deleteAccountIsPending,
     isError: deleteAccountIsError,
     error: deleteAccountError,
   } = useDeleteAccount();
@@ -284,7 +285,8 @@ export default function Guvenlik() {
               <SecondaryButton
                 type="submit"
                 className={classes.dangerBtn}
-                text="Hesabı Sil"
+                text={deleteAccountIsPending ? "Siliniyor..." : "Hesabı Sil"}
+                disabled={deleteAccountIsPending}
               />
             </div>
             {accountErrorMessage && (

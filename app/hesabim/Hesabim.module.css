@@ -162,7 +162,8 @@
     display: none;
   }
 
-  .list {
+  .list,
+  .logoutText {
     font-size: 13px;
   }
 
@@ -171,7 +172,7 @@
     justify-content: flex-start;
     align-items: center;
     text-align: left;
-    padding: 10px 12px;
+    padding: 10px;
     gap: 8px;
     height: 100%;
   }

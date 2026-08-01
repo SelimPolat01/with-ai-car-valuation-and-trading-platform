@@ -166,17 +166,20 @@ export default function RandevularPage() {
                   #{appointment.appointment_id}
                 </span>
 
-                {appointment.appointment_status !== "canceled" && (
-                  <button
-                    onClick={() =>
-                      router.push(`${pathName}/${appointment.appointment_id}`)
-                    }
-                    className={classes.actionButton}
-                  >
-                    {activeTab === "active" ? "Detayları Gör" : "Raporu İncele"}
-                    <ChevronRight size={16} />
-                  </button>
-                )}
+                {!appointment.is_deleted &&
+                  appointment.appointment_status !== "canceled" && (
+                    <button
+                      onClick={() =>
+                        router.push(`${pathName}/${appointment.appointment_id}`)
+                      }
+                      className={classes.actionButton}
+                    >
+                      {activeTab === "active"
+                        ? "Detayları Gör"
+                        : "Raporu İncele"}
+                      <ChevronRight size={16} />
+                    </button>
+                  )}
               </div>
             </div>
           ))

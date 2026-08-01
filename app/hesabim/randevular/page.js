@@ -98,19 +98,19 @@ export default function RandevularPage() {
           className={`${classes.tabButton} ${activeTab === "active" ? classes.activeTab : ""}`}
           onClick={() => setActiveTab("active")}
         >
-          Aktif Randevularım
+          Aktif Randevular
         </button>
         <button
           className={`${classes.tabButton} ${activeTab === "past" ? classes.activeTab : ""}`}
           onClick={() => setActiveTab("past")}
         >
-          Geçmiş Randevularım
+          Geçmiş Randevular
         </button>
         <button
           className={`${classes.tabButton} ${activeTab === "cancel" ? classes.activeTab : ""}`}
           onClick={() => setActiveTab("cancel")}
         >
-          İptal Randevularım
+          İptal Randevular
         </button>
       </div>
 

@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
+  Eye,
 } from "lucide-react";
 import SuccessMessage from "./SuccessMessage";
 import SimilarAdverts from "./SimiliarAdverts";
@@ -17,6 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useGetAdvert } from "@/hooks/GET/useGetAdvert";
 import { usePostFavoriteAdvert } from "@/hooks/POST/usePostFavoriteAdvert";
 import { useGetCheckFavoriteAdvert } from "@/hooks/GET/useGetCheckFavoriteAdvert";
+import { useGetAdvertView } from "@/hooks/GET/useGetAdvertView";
 import {
   formatBrandModel,
   engineCapacityFormat,
@@ -35,7 +37,6 @@ export default function AdvertInfos() {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const user = useSelector((state) => state.auth.user);
-
   const [isSuccess, setIsSuccess] = useState(false);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
@@ -69,8 +70,19 @@ export default function AdvertInfos() {
     error: favoriteCountError,
   } = useGetAdvertFavoriteCount(advert?.id);
 
-  const { mutate: postFavorite, isPending: isFavoritePending } =
-    usePostFavoriteAdvert();
+  const {
+    data: advertViewData,
+    isLoading: advertViewIsLoading,
+    isError: advertViewIsError,
+    error: advertViewError,
+  } = useGetAdvertView(advert?.id);
+
+  const {
+    mutate: postFavorite,
+    isPending: isFavoritePending,
+    isError: postFavoriteIsError,
+    error: postFavoriteError,
+  } = usePostFavoriteAdvert();
 
   const isFavorite =
     checkFavoriteData?.result?.isFavorite ??
@@ -81,6 +93,9 @@ export default function AdvertInfos() {
     getAdvertFavoriteCountData?.result?.count ??
     getAdvertFavoriteCountData?.count ??
     0;
+
+  const viewCount =
+    advertViewData?.result?.viewCount ?? advertViewData?.viewCount ?? 0;
 
   useEffect(() => {
     let timer;
@@ -161,7 +176,8 @@ export default function AdvertInfos() {
   if (
     getAdvertIsLoading ||
     (user && checkFavoriteIsLoading) ||
-    favoriteCountIsLoading
+    favoriteCountIsLoading ||
+    (advert && advertViewIsLoading)
   ) {
     return <Loading />;
   }
@@ -169,17 +185,19 @@ export default function AdvertInfos() {
   if (
     getAdvertIsError ||
     (user && checkFavoriteIsError) ||
-    favoriteCountIsError
+    favoriteCountIsError ||
+    (advert && advertViewIsError)
   ) {
     const errorMessage =
       getAdvertError?.message ||
       (user && checkFavoriteError?.message) ||
       favoriteCountError?.message ||
+      (advert && advertViewError?.message) ||
       "Sunucu kaynaklı bir hata oluştu.";
 
     return (
       <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
+        <AlertCircle className="iconSecondary" size={48} />
         <h2>Bir Hata Oluştu</h2>
         <p>{errorMessage}</p>
         <button onClick={() => router.back()} className="backButton">
@@ -192,7 +210,7 @@ export default function AdvertInfos() {
   if (!advert) {
     return (
       <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
+        <AlertCircle className="iconSecondary" size={48} />
         <h2>İlan Bulunamadı</h2>
         <p>Aradığınız ilan yayından kaldırılmış veya sistemde mevcut değil.</p>
         <button onClick={() => router.push("/")} className="backButton">
@@ -331,15 +349,38 @@ export default function AdvertInfos() {
                     whileHover={{ scale: 1.05 }}
                     className={classes.favoriteCountBadge}
                   >
+                    <Eye className={classes.favoriteIcon} size={20} />
+                    <span className={classes.favoriteCountText}>
+                      {viewCount}
+                    </span>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className={classes.favoriteCountBadge}
+                  >
                     <Heart
-                      size={20}
                       className={`${classes.favoriteIcon} ${isFavorite ? classes.favoriteIconActive : ""}`}
+                      size={20}
                     />
                     <span className={classes.favoriteCountText}>
                       {favoriteCount}
                     </span>
                   </motion.div>
                 </div>
+                {postFavoriteIsError && (
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "12px",
+                      marginTop: "5px",
+                      textAlign: "right",
+                    }}
+                  >
+                    {postFavoriteError?.message ||
+                      "Favori işlemi başarısız oldu."}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -410,10 +451,10 @@ export default function AdvertInfos() {
                 {(!user || Number(user.id) !== Number(advert.user_id)) && (
                   <div className={classes.buyButtonContainer}>
                     <SecondaryButton
-                      type="button"
-                      text="Bu Aracı Satın Al"
                       className={classes.buyButton}
                       onClick={advertBuyHandler}
+                      text="Bu Aracı Satın Al"
+                      type="button"
                     />
                   </div>
                 )}

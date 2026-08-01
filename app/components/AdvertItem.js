@@ -11,6 +11,7 @@ import { advertItemVariants } from "@/app/utils/animations";
 
 export default function AdvertItem({
   id,
+  onClick,
   imgSrc,
   brand,
   model,
@@ -30,12 +31,16 @@ export default function AdvertItem({
   return (
     <motion.div
       layout
+      role="button"
       className={classes.advertWrapper}
       initial={advertItemVariants.initial}
       animate={advertItemVariants.animate}
       exit={advertItemVariants.exit}
       transition={advertItemVariants.transition}
       onClick={() => {
+        if (onClick) {
+          onClick();
+        }
         router.push(`/ilan/${brand}-${model}-${modelYear}/${id}`);
       }}
     >

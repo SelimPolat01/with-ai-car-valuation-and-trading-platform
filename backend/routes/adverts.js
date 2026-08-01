@@ -232,7 +232,9 @@ router.post("/post", verifyToken, upload.any(), async (req, res) => {
       if (Array.isArray(parsedArray)) {
         imageEmbedding = JSON.stringify(parsedArray);
       }
-    } catch (err) {}
+    } catch (err) {
+      console.warn("Embedding parse edilemedi", err);
+    }
   }
 
   let descEmbedding = null;

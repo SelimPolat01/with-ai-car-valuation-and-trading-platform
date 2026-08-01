@@ -1,4 +1,7 @@
 <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <!-- Köşeleri yumuşatılmış koyu arka plan (rx="20") -->
+    <rect width="120" height="120" rx="20" fill="#0f172a"/>
+    
     <!-- 'O' Harfi ve Direksiyon Çemberi -->
     <circle cx="60" cy="60" r="40" fill="none" stroke="#38bdf8" stroke-width="14"/>
     

@@ -30,12 +30,13 @@ router.get("/personal-transactions", verifyToken, async (req, res) => {
       a.lpg_status,
       a.owner_count,
       a.price AS total_price, 
-      appo.status, 
+      a.is_deleted AS is_advert_deleted,
+      appo.status AS appointment_status, 
       appo.slot_date, 
       appo.slot_time, 
       appo.location,
       pay.id AS payment_id,
-      pay.payment_status,
+      COALESCE(pay.payment_status, 'pending') AS payment_status,
       pay.deposit_amount, 
       pay.remaining_amount, 
       pay.transaction_reference,
@@ -53,7 +54,7 @@ router.get("/personal-transactions", verifyToken, async (req, res) => {
       CASE 
         WHEN appo.user_id = $1 THEN 'buyer' 
         WHEN a.user_id = $1 THEN 'seller'    
-      END as role
+      END AS role
     FROM adverts AS a
     INNER JOIN appointments AS appo ON appo.advert_id = a.id
     LEFT JOIN advert_payments AS pay ON pay.appointment_id = appo.id
@@ -66,6 +67,7 @@ router.get("/personal-transactions", verifyToken, async (req, res) => {
     const result = await db.query(queryText, [userId]);
     res.status(200).json(result.rows);
   } catch (err) {
+    console.error("Personal transactions error:", err);
     res.status(500).json({
       success: false,
       message: "İşlemler getirilirken sunucu hatası oluştu.",

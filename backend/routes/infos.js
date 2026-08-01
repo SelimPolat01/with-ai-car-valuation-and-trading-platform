@@ -68,16 +68,28 @@ router.get("/token-duration", verifyToken, async (req, res) => {
 });
 
 router.get("/adverts", verifyToken, async (req, res) => {
-  const userId = req.user?.id;
+  const userId = Number(req.user.id);
+
   try {
-    const queryText = "SELECT * FROM adverts WHERE user_id = $1";
-    const advertsResult = await db.query(queryText, [userId]);
-    const favoritesQuery =
-      "SELECT COUNT(*) FROM favorite_adverts WHERE user_id = $1";
+    const advertsQuery = `
+      SELECT * 
+      FROM adverts 
+      WHERE user_id = $1 AND is_deleted = false AND is_sold = false
+      ORDER BY created_at DESC
+    `;
+    const advertsResult = await db.query(advertsQuery, [userId]);
+
+    const favoritesQuery = `
+      SELECT COUNT(*)::int AS count 
+      FROM favorite_adverts f 
+      JOIN adverts a ON f.advert_id = a.id 
+      WHERE f.user_id = $1 AND a.is_deleted = false AND a.is_sold = false
+    `;
     const favoritesResult = await db.query(favoritesQuery, [userId]);
+
     res.status(200).json({
       personalAdverts: advertsResult.rows,
-      personalFavoriteAdverts: parseInt(favoritesResult.rows[0].count || 0, 10),
+      personalFavoriteAdverts: favoritesResult.rows[0].count || 0,
     });
   } catch (err) {
     console.error("Veritabanı hatası:", err);
@@ -86,17 +98,25 @@ router.get("/adverts", verifyToken, async (req, res) => {
 });
 
 router.get("/soldAdverts", verifyToken, async (req, res) => {
-  const userId = req.user.id;
+  const userId = Number(req.user.id);
   try {
     const result = await db.query(
-      "SELECT * FROM sold_adverts WHERE user_id = $1",
+      `SELECT a.*, 
+              (SELECT image_url 
+               FROM advert_images 
+               WHERE advert_id = a.id 
+               ORDER BY is_main DESC, id ASC
+               LIMIT 1) AS image_data
+       FROM adverts AS a 
+       WHERE a.user_id = $1 AND a.is_sold = true AND a.is_deleted = false
+       ORDER BY a.sold_at DESC`,
       [userId],
     );
+
     res.status(200).json({
       personalSoldAdverts: result.rows,
     });
   } catch (err) {
-    console.error("Veritabanı hatası:", err);
     res.status(500).json({ message: "Sunucu hatası: " + err.message });
   }
 });
@@ -106,19 +126,15 @@ router.patch(
   verifyToken,
   upload.single("image"),
   async (req, res) => {
-    console.log("--- PATCH İSTEĞİ GELDİ ---");
-    console.log("GELEN METİNLER:", req.body);
-    console.log("GELEN RESİM:", req.file);
-
     const id = req.user.id;
-    const { name, surname, address: address, iban } = req.body;
+    const { name, surname, address, iban } = req.body;
 
     try {
       let query = "UPDATE users SET ";
       const values = [];
       const sets = [];
       let counter = 1;
-      const fields = { name, surname, address: address, iban };
+      const fields = { name, surname, address, iban };
 
       if (req.file) {
         fields.image_src = `/uploads/${req.file.filename}`;

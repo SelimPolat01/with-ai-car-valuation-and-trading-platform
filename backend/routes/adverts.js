@@ -21,13 +21,12 @@ router.get("/", async (req, res) => {
           ROW_NUMBER() OVER (PARTITION BY advert_id ORDER BY is_main DESC, id ASC) as rn
         FROM advert_images
       ) i ON a.id = i.advert_id AND i.rn = 1
-      WHERE a.is_sold = false
+      WHERE a.is_sold = false AND a.is_deleted = false
       ORDER BY a.id DESC;
     `;
     const result = await db.query(queryText);
     res.status(200).json(result.rows);
   } catch (err) {
-    console.error("Veritabanı sorgu hatası:", err.message);
     res.status(500).json({ message: "Sunucu hatası: " + err.message });
   }
 });
@@ -44,14 +43,13 @@ router.get("/favoriteAdverts", verifyToken, async (req, res) => {
                LIMIT 1) AS image_data
        FROM adverts AS a 
        INNER JOIN favorite_adverts AS f ON a.id = f.advert_id 
-       WHERE f.user_id = $1 AND a.is_sold = false
+       WHERE f.user_id = $1 AND a.is_sold = false AND a.is_deleted = false
        ORDER BY f.id DESC`,
       [userId],
     );
     if (result.rows.length === 0) return res.status(200).json([]);
     res.status(200).json(result.rows);
   } catch (err) {
-    console.error("Favori Getirme Hatası:", err);
     res.status(500).json({ message: "Sunucu hatası!" });
   }
 });
@@ -61,12 +59,15 @@ router.get("/check-favorite/:advertId", verifyToken, async (req, res) => {
   const { advertId } = req.params;
   try {
     const result = await db.query(
-      `SELECT EXISTS(SELECT 1 FROM favorite_adverts WHERE user_id = $1 AND advert_id = $2)`,
+      `SELECT EXISTS(
+        SELECT 1 FROM favorite_adverts f 
+        JOIN adverts a ON f.advert_id = a.id 
+        WHERE f.user_id = $1 AND f.advert_id = $2 AND a.is_deleted = false
+      )`,
       [userId, advertId],
     );
     res.status(200).json({ isFavorite: result.rows[0].exists });
   } catch (err) {
-    console.error("Favori Kontrol Hatası:", err);
     res.status(500).json({ message: "Sunucu hatası!" });
   }
 });
@@ -82,13 +83,12 @@ router.get("/myAdverts", verifyToken, async (req, res) => {
                ORDER BY is_main DESC, id ASC
                LIMIT 1) AS image_data
        FROM adverts AS a 
-       WHERE a.user_id = $1 AND a.is_sold = false
+       WHERE a.user_id = $1 AND a.is_sold = false AND a.is_deleted = false
        ORDER BY a.id DESC`,
       [userId],
     );
     res.status(200).json(result.rows);
   } catch (err) {
-    console.error("İlanlarım Getirme Hatası:", err);
     res.status(500).json({ message: "Sunucu hatası!" });
   }
 });
@@ -131,16 +131,13 @@ router.get("/:advertId", async (req, res) => {
   }
 
   let userId = 9999;
-
   const token = req.cookies?.token;
 
   if (token && token !== "null" && token !== "undefined") {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       userId = Number(decoded.id) || 9999;
-    } catch (err) {
-      console.error("Token doğrulama hatası:", err.message);
-    }
+    } catch (err) {}
   }
 
   try {
@@ -172,19 +169,18 @@ router.get("/:advertId", async (req, res) => {
         ) AS images
       FROM adverts AS a 
       JOIN users AS u ON u.id = a.user_id 
-      WHERE a.id = $2 AND a.is_sold = false`,
+      WHERE a.id = $2 AND a.is_sold = false AND a.is_deleted = false`,
       [userId, Number(advertId)],
     );
 
     if (!result.rows.length) {
       return res
         .status(404)
-        .json({ message: "İlan bulunamadı veya satılmış olabilir." });
+        .json({ message: "İlan bulunamadı, satılmış veya silinmiş olabilir." });
     }
 
     res.status(200).json(result.rows[0]);
   } catch (err) {
-    console.error("SQL Hatası Detayı:", err.message);
     res.status(500).json({ message: "Sunucu hatası!" });
   }
 });
@@ -232,9 +228,7 @@ router.post("/post", verifyToken, upload.any(), async (req, res) => {
       if (Array.isArray(parsedArray)) {
         imageEmbedding = JSON.stringify(parsedArray);
       }
-    } catch (err) {
-      console.warn("Embedding parse edilemedi", err);
-    }
+    } catch (err) {}
   }
 
   let descEmbedding = null;
@@ -372,7 +366,6 @@ router.post("/post", verifyToken, upload.any(), async (req, res) => {
       advertId: newAdvertId,
     });
   } catch (err) {
-    console.error("Post endpoint hatası:", err);
     res.status(500).json({ message: "Sunucu hatası oluştu" });
   }
 });
@@ -435,7 +428,7 @@ router.put("/edit", verifyToken, upload.any(), async (req, res) => {
             description_embedding = $5, 
             description_summary_embedding = $6,
             edited_at = NOW()
-           WHERE user_id = $7 AND id = $8`,
+           WHERE user_id = $7 AND id = $8 AND is_deleted = false`,
         [
           title || null,
           description || null,
@@ -456,7 +449,7 @@ router.put("/edit", verifyToken, upload.any(), async (req, res) => {
             description_embedding = $4, 
             description_summary_embedding = $5,
             edited_at = NOW()
-           WHERE user_id = $6 AND id = $7`,
+           WHERE user_id = $6 AND id = $7 AND is_deleted = false`,
         [
           title || null,
           description || null,
@@ -541,7 +534,6 @@ router.put("/edit", verifyToken, upload.any(), async (req, res) => {
 
     res.status(200).json({ message: "İlan başarıyla güncellendi." });
   } catch (err) {
-    console.error("Edit endpoint hatası:", err);
     res.status(500).json({ message: "Sunucu hatası oluştu." });
   }
 });
@@ -552,7 +544,7 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
     await db.query("BEGIN");
 
     const checkStatus = await db.query(
-      `SELECT is_sold FROM adverts WHERE id = $1 FOR UPDATE`,
+      `SELECT is_sold FROM adverts WHERE id = $1 AND is_deleted = false FOR UPDATE`,
       [advertId],
     );
 
@@ -569,41 +561,11 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
     }
 
     const soldAdvertDetailRaw = await db.query(
-      `UPDATE adverts SET is_sold = True WHERE id = $1 RETURNING *`,
+      `UPDATE adverts SET is_sold = true, sold_at = NOW() WHERE id = $1 RETURNING *`,
       [advertId],
     );
 
     const soldAdvertDetail = soldAdvertDetailRaw.rows[0];
-    const createdDate = new Date(soldAdvertDetail.created_at);
-    const currentDate = new Date();
-    const diffInMs = currentDate.getTime() - createdDate.getTime();
-    const daysToSell = Math.max(
-      0,
-      Math.floor(diffInMs / (1000 * 60 * 60 * 24)),
-    );
-
-    await db.query(
-      `INSERT INTO sold_adverts (brand, model, model_year, body_type, engine_capacity, horsepower, transmission, kilometer, fuel_type, price, trim_level, days_to_sell, has_scratch, has_dent, user_id, advert_id, sold_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`,
-      [
-        soldAdvertDetail.brand,
-        soldAdvertDetail.model,
-        soldAdvertDetail.model_year,
-        soldAdvertDetail.body_type,
-        soldAdvertDetail.engine_capacity,
-        soldAdvertDetail.horsepower,
-        soldAdvertDetail.transmission,
-        soldAdvertDetail.kilometer,
-        soldAdvertDetail.fuel_type,
-        soldAdvertDetail.price,
-        soldAdvertDetail.trim_level,
-        daysToSell,
-        soldAdvertDetail.has_scratch,
-        soldAdvertDetail.has_dent,
-        req.user.id,
-        advertId,
-        currentDate,
-      ],
-    );
 
     await db.query(`DELETE FROM favorite_adverts WHERE advert_id = $1`, [
       advertId,
@@ -692,7 +654,6 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
     });
   } catch (err) {
     await db.query("ROLLBACK");
-    console.error("Satış hatası detayı:", err);
 
     if (err.code === "23505") {
       return res.status(400).json({
@@ -715,7 +676,7 @@ router.get("/similar-by-ai/:advertId", async (req, res) => {
       `SELECT a.id, a.brand, a.model, a.price, a.model_year, a.kilometer,
         (SELECT image_url FROM advert_images WHERE advert_id = a.id ORDER BY is_main DESC LIMIT 1) as image_data
        FROM adverts a
-       WHERE a.id != $1 AND a.is_sold = false
+       WHERE a.id != $1 AND a.is_sold = false AND a.is_deleted = false
        ORDER BY a.image_embedding <=> (SELECT image_embedding FROM adverts WHERE id = $1)
        LIMIT 5`,
       [advertId],
@@ -723,20 +684,20 @@ router.get("/similar-by-ai/:advertId", async (req, res) => {
 
     res.status(200).json(similarAdverts.rows);
   } catch (err) {
-    console.error("Yapay Zeka Benzer İlan Hatası:", err);
     res.status(500).json({ message: "Benzer araçlar getirilemedi." });
   }
 });
 
 router.get("/favoriteCount/:advertId", async (req, res) => {
   const advertId = Number(req.params.advertId);
-  const queryText =
-    "SELECT COUNT(*)::int AS count FROM favorite_adverts WHERE advert_id = $1";
+  const queryText = `SELECT COUNT(*)::int AS count 
+      FROM favorite_adverts f 
+      JOIN adverts a ON f.advert_id = a.id 
+      WHERE f.advert_id = $1 AND a.is_deleted = false`;
   try {
     const result = await db.query(queryText, [advertId]);
     return res.status(200).json(result.rows[0]);
   } catch (err) {
-    console.error(err?.message);
     return res.status(500).json({
       message: "Favori sayısı getirilirken sunucu hatası meydana geldi.",
     });
@@ -748,7 +709,7 @@ router.get("/:advertId/view", async (req, res) => {
     const { advertId } = req.params;
 
     const result = await db.query(
-      "SELECT view_count FROM adverts WHERE id = $1",
+      "SELECT view_count FROM adverts WHERE id = $1 AND is_deleted = false",
       [advertId],
     );
 
@@ -765,7 +726,6 @@ router.get("/:advertId/view", async (req, res) => {
       viewCount: viewCount,
     });
   } catch (error) {
-    console.error("Görüntülenme sayısı çekilirken hata oluştu:", error);
     return res.status(500).json({
       success: false,
       message: "Sunucu kaynaklı bir hata oluştu.",
@@ -784,10 +744,9 @@ router.post("/:advertId/view", async (req, res) => {
     if (redisResult === "OK") {
       await Promise.all([
         db.query(
-          "UPDATE adverts SET view_count = view_count + 1 WHERE id = $1",
+          "UPDATE adverts SET view_count = view_count + 1 WHERE id = $1 AND is_deleted = false",
           [advertId],
         ),
-
         db.query(
           "INSERT INTO advert_views (advert_id, user_id, ip_address) VALUES ($1, $2, $3)",
           [advertId, userId, ipAddress],
@@ -799,7 +758,6 @@ router.post("/:advertId/view", async (req, res) => {
       .status(200)
       .json({ success: true, message: "Görüntüleme işlendi." });
   } catch (err) {
-    console.error("Görüntüleme kaydedilirken hata meydana geldi", err);
     return res.status(500).json({ success: false, message: "Sunucu hatası" });
   }
 });
@@ -807,16 +765,56 @@ router.post("/:advertId/view", async (req, res) => {
 router.delete("/:advertId", verifyToken, async (req, res) => {
   const { advertId } = req.params;
   const userId = Number(req.user.id);
+
   try {
+    await db.query("BEGIN");
+
     const result = await db.query(
-      "DELETE FROM adverts WHERE user_id = $1 AND id = $2",
+      "UPDATE adverts SET is_deleted = true, deleted_at = NOW() WHERE user_id = $1 AND id = $2 RETURNING id",
       [userId, advertId],
     );
+
     if (result.rowCount === 0) {
-      return res.status(404).json({ message: "İlan bulunamadı" });
+      await db.query("ROLLBACK");
+      return res
+        .status(404)
+        .json({ message: "İlan bulunamadı veya silme yetkiniz yok." });
     }
-    res.status(200).json({ message: "İlan başarıyla kaldırıldı." });
+
+    const canceledAppointments = await db.query(
+      `UPDATE appointments 
+       SET status = 'canceled' 
+       WHERE advert_id = $1 AND status NOT IN ('canceled', 'completed') 
+       RETURNING id, slot_date, slot_time`,
+      [advertId],
+    );
+
+    if (canceledAppointments.rows.length > 0) {
+      const canceledAppIds = canceledAppointments.rows.map((app) => app.id);
+
+      await db.query(
+        `UPDATE advert_payments 
+         SET payment_status = 'canceled' 
+         WHERE appointment_id = ANY($1::int[]) AND payment_status NOT IN ('canceled', 'completed')`,
+        [canceledAppIds],
+      );
+
+      for (const app of canceledAppointments.rows) {
+        await db.query(
+          "UPDATE available_slots SET is_booked = false WHERE slot_date = $1 AND slot_time = $2",
+          [app.slot_date, app.slot_time],
+        );
+      }
+    }
+
+    await db.query("COMMIT");
+    res.status(200).json({
+      message:
+        "İlan başarıyla kaldırıldı, ilgili ödeme ve randevu süreçleri iptal edildi.",
+    });
   } catch (err) {
+    await db.query("ROLLBACK");
+    console.error("Delete advert error:", err);
     res.status(500).json({ message: "Sunucu hatası!" });
   }
 });

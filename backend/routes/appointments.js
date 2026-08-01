@@ -29,14 +29,18 @@ router.get("/personal-appointments", verifyToken, async (req, res) => {
       adv.has_dent, 
       adv.price,
       adv.summary,
-      img.image_url,
+      adv.is_deleted,
+      (SELECT image_url 
+       FROM advert_images 
+       WHERE advert_id = adv.id 
+       ORDER BY is_main DESC, id ASC
+       LIMIT 1) AS image_url,
       CASE 
         WHEN a.user_id = $1 THEN 'buyer' 
         ELSE 'seller' 
       END AS role
     FROM appointments AS a 
     INNER JOIN adverts AS adv ON adv.id = a.advert_id 
-    LEFT JOIN advert_images img ON img.advert_id = adv.id AND img.is_main = TRUE
     WHERE a.user_id = $1 OR adv.user_id = $1 
     ORDER BY a.slot_date DESC, a.slot_time DESC
   `;
@@ -45,6 +49,7 @@ router.get("/personal-appointments", verifyToken, async (req, res) => {
     const result = await db.query(query, [userId]);
     return res.status(200).json(result.rows);
   } catch (err) {
+    console.error("Randevular çekilirken hata:", err);
     res.status(500).json({ message: "Sunucu hatası." });
   }
 });

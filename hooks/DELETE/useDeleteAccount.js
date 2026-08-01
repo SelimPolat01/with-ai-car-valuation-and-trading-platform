@@ -10,6 +10,7 @@ export function useDeleteAccount() {
   return useMutation({
     mutationFn: () => deleteAccount(),
     onSuccess: () => {
+      queryClient.cancelQueries();
       queryClient.clear();
     },
   });

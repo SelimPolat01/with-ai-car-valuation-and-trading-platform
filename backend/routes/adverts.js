@@ -136,7 +136,7 @@ router.get("/:advertId", async (req, res) => {
 
   if (token && token !== "null" && token !== "undefined") {
     try {
-      const decoded = jwt.verify(token, process.env.SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       userId = Number(decoded.id) || 9999;
     } catch (err) {
       console.error("Token doğrulama hatası:", err.message);

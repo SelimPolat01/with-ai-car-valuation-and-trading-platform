@@ -772,7 +772,7 @@ router.get("/:advertId/view", async (req, res) => {
 router.post("/:advertId/view", async (req, res) => {
   const { advertId } = req.params;
   const userId = req.user ? req.user.id : null;
-  const ipAddress = req.headers["x-forwarded-for"] || req.ip || "127.0.0.1";
+  const ipAddress = req.headers["x-forwarded-for"] || req.ip;
   const identifier = userId ? `user:${userId}` : `ip:${ipAddress}`;
   const redisKey = `view:advert${advertId}:${identifier}`;
 

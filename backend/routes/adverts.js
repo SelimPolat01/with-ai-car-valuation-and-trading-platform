@@ -778,8 +778,7 @@ router.post("/:advertId/view", async (req, res) => {
   const userId = req.user ? req.user.id : null;
   const ipAddress = req.headers["x-forwarded-for"] || req.ip;
   const identifier = userId ? `user:${userId}` : `ip:${ipAddress}`;
-  const redisKey = `view:advert${advertId}:${identifier}`;
-
+  const redisKey = `view:advert:${advertId}:${identifier}`;
   try {
     const redisResult = await redis.set(redisKey, "1", "EX", 86400, "NX");
     if (redisResult === "OK") {

@@ -552,15 +552,17 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
     await db.query("BEGIN");
 
     const checkStatus = await db.query(
-      `SELECT is_sold FROM adverts WHERE id = $1`,
+      `SELECT is_sold FROM adverts WHERE id = $1 FOR UPDATE`,
       [advertId],
     );
 
     if (checkStatus.rows.length === 0) {
+      await db.query("ROLLBACK");
       return res.status(404).json({ message: "İlan bulunamadı." });
     }
 
     if (checkStatus.rows[0].is_sold === true) {
+      await db.query("ROLLBACK");
       return res
         .status(400)
         .json({ message: "Bu araç zaten daha önce satın alınmış!" });

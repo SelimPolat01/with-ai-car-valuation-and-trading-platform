@@ -247,7 +247,7 @@ export default function Header({ className }) {
                 <li>
                   <Link
                     className={classes.favoriteAdvertsLink}
-                    href="/favorilerim"
+                    href="/favori-ilanlarim"
                     title="Favori İlanlarım"
                   >
                     <FolderHeart

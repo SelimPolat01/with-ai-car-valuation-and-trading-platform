@@ -13,31 +13,39 @@ export default function ManagementNav({ className }) {
             className={path === "/ilanlarim" ? classes.active : ""}
             href="/ilanlarim"
           >
-            İlanlarım
+            Mevcut İlanlarım
           </Link>
         </li>
         <li>
           <Link
-            className={path === "/favorilerim" ? classes.active : ""}
-            href="/favorilerim"
+            className={path === "/satilan-ilanlarim" ? classes.active : ""}
+            href="/satilan-ilanlarim"
           >
-            Favorilerim
+            Satılan İlanlarım
           </Link>
         </li>
-        {/* <li>
-          <Link
-            className={path === "/mesajlarim" ? classes.active : ""}
-            href={"/mesajlarim"}
-          >
-            Mesajlarım
-          </Link>
-        </li> */}
         <li>
           <Link
-            className={path === "/hesabim" ? classes.active : ""}
-            href="/hesabim"
+            className={path === "/satin-aldigim-ilanlar" ? classes.active : ""}
+            href="/satin-aldigim-ilanlar"
           >
-            Hesabım
+            Satın Aldığım İlanlar
+          </Link>
+        </li>
+        <li>
+          <Link
+            className={path === "/kaldirilan-ilanlarim" ? classes.active : ""}
+            href="/kaldirilan-ilanlarim"
+          >
+            Kaldırılan İlanlarım
+          </Link>
+        </li>
+        <li>
+          <Link
+            className={path === "/favori-ilanlarim" ? classes.active : ""}
+            href="/favori-ilanlarim"
+          >
+            Favori İlanlarım
           </Link>
         </li>
       </ul>

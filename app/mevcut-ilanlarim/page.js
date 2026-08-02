@@ -1,0 +1,145 @@
+"use client";
+
+import { useRef, useState } from "react";
+import classes from "./MevcutIlanlarim.module.css";
+import AdvertItem from "../components/AdvertItem";
+import { usePathname, useRouter } from "next/navigation";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { AnimatePresence } from "framer-motion";
+import ManagementNav from "../components/ManagementNav";
+import { useGetPersonalAdverts } from "@/hooks/GET/useGetPersonalAdverts";
+import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
+import { AlertCircle, ArrowLeft } from "lucide-react";
+import Loading from "../loading";
+import { useSelector } from "react-redux";
+
+export default function MyAdverts() {
+  const router = useRouter();
+  const path = usePathname();
+  const deleteDialogRef = useRef(null);
+  const editDialogRef = useRef(null);
+  const { user } = useSelector((state) => state.auth);
+  const [selectedAdvertId, setSelectedAdvertId] = useState(null);
+
+  const {
+    data: getPersonalAdvertsData,
+    isLoading: getPersonalAdvertsIsLoading,
+    isError: getPersonalAdvertsIsError,
+    error: getPersonalAdvertsError,
+  } = useGetPersonalAdverts(user);
+
+  const {
+    mutate: deleteAdvertMutate,
+    isPending: deleteAdvertIsPending,
+    isError: deleteAdvertIsError,
+    error: deleteAdvertError,
+    reset: resetDeleteMutation,
+  } = useDeleteAdvert();
+
+  function advertDeleteHandler(id) {
+    deleteAdvertMutate(
+      { advertId: id },
+      {
+        onSuccess: () => {
+          setSelectedAdvertId(null);
+          deleteDialogRef.current?.close();
+        },
+        onError: () => {
+          setSelectedAdvertId(null);
+          deleteDialogRef.current?.close();
+        },
+      },
+    );
+  }
+
+  function openDeleteModal(id) {
+    resetDeleteMutation();
+    setSelectedAdvertId(id);
+    deleteDialogRef.current.showModal();
+  }
+
+  if (getPersonalAdvertsIsLoading) {
+    return <Loading />;
+  }
+
+  if (getPersonalAdvertsIsError) {
+    return (
+      <div className="errorContainer">
+        <AlertCircle size={48} className="iconSecondary" />
+        <h2>Bir Hata Oluştu</h2>
+        <p>{getPersonalAdvertsError?.message}</p>
+        <button onClick={() => router.back()} className="backButton">
+          <ArrowLeft size={20} /> Geri Dön
+        </button>
+      </div>
+    );
+  }
+
+  const advertsList = Array.isArray(getPersonalAdvertsData)
+    ? getPersonalAdvertsData
+    : getPersonalAdvertsData?.result || [];
+
+  return (
+    <div className={classes.container}>
+      <ConfirmDialog
+        ref={deleteDialogRef}
+        onConfirm={() => advertDeleteHandler(selectedAdvertId)}
+        text={
+          deleteAdvertIsPending
+            ? "Siliniyor..."
+            : "Bunu yapmak istediğinizden emin misiniz?"
+        }
+        title="Kaldır"
+        cancelRedirect={path}
+        confirmRedirect="/kaldirilan-ilanlarim"
+      />
+
+      <ManagementNav className={classes.managementNav} />
+
+      {deleteAdvertIsError && (
+        <p className={classes.errorText}>
+          {deleteAdvertError?.message || "İlan silinirken bir hata oluştu."}
+        </p>
+      )}
+
+      {advertsList && advertsList.length > 0 ? (
+        <div className={classes.div}>
+          <AnimatePresence>
+            {advertsList.map((myAdvert) => {
+              const mainImgObj = myAdvert.images
+                ? myAdvert.images.find((img) => img.is_main) ||
+                  myAdvert.images[0]
+                : null;
+
+              const coverImage = mainImgObj
+                ? mainImgObj.image_data || mainImgObj.image_url
+                : myAdvert.image_data || myAdvert.image_src;
+
+              return (
+                <AdvertItem
+                  id={myAdvert.id}
+                  key={myAdvert.id}
+                  userId={myAdvert.user_id}
+                  imgSrc={coverImage}
+                  brand={myAdvert.brand}
+                  model={myAdvert.model}
+                  engineCapacity={myAdvert.engine_capacity}
+                  modelYear={myAdvert.model_year}
+                  price={myAdvert.price}
+                  onDeleteDialog={() => openDeleteModal(myAdvert.id)}
+                  onEditDialog={() => openEditModal(myAdvert.id)}
+                  showDeleteButton={true}
+                  showEditButton={true}
+                />
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      ) : (
+        <div className={classes.noAdvertDiv}>
+          <p>İlanınız Bulunmamaktadır</p>
+        </div>
+      )}
+    </div>
+  );
+}

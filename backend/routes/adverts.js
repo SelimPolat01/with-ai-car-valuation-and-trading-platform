@@ -9,10 +9,29 @@ export const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
+    const { sort } = req.query;
+
+    let orderBy = "ORDER BY a.created_at DESC";
+
+    if (sort === "views_desc") {
+      orderBy = "ORDER BY a.view_count DESC, a.created_at DESC";
+    } else if (sort === "views_asc") {
+      orderBy = "ORDER BY a.view_count ASC, a.created_at DESC";
+    } else if (sort === "favorites_desc") {
+      orderBy = "ORDER BY fav_count DESC, a.created_at DESC";
+    } else if (sort === "favorites_asc") {
+      orderBy = "ORDER BY fav_count ASC, a.created_at DESC";
+    } else if (sort === "oldest") {
+      orderBy = "ORDER BY a.created_at ASC";
+    } else if (sort === "newest") {
+      orderBy = "ORDER BY a.created_at DESC";
+    }
+
     const queryText = `
       SELECT 
         a.*, 
-        i.image_url AS image_src
+        i.image_url AS image_src,
+        (SELECT COUNT(*)::int FROM favorite_adverts f WHERE f.advert_id = a.id) AS fav_count
       FROM adverts a
       LEFT JOIN (
         SELECT 
@@ -22,7 +41,7 @@ router.get("/", async (req, res) => {
         FROM advert_images
       ) i ON a.id = i.advert_id AND i.rn = 1
       WHERE a.is_sold = false AND a.is_deleted = false
-      ORDER BY a.id DESC;
+      ${orderBy};
     `;
     const result = await db.query(queryText);
     res.status(200).json(result.rows);
@@ -84,7 +103,7 @@ router.get("/myAdverts", verifyToken, async (req, res) => {
                LIMIT 1) AS image_data
        FROM adverts AS a 
        WHERE a.user_id = $1 AND a.is_sold = false AND a.is_deleted = false
-       ORDER BY a.id DESC`,
+       ORDER BY a.created_at DESC`,
       [userId],
     );
     res.status(200).json(result.rows);

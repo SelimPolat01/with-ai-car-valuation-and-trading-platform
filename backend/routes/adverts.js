@@ -642,7 +642,6 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
         .json({ message: "Bu araç zaten daha önce satın alınmış!" });
     }
 
-    // BURASI GÜNCELLENDİ: is_sold ve sold_at güncellenirken buyer_id'ye de satın alan kişinin ID'si (req.user.id) ekleniyor.
     const soldAdvertDetailRaw = await db.query(
       `UPDATE adverts 
        SET is_sold = true, sold_at = NOW(), buyer_id = $2 
@@ -844,6 +843,51 @@ router.post("/:advertId/view", async (req, res) => {
       .json({ success: true, message: "Görüntüleme işlendi." });
   } catch (err) {
     return res.status(500).json({ success: false, message: "Sunucu hatası" });
+  }
+});
+
+router.patch("/recoverAdvert/:advertId", verifyToken, async (req, res) => {
+  const { advertId } = req.params;
+
+  if (!advertId) {
+    return res.status(400).json({ message: "İlan ID bilgisi zorunludur." });
+  }
+
+  try {
+    const checkAdvert = await db.query(
+      `SELECT id, user_id, is_deleted FROM adverts WHERE id = $1`,
+      [advertId],
+    );
+
+    if (checkAdvert.rows.length === 0) {
+      return res.status(404).json({ message: "İlan bulunamadı." });
+    }
+
+    const advert = checkAdvert.rows[0];
+
+    if (Number(advert.user_id) !== Number(req.user.id)) {
+      return res
+        .status(403)
+        .json({ message: "Bu ilanı yayına almak için yetkiniz yok." });
+    }
+
+    if (!advert.is_deleted) {
+      return res.status(400).json({ message: "Bu ilan zaten yayında." });
+    }
+
+    await db.query(
+      `UPDATE adverts SET is_deleted = false, edited_at = NOW() WHERE id = $1`,
+      [advertId],
+    );
+
+    res.status(200).json({
+      message: "İlan başarıyla tekrar yayına alındı.",
+    });
+  } catch (err) {
+    console.error("İlan Yayına Alma Hatası Detayı:", err);
+    res.status(500).json({
+      message: "İlan tekrar yayına alınırken bir sunucu hatası oluştu.",
+    });
   }
 });
 

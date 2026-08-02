@@ -7,19 +7,23 @@ import { useDispatch, useSelector } from "react-redux";
 import classes from "./TumIlanlar.module.css";
 import { useRouter } from "next/navigation.js";
 import ConfirmDialog from "../components/ConfirmDialog.js";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import FilterBrand from "../components/FilterBrand.js";
 import { useGetAdverts } from "@/hooks/GET/useGetAdverts";
 import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
-import { AlertCircle, ArrowLeft } from "lucide-react";
+import { AlertCircle, ArrowLeft, ChevronDown } from "lucide-react";
 import Loading from "../loading.js";
 import { usePostAdvertView } from "@/hooks/POST/usePostAdvertView.js";
+import { formatBrandModel } from "@/app/utils/helpers.js";
 
 export default function AllAdverts() {
   const dispatch = useDispatch();
   const router = useRouter();
   const deleteDialogRef = useRef(null);
+  const dropdownRef = useRef(null);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
+  const [sortOption, setSortOption] = useState("default");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const allAdverts = useSelector((state) => state.adverts.allAdverts);
   const filteredAdverts = useSelector((state) => state.adverts.filteredAdverts);
   const selectedBrand = useSelector((state) => state.adverts.selectedBrand);
@@ -52,6 +56,16 @@ export default function AllAdverts() {
     }
   }, [getAdvertsData, dispatch]);
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const { uniqueBrands, brandCounts } = useMemo(() => {
     const counts = {};
     if (allAdverts && allAdverts.length > 0) {
@@ -66,6 +80,45 @@ export default function AllAdverts() {
       brandCounts: counts,
     };
   }, [allAdverts]);
+
+  const sortedAdverts = useMemo(() => {
+    if (!filteredAdverts) return [];
+
+    let advertsToSort = [...filteredAdverts];
+
+    switch (sortOption) {
+      case "price-asc":
+        return advertsToSort.sort((a, b) => Number(a.price) - Number(b.price));
+      case "price-desc":
+        return advertsToSort.sort((a, b) => Number(b.price) - Number(a.price));
+      case "year-desc":
+        return advertsToSort.sort(
+          (a, b) => Number(b.model_year) - Number(a.model_year),
+        );
+      case "year-asc":
+        return advertsToSort.sort(
+          (a, b) => Number(a.model_year) - Number(b.model_year),
+        );
+      case "views-desc":
+        return advertsToSort.sort(
+          (a, b) => Number(b.view_count || 0) - Number(a.view_count || 0),
+        );
+      case "views-asc":
+        return advertsToSort.sort(
+          (a, b) => Number(a.view_count || 0) - Number(b.view_count || 0),
+        );
+      case "fav-desc":
+        return advertsToSort.sort(
+          (a, b) => Number(b.fav_count || 0) - Number(a.fav_count || 0),
+        );
+      case "fav-asc":
+        return advertsToSort.sort(
+          (a, b) => Number(a.fav_count || 0) - Number(b.fav_count || 0),
+        );
+      default:
+        return advertsToSort;
+    }
+  }, [filteredAdverts, sortOption]);
 
   function advertDeleteHandler(id) {
     if (!user) {
@@ -110,6 +163,22 @@ export default function AllAdverts() {
       { onSuccess: (data) => {}, onError: (err) => console.log(err?.message) },
     );
   }
+
+  const sortOptionsList = [
+    { value: "default", label: "Varsayılan Sıralama" },
+    { value: "price-asc", label: "Fiyata Göre Artan" },
+    { value: "price-desc", label: "Fiyata Göre Azalan" },
+    { value: "year-desc", label: "Tarihe Göre Azalan" },
+    { value: "year-asc", label: "Tarihe Göre Artan" },
+    { value: "views-desc", label: "Tıklamaya Göre Azalan" },
+    { value: "views-asc", label: "Tıklamaya Göre Artan" },
+    { value: "fav-desc", label: "Favorilemeye Göre Azalan" },
+    { value: "fav-asc", label: "Favorilemeye Göre Artan" },
+  ];
+
+  const currentSortLabel = sortOptionsList.find(
+    (opt) => opt.value === sortOption,
+  )?.label;
 
   if (getAdvertsIsLoading) {
     return <Loading />;
@@ -171,11 +240,52 @@ export default function AllAdverts() {
 
       <div className={classes.advertsContainer}>
         <div className={classes.headerDiv}>
-          <h1>TÜM İLANLAR {selectedBrand ? `- ${selectedBrand}` : ""}</h1>
+          <h1>
+            TÜM İLANLAR{" "}
+            {selectedBrand ? `- ${formatBrandModel(selectedBrand)}` : ""}
+          </h1>
+
+          <div className={classes.customDropdownContainer} ref={dropdownRef}>
+            <div
+              className={`${classes.dropdownHeader} ${isDropdownOpen ? classes.dropdownHeaderActive : ""}`}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <span>{currentSortLabel}</span>
+              <ChevronDown
+                size={18}
+                className={`${classes.dropdownIcon} ${isDropdownOpen ? classes.iconRotated : ""}`}
+              />
+            </div>
+
+            <AnimatePresence>
+              {isDropdownOpen && (
+                <motion.ul
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className={classes.dropdownList}
+                >
+                  {sortOptionsList.map((option) => (
+                    <li
+                      key={option.value}
+                      className={`${classes.dropdownItem} ${sortOption === option.value ? classes.dropdownItemActive : ""}`}
+                      onClick={() => {
+                        setSortOption(option.value);
+                        setIsDropdownOpen(false);
+                      }}
+                    >
+                      {option.label}
+                    </li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         <div className={classes.div}>
-          {!filteredAdverts || filteredAdverts.length === 0 ? (
+          {!sortedAdverts || sortedAdverts.length === 0 ? (
             <div className={classes.notFoundAdvertDiv}>
               <p>
                 {selectedBrand
@@ -185,7 +295,7 @@ export default function AllAdverts() {
             </div>
           ) : (
             <AnimatePresence>
-              {filteredAdverts.map((advert) => {
+              {sortedAdverts.map((advert) => {
                 const mainImgObj = advert.images
                   ? advert.images.find((img) => img.is_main) || advert.images[0]
                   : null;

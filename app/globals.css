@@ -372,6 +372,13 @@ a {
   background-repeat: no-repeat;
 }
 
+.bgResetPasswordBg {
+  background-image: url("/images/reset-password-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .secretDiv {
   flex: 1;
   background-color: black;

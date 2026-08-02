@@ -9,6 +9,8 @@ export default function BackgroundWrapper({ children }) {
   const isLoginPage = pathname.startsWith("/login");
   const isRegisterPage = pathname.startsWith("/register");
   const isFormHomePage = searcParams.get("mode") === "form";
+  const isResetPasswordPage = pathname.startsWith("/sifremi-unuttum");
+
   const bgClass = isPriceOfferPage
     ? "priceOfferBg"
     : isFormHomePage
@@ -17,7 +19,9 @@ export default function BackgroundWrapper({ children }) {
         ? "bgLogin"
         : isRegisterPage
           ? "bgRegister"
-          : "bgAiCarDetector";
+          : isResetPasswordPage
+            ? "bgResetPasswordBg"
+            : "bgAiCarDetector";
 
   return <div className={bgClass}>{children}</div>;
 }

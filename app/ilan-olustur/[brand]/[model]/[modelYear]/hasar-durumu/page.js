@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import classes from "./HasarDurumu.module.css";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import { AlertTriangle } from "lucide-react";
@@ -23,7 +23,7 @@ export default function HasarDurumu() {
   const router = useRouter();
   const dispatch = useDispatch();
   const prediction = useSelector((state) => state.prediction.prediction);
-  const { user } = useSelector((state) => state.auth);
+  const path = usePathname();
   const dialogRef = useRef();
 
   const [error, setError] = useState(null);
@@ -298,10 +298,11 @@ export default function HasarDurumu() {
         <ConfirmDialog
           ref={dialogRef}
           onConfirm={dialogConfirmHandler}
-          cancelRedirect="/"
           title="Hasar Tespiti"
           text={generateDamageText(damagePredictions)}
           cancelButtonText="Ana Sayfaya Git"
+          cancelRedirect="/"
+          confirmRedirct={path}
           logo={<AlertTriangle size={35} color="#ef4444" />}
         />
 

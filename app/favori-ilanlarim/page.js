@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import classes from "./Favorilerim.module.css";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -15,6 +15,7 @@ import Loading from "../loading";
 
 export default function Favorilerim() {
   const router = useRouter();
+  const path = usePathname();
   const deleteDialogRef = useRef(null);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
   const { user, isInitialized, isLogin } = useSelector((state) => state.auth);
@@ -102,6 +103,8 @@ export default function Favorilerim() {
             : "Bunu yapmak istediğinizden emin misiniz?"
         }
         title="Kaldır"
+        cancelRedirect={path}
+        confirmRedirect={path}
       />
       <ManagementNav className={classes.managementNav} />
 

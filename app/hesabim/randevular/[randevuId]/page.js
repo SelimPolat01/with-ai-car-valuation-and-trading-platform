@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { useGetPersonalAppointments } from "@/hooks/GET/useGetPersonalAppointments";
 import Image from "next/image";
@@ -22,7 +22,6 @@ import {
   Navigation,
   CheckCircle2,
   CalendarX,
-  FileText,
 } from "lucide-react";
 import { usePatchPersonalAppointmentCancel } from "@/hooks/PATCH/usePatchPersonalAppointmentCancel";
 import ConfirmDialog from "../../../components/ConfirmDialog.js";
@@ -44,6 +43,7 @@ import {
 
 export default function RandevuDetaylar() {
   const router = useRouter();
+  const path = usePathname();
   const params = useParams();
   const cancelDialogRef = useRef(null);
   const { user } = useSelector((state) => state.auth);
@@ -90,7 +90,6 @@ export default function RandevuDetaylar() {
     (app) => String(app.appointment_id) === String(params.randevuId),
   );
 
-  // 1. KONTROL: Randevu Veritabanında Yoksa
   if (!appointment) {
     return (
       <div className={classes.errorContainer}>
@@ -161,6 +160,7 @@ export default function RandevuDetaylar() {
         text="Bu randevuyu iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
         title="Randevu İptali"
         confirmRedirect={"/hesabim/randevular"}
+        cancelRedirect={path}
         logo={<CalendarX size={35} />}
       />
 

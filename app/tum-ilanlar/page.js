@@ -5,7 +5,7 @@ import { setAdverts, setFilterAdverts } from "@/store/advertsSlice.js";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import classes from "./TumIlanlar.module.css";
-import { useRouter } from "next/navigation.js";
+import { usePathname, useRouter } from "next/navigation.js";
 import ConfirmDialog from "../components/ConfirmDialog.js";
 import { AnimatePresence, motion } from "framer-motion";
 import FilterBrand from "../components/FilterBrand.js";
@@ -20,6 +20,7 @@ export default function AllAdverts() {
   const router = useRouter();
   const deleteDialogRef = useRef(null);
   const dropdownRef = useRef(null);
+  const path = usePathname();
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
   const [sortOption, setSortOption] = useState("default");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -221,6 +222,8 @@ export default function AllAdverts() {
             : "Bunu yapmak istediğinizden emin misiniz?"
         }
         title="Kaldır"
+        cancelRedirecT={path}
+        confirmRedirecT={"/kaldirilan-ilanlarim"}
       />
       <div className={classes.filterDiv}>
         <div className={classes.filterTextDiv}>

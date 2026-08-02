@@ -1,18 +1,24 @@
 "use client";
 
+import { useRef, useState } from "react";
 import classes from "./KaldirilanIlanlarim.module.css";
 import AdvertItem from "../components/AdvertItem";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import ManagementNav from "../components/ManagementNav";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { useGetPersonalDeletedAdverts } from "@/hooks/GET/useGetPersonalDeletedAdverts";
-import { AlertCircle, ArrowLeft } from "lucide-react";
+import { usePatchRecoverAdvert } from "@/hooks/PATCH/usePatchRecoverAdvert";
+import { AlertCircle, ArrowLeft, RotateCcw } from "lucide-react";
 import Loading from "../loading";
 import { useSelector } from "react-redux";
 
 export default function KaldirilanIlanlarim() {
   const router = useRouter();
   const { user } = useSelector((state) => state.auth);
+  const path = usePathname();
+  const recoveryDialogRef = useRef(null);
+  const [selectedAdvertId, setSelectedAdvertId] = useState(null);
 
   const {
     data: getDeletedAdvertsData,
@@ -20,6 +26,23 @@ export default function KaldirilanIlanlarim() {
     isError: getDeletedAdvertsIsError,
     error: getDeletedAdvertsError,
   } = useGetPersonalDeletedAdverts(user);
+
+  const {
+    mutate: patchRecoverAdvertMutate,
+    isPending: patchRecoverAdvertIsPending,
+    isError: patchRecoverAdvertIsError,
+    error: patchRecoverAdvertError,
+  } = usePatchRecoverAdvert();
+
+  function openRecoveryModal(id) {
+    setSelectedAdvertId(id);
+    recoveryDialogRef.current?.showModal();
+  }
+
+  function advertRecoveryHandler(id) {
+    if (!id) return;
+    patchRecoverAdvertMutate(id);
+  }
 
   if (getDeletedAdvertsIsLoading) {
     return <Loading />;
@@ -44,6 +67,23 @@ export default function KaldirilanIlanlarim() {
 
   return (
     <div className={classes.container}>
+      <ConfirmDialog
+        ref={recoveryDialogRef}
+        onConfirm={() => advertRecoveryHandler(selectedAdvertId)}
+        title="Tekrar Yayınla"
+        text={
+          patchRecoverAdvertIsPending
+            ? "İlanınız yayına alınıyor..."
+            : patchRecoverAdvertIsError
+              ? `Hata: ${patchRecoverAdvertError?.message || "İşlem başarısız oldu."}`
+              : "Bu ilanı tekrar yayınlamak istediğinize emin misiniz?"
+        }
+        logo={<RotateCcw size={35} color="#10b981" />}
+        cancelButtonText="Vazgeç"
+        cancelRedirect={path}
+        confirmRedirect="/mevcut-ilanlarim"
+      />
+
       <ManagementNav className={classes.managementNav} />
 
       {advertsList && advertsList.length > 0 ? (
@@ -72,6 +112,8 @@ export default function KaldirilanIlanlarim() {
                   price={myAdvert.price}
                   showDeleteButton={false}
                   showEditButton={false}
+                  showRecoveryButton={true}
+                  onRecoveryDialog={() => openRecoveryModal(myAdvert.id)}
                 />
               );
             })}

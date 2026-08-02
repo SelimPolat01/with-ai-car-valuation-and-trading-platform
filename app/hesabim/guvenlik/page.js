@@ -4,7 +4,7 @@ import Input from "@/app/components/Input";
 import classes from "./Guvenlik.module.css";
 import { AlertCircle, AlertTriangle, ArrowLeft, KeyRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/store/authSlice";
 import { AnimatePresence } from "framer-motion";
@@ -18,7 +18,7 @@ import Loading from "@/app/loading";
 export default function Guvenlik() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const path = usePathname();
 
   const [error, setError] = useState({
     password: false,
@@ -183,9 +183,10 @@ export default function Guvenlik() {
         <ConfirmDialog
           text="Bunu yapmak istediğinizden emin misiniz?"
           title="Hesabı Sil"
-          confirmRedirect="/login"
           onConfirm={confirmDeleteHandler}
           ref={deleteAccountInputRef}
+          cancelRedirect={path}
+          confirmRedirect="/login"
         />
       </AnimatePresence>
       <h1 className={classes.pageTitle}>Güvenlik Ayarları</h1>

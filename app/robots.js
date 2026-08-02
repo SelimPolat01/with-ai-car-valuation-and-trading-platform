@@ -13,7 +13,7 @@ export default function robots() {
         "/hesabim/garaj/",
         "/hesabim/bildirimler/",
         "/hesabim/alis-satis-islemleri/",
-        "/ilanlarim/",
+        "/mevut-ilanlarim/",
         "/satilan-ilanlarim/",
         "/satin-aldigim-ilanlar/",
         "/kaldirilan-ilanlarim/",

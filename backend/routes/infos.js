@@ -113,9 +113,7 @@ router.get("/soldAdverts", verifyToken, async (req, res) => {
       [userId],
     );
 
-    res.status(200).json({
-      personalSoldAdverts: result.rows,
-    });
+    res.status(200).json(result.rows);
   } catch (err) {
     res.status(500).json({ message: "Sunucu hatası: " + err.message });
   }

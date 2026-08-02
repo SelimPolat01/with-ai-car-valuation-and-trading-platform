@@ -112,6 +112,69 @@ router.get("/myAdverts", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/soldAdverts", verifyToken, async (req, res) => {
+  const userId = Number(req.user.id);
+  try {
+    const result = await db.query(
+      `SELECT a.*, 
+              (SELECT image_url 
+               FROM advert_images 
+               WHERE advert_id = a.id 
+               ORDER BY is_main DESC, id ASC
+               LIMIT 1) AS image_data
+       FROM adverts AS a 
+       WHERE a.user_id = $1 AND a.is_sold = true AND a.is_deleted = false
+       ORDER BY a.created_at DESC`,
+      [userId],
+    );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    res.status(500).json({ message: "Sunucu hatası!" });
+  }
+});
+
+router.get("/deletedAdverts", verifyToken, async (req, res) => {
+  const userId = Number(req.user.id);
+  try {
+    const result = await db.query(
+      `SELECT a.*, 
+              (SELECT image_url 
+               FROM advert_images 
+               WHERE advert_id = a.id 
+               ORDER BY is_main DESC, id ASC
+               LIMIT 1) AS image_data
+       FROM adverts AS a 
+       WHERE a.user_id = $1 AND a.is_deleted = true
+       ORDER BY a.created_at DESC`,
+      [userId],
+    );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    res.status(500).json({ message: "Sunucu hatası!" });
+  }
+});
+
+router.get("/boughtAdverts", verifyToken, async (req, res) => {
+  const userId = Number(req.user.id);
+  try {
+    const result = await db.query(
+      `SELECT a.*, 
+              (SELECT image_url 
+               FROM advert_images 
+               WHERE advert_id = a.id 
+               ORDER BY is_main DESC, id ASC
+               LIMIT 1) AS image_data
+       FROM adverts AS a 
+       WHERE a.buyer_id = $1 AND a.is_sold = true AND a.is_deleted = false
+       ORDER BY a.sold_at DESC`,
+      [userId],
+    );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    res.status(500).json({ message: "Sunucu hatası!" });
+  }
+});
+
 router.post("/favoriteAdverts/:advertId", verifyToken, async (req, res) => {
   const advertId = Number(req.params.advertId);
   const userId = Number(req.user.id);
@@ -579,9 +642,12 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
         .json({ message: "Bu araç zaten daha önce satın alınmış!" });
     }
 
+    // BURASI GÜNCELLENDİ: is_sold ve sold_at güncellenirken buyer_id'ye de satın alan kişinin ID'si (req.user.id) ekleniyor.
     const soldAdvertDetailRaw = await db.query(
-      `UPDATE adverts SET is_sold = true, sold_at = NOW() WHERE id = $1 RETURNING *`,
-      [advertId],
+      `UPDATE adverts 
+       SET is_sold = true, sold_at = NOW(), buyer_id = $2 
+       WHERE id = $1 RETURNING *`,
+      [advertId, req.user.id],
     );
 
     const soldAdvertDetail = soldAdvertDetailRaw.rows[0];

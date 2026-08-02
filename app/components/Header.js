@@ -233,8 +233,8 @@ export default function Header({ className }) {
                 <li>
                   <Link
                     className={classes.myAdvertsLink}
-                    href="/ilanlarim"
-                    title="İlanlarım"
+                    href="/mevcut-ilanlarim"
+                    title="Mevcut İlanlarım"
                   >
                     <Tags
                       className={classes.juniorIcon}

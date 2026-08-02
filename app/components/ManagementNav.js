@@ -10,8 +10,8 @@ export default function ManagementNav({ className }) {
       <ul className={classes.ul}>
         <li>
           <Link
-            className={path === "/ilanlarim" ? classes.active : ""}
-            href="/ilanlarim"
+            className={path === "/mevcut-ilanlarim" ? classes.active : ""}
+            href="/mevcut-ilanlarim"
           >
             Mevcut İlanlarım
           </Link>

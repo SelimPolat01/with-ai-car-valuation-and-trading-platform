@@ -19,8 +19,10 @@ export default function AdvertItem({
   modelYear,
   price,
   onDeleteDialog,
+  onRecoveryDialog,
   showDeleteButton = false,
   showEditButton = false,
+  showRecoveryButton = false,
 }) {
   const router = useRouter();
 
@@ -73,6 +75,20 @@ export default function AdvertItem({
                 }}
                 title="İlanı Kaldır"
               ></button>
+            )}
+            {showRecoveryButton && (
+              <button
+                className={classes.recoveryAdvertButton}
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  event.preventDefault();
+                  onRecoveryDialog();
+                }}
+                title="İlanı Tekrar Yayınla"
+              >
+                <span className="material-icons">restore_page</span>
+              </button>
             )}
           </>
           <img className={classes.img} src={imgSrc} alt="Araç Görseli" />

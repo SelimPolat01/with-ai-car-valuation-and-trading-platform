@@ -1,6 +1,23 @@
 export default async function sitemap() {
   const baseUrl = "https://yapayoto.com.tr";
 
+  const slugify = (text) => {
+    if (!text) return "";
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/ğ/g, "g")
+      .replace(/ü/g, "u")
+      .replace(/ş/g, "s")
+      .replace(/ı/g, "i")
+      .replace(/ö/g, "o")
+      .replace(/ç/g, "c")
+      .replace(/[^a-z0-9 -]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  };
+
   const staticRoutes = [
     {
       url: baseUrl,
@@ -55,29 +72,27 @@ export default async function sitemap() {
           ? data
           : [];
 
-      dynamicRoutes = ilanlar.map((ilan) => {
-        const brandFormat = (ilan.brand || "")
-          .toLowerCase()
-          .replace(/\s+/g, "-");
-        const modelFormat = (ilan.model || "")
-          .toLowerCase()
-          .replace(/\s+/g, "-");
+      const aktifIlanlar = ilanlar.filter(
+        (ilan) => ilan.is_sold === false && ilan.is_deleted === false,
+      );
+
+      dynamicRoutes = aktifIlanlar.map((ilan) => {
+        const brandFormat = slugify(ilan.brand);
+        const modelFormat = slugify(ilan.model);
         const slug = `${brandFormat}-${modelFormat}-${ilan.model_year}`;
         const advertId = ilan.id || ilan.advert_id;
 
         return {
           url: `${baseUrl}/ilan/${slug}/${advertId}`,
           lastModified: new Date(
-            ilan.updated_at || ilan.created_at || new Date(),
+            ilan.edited_at || ilan.created_at || new Date(),
           ),
           changeFrequency: "daily",
           priority: 0.8,
         };
       });
     }
-  } catch (error) {
-    console.error("Sitemap oluşturulurken API'den ilanlar çekilemedi:", error);
-  }
+  } catch (error) {}
 
   return [...staticRoutes, ...dynamicRoutes];
 }

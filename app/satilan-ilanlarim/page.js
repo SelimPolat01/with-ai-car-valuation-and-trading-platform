@@ -72,6 +72,7 @@ export default function SatilanIlanlarim() {
                   price={myAdvert.price}
                   showDeleteButton={false}
                   showEditButton={false}
+                  notClick
                 />
               );
             })}

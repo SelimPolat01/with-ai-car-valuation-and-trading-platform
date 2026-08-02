@@ -114,6 +114,7 @@ export default function KaldirilanIlanlarim() {
                   showEditButton={false}
                   showRecoveryButton={true}
                   onRecoveryDialog={() => openRecoveryModal(myAdvert.id)}
+                  notClick
                 />
               );
             })}

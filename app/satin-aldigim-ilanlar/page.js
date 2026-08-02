@@ -72,6 +72,7 @@ export default function SatinAldigimIlanlar() {
                   price={myAdvert.price}
                   showDeleteButton={false}
                   showEditButton={false}
+                  notClick
                 />
               );
             })}

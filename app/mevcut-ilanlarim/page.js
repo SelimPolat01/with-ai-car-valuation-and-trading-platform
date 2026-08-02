@@ -130,6 +130,7 @@ export default function MyAdverts() {
                   onEditDialog={() => openEditModal(myAdvert.id)}
                   showDeleteButton={true}
                   showEditButton={true}
+                  notClick
                 />
               );
             })}

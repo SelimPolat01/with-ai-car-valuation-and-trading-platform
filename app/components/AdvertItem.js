@@ -23,6 +23,7 @@ export default function AdvertItem({
   showDeleteButton = false,
   showEditButton = false,
   showRecoveryButton = false,
+  notClick,
 }) {
   const router = useRouter();
 
@@ -35,15 +36,17 @@ export default function AdvertItem({
       layout
       role="button"
       className={classes.advertWrapper}
+      style={{
+        cursor: notClick ? "default" : "pointer",
+      }}
       variants={advertItemVariants}
       initial="initial"
       animate="animate"
       exit="exit"
       onClick={() => {
-        if (onClick) {
-          onClick();
-        }
-        router.push(`/ilan/${brand}-${model}-${modelYear}/${id}`);
+        if (onClick) onClick();
+        if (!notClick)
+          router.push(`/ilan/${brand}-${model}-${modelYear}/${id}`);
       }}
     >
       <div className={classes.advert}>

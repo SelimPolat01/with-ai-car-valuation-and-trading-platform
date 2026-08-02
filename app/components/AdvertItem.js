@@ -33,10 +33,10 @@ export default function AdvertItem({
       layout
       role="button"
       className={classes.advertWrapper}
-      initial={advertItemVariants.initial}
-      animate={advertItemVariants.animate}
-      exit={advertItemVariants.exit}
-      transition={advertItemVariants.transition}
+      variants={advertItemVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
       onClick={() => {
         if (onClick) {
           onClick();

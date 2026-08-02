@@ -19,13 +19,12 @@
 
 .headerDiv {
   background: linear-gradient(90deg, #6b21a8, #4c1d95);
-  padding: 12px 1.5rem;
+  padding: 16px 32px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(107, 33, 168, 0.25);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
   gap: 1rem;
   box-sizing: border-box;
   max-width: 100%;
@@ -42,7 +41,7 @@
 
 .customDropdownContainer {
   position: relative;
-  width: 250px;
+  width: 280px;
   z-index: 50;
 }
 
@@ -81,7 +80,7 @@
 .dropdownList {
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
+  right: 0;
   width: 100%;
   margin: 0;
   padding: 8px 0;
@@ -90,7 +89,7 @@
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   list-style: none;
-  max-height: 250px;
+  max-height: 280px;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 100;
@@ -110,6 +109,7 @@
 .dropdownItemActive {
   background-color: rgba(0, 244, 255, 0.15);
   color: #00f4ff;
+  padding-left: 24px;
 }
 
 .div {
@@ -193,13 +193,15 @@
 
   .headerDiv {
     flex-direction: column;
-    text-align: center;
-    padding: 12px 1rem;
+    padding: 16px;
     justify-content: center;
+    align-items: stretch;
+    gap: 1rem;
   }
 
   .headerDiv h1 {
-    font-size: 20px;
+    font-size: 18.68px;
+    text-align: center;
   }
 
   .customDropdownContainer {
@@ -207,13 +209,19 @@
   }
 
   .dropdownHeader {
-    font-size: 15px;
+    font-size: 14px;
     padding: 12px 16px;
+    text-align: left;
   }
 
   .dropdownItem {
-    font-size: 15px;
+    font-size: 14px;
     padding: 12px 16px;
+    text-align: left;
+  }
+
+  .dropdownList {
+    max-height: 220px;
   }
 
   .div {

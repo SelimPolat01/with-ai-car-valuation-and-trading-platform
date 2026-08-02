@@ -14,7 +14,6 @@ import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
 import { AlertCircle, ArrowLeft, ChevronDown } from "lucide-react";
 import Loading from "../loading.js";
 import { usePostAdvertView } from "@/hooks/POST/usePostAdvertView.js";
-import { capitalizeWords } from "@/app/utils/helpers.js";
 
 export default function AllAdverts() {
   const dispatch = useDispatch();
@@ -250,7 +249,7 @@ export default function AllAdverts() {
         <div className={classes.headerDiv}>
           <h1>
             TÜM İLANLAR{" "}
-            {selectedBrand ? `- ${capitalizeWords(selectedBrand)}` : ""}
+            {selectedBrand ? `- ${selectedBrand.toUpperCase()}` : ""}
           </h1>
 
           <div className={classes.customDropdownContainer} ref={dropdownRef}>

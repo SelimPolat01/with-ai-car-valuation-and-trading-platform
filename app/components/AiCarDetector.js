@@ -189,10 +189,12 @@ export default function AiCarDetector() {
         />
         <div className={classes.photoContainer}>
           <div className={classes.photoUploadTextContainer}>
-            <h1 className={classes.customUpload}>Fotoğraf Yükle</h1>
+            <h1 className={classes.customUpload}>
+              Akıllı Tespit İçin Fotoğraf Yükleyin
+            </h1>
             <Camera
               className={classes.cameraIcon}
-              size={38}
+              size={24}
               stroke="url(#custom-icon-gradient)"
             />
           </div>

@@ -97,16 +97,19 @@ export default function Header({ className }) {
   return (
     <header className={`${classes.header} ${className ? className : ""} `}>
       <nav className={classes.nav}>
-        <Link className={classes.logoLink} href="/">
-          <Image
-            alt="logo"
-            className={classes.logo}
-            height={55}
-            priority
-            src="/images/logo.svg"
-            width={55}
-          />
-        </Link>
+        <div className={classes.logoAndVersion}>
+          <Link className={classes.logoLink} href="/">
+            <Image
+              alt="logo"
+              className={classes.logo}
+              height={55}
+              priority
+              src="/images/logo.svg"
+              width={55}
+            />
+          </Link>
+          <span className={classes.versionText}>BETA</span>
+        </div>
         <ul className={classes.ul}>
           {!hideSearchBar && <SearchBar />}
 

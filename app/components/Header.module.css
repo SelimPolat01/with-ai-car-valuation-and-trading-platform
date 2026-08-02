@@ -30,6 +30,20 @@
   height: 30px;
 }
 
+.logoAndVersion {
+  display: flex;
+}
+
+.versionText {
+  align-self: center;
+  font-size: 30px;
+  padding: 10px 0 0 0;
+  background: linear-gradient(90deg, #acf8fc, #7af8ff, #00f4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .logoLink {
   height: 50px;
 }
@@ -38,6 +52,8 @@
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   filter: drop-shadow(0px 0px 6px rgba(0, 242, 254, 0.3));
   margin: 0 0 0 0;
+  height: 50px;
+  padding: 7px 0 0 0;
 }
 
 .logo:hover {
@@ -485,7 +501,7 @@
     height: 40px !important;
     width: 40px !important;
     min-width: 40px !important;
-    margin: 2px 0 0 0;
+    padding: 5px 0 0 0;
   }
 
   .icon {
@@ -546,5 +562,11 @@
 
   .account {
     margin: 0;
+  }
+
+  .versionText {
+    font-size: 22px;
+    padding: 4.5px 0 0 0;
+    display: none;
   }
 }

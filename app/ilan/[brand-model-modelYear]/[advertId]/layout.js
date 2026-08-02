@@ -1,5 +1,6 @@
 export async function generateMetadata({ params }) {
-  const advertId = params.advertId;
+  const resolvedParams = await params;
+  const advertId = resolvedParams.advertId;
 
   try {
     const res = await fetch(
@@ -28,6 +29,25 @@ export async function generateMetadata({ params }) {
       ? mainImgObj.image_data || mainImgObj.image_url
       : "https://yapayoto.com.tr/images/default-car.svg";
 
+    const slugify = (text) => {
+      if (!text) return "";
+      return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/ğ/g, "g")
+        .replace(/ü/g, "u")
+        .replace(/ş/g, "s")
+        .replace(/ı/g, "i")
+        .replace(/ö/g, "o")
+        .replace(/ç/g, "c")
+        .replace(/[^a-z0-9 -]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+    };
+
+    const cleanSlug = `${slugify(advert.brand)}-${slugify(advert.model)}-${advert.model_year}`;
+
     return {
       title: pageTitle,
       description: pageDescription,
@@ -42,7 +62,7 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: pageTitle,
         description: pageDescription,
-        url: `https://yapayoto.com.tr/ilan/${params["brand-model-modelYear"]}/${advertId}`,
+        url: `https://yapayoto.com.tr/ilan/${cleanSlug}/${advertId}`,
         siteName: "Aracını Sat",
         locale: "tr_TR",
         type: "website",

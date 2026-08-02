@@ -33,12 +33,9 @@
   flex: 1;
 }
 
-.nav {
-  padding: 0 0 0 10rem;
-}
-
 .managementNav {
   padding: 0 0 0 10rem;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {

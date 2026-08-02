@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useGetPersonalAdvertsInfos } from "@/hooks/GET/useGetPersonalAdvertsInfos";
-import { useGetPersonalSoldAdverts } from "@/hooks/GET/usePersonalSoldAdverts";
+import { useGetPersonalSoldAdverts } from "@/hooks/GET/useGetPersonalSoldAdverts";
 import { formatMaliDeger, getAylikIlanVerileri } from "@/app/utils/helpers";
 import Loading from "@/app/loading";
 import { garajContainerVariants } from "@/app/utils/animations";
@@ -71,8 +71,7 @@ export default function Garaj() {
   const kisiselİlanlar = getPersonalAdvertsData?.result?.personalAdverts || [];
   const favoriIlanSayisi =
     getPersonalAdvertsData?.result?.personalFavoriteAdverts || 0;
-  const kisiselSatinAldigimIlanlar =
-    personalSoldAdvertsData?.result?.personalSoldAdverts || [];
+  const kisiselSatinAldigimIlanlar = personalSoldAdvertsData?.result || [];
 
   const kisiselMevcutİlanlar = kisiselİlanlar.filter(
     (ilan) =>

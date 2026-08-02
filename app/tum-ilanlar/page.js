@@ -14,7 +14,7 @@ import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
 import { AlertCircle, ArrowLeft, ChevronDown } from "lucide-react";
 import Loading from "../loading.js";
 import { usePostAdvertView } from "@/hooks/POST/usePostAdvertView.js";
-import { formatBrandModel } from "@/app/utils/helpers.js";
+import { capitalizeWords } from "@/app/utils/helpers.js";
 
 export default function AllAdverts() {
   const dispatch = useDispatch();
@@ -176,12 +176,12 @@ export default function AllAdverts() {
     { value: "oldest", label: "Tarihe Göre (En Eski)" },
     { value: "price-asc", label: "Fiyata Göre Artan" },
     { value: "price-desc", label: "Fiyata Göre Azalan" },
-    { value: "year-desc", label: "Model Yılına Göre Azalan" },
-    { value: "year-asc", label: "Model Yılına Göre Artan" },
     { value: "views-desc", label: "Tıklamaya Göre Azalan" },
     { value: "views-asc", label: "Tıklamaya Göre Artan" },
     { value: "fav-desc", label: "Favorilemeye Göre Azalan" },
     { value: "fav-asc", label: "Favorilemeye Göre Artan" },
+    { value: "year-desc", label: "Model Yılına Göre Azalan" },
+    { value: "year-asc", label: "Model Yılına Göre Artan" },
   ];
 
   const currentSortLabel = sortOptionsList.find(
@@ -250,7 +250,7 @@ export default function AllAdverts() {
         <div className={classes.headerDiv}>
           <h1>
             TÜM İLANLAR{" "}
-            {selectedBrand ? `- ${formatBrandModel(selectedBrand)}` : ""}
+            {selectedBrand ? `- ${capitalizeWords(selectedBrand)}` : ""}
           </h1>
 
           <div className={classes.customDropdownContainer} ref={dropdownRef}>

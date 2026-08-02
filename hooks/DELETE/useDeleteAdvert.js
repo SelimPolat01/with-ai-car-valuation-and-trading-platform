@@ -19,6 +19,7 @@ export function useDeleteAdvert() {
       queryClient.invalidateQueries({ queryKey: ["personalAppointments"] });
       queryClient.invalidateQueries({ queryKey: ["available-slots"] });
       queryClient.invalidateQueries({ queryKey: ["personalTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["deletedAdverts"] });
 
       queryClient.removeQueries({
         queryKey: ["advert", variables.advertId],

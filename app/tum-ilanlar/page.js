@@ -115,8 +115,15 @@ export default function AllAdverts() {
         return advertsToSort.sort(
           (a, b) => Number(a.fav_count || 0) - Number(b.fav_count || 0),
         );
+      case "oldest":
+        return advertsToSort.sort(
+          (a, b) => new Date(a.created_at) - new Date(b.created_at),
+        );
+      case "default":
       default:
-        return advertsToSort;
+        return advertsToSort.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at),
+        );
     }
   }, [filteredAdverts, sortOption]);
 
@@ -165,11 +172,12 @@ export default function AllAdverts() {
   }
 
   const sortOptionsList = [
-    { value: "default", label: "Varsayılan Sıralama" },
+    { value: "default", label: "Varsayılan Sıralama (En Yeni)" },
+    { value: "oldest", label: "Tarihe Göre (En Eski)" },
     { value: "price-asc", label: "Fiyata Göre Artan" },
     { value: "price-desc", label: "Fiyata Göre Azalan" },
-    { value: "year-desc", label: "Tarihe Göre Azalan" },
-    { value: "year-asc", label: "Tarihe Göre Artan" },
+    { value: "year-desc", label: "Model Yılına Göre Azalan" },
+    { value: "year-asc", label: "Model Yılına Göre Artan" },
     { value: "views-desc", label: "Tıklamaya Göre Azalan" },
     { value: "views-asc", label: "Tıklamaya Göre Artan" },
     { value: "fav-desc", label: "Favorilemeye Göre Azalan" },

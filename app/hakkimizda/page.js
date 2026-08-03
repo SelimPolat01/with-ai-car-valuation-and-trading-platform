@@ -62,12 +62,13 @@ export default function Hakkimizda() {
         >
           Her şey, otomotiv pazarındaki değerleme tutarsızlıklarını çözmek
           amacıyla atılan güçlü bir akademik mühendislik adımıyla başladı.
-          Kurucumuz Selim Polat tarafından geliştirilen ve gücünü derin öğrenme
-          algoritmalarından alan sistemimiz, kısa sürede bireysel kullanıcıların
-          ve profesyonellerin güvenle kullanabileceği tam donanımlı bir
-          teknoloji platformuna dönüştü. Bugün YapayOto, sadece bir ilan sitesi
-          değil; alıcı ve satıcı arasındaki güven köprüsünü matematik, veri
-          bilimi ve kodlarla inşa eden bir mühendislik ürünüdür.
+          Kurucumuz <strong>Selim POLAT</strong> tarafından geliştirilen ve
+          gücünü derin öğrenme algoritmalarından alan sistemimiz, kısa sürede
+          bireysel kullanıcıların ve profesyonellerin güvenle kullanabileceği
+          tam donanımlı bir teknoloji platformuna dönüştü. Bugün YapayOto,
+          sadece bir ilan sitesi değil; alıcı ve satıcı arasındaki güven
+          köprüsünü matematik, veri bilimi ve kodlarla inşa eden bir mühendislik
+          ürünüdür.
         </motion.p>
       </motion.div>
 

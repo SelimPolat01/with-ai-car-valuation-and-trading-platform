@@ -57,7 +57,7 @@ export default function ErrorDisplay({
           <div
             style={{
               display: "flex",
-              gap: "15px",
+              gap: "1rem",
               flexWrap: "wrap",
               justifyContent: "center",
             }}

@@ -665,6 +665,7 @@ a {
   }
   .errorImage {
     margin: 0;
+    max-height: 190px;
   }
   .backHomeButton {
     padding: 12px 28px;
@@ -694,6 +695,7 @@ a {
   }
   .errorImage {
     margin: 0;
+    max-height: 180px;
   }
   .backHomeButton {
     width: 100%;

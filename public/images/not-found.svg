@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Renk Geçişleri (Projenizin Paleti) -->
+    <linearGradient id="ufoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#934b8e" />
+      <stop offset="100%" stop-color="#2d1457" />
+    </linearGradient>
+    <linearGradient id="beamGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#a7b8d4" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#a7b8d4" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- CSS Animasyonları -->
+    <style>
+      @keyframes float-ufo {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-15px) rotate(2deg); }
+      }
+      @keyframes float-doc {
+        0%, 100% { transform: translateY(0px) rotate(-3deg); }
+        50% { transform: translateY(-10px) rotate(3deg); }
+      }
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.2; }
+      }
+      @keyframes pulse-beam {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 0.8; }
+      }
+      .ufo { animation: float-ufo 4s ease-in-out infinite; transform-origin: 250px 150px; }
+      .doc { animation: float-doc 5s ease-in-out infinite; transform-origin: 250px 320px; }
+      .beam { animation: pulse-beam 3s ease-in-out infinite; }
+      .light-1 { animation: blink 1s ease-in-out infinite 0s; }
+      .light-2 { animation: blink 1.5s ease-in-out infinite 0.5s; }
+      .light-3 { animation: blink 1.2s ease-in-out infinite 1s; }
+    </style>
+  </defs>
+
+  <!-- Arka Plan Süslemeleri (Yıldızlar / Uzay Hissi) -->
+  <circle cx="90" cy="120" r="4" fill="#f5af19" opacity="0.6" class="light-1" />
+  <circle cx="410" cy="170" r="5" fill="#00f2fe" opacity="0.5" class="light-2" />
+  <circle cx="130" cy="380" r="6" fill="#ef4444" opacity="0.4" class="light-3" />
+  <circle cx="370" cy="330" r="3" fill="#ffffff" opacity="0.7" />
+
+  <!-- Arka Plandaki Dev 4 ve 4 Rakamları (Ortadaki belge 0'ı temsil eder) -->
+  <!-- Sol '4' -->
+  <text x="115" y="380" font-family="Arial, sans-serif" font-size="140" font-weight="900" fill="#a7b8d4" opacity="0.25">4</text>
+  <!-- Sağ '4' -->
+  <text x="315" y="380" font-family="Arial, sans-serif" font-size="140" font-weight="900" fill="#a7b8d4" opacity="0.25">4</text>
+  
+  <!-- Yerdeki Gölgeler -->
+  <ellipse cx="250" cy="440" rx="140" ry="15" fill="rgba(0,0,0,0.15)" />
+  <ellipse cx="250" cy="440" rx="60" ry="8" fill="rgba(0,0,0,0.1)" />
+
+  <!-- UFO Grubu -->
+  <g class="ufo">
+    <!-- Tarama Işığı (Beam) -->
+    <polygon points="250,160 110,440 390,440" fill="url(#beamGrad)" class="beam" />
+    
+    <!-- Cam Kubbe -->
+    <path d="M 195 130 C 195 65, 305 65, 305 130 Z" fill="#a7b8d4" opacity="0.85" />
+    
+    <!-- İçerideki Sevimli Uzaylı -->
+    <circle cx="250" cy="105" r="18" fill="#00f2fe" opacity="0.9" />
+    <path d="M 232 130 Q 250 95 268 130 Z" fill="#00f2fe" opacity="0.9" />
+    <!-- Uzaylı Gözleri -->
+    <ellipse cx="240" cy="102" rx="4" ry="6" fill="#150a29" />
+    <ellipse cx="260" cy="102" rx="4" ry="6" fill="#150a29" />
+    <circle cx="241" cy="100" r="1.5" fill="#ffffff" />
+    <circle cx="261" cy="100" r="1.5" fill="#ffffff" />
+
+    <!-- UFO Gövdesi -->
+    <ellipse cx="250" cy="130" rx="95" ry="28" fill="url(#ufoGrad)" />
+    <!-- Gövde Derinlik Çizgisi -->
+    <ellipse cx="250" cy="118" rx="80" ry="16" fill="#150a29" opacity="0.25" />
+    
+    <!-- UFO Sinyal Işıkları -->
+    <circle cx="170" cy="130" r="6" fill="#00f2fe" class="light-1" />
+    <circle cx="215" cy="145" r="6" fill="#f5af19" class="light-2" />
+    <circle cx="285" cy="145" r="6" fill="#f5af19" class="light-3" />
+    <circle cx="330" cy="130" r="6" fill="#ef4444" class="light-1" />
+  </g>
+
+  <!-- Kayıp Belge (Ortadaki '0' Hissi ve Hedef) -->
+  <g class="doc">
+    <!-- Sayfa Zemin -->
+    <path d="M 205 270 L 270 270 L 295 295 L 295 370 L 205 370 Z" fill="#ffffff" stroke="#2d1457" stroke-width="5" stroke-linejoin="round" />
+    <!-- Sayfa Kıvrımı -->
+    <polygon points="270,270 270,295 295,295" fill="#a7b8d4" stroke="#2d1457" stroke-width="5" stroke-linejoin="round" />
+    
+    <!-- Kırmızı Soru İşareti -->
+    <text x="250" y="348" font-family="Arial, sans-serif" font-size="55" font-weight="900" fill="#ef4444" text-anchor="middle">?</text>
+    
+    <!-- Metin Çizgileri -->
+    <line x1="220" y1="300" x2="255" y2="300" stroke="#a7b8d4" stroke-width="5" stroke-linecap="round" />
+    <line x1="220" y1="315" x2="245" y2="315" stroke="#a7b8d4" stroke-width="5" stroke-linecap="round" />
+  </g>
+</svg>

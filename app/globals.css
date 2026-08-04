@@ -683,7 +683,7 @@ a {
     gap: 0.5rem;
   }
   .errorTitle {
-    font-size: clamp(60px, 16.9vw, 90px);
+    font-size: clamp(60px, 16vw, 90px);
   }
   .textWrapper {
     flex-direction: column;

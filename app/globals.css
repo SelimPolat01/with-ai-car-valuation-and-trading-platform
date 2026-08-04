@@ -675,7 +675,7 @@ a {
 
 @media (max-width: 480px) {
   .errorDiv {
-    padding: 0.5rem 1rem 0.5rem 1rem;
+    padding: 0.25rem 1rem 0.75rem 1rem;
   }
   .glassCard {
     padding: 1rem;

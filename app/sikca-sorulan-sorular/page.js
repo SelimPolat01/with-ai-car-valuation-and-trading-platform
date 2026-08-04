@@ -2,8 +2,8 @@
 
 import useGetFaqs from "@/hooks/GET/useGetFaqs";
 import Loading from "../loading";
-import { AlertCircle, ArrowLeft, ChevronDown, HelpCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import ErrorDisplay from "@/app/components/ErrorDisplay";
+import { ChevronDown, HelpCircle } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import classes from "./SikcaSorulanSorular.module.css";
@@ -14,7 +14,6 @@ import {
 } from "../utils/animations";
 
 export default function SikcaSorulanSorular() {
-  const router = useRouter();
   const [faqAnswerDisplay, setFaqAnswerDisplay] = useState(null);
 
   const {
@@ -29,23 +28,7 @@ export default function SikcaSorulanSorular() {
   }
 
   if (getFaqsIsError) {
-    return (
-      <div className={classes.pageWrapper}>
-        <motion.div
-          className={classes.errorContainer}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
-        >
-          <AlertCircle size={48} className={classes.iconSecondary} />
-          <h2>Bir Hata Oluştu</h2>
-          <p>{getFaqsError?.message}</p>
-          <button onClick={() => router.back()} className={classes.backButton}>
-            <ArrowLeft size={20} /> Geri Dön
-          </button>
-        </motion.div>
-      </div>
-    );
+    return <ErrorDisplay error={getFaqsError} />;
   }
 
   const faqs = getFaqsData?.result || [];

@@ -145,22 +145,6 @@ a {
   flex: 1;
 }
 
-@media (max-width: 768px) {
-  .authLoadingSpinner {
-    min-height: 100dvh !important;
-  }
-
-  .dropdownDiv {
-    width: 100%;
-    padding: 0;
-  }
-
-  .homeContainer {
-    padding: 0 1rem 1.25rem 1rem;
-    flex-grow: 1;
-  }
-}
-
 .error {
   color: #ef4444;
   margin: 0 0 0.1rem 0;
@@ -517,6 +501,105 @@ a {
   flex: 1;
 }
 
+.notFoundDiv {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  padding: 70px 1rem 80px 1rem;
+  box-sizing: border-box;
+  flex: 1;
+}
+
+.notFoundContainer {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.notFoundTitle {
+  font-size: clamp(80px, 15vw, 150px);
+  margin: 0;
+  font-weight: 900;
+  background: linear-gradient(to bottom, #ffffff, #934b8e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+.glassCard {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 40px;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 100%;
+  gap: 1.5rem;
+}
+
+.textWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.alertIcon {
+  color: #a7b8d4;
+}
+
+.notFoundText {
+  font-size: 1.25rem;
+  color: #f8f8f8;
+  margin: 0;
+  font-weight: 300;
+  text-align: center;
+}
+
+.notFoundImage {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.backHomeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background-color: blanchedalmond;
+  color: #150a29;
+  padding: 14px 32px;
+  border-radius: 100px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  width: fit-content;
+}
+
+.backHomeButton:hover {
+  background-color: #150a29;
+  color: blanchedalmond;
+  border: 2px solid blanchedalmond;
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
 .hr {
   width: 100%;
   color: black;
@@ -557,7 +640,66 @@ a {
 }
 
 @media (max-width: 768px) {
+  .authLoadingSpinner {
+    min-height: 100dvh !important;
+  }
+  .dropdownDiv {
+    width: 100%;
+    padding: 0;
+  }
+  .homeContainer {
+    padding: 0 1rem 1.25rem 1rem;
+    flex-grow: 1;
+  }
   .whiteFormSection {
     flex: 1;
+  }
+  .notFoundDiv {
+    padding: 2rem 1rem;
+  }
+  .glassCard {
+    padding: 2.5rem 1.5rem;
+    border-radius: 30px;
+    gap: 1.25rem;
+  }
+  .notFoundText {
+    font-size: 1.1rem;
+  }
+  .notFoundImage {
+    margin: 0;
+  }
+  .backHomeButton {
+    padding: 12px 28px;
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .notFoundDiv {
+    padding: 2rem 1rem 2.5rem 1rem;
+  }
+  .glassCard {
+    padding: 2rem 1rem;
+    border-radius: 24px;
+    gap: 1rem;
+  }
+  .notFoundTitle {
+    font-size: clamp(60px, 18vw, 90px);
+  }
+  .textWrapper {
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+  }
+  .notFoundText {
+    font-size: 1rem;
+  }
+  .notFoundImage {
+    margin: 0;
+  }
+  .backHomeButton {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
   }
 }

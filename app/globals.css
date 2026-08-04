@@ -680,7 +680,7 @@ a {
   .glassCard {
     padding: 1rem;
     border-radius: 24px;
-    gap: 0.5rem;
+    gap: 10px;
   }
   .errorTitle {
     font-size: clamp(60px, 16vw, 90px);
@@ -696,6 +696,9 @@ a {
   .errorImage {
     margin: 0;
     max-height: 165px;
+  }
+  .notFoundErrorImage {
+    max-height: 238.28px;
   }
   .backHomeButton {
     width: 100%;

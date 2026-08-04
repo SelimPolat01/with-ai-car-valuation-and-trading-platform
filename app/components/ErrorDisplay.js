@@ -11,6 +11,7 @@ export default function ErrorDisplay({
   title = "HATA",
   message,
   imageSrc = "/images/error.svg",
+  notFound,
 }) {
   useEffect(() => {
     if (error) {
@@ -51,13 +52,13 @@ export default function ErrorDisplay({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="errorImage"
+            className={`errorImage ${notFound ? "notFoundErrorImage" : ""} `}
           />
 
           <div
             style={{
               display: "flex",
-              gap: "1rem",
+              gap: "10px",
               flexWrap: "wrap",
               justifyContent: "center",
             }}

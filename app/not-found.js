@@ -8,6 +8,7 @@ export default function NotFound() {
       title="404"
       message="Hay aksi! Aradığınız sayfa duman olmuş."
       imageSrc="/images/not-found.svg"
+      notFound
     />
   );
 }

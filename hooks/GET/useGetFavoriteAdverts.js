@@ -11,5 +11,6 @@ export function useGetFavoriteAdverts(user) {
     queryFn: () => getFavoriteAdverts(),
     enabled: !!user,
     retry: false,
+    throwOnError: true,
   });
 }

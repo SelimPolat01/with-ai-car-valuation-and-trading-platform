@@ -3,14 +3,7 @@
 import { useState } from "react";
 import { useGetPersonalAppointments } from "@/hooks/GET/useGetPersonalAppointments";
 import classes from "./Randevular.module.css";
-import {
-  CalendarClock,
-  MapPin,
-  CarFront,
-  ChevronRight,
-  AlertCircle,
-  ArrowLeft,
-} from "lucide-react";
+import { CalendarClock, MapPin, CarFront, ChevronRight } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   formatBrandModel,
@@ -19,6 +12,11 @@ import {
 } from "@/app/utils/helpers";
 import Loading from "@/app/loading";
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
+import {
+  randevuContainerVariants,
+  randevuItemVariants,
+} from "@/app/utils/animations";
 
 export default function RandevularPage() {
   const router = useRouter();
@@ -30,28 +28,10 @@ export default function RandevularPage() {
   const {
     data: getPersonalAppointmentsData,
     isLoading: getPersonalAppointmentsIsLoading,
-    isError: getPersonalAppointmentsIsError,
-    error: getPersonalAppointmentsError,
   } = useGetPersonalAppointments(user);
 
   if (getPersonalAppointmentsIsLoading) {
     return <Loading />;
-  }
-
-  if (getPersonalAppointmentsIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>
-          {getPersonalAppointmentsError?.message ||
-            "Randevularınız yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyiniz."}
-        </p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
   }
 
   const appointments = Array.isArray(getPersonalAppointmentsData)
@@ -75,53 +55,81 @@ export default function RandevularPage() {
   });
 
   return (
-    <div className={classes.container}>
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={classes.container}
+    >
       <h1 className={classes.pageTitle}>Randevular</h1>
 
       <div className={classes.tabs}>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           className={`${classes.tabButton} ${roleTab === "buyer" ? classes.activeTab : ""}`}
           onClick={() => setRoleTab("buyer")}
         >
           Alıcı Olduğum
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           className={`${classes.tabButton} ${roleTab === "seller" ? classes.activeTab : ""}`}
           onClick={() => setRoleTab("seller")}
         >
           Satıcı Olduğum
-        </button>
+        </motion.button>
       </div>
 
       <div className={classes.tabs}>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           className={`${classes.tabButton} ${activeTab === "active" ? classes.activeTab : ""}`}
           onClick={() => setActiveTab("active")}
         >
           Aktif Randevular
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           className={`${classes.tabButton} ${activeTab === "past" ? classes.activeTab : ""}`}
           onClick={() => setActiveTab("past")}
         >
           Geçmiş Randevular
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           className={`${classes.tabButton} ${activeTab === "cancel" ? classes.activeTab : ""}`}
           onClick={() => setActiveTab("cancel")}
         >
           İptal Randevular
-        </button>
+        </motion.button>
       </div>
 
-      <div className={classes.listContainer}>
+      <motion.div
+        variants={randevuContainerVariants}
+        initial="hidden"
+        animate="show"
+        className={classes.listContainer}
+        key={`${roleTab}-${activeTab}`}
+      >
         {currentData.length === 0 ? (
-          <div className={classes.emptyState}>
+          <motion.div
+            variants={randevuItemVariants}
+            className={classes.emptyState}
+          >
             Bu kategoride randevunuz bulunmuyor.
-          </div>
+          </motion.div>
         ) : (
           currentData.map((appointment) => (
-            <div key={appointment.appointment_id} className={classes.card}>
+            <motion.div
+              variants={randevuItemVariants}
+              key={appointment.appointment_id}
+              className={classes.card}
+            >
               <div className={classes.cardHeader}>
                 <div className={classes.dateTime}>
                   <CalendarClock size={20} className={classes.iconPrimary} />
@@ -168,7 +176,9 @@ export default function RandevularPage() {
 
                 {!appointment.is_deleted &&
                   appointment.appointment_status !== "canceled" && (
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() =>
                         router.push(`${pathName}/${appointment.appointment_id}`)
                       }
@@ -178,13 +188,13 @@ export default function RandevularPage() {
                         ? "Detayları Gör"
                         : "Raporu İncele"}
                       <ChevronRight size={16} />
-                    </button>
+                    </motion.button>
                   )}
               </div>
-            </div>
+            </motion.div>
           ))
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

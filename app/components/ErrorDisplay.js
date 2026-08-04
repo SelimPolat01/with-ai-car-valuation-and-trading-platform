@@ -1,4 +1,3 @@
-// components/ErrorDisplay.jsx (veya kendi yoluna göre ayarla)
 "use client";
 
 import { useEffect } from "react";
@@ -6,45 +5,53 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { AlertTriangle, RotateCcw, Home } from "lucide-react";
 
-// error ve reset proplarını dışarıdan alacak şekilde ayarladık
-export default function ErrorDisplay({ error, reset }) {
+export default function ErrorDisplay({
+  error,
+  reset,
+  title = "HATA",
+  message,
+  imageSrc = "/images/error.svg",
+}) {
   useEffect(() => {
-    console.error(error);
+    if (error) {
+      console.error(error);
+    }
   }, [error]);
 
+  const displayMessage =
+    message ||
+    error?.message ||
+    "Hay aksi! Beklenmeyen bir sistem hatası oluştu.";
+
   return (
-    <div className="notFoundDiv">
+    <div className="errorDiv">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="notFoundContainer"
+        className="errorMainContainer"
       >
         <div className="glassCard">
           <motion.h1
             initial={{ y: -20 }}
             animate={{ y: 0 }}
-            className="notFoundTitle"
-            style={{ fontSize: "clamp(50px, 10vw, 110px)" }}
+            className="errorTitle"
           >
-            HATA
+            {title}
           </motion.h1>
 
           <div className="textWrapper">
             <AlertTriangle size={28} className="alertIcon" />
-            <p className="notFoundText">
-              {error?.message ||
-                "Hay aksi! Beklenmeyen bir sistem hatası oluştu."}
-            </p>
+            <p className="errorText">{displayMessage}</p>
           </div>
 
           <motion.img
-            src="/images/error.svg"
-            alt="Hata Oluştu"
+            src={imageSrc}
+            alt={title}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="notFoundImage"
+            className="errorImage"
           />
 
           <div
@@ -55,27 +62,14 @@ export default function ErrorDisplay({ error, reset }) {
               justifyContent: "center",
             }}
           >
-            {/* Eğer reset fonksiyonu gönderilmişse butonu göster */}
             {reset && (
-              <button
-                onClick={() => reset()}
-                className="backHomeButton"
-                style={{ cursor: "pointer", fontFamily: "inherit" }}
-              >
+              <button onClick={() => reset()} className="backHomeButton">
                 <RotateCcw size={20} />
                 <span>Tekrar Dene</span>
               </button>
             )}
 
-            <Link
-              href="/"
-              className="backHomeButton"
-              style={{
-                backgroundColor: "transparent",
-                color: "blanchedalmond",
-                border: "2px solid blanchedalmond",
-              }}
-            >
+            <Link href="/" className="backHomeButton">
               <Home size={20} />
               <span>Ana Sayfa</span>
             </Link>

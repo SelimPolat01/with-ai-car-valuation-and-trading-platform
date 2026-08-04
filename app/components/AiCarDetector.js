@@ -211,6 +211,7 @@ export default function AiCarDetector() {
                 height={225}
                 src={preview}
                 alt="preview"
+                unoptimized
                 className={classes.preview}
                 onClick={handleClick}
               />
@@ -255,7 +256,7 @@ export default function AiCarDetector() {
                 {bodyTypeParser(car.bodyType)}
               </strong>
 
-              <span
+              <div
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -312,7 +313,7 @@ export default function AiCarDetector() {
                     </ul>
                   </div>
                 )}
-              </span>
+              </div>
             </motion.div>
 
             <motion.div

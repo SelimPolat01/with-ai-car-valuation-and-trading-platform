@@ -11,5 +11,6 @@ export function useGetPersonalDeletedAdverts(user) {
     queryFn: () => getPersonalDeletedAdverts(),
     enabled: !!user,
     retry: false,
+    throwOnError: true,
   });
 }

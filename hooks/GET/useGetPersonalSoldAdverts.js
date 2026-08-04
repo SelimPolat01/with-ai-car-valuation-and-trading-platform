@@ -11,5 +11,6 @@ export function useGetPersonalSoldAdverts(user) {
     queryFn: () => getPersonalSoldAdverts(),
     enabled: !!user,
     retry: false,
+    throwOnError: true,
   });
 }

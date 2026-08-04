@@ -9,23 +9,18 @@ import { AnimatePresence } from "framer-motion";
 import ManagementNav from "../components/ManagementNav";
 import { useGetPersonalAdverts } from "@/hooks/GET/useGetPersonalAdverts";
 import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
-import { AlertCircle, ArrowLeft } from "lucide-react";
 import Loading from "../loading";
 import { useSelector } from "react-redux";
 
 export default function MyAdverts() {
-  const router = useRouter();
   const path = usePathname();
   const deleteDialogRef = useRef(null);
-  const editDialogRef = useRef(null);
   const { user } = useSelector((state) => state.auth);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
 
   const {
     data: getPersonalAdvertsData,
     isLoading: getPersonalAdvertsIsLoading,
-    isError: getPersonalAdvertsIsError,
-    error: getPersonalAdvertsError,
   } = useGetPersonalAdverts(user);
 
   const {
@@ -60,19 +55,6 @@ export default function MyAdverts() {
 
   if (getPersonalAdvertsIsLoading) {
     return <Loading />;
-  }
-
-  if (getPersonalAdvertsIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{getPersonalAdvertsError?.message}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
   }
 
   const advertsList = Array.isArray(getPersonalAdvertsData)

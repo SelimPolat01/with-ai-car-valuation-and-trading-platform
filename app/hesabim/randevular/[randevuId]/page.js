@@ -51,8 +51,6 @@ export default function RandevuDetaylar() {
   const {
     data: getPersonalAppointmentsData,
     isLoading: getPersonalAppointmentsIsLoading,
-    isError: getPersonalAppointmentsIsError,
-    error: getPersonalAppointmentsError,
   } = useGetPersonalAppointments(user);
 
   const {
@@ -64,22 +62,6 @@ export default function RandevuDetaylar() {
 
   if (getPersonalAppointmentsIsLoading) {
     return <Loading />;
-  }
-
-  if (getPersonalAppointmentsIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={30} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>
-          {getPersonalAppointmentsError?.message ||
-            "Randevular yüklenirken bir sorun oluştu."}
-        </p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
   }
 
   const appointmentsList = Array.isArray(getPersonalAppointmentsData)

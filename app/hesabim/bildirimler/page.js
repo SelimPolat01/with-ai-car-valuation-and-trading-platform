@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { useGetPersonalNotifications } from "@/hooks/GET/useGetPersonalNotifications";
@@ -12,8 +12,6 @@ import {
   CheckCheck,
   Filter,
   ChevronDown,
-  AlertCircle,
-  ArrowLeft,
 } from "lucide-react";
 import Loading from "@/app/loading";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,7 +25,14 @@ export default function Bildirimler() {
   const [readFilter, setReadFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const { user } = useSelector((state) => state.auth);
+
+  const { isInitialized, isLogin, user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isInitialized && !isLogin) {
+      router.replace("/login");
+    }
+  }, [isInitialized, isLogin, router]);
 
   const {
     data: getPersonalNotificationsData,
@@ -39,9 +44,14 @@ export default function Bildirimler() {
   const {
     mutate: patchPersonalNotificationRead,
     isPending: patchPersonalNotificationIsPending,
-    isError: patchPersonalNotificationIsError,
-    error: patchPersonalNotificationError,
   } = usePatchNotificationRead();
+
+  if (getPersonalNotificationsIsError) {
+    throw (
+      getPersonalNotificationsError ||
+      new Error("Bildirimler yüklenirken bir hata oluştu.")
+    );
+  }
 
   const personalNotifications = Array.isArray(getPersonalNotificationsData)
     ? getPersonalNotificationsData
@@ -90,24 +100,16 @@ export default function Bildirimler() {
     });
   }
 
-  if (getPersonalNotificationsIsLoading || patchPersonalNotificationIsPending) {
+  if (
+    !isInitialized ||
+    getPersonalNotificationsIsLoading ||
+    patchPersonalNotificationIsPending
+  ) {
     return <Loading />;
   }
 
-  if (getPersonalNotificationsIsError || patchPersonalNotificationIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>
-          {getPersonalNotificationsError?.message ||
-            patchPersonalNotificationError?.message}
-        </p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
+  if (!isLogin) {
+    return null;
   }
 
   return (

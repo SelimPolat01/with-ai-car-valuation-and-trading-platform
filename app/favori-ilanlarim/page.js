@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import classes from "./Favorilerim.module.css";
@@ -10,7 +10,6 @@ import ManagementNav from "../components/ManagementNav";
 import { AnimatePresence } from "framer-motion";
 import { useGetFavoriteAdverts } from "@/hooks/GET/useGetFavoriteAdverts";
 import { usePostFavoriteAdvert } from "@/hooks/POST/usePostFavoriteAdvert";
-import { AlertCircle, ArrowLeft } from "lucide-react";
 import Loading from "../loading";
 
 export default function Favorilerim() {
@@ -23,8 +22,6 @@ export default function Favorilerim() {
   const {
     data: getFavoriteAdvertsData,
     isLoading: getFavoriteAdvertsIsLoading,
-    isError: getFavoriteAdvertsIsError,
-    error: getFavoriteAdvertsError,
   } = useGetFavoriteAdverts(user);
 
   const {
@@ -34,6 +31,12 @@ export default function Favorilerim() {
     error: deleteFavoriteAdvertMutateError,
     reset: resetRemoveMutation,
   } = usePostFavoriteAdvert();
+
+  useEffect(() => {
+    if (isInitialized && !isLogin) {
+      router.replace("/login");
+    }
+  }, [isInitialized, isLogin, router]);
 
   function removeFavoriteAdvertHandler(id) {
     if (!user) {
@@ -64,7 +67,7 @@ export default function Favorilerim() {
 
     resetRemoveMutation();
     setSelectedAdvertId(id);
-    deleteDialogRef.current.showModal();
+    deleteDialogRef.current?.showModal();
   }
 
   if (!isInitialized || getFavoriteAdvertsIsLoading) {
@@ -73,19 +76,6 @@ export default function Favorilerim() {
 
   if (!isLogin) {
     return null;
-  }
-
-  if (getFavoriteAdvertsIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{getFavoriteAdvertsError?.message}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
   }
 
   const favoriteAdverts = Array.isArray(getFavoriteAdvertsData)
@@ -144,7 +134,7 @@ export default function Favorilerim() {
 
           {favoriteAdverts.length === 0 && (
             <div className={classes.noFavoriteAdvertDiv}>
-              <p>Favori ilanınız Bulunmamaktadır</p>
+              <p>Favori ilanınız bulunmamaktadır.</p>
             </div>
           )}
         </div>

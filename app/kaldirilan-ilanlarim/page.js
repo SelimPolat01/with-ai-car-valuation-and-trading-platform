@@ -9,23 +9,18 @@ import ManagementNav from "../components/ManagementNav";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useGetPersonalDeletedAdverts } from "@/hooks/GET/useGetPersonalDeletedAdverts";
 import { usePatchRecoverAdvert } from "@/hooks/PATCH/usePatchRecoverAdvert";
-import { AlertCircle, ArrowLeft, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import Loading from "../loading";
 import { useSelector } from "react-redux";
 
 export default function KaldirilanIlanlarim() {
-  const router = useRouter();
   const { user } = useSelector((state) => state.auth);
   const path = usePathname();
   const recoveryDialogRef = useRef(null);
   const [selectedAdvertId, setSelectedAdvertId] = useState(null);
 
-  const {
-    data: getDeletedAdvertsData,
-    isLoading: getDeletedAdvertsIsLoading,
-    isError: getDeletedAdvertsIsError,
-    error: getDeletedAdvertsError,
-  } = useGetPersonalDeletedAdverts(user);
+  const { data: getDeletedAdvertsData, isLoading: getDeletedAdvertsIsLoading } =
+    useGetPersonalDeletedAdverts(user);
 
   const {
     mutate: patchRecoverAdvertMutate,
@@ -46,19 +41,6 @@ export default function KaldirilanIlanlarim() {
 
   if (getDeletedAdvertsIsLoading) {
     return <Loading />;
-  }
-
-  if (getDeletedAdvertsIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{getDeletedAdvertsError?.message}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
   }
 
   const advertsList = Array.isArray(getDeletedAdvertsData)

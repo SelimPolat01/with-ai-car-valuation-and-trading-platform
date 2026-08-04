@@ -32,8 +32,7 @@ const formatIBAN = (value) => {
   return cleaned;
 };
 
-export default function Hesabim() {
-  const router = useRouter();
+export default function KisiselBilgiler() {
   const imageInputRef = useRef();
   const { user } = useSelector((state) => state.auth);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -41,6 +40,23 @@ export default function Hesabim() {
   const DEFAULT_BLANK_AVATAR =
     "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22%23e0e0e0%22%2F%3E%3Cpath%20d%3D%22M50%2050c11.046%200%2020-8.954%2020-20s-8.954-20-20-20-20%208.954-20%2020%208.954%2020%2020%2020zm0%2010c-15.012%200-45%207.525-45%2022.5V100h90V82.5C95%2067.525%2065.012%2060%2050%2060z%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E";
   const [imagePreview, setImagePreview] = useState(DEFAULT_BLANK_AVATAR);
+
+  const [input, setInput] = useState({
+    name: { letters: "", isBlur: false },
+    surname: { letters: "", isBlur: false },
+    address: { letters: "", isBlur: false },
+    iban: { letters: "", isBlur: false },
+  });
+
+  const { data: getPersonalInfosData, isLoading: getPersonalInfosIsLoading } =
+    useGetPersonalInfos(user);
+
+  const {
+    mutate: patchPersonalInfosMutate,
+    isPending: patchPersonalInfosIsPending,
+    isError: patchPersonalInfosIsError,
+    error: patchPersonalInfosError,
+  } = usePatchPersonalInfos();
 
   useEffect(() => {
     let timer;
@@ -52,47 +68,14 @@ export default function Hesabim() {
     return () => clearTimeout(timer);
   }, [isSuccess]);
 
-  const [input, setInput] = useState({
-    name: { letters: "", isBlur: false },
-    surname: { letters: "", isBlur: false },
-    address: { letters: "", isBlur: false },
-    iban: { letters: "", isBlur: false },
-  });
-
-  const {
-    data: getPersonalInfosData,
-    isLoading: getPersonalInfosIsLoading,
-    isError: getPersonalInfosIsError,
-    error: getPersonalInfosError,
-  } = useGetPersonalInfos(user);
-
-  const {
-    mutate: patchPersonalInfosMutate,
-    isPending: patchPersonalInfosIsPending,
-    isError: patchPersonalInfosIsError,
-    error: patchPersonalInfosError,
-  } = usePatchPersonalInfos();
-
   useEffect(() => {
     if (getPersonalInfosData) {
       const data = getPersonalInfosData.result || getPersonalInfosData;
       setInput({
-        name: {
-          letters: data?.name || "",
-          isBlur: false,
-        },
-        surname: {
-          letters: data?.surname || "",
-          isBlur: false,
-        },
-        address: {
-          letters: data?.address || "",
-          isBlur: false,
-        },
-        iban: {
-          letters: formatIBAN(data?.iban || ""),
-          isBlur: false,
-        },
+        name: { letters: data?.name || "", isBlur: false },
+        surname: { letters: data?.surname || "", isBlur: false },
+        address: { letters: data?.address || "", isBlur: false },
+        iban: { letters: formatIBAN(data?.iban || ""), isBlur: false },
       });
 
       if (data?.image_src) {
@@ -142,9 +125,7 @@ export default function Hesabim() {
     }
 
     patchPersonalInfosMutate(
-      {
-        body: formData,
-      },
+      { body: formData },
       {
         onSuccess: () => {
           setIsSuccess(true);
@@ -159,19 +140,6 @@ export default function Hesabim() {
     return <Loading />;
   }
 
-  if (getPersonalInfosIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{getPersonalInfosError?.message}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div className={classes.div}>
       <h1 className={classes.pageTitle}>Kişisel Bilgiler</h1>
@@ -182,19 +150,18 @@ export default function Hesabim() {
               <div className={classes.avatarSection}>
                 <div
                   className={classes.avatarPreview}
-                  onClick={() => imageInputRef.current.click()}
+                  onClick={() => imageInputRef.current?.click()}
                 >
                   <img
                     src={imagePreview}
                     alt="profile"
                     className={classes.profileImg}
-                    onError={() => {
-                      setImagePreview(DEFAULT_BLANK_AVATAR);
-                    }}
+                    onError={() => setImagePreview(DEFAULT_BLANK_AVATAR)}
                     style={{
                       width: "180px",
                       height: "180px",
                       borderRadius: "50%",
+                      objectFit: "cover",
                     }}
                   />
                   <div className={classes.uploadOverlay}>

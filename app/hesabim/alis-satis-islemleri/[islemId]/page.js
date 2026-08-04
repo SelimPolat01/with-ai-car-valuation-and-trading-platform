@@ -10,7 +10,7 @@ import {
   ShieldX,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import classes from "./İslem.module.css";
 import {
@@ -42,13 +42,17 @@ export default function IslemDetaylar() {
   const params = useParams();
   const cancelDialogRef = useRef(null);
   const [permitVisible, setPermitVisible] = useState(true);
-  const { isInitialized, user } = useSelector((state) => state.auth);
+  const { isInitialized, isLogin, user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isInitialized && !isLogin) {
+      router.replace("/login");
+    }
+  }, [isInitialized, isLogin, router]);
 
   const {
     data: getPersonalTransactionsData,
     isLoading: getPersonalTransactionsIsLoading,
-    isError: getPersonalTransactionsIsError,
-    error: getPersonalTransactionsError,
   } = useGetPersonalTransactions(user);
 
   const {
@@ -62,15 +66,16 @@ export default function IslemDetaylar() {
     return <Loading />;
   }
 
-  if (getPersonalTransactionsIsError || patchPersonalTransactionIsError) {
+  if (!isLogin) {
+    return null;
+  }
+
+  if (patchPersonalTransactionIsError) {
     return (
       <div className={classes.errorContainer}>
         <AlertCircle size={48} className={classes.iconSecondary} />
         <h2>Bir Hata Oluştu</h2>
-        <p>
-          {getPersonalTransactionsError?.message ||
-            patchPersonalTransactionError?.message}
-        </p>
+        <p>{patchPersonalTransactionError?.message}</p>
         <button onClick={() => router.back()} className="backButton">
           <ArrowLeft size={20} /> Geri Dön
         </button>
@@ -80,10 +85,12 @@ export default function IslemDetaylar() {
 
   const transactionList = Array.isArray(getPersonalTransactionsData)
     ? getPersonalTransactionsData
-    : getPersonalTransactionsData?.result || [];
+    : getPersonalTransactionsData?.result ||
+      getPersonalTransactionsData?.data ||
+      [];
 
   const transaction = transactionList.find(
-    (transaction) => String(transaction.payment_id) === String(params.islemId),
+    (item) => String(item.payment_id) === String(params.islemId),
   );
 
   if (!transaction) {

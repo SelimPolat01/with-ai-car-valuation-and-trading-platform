@@ -22,7 +22,7 @@ import {
 export default function PriceOffer({ advertId }) {
   const isEdit = !!advertId;
 
-  const [inputTextareValue, setInputTextareaValue] = useState({
+  const [inputTextareaValue, setInputTextareaValue] = useState({
     title: "",
     description: "",
   });
@@ -62,21 +62,20 @@ export default function PriceOffer({ advertId }) {
 
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImages((prevImages) => {
-          const newImages = [...prevImages];
-          newImages[index] = {
-            file: file,
-            preview: URL.createObjectURL(file),
-          };
-          return newImages;
-        });
-        if (index === 0) {
-          setError(null);
+      setImages((prevImages) => {
+        const newImages = [...prevImages];
+        if (newImages[index] && newImages[index].file) {
+          URL.revokeObjectURL(newImages[index].preview);
         }
-      };
-      reader.readAsDataURL(file);
+        newImages[index] = {
+          file: file,
+          preview: URL.createObjectURL(file),
+        };
+        return newImages;
+      });
+      if (index === 0) {
+        setError(null);
+      }
     }
   };
 
@@ -89,6 +88,9 @@ export default function PriceOffer({ advertId }) {
     event.stopPropagation();
     setImages((prevImages) => {
       const newImages = [...prevImages];
+      if (newImages[index] && newImages[index].file) {
+        URL.revokeObjectURL(newImages[index].preview);
+      }
       newImages[index] = null;
       return newImages;
     });
@@ -116,13 +118,13 @@ export default function PriceOffer({ advertId }) {
       hasValidationErrors = true;
     }
 
-    const titleText = inputTextareValue.title.trim();
+    const titleText = inputTextareaValue.title.trim();
     if (titleText.length < 15 || titleText.length > 70) {
       newFieldErrors.title = `İlan başlığı en az 15, en fazla 70 karakter olmalıdır.\n(Şu anki karakter sayısı: ${titleText.length})`;
       hasValidationErrors = true;
     }
 
-    const descriptionText = inputTextareValue.description.trim();
+    const descriptionText = inputTextareaValue.description.trim();
     const wordCount =
       descriptionText.length > 0 ? descriptionText.split(/\s+/).length : 0;
 
@@ -143,8 +145,8 @@ export default function PriceOffer({ advertId }) {
 
       const validationData = await postAdvertValidateContentMutateAsync({
         body: {
-          title: inputTextareValue.title,
-          description: inputTextareValue.description,
+          title: inputTextareaValue.title,
+          description: inputTextareaValue.description,
         },
       });
 
@@ -178,7 +180,7 @@ export default function PriceOffer({ advertId }) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            description: inputTextareValue.description,
+            description: inputTextareaValue.description,
           }),
         },
       );
@@ -195,8 +197,8 @@ export default function PriceOffer({ advertId }) {
 
     const formData = new FormData();
 
-    formData.append("title", inputTextareValue.title);
-    formData.append("description", inputTextareValue.description);
+    formData.append("title", inputTextareaValue.title);
+    formData.append("description", inputTextareaValue.description);
 
     if (summarizedDescription) {
       formData.append("summary", JSON.stringify(summarizedDescription));
@@ -235,10 +237,13 @@ export default function PriceOffer({ advertId }) {
       formData.append("tramerRecord", reduxData.tramerRecord ?? "");
       formData.append("inspectionDate", reduxData.inspectionDate || "");
       formData.append("ownerCount", reduxData.ownerCount || "");
-      formData.append("hasPledge", reduxData.hasPledge);
-      formData.append("hasServiceMaintence", reduxData.hasServiceMaintence);
-      formData.append("hasWarrenty", reduxData.hasWarrenty);
-      formData.append("hasSpareKey", reduxData.hasSpareKey);
+      formData.append("hasPledge", reduxData.hasPledge ?? false);
+      formData.append(
+        "hasServiceMaintence",
+        reduxData.hasServiceMaintence ?? false,
+      );
+      formData.append("hasWarrenty", reduxData.hasWarrenty ?? false);
+      formData.append("hasSpareKey", reduxData.hasSpareKey ?? false);
       formData.append("tireType", reduxData.tireType || "");
       formData.append("tireCondition", reduxData.tireCondition || "");
       formData.append("extras", reduxData.extras || "");
@@ -445,7 +450,7 @@ export default function PriceOffer({ advertId }) {
             identifier="title"
             label="İlan Başlığı"
             name="title"
-            value={inputTextareValue.title}
+            value={inputTextareaValue.title}
             onChange={inputTextareaChangeHandler}
             autoFocus
           />
@@ -474,7 +479,7 @@ export default function PriceOffer({ advertId }) {
             className={classes.textarea}
             id="description"
             name="description"
-            value={inputTextareValue.description}
+            value={inputTextareaValue.description}
             onChange={inputTextareaChangeHandler}
             rows={6}
           />

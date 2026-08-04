@@ -1,9 +1,7 @@
 "use client";
 
 import {
-  AlertCircle,
   ArrowDown,
-  ArrowLeft,
   ArrowUp,
   Heart,
   Megaphone,
@@ -14,7 +12,6 @@ import Frame from "../../components/Frame";
 import classes from "./Garaj.module.css";
 import ChartBar from "../../components/ChartBar";
 import HalfCircleProgress from "../../components/HalfCircleProgress";
-import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useGetPersonalAdvertsInfos } from "@/hooks/GET/useGetPersonalAdvertsInfos";
@@ -24,23 +21,18 @@ import Loading from "@/app/loading";
 import { garajContainerVariants } from "@/app/utils/animations";
 
 export default function Garaj() {
-  const router = useRouter();
   const { user } = useSelector((state) => state.auth);
 
   const {
     data: getPersonalAdvertsData,
     isLoading: getPersonalAdvertsIsLoading,
     isPending: getPersonalAdvertsIsPending,
-    isError: getPersonalAdvertsIsError,
-    error: getPersonalAdvertsError,
   } = useGetPersonalAdvertsInfos(user);
 
   const {
     data: personalSoldAdvertsData,
     isLoading: personalSoldAdvertsIsLoading,
     isPending: personalSoldAdvertsIsPending,
-    isError: personalSoldAdvertsIsError,
-    error: personalSoldAdvertsError,
   } = useGetPersonalSoldAdverts(user);
 
   if (
@@ -50,22 +42,6 @@ export default function Garaj() {
     personalSoldAdvertsIsPending
   ) {
     return <Loading />;
-  }
-
-  if (getPersonalAdvertsIsError || personalSoldAdvertsIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>
-          {getPersonalAdvertsError?.message ||
-            personalSoldAdvertsError?.message}
-        </p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
   }
 
   const kisiselİlanlar = getPersonalAdvertsData?.result?.personalAdverts || [];

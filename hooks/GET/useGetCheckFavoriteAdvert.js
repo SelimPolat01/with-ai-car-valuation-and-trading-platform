@@ -11,5 +11,6 @@ export function useGetCheckFavoriteAdvert(advertId) {
     queryFn: () => getCheckFavoriteAdvert(advertId),
     enabled: !!advertId,
     retry: false,
+    throwOnError: true,
   });
 }

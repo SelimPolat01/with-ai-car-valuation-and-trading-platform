@@ -11,5 +11,6 @@ export default function useGetAdvertFavoriteCount(advertId) {
     queryKey: ["favoriteCount", advertId],
     enabled: !!advertId && advertId !== "undefined" && advertId !== "null",
     retry: false,
+    throwOnError: true,
   });
 }

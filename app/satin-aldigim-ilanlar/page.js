@@ -2,40 +2,22 @@
 
 import classes from "./SatinAldigimIlanlar.module.css";
 import AdvertItem from "../components/AdvertItem";
-import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import ManagementNav from "../components/ManagementNav";
 import { useGetPersonalBoughtAdverts } from "@/hooks/GET/useGetPersonalBoughtAdverts";
-import { AlertCircle, ArrowLeft } from "lucide-react";
 import Loading from "../loading";
 import { useSelector } from "react-redux";
 
 export default function SatinAldigimIlanlar() {
-  const router = useRouter();
   const { user } = useSelector((state) => state.auth);
 
   const {
     data: getPersonalBoughtAdvertsData,
     isLoading: getPersonalBoughtAdvertsIsLoading,
-    isError: getPersonalBoughtAdvertsIsError,
-    error: getPersonalBoughtAdvertsError,
   } = useGetPersonalBoughtAdverts(user);
 
   if (getPersonalBoughtAdvertsIsLoading) {
     return <Loading />;
-  }
-
-  if (getPersonalBoughtAdvertsIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{getPersonalBoughtAdvertsError?.message}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
   }
 
   const advertsList = Array.isArray(getPersonalBoughtAdvertsData)

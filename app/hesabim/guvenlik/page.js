@@ -2,7 +2,7 @@
 
 import Input from "@/app/components/Input";
 import classes from "./Guvenlik.module.css";
-import { AlertCircle, AlertTriangle, ArrowLeft, KeyRound } from "lucide-react";
+import { AlertTriangle, KeyRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
@@ -42,33 +42,16 @@ export default function Guvenlik() {
   }, [isSuccess]);
 
   const [input, setInput] = useState({
-    currentPassword: {
-      letters: "",
-      isBlur: false,
-    },
-    password: {
-      letters: "",
-      isBlur: false,
-    },
-    confirmPassword: {
-      letters: "",
-      isBlur: false,
-    },
+    currentPassword: { letters: "", isBlur: false },
+    password: { letters: "", isBlur: false },
+    confirmPassword: { letters: "", isBlur: false },
   });
 
-  const {
-    mutate: patchPasswordMutate,
-    isPending: patchPasswordIsPending,
-    isError: patchPasswordIsError,
-    error: patchPasswordError,
-  } = usePatchPassword();
+  const { mutate: patchPasswordMutate, isPending: patchPasswordIsPending } =
+    usePatchPassword();
 
-  const {
-    mutate: deleteAccountMutate,
-    isPending: deleteAccountIsPending,
-    isError: deleteAccountIsError,
-    error: deleteAccountError,
-  } = useDeleteAccount();
+  const { mutate: deleteAccountMutate, isPending: deleteAccountIsPending } =
+    useDeleteAccount();
 
   function changeHandler(event) {
     const { name, value } = event.target;
@@ -121,16 +104,18 @@ export default function Guvenlik() {
       {
         onSuccess: () => {
           setIsSuccess((prev) => ({ ...prev, password: true }));
-          setInput((prev) => ({
-            ...prev,
+          setInput({
             currentPassword: { letters: "", isBlur: false },
-            confirmPassword: { letters: "", isBlur: false },
             password: { letters: "", isBlur: false },
-          }));
+            confirmPassword: { letters: "", isBlur: false },
+          });
           setError((prev) => ({ ...prev, password: false }));
         },
         onError: (err) =>
-          setError((prev) => ({ ...prev, password: err?.message })),
+          setError((prev) => ({
+            ...prev,
+            password: err?.message || "Bir hata oluştu.",
+          })),
       },
     );
   }
@@ -150,32 +135,13 @@ export default function Guvenlik() {
           router.replace("/login");
         },
         onError: (err) =>
-          setError((prev) => ({ ...prev, account: err?.message })),
+          setError((prev) => ({
+            ...prev,
+            account: err?.message || "Hesap silinirken bir hata oluştu.",
+          })),
       },
     );
   }
-
-  if (patchPasswordIsPending) {
-    return <Loading />;
-  }
-
-  if (patchPasswordIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{patchPasswordError?.message}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
-  }
-
-  const passwordErrorMessage =
-    error.password || (patchPasswordIsError && patchPasswordError?.message);
-  const accountErrorMessage =
-    error.account || (deleteAccountIsError && deleteAccountError?.message);
 
   return (
     <div className={classes.div}>
@@ -232,9 +198,9 @@ export default function Guvenlik() {
                   className={classes.input}
                 />
               </div>
-              {passwordErrorMessage && (
+              {error.password && (
                 <div className={classes.errorDiv}>
-                  <p>{passwordErrorMessage}</p>
+                  <p>{error.password}</p>
                 </div>
               )}
               <div className={classes.submitContainer}>
@@ -290,9 +256,9 @@ export default function Guvenlik() {
                 disabled={deleteAccountIsPending}
               />
             </div>
-            {accountErrorMessage && (
+            {error.account && (
               <div className={classes.errorDiv}>
-                <p>{accountErrorMessage}</p>
+                <p>{error.account}</p>
               </div>
             )}
           </form>

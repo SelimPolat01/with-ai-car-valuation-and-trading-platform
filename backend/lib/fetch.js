@@ -31,21 +31,28 @@ export async function Fetch(
   if (response.status === 401) {
     if (typeof window !== "undefined") {
       const currentPath = window.location.pathname;
-      const isPublicPage =
-        currentPath === "/" ||
-        currentPath === "/tum-ilanlar" ||
-        currentPath.startsWith("/ilan/") ||
-        currentPath === "/hakkimizda" ||
-        currentPath === "/sikca-sorulan-sorular" ||
-        currentPath === "/iletisim" ||
-        currentPath === "/register" ||
-        currentPath === "/login";
+      const PUBLIC_ROUTES = [
+        "/",
+        "/tum-ilanlar",
+        "/hakkimizda",
+        "/sikca-sorulan-sorular",
+        "/iletisim",
+        "/register",
+        "/login",
+      ];
+
+      const isPublicPage = PUBLIC_ROUTES.some(
+        (route) => currentPath === route || currentPath.startsWith("/ilan/"),
+      );
 
       if (!isPublicPage) {
         window.location.href = "/login";
       }
     }
-    throw { ok: false, status: 401, message: "Oturum süresi doldu." };
+
+    const error = new Error("Oturum süresi doldu.");
+    error.status = 401;
+    throw error;
   }
 
   let result = null;
@@ -54,12 +61,12 @@ export async function Fetch(
   } catch (error) {}
 
   if (!response.ok) {
-    throw {
-      ok: false,
-      status: response.status,
-      message: result?.message || "Sunucu kaynaklı bir hata oluştu.",
-      data: result,
-    };
+    const error = new Error(
+      result?.message || "Sunucu kaynaklı bir hata oluştu.",
+    );
+    error.status = response.status;
+    error.data = result;
+    throw error;
   }
 
   return { result: result, status: response.status };

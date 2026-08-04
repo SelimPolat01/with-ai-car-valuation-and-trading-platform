@@ -11,5 +11,6 @@ export function useGetPersonalAppointments(user) {
     queryFn: () => getPersonalAppointments(),
     enabled: !!user,
     retry: false,
+    throwOnError: true,
   });
 }

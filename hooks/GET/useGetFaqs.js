@@ -10,5 +10,6 @@ export default function useGetFaqs() {
     queryFn: () => getFaqs(),
     queryKey: ["faqs"],
     retry: false,
+    throwOnError: true,
   });
 }

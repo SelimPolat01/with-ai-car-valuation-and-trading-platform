@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, notFound } from "next/navigation";
 import classes from "./AdvertInfos.module.css";
 import { useSelector } from "react-redux";
 import {
@@ -51,30 +51,24 @@ export default function AdvertInfos() {
     error: getAdvertError,
   } = useGetAdvert(params.advertId);
 
+  if (getAdvertIsError) {
+    throw getAdvertError;
+  }
+
   const advert = Array.isArray(getAdvertData?.result)
     ? getAdvertData.result[0]
     : getAdvertData?.result;
 
-  const {
-    data: checkFavoriteData,
-    isLoading: checkFavoriteIsLoading,
-    isError: checkFavoriteIsError,
-    error: checkFavoriteError,
-  } = useGetCheckFavoriteAdvert(user ? advert?.id : null);
+  const { data: checkFavoriteData, isLoading: checkFavoriteIsLoading } =
+    useGetCheckFavoriteAdvert(user ? advert?.id : null);
 
   const {
     data: getAdvertFavoriteCountData,
     isLoading: favoriteCountIsLoading,
-    isError: favoriteCountIsError,
-    error: favoriteCountError,
   } = useGetAdvertFavoriteCount(advert?.id);
 
-  const {
-    data: advertViewData,
-    isLoading: advertViewIsLoading,
-    isError: advertViewIsError,
-    error: advertViewError,
-  } = useGetAdvertView(advert?.id);
+  const { data: advertViewData, isLoading: advertViewIsLoading } =
+    useGetAdvertView(advert?.id);
 
   const {
     mutate: postFavorite,
@@ -182,42 +176,8 @@ export default function AdvertInfos() {
     return <Loading />;
   }
 
-  if (
-    getAdvertIsError ||
-    (user && checkFavoriteIsError) ||
-    favoriteCountIsError ||
-    (advert && advertViewIsError)
-  ) {
-    const errorMessage =
-      getAdvertError?.message ||
-      (user && checkFavoriteError?.message) ||
-      favoriteCountError?.message ||
-      (advert && advertViewError?.message) ||
-      "Sunucu kaynaklı bir hata oluştu.";
-
-    return (
-      <div className="errorContainer">
-        <AlertCircle className="iconSecondary" size={48} />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{errorMessage}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
-  }
-
   if (!advert) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle className="iconSecondary" size={48} />
-        <h2>İlan Bulunamadı</h2>
-        <p>Aradığınız ilan yayından kaldırılmış veya sistemde mevcut değil.</p>
-        <button onClick={() => router.push("/")} className="backButton">
-          <ArrowLeft size={20} /> Ana Sayfaya Dön
-        </button>
-      </div>
-    );
+    notFound();
   }
 
   const advertDetails = [
@@ -245,7 +205,9 @@ export default function AdvertInfos() {
     {
       id: 7,
       label: "Model",
-      value: `${engineCapacityFormat(advert.engine_capacity)} ${carTypeMap.trimLevelMap[advert.trim_level] || ""}`,
+      value: `${engineCapacityFormat(advert.engine_capacity)} ${
+        carTypeMap.trimLevelMap[advert.trim_level] || ""
+      }`,
     },
     { id: 8, label: "Yıl", value: advert.model_year },
     {
@@ -357,7 +319,9 @@ export default function AdvertInfos() {
 
                   <motion.div className={classes.favoriteCountBadge}>
                     <Heart
-                      className={`${classes.favoriteIcon} ${isFavorite ? classes.favoriteIconActive : ""}`}
+                      className={`${classes.favoriteIcon} ${
+                        isFavorite ? classes.favoriteIconActive : ""
+                      }`}
                       size={20}
                     />
                     <span className={classes.favoriteCountText}>
@@ -419,7 +383,9 @@ export default function AdvertInfos() {
                       {advertImages.map((_, idx) => (
                         <span
                           key={idx}
-                          className={`${classes.dot} ${idx === currentImgIndex ? classes.activeDot : ""}`}
+                          className={`${classes.dot} ${
+                            idx === currentImgIndex ? classes.activeDot : ""
+                          }`}
                           onClick={() => setCurrentImgIndex(idx)}
                         />
                       ))}
@@ -433,7 +399,15 @@ export default function AdvertInfos() {
                   {advertDetails.map((detail) => (
                     <li
                       key={detail.id}
-                      className={`${classes.li} ${detail.priceClassName || ""} ${user && advert && Number(user.id) === Number(advert.user_id) ? classes.expandedLi : classes.expandlessLi}`}
+                      className={`${classes.li} ${
+                        detail.priceClassName || ""
+                      } ${
+                        user &&
+                        advert &&
+                        Number(user.id) === Number(advert.user_id)
+                          ? classes.expandedLi
+                          : classes.expandlessLi
+                      }`}
                     >
                       <strong className={classes.strong}>{detail.label}</strong>
                       <span className={detail.spanClassName || ""}>
@@ -459,7 +433,11 @@ export default function AdvertInfos() {
             <div className={classes.descriptionContainer}>
               <div
                 onClick={() => setShowDescription((prev) => !prev)}
-                className={`${classes.descriptionTextDiv} ${showDescription ? classes.semiBorderRadius : classes.fullBorderRadius}`}
+                className={`${classes.descriptionTextDiv} ${
+                  showDescription
+                    ? classes.semiBorderRadius
+                    : classes.fullBorderRadius
+                }`}
               >
                 Açıklama
               </div>

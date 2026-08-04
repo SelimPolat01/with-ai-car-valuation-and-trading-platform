@@ -10,5 +10,6 @@ export function useGetAdverts() {
     queryKey: ["adverts"],
     queryFn: () => getAdverts(),
     retry: false,
+    throwOnError: true,
   });
 }

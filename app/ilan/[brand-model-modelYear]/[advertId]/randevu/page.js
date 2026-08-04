@@ -7,7 +7,6 @@ import SecondaryButton from "@/app/components/SecondaryButton";
 import { useParams, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useGetAvailableSlots } from "@/hooks/GET/useGetSlots";
-import { AlertCircle, ArrowLeft } from "lucide-react";
 import {
   formatDayName,
   formatDayNumber,
@@ -49,12 +48,8 @@ export default function Randevu() {
   const [selectedDate, setSelectedDate] = useState(days[0].toDateString());
   const [selectedHour, setSelectedHour] = useState(null);
 
-  const {
-    data: getAvailableSlotsData,
-    isLoading: getAvailableSlotsIsLoading,
-    isError: getAvailableSlotsIsError,
-    error: getAvailableSlotsError,
-  } = useGetAvailableSlots(user);
+  const { data: getAvailableSlotsData, isLoading: getAvailableSlotsIsLoading } =
+    useGetAvailableSlots(user);
 
   function appointmentClickHandler() {
     const appointmentData = {
@@ -73,22 +68,6 @@ export default function Randevu() {
 
   if (getAvailableSlotsIsLoading) {
     return <Loading />;
-  }
-
-  if (getAvailableSlotsIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>
-          {getAvailableSlotsError?.message ||
-            "Slotlar yüklenirken bir hata oluştu."}
-        </p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
   }
 
   return (

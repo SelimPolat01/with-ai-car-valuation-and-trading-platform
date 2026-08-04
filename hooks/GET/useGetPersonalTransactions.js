@@ -11,5 +11,6 @@ export default function useGetPersonalTransactions(user) {
     queryFn: () => getPersonalTransactions(),
     enabled: !!user,
     retry: false,
+    throwOnError: true,
   });
 }

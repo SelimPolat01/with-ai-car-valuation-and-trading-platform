@@ -11,5 +11,6 @@ export function useGetAvailableSlots(user) {
     queryFn: () => getAvailableSlots(),
     enabled: !!user,
     retry: false,
+    throwOnError: true,
   });
 }

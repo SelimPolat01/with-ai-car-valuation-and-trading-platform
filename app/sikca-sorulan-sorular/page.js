@@ -2,7 +2,6 @@
 
 import useGetFaqs from "@/hooks/GET/useGetFaqs";
 import Loading from "../loading";
-import ErrorDisplay from "@/app/components/ErrorDisplay";
 import { ChevronDown, HelpCircle } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,19 +15,10 @@ import {
 export default function SikcaSorulanSorular() {
   const [faqAnswerDisplay, setFaqAnswerDisplay] = useState(null);
 
-  const {
-    data: getFaqsData,
-    isLoading: getFaqsIsLoading,
-    isError: getFaqsIsError,
-    error: getFaqsError,
-  } = useGetFaqs();
+  const { data: getFaqsData, isLoading: getFaqsIsLoading } = useGetFaqs();
 
   if (getFaqsIsLoading) {
     return <Loading />;
-  }
-
-  if (getFaqsIsError) {
-    return <ErrorDisplay error={getFaqsError} />;
   }
 
   const faqs = getFaqsData?.result || [];

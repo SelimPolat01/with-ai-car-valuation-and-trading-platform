@@ -10,5 +10,6 @@ export function useGetEmail() {
     queryKey: ["email"],
     queryFn: () => getEmail(),
     retry: false,
+    throwOnError: true,
   });
 }

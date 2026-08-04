@@ -10,5 +10,6 @@ export function useGetAuth() {
     queryKey: ["auth"],
     queryFn: getAuth,
     retry: false,
+    throwOnError: true,
   });
 }

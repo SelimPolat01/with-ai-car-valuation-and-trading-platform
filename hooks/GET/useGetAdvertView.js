@@ -11,5 +11,6 @@ export function useGetAdvertView(advertId) {
     queryFn: () => getAdvertView(advertId),
     enabled: !!advertId,
     retry: false,
+    throwOnError: true,
   });
 }

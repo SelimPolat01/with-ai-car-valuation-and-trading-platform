@@ -8,7 +8,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import SuccessMessage from "@/app/components/SuccessMessage";
 import { AnimatePresence, motion } from "framer-motion";
-import { useSelector } from "react-redux";
 
 export default function Odeme() {
   const router = useRouter();

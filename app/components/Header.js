@@ -14,8 +14,6 @@ import {
   Tags,
   User,
   UserCog,
-  AlertCircle,
-  ArrowLeft,
 } from "lucide-react";
 import { useState } from "react";
 import { useGetPersonalNotifications } from "@/hooks/GET/useGetPersonalNotifications";
@@ -36,7 +34,6 @@ export default function Header({ className }) {
     data: getPersonalNotificationsData,
     isLoading: getPersonalNotificationsIsLoading,
     isError: getPersonalNotificationsIsError,
-    error: getPersonalNotificationsError,
   } = useGetPersonalNotifications(user);
 
   const { mutate: patchPersonalNotificationRead } = usePatchNotificationRead();
@@ -116,7 +113,9 @@ export default function Header({ className }) {
           {links.commonLinks.map((commonLink, index) => (
             <li className={classes.li} key={index}>
               <Link
-                className={className || ""}
+                className={
+                  commonLink.className ? classes[commonLink.className] : ""
+                }
                 href={commonLink.href}
                 title={commonLink.title}
               >
@@ -129,7 +128,11 @@ export default function Header({ className }) {
             links.notLoginlinks.map((notLoginlink, index) => (
               <li className={classes.li} key={index}>
                 <Link
-                  className={classes[notLoginlink.className]}
+                  className={
+                    notLoginlink.className
+                      ? classes[notLoginlink.className]
+                      : ""
+                  }
                   href={notLoginlink.href}
                   title={notLoginlink.title}
                 >
@@ -170,16 +173,8 @@ export default function Header({ className }) {
                           Yükleniyor...
                         </div>
                       ) : getPersonalNotificationsIsError ? (
-                        <div className="errorContainer">
-                          <AlertCircle className="iconSecondary" size={48} />
-                          <h2>Bir Hata Oluştu</h2>
-                          <p>{getPersonalNotificationsError?.message}</p>
-                          <button
-                            onClick={() => setClickNotificationIcon(false)}
-                            className="backButton"
-                          >
-                            <ArrowLeft size={20} /> Kapat
-                          </button>
+                        <div className={classes.emptyNotification}>
+                          Bildirimler yüklenirken bir hata oluştu.
                         </div>
                       ) : personalNotifications?.length > 0 ? (
                         personalNotifications.map((notification) => (

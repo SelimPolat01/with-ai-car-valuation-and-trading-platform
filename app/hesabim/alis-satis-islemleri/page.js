@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import classes from "./AlisSatisİslemleri.module.css";
 import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
@@ -13,7 +13,6 @@ import {
   Calendar,
   CreditCard,
   ShieldCheck,
-  Ban,
 } from "lucide-react";
 import {
   formatBrandModel,
@@ -36,18 +35,18 @@ export default function AlisSatisiIslemleri() {
   const {
     data: getTradingValuesData,
     isLoading: getTradingValuesIsLoading,
-    isError: getTradingValuesError,
-    error: getTradingValuesErrObj,
+    isError: getTradingValuesIsError,
+    error: getTradingValuesError,
   } = useGetPersonalTransactions(user);
 
   const currentData = useMemo(() => {
     if (!getTradingValuesData) return [];
 
-    const tradingValues = Array.isArray(getTradingValuesData)
+    const rawValues = Array.isArray(getTradingValuesData)
       ? getTradingValuesData
-      : Array.isArray(getTradingValuesData?.result)
-        ? getTradingValuesData.result
-        : [];
+      : getTradingValuesData?.result || getTradingValuesData?.data || [];
+
+    const tradingValues = Array.isArray(rawValues) ? rawValues : [];
 
     const roleFilteredData = tradingValues.filter((t) =>
       role === "buyer" ? t.role === "buyer" : t.role === "seller",
@@ -71,13 +70,13 @@ export default function AlisSatisiIslemleri() {
     return <Loading />;
   }
 
-  if (getTradingValuesError) {
+  if (getTradingValuesIsError) {
     return (
       <div className={classes.errorContainer}>
         <AlertCircle size={48} className={classes.iconSecondary} />
         <h2>Bir Hata Oluştu</h2>
         <p>
-          {getTradingValuesErrObj?.message ||
+          {getTradingValuesError?.message ||
             "İşlemleriniz yüklenirken bir sorun oluştu."}
         </p>
         <button onClick={() => router.back()} className="backButton">

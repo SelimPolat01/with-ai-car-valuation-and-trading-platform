@@ -2,40 +2,20 @@
 
 import classes from "./SatilanIlanlarim.module.css";
 import AdvertItem from "../components/AdvertItem";
-import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import ManagementNav from "../components/ManagementNav";
 import { useGetPersonalSoldAdverts } from "@/hooks/GET/useGetPersonalSoldAdverts";
-import { AlertCircle, ArrowLeft } from "lucide-react";
 import Loading from "../loading";
 import { useSelector } from "react-redux";
 
 export default function SatilanIlanlarim() {
-  const router = useRouter();
   const { user } = useSelector((state) => state.auth);
 
-  const {
-    data: getSoldAdvertsData,
-    isLoading: getSoldAdvertsIsLoading,
-    isError: getSoldAdvertsIsError,
-    error: getSoldAdvertsError,
-  } = useGetPersonalSoldAdverts(user);
+  const { data: getSoldAdvertsData, isLoading: getSoldAdvertsIsLoading } =
+    useGetPersonalSoldAdverts(user);
 
   if (getSoldAdvertsIsLoading) {
     return <Loading />;
-  }
-
-  if (getSoldAdvertsIsError) {
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p>{getSoldAdvertsError?.message}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
   }
 
   const advertsList = Array.isArray(getSoldAdvertsData)

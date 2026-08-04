@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import FilterBrand from "../components/FilterBrand.js";
 import { useGetAdverts } from "@/hooks/GET/useGetAdverts";
 import { useDeleteAdvert } from "@/hooks/DELETE/useDeleteAdvert";
-import { AlertCircle, ArrowLeft, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Loading from "../loading.js";
 import { usePostAdvertView } from "@/hooks/POST/usePostAdvertView.js";
 
@@ -29,26 +29,13 @@ export default function AllAdverts() {
   const selectedBrand = useSelector((state) => state.adverts.selectedBrand);
   const { user } = useSelector((state) => state.auth);
 
-  const {
-    data: getAdvertsData,
-    isLoading: getAdvertsIsLoading,
-    isError: getAdvertsDataIsError,
-    error: getAdvertsDataError,
-  } = useGetAdverts();
+  const { data: getAdvertsData, isLoading: getAdvertsIsLoading } =
+    useGetAdverts();
 
-  const {
-    mutate: deleteAdvertMutate,
-    isPending: deleteAdvertIsPending,
-    isError: deleteAdvertIsError,
-    error: deleteAdvertError,
-  } = useDeleteAdvert();
+  const { mutate: deleteAdvertMutate, isPending: deleteAdvertIsPending } =
+    useDeleteAdvert();
 
-  const {
-    mutate: postAdvertViewMutate,
-    isPending: postAdvertViewIsPending,
-    isError: postAdvertViewIsError,
-    error: postAdvertViewError,
-  } = usePostAdvertView();
+  const { mutate: postAdvertViewMutate } = usePostAdvertView();
 
   useEffect(() => {
     if (getAdvertsData) {
@@ -190,25 +177,6 @@ export default function AllAdverts() {
 
   if (getAdvertsIsLoading) {
     return <Loading />;
-  }
-
-  if (getAdvertsDataIsError || deleteAdvertIsError || postAdvertViewIsError) {
-    const errorMessage =
-      getAdvertsDataError?.message ||
-      deleteAdvertError?.message ||
-      postAdvertViewError?.message ||
-      "Sunucu kaynaklı bir hata oluştu.";
-
-    return (
-      <div className="errorContainer">
-        <AlertCircle size={48} className="iconSecondary" />
-        <h2>Bir Hata Oluştu</h2>
-        <p className="error">{errorMessage}</p>
-        <button onClick={() => router.back()} className="backButton">
-          <ArrowLeft size={20} /> Geri Dön
-        </button>
-      </div>
-    );
   }
 
   return (

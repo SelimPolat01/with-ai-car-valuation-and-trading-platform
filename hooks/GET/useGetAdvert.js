@@ -11,5 +11,6 @@ export function useGetAdvert(advertId) {
     queryFn: () => getAdvert(advertId),
     enabled: !!advertId && advertId !== "undefined" && advertId !== "null",
     retry: false,
+    throwOnError: true,
   });
 }

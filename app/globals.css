@@ -504,7 +504,6 @@ a {
 .errorDiv {
   display: flex;
   justify-content: center;
-  align-items: stretch;
   width: 100%;
   padding: 70px 1rem 80px 1rem;
   box-sizing: border-box;

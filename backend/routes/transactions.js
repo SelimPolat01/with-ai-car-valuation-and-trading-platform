@@ -70,7 +70,8 @@ router.get("/personal-transactions", verifyToken, async (req, res) => {
     console.error("Personal transactions error:", err);
     res.status(500).json({
       success: false,
-      message: "İşlemler getirilirken sunucu hatası oluştu.",
+      message:
+        "İşlem geçmişiniz yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
     });
   }
 });
@@ -94,7 +95,7 @@ router.patch(
       if (checkResult.rows.length === 0) {
         return res.status(404).json({
           message:
-            "Ödeme işlemi bulunamadı veya bu işlemi yapmak için yetkiniz yok.",
+            "Ödeme işlemi bulunamadı veya bu işlemi gerçekleştirmek için yetkiniz bulunmuyor.",
         });
       }
 
@@ -103,7 +104,7 @@ router.patch(
 
       if (currentStatus === "completed") {
         return res.status(400).json({
-          message: "Tamamlanmış (completed) ödeme işlemleri iptal edilemez.",
+          message: "Tamamlanmış ödeme işlemleri iptal edilemez.",
         });
       }
 
@@ -121,17 +122,23 @@ router.patch(
         ]);
 
         return res.status(200).json({
-          message: "Ödeme işlemi başarıyla iptal edildi.",
+          message: "Ödeme işleminiz başarıyla iptal edilmiştir.",
           transaction: updateResult.rows[0],
         });
       } else {
         return res.status(400).json({
           message:
-            "Geçerli bir işlem belirtilmedi. (İptal için cancel=true gerekli)",
+            "Geçersiz işlem talebi iletildi. Lütfen işlemi kontrol edip tekrar deneyiniz.",
         });
       }
     } catch (err) {
-      return res.status(500).json({ message: "Sunucu hatası." });
+      console.error(err);
+      return res
+        .status(500)
+        .json({
+          message:
+            "İşlem sırasında sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+        });
     }
   },
 );

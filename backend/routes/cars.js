@@ -10,8 +10,13 @@ router.get("/brands", async (req, res) => {
     );
     return res.status(200).json(result.rows);
   } catch (err) {
-    console.log("Markalar getirilemedi: ", err);
-    return res.status(500).json({ message: "Sunucu hatası!" });
+    console.error("Markalar getirilemedi: ", err);
+    return res
+      .status(500)
+      .json({
+        message:
+          "Marka bilgileri yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });
 
@@ -24,8 +29,13 @@ router.get("/models/:brand", async (req, res) => {
     );
     return res.status(200).json(result.rows);
   } catch (err) {
-    console.log("Modeller getirilemedi: ", err);
-    return res.status(500).json({ message: "Sunucu hatası!" });
+    console.error("Modeller getirilemedi: ", err);
+    return res
+      .status(500)
+      .json({
+        message:
+          "Model bilgileri yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });
 
@@ -38,8 +48,13 @@ router.get("/model_years/:brand/:model", async (req, res) => {
     );
     return res.status(200).json(result.rows);
   } catch (err) {
-    console.log("Yıllar getirilemedi: ", err);
-    return res.status(500).json({ message: "Sunucu hataıas!" });
+    console.error("Yıllar getirilemedi: ", err);
+    return res
+      .status(500)
+      .json({
+        message:
+          "Üretim yılı bilgileri yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });
 
@@ -74,8 +89,13 @@ router.get("/car-value/:brand/:model/:modelYear", async (req, res) => {
     }
     return res.status(200).json(result.rows);
   } catch (err) {
-    console.log("Motor hacimleri getirilemedi: ", err);
-    return res.status(500).json({ message: "Sunucu hatası!" });
+    console.error("Motor hacimleri getirilemedi: ", err);
+    return res
+      .status(500)
+      .json({
+        message:
+          "Motor hacmi seçenekleri yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });
 
@@ -92,8 +112,13 @@ router.get(
       );
       return res.status(200).json(result.rows);
     } catch (err) {
-      console.log("Yakıt tipleri getirilemedi: ", err);
-      return res.status(500).json({ message: "Sunucu hatası!" });
+      console.error("Yakıt tipleri getirilemedi: ", err);
+      return res
+        .status(500)
+        .json({
+          message:
+            "Yakıt tipleri yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+        });
     }
   },
 );
@@ -111,8 +136,13 @@ router.get(
       );
       return res.status(200).json(result.rows);
     } catch (err) {
-      console.log("Beygir güçleri getirilemedi: ", err);
-      return res.status(500).json({ message: "Sunucu hatası!" });
+      console.error("Beygir güçleri getirilemedi: ", err);
+      return res
+        .status(500)
+        .json({
+          message:
+            "Motor gücü seçenekleri yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+        });
     }
   },
 );
@@ -138,8 +168,13 @@ router.get(
       );
       return res.status(200).json(result.rows);
     } catch (err) {
-      console.log("Vites tipleri getirilemedi: ", err);
-      return res.status(500).json({ message: "Sunucu hatası!" });
+      console.error("Vites tipleri getirilemedi: ", err);
+      return res
+        .status(500)
+        .json({
+          message:
+            "Vites tipleri yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+        });
     }
   },
 );
@@ -173,8 +208,13 @@ router.get(
       );
       return res.status(200).json(result.rows);
     } catch (err) {
-      console.log("Kasa tipleri getirilemedi: ", err);
-      return res.status(500).json({ message: "Sunucu hatası!" });
+      console.error("Kasa tipleri getirilemedi: ", err);
+      return res
+        .status(500)
+        .json({
+          message:
+            "Kasa tipleri yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+        });
     }
   },
 );
@@ -210,8 +250,13 @@ router.get(
       );
       return res.status(200).json(result.rows);
     } catch (err) {
-      console.log("Paketler getirilemedi: ", err);
-      return res.status(500).json({ message: "Sunucu hatası!" });
+      console.error("Paketler getirilemedi: ", err);
+      return res
+        .status(500)
+        .json({
+          message:
+            "Donanım paketleri yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+        });
     }
   },
 );

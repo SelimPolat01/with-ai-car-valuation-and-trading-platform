@@ -50,7 +50,12 @@ router.get("/personal-appointments", verifyToken, async (req, res) => {
     return res.status(200).json(result.rows);
   } catch (err) {
     console.error("Randevular çekilirken hata:", err);
-    res.status(500).json({ message: "Sunucu hatası." });
+    res
+      .status(500)
+      .json({
+        message:
+          "Randevularınız listelenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });
 
@@ -73,7 +78,7 @@ router.patch(
       if (checkResult.rows.length === 0) {
         return res.status(404).json({
           message:
-            "Randevu bulunamadı veya bu işlemi yapmak için yetkiniz yok.",
+            "Randevu kaydı bulunamadı veya bu işlemi gerçekleştirmek için yetkiniz bulunmuyor.",
         });
       }
 
@@ -83,7 +88,7 @@ router.patch(
       if (currentStatus !== "pending") {
         return res.status(400).json({
           message:
-            "Yalnızca bekleyen (pending) durumdaki randevular iptal edilebilir.",
+            "Yalnızca 'Bekleyen' statüsündeki randevular üzerinde işlem yapılabilir.",
         });
       }
 
@@ -100,17 +105,23 @@ router.patch(
         ]);
 
         return res.status(200).json({
-          message: "Randevu başarıyla iptal edildi.",
+          message: "Randevunuz başarıyla iptal edilmiştir.",
           appointment: updateResult.rows[0],
         });
       } else {
         return res.status(400).json({
           message:
-            "Geçerli bir işlem belirtilmedi. (İptal için cancel=true gerekli)",
+            "Geçersiz işlem talebi iletildi. Lütfen işlemi kontrol edip tekrar deneyiniz.",
         });
       }
     } catch (err) {
-      return res.status(500).json({ message: "Sunucu hatası." });
+      console.error(err);
+      return res
+        .status(500)
+        .json({
+          message:
+            "Randevu işlemi sırasında sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+        });
     }
   },
 );

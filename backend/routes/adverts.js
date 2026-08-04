@@ -46,7 +46,9 @@ router.get("/", async (req, res) => {
     const result = await db.query(queryText);
     res.status(200).json(result.rows);
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası: " + err.message });
+    res
+      .status(500)
+      .json({ message: "İlanlar listelenirken bir sunucu hatası oluştu." });
   }
 });
 
@@ -69,7 +71,9 @@ router.get("/favoriteAdverts", verifyToken, async (req, res) => {
     if (result.rows.length === 0) return res.status(200).json([]);
     res.status(200).json(result.rows);
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası!" });
+    res.status(500).json({
+      message: "Favori ilanlar getirilirken bir sunucu hatası oluştu.",
+    });
   }
 });
 
@@ -87,7 +91,9 @@ router.get("/check-favorite/:advertId", verifyToken, async (req, res) => {
     );
     res.status(200).json({ isFavorite: result.rows[0].exists });
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası!" });
+    res.status(500).json({
+      message: "Favori durumu kontrol edilirken bir sunucu hatası oluştu.",
+    });
   }
 });
 
@@ -108,7 +114,9 @@ router.get("/myAdverts", verifyToken, async (req, res) => {
     );
     res.status(200).json(result.rows);
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası!" });
+    res
+      .status(500)
+      .json({ message: "İlanlarınız getirilirken bir sunucu hatası oluştu." });
   }
 });
 
@@ -129,7 +137,9 @@ router.get("/soldAdverts", verifyToken, async (req, res) => {
     );
     res.status(200).json(result.rows);
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası!" });
+    res.status(500).json({
+      message: "Satılan ilanlarınız getirilirken bir sunucu hatası oluştu.",
+    });
   }
 });
 
@@ -150,7 +160,9 @@ router.get("/deletedAdverts", verifyToken, async (req, res) => {
     );
     res.status(200).json(result.rows);
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası!" });
+    res.status(500).json({
+      message: "Silinen ilanlarınız getirilirken bir sunucu hatası oluştu.",
+    });
   }
 });
 
@@ -171,13 +183,20 @@ router.get("/boughtAdverts", verifyToken, async (req, res) => {
     );
     res.status(200).json(result.rows);
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası!" });
+    res.status(500).json({
+      message: "Satın aldığınız ilanlar getirilirken bir sunucu hatası oluştu.",
+    });
   }
 });
 
 router.post("/favoriteAdverts/:advertId", verifyToken, async (req, res) => {
   const advertId = Number(req.params.advertId);
   const userId = Number(req.user.id);
+
+  if (isNaN(advertId)) {
+    return res.status(400).json({ message: "Geçersiz ilan kimliği." });
+  }
+
   try {
     const selectResult = await db.query(
       "SELECT * FROM favorite_adverts WHERE user_id = $1 AND advert_id = $2",
@@ -191,7 +210,9 @@ router.post("/favoriteAdverts/:advertId", verifyToken, async (req, res) => {
         );
         res.status(200).json({ isFavorite: true });
       } catch (err) {
-        res.status(500).json({ message: "Sunucu hatası!" });
+        res.status(500).json({
+          message: "İlan favorilere eklenirken bir sunucu hatası oluştu.",
+        });
       }
     } else {
       await db.query(
@@ -201,7 +222,9 @@ router.post("/favoriteAdverts/:advertId", verifyToken, async (req, res) => {
       res.status(200).json({ isFavorite: false });
     }
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası!" });
+    res.status(500).json({
+      message: "Favori işlemi gerçekleştirilirken bir sunucu hatası oluştu.",
+    });
   }
 });
 
@@ -209,7 +232,9 @@ router.get("/:advertId", async (req, res) => {
   const { advertId } = req.params;
 
   if (!advertId || advertId === "undefined" || isNaN(Number(advertId))) {
-    return res.status(400).json({ message: "ID bekleniyor" });
+    return res
+      .status(400)
+      .json({ message: "Geçerli bir ilan ID bilgisi gereklidir." });
   }
 
   let userId = 9999;
@@ -256,14 +281,17 @@ router.get("/:advertId", async (req, res) => {
     );
 
     if (!result.rows.length) {
-      return res
-        .status(404)
-        .json({ message: "İlan bulunamadı, satılmış veya silinmiş olabilir." });
+      return res.status(404).json({
+        message:
+          "İlan bulunamadı, satılmış veya yayından kaldırılmış olabilir.",
+      });
     }
 
     res.status(200).json(result.rows[0]);
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası!" });
+    res.status(500).json({
+      message: "İlan detayları getirilirken bir sunucu hatası oluştu.",
+    });
   }
 });
 
@@ -444,11 +472,13 @@ router.post("/post", verifyToken, upload.any(), async (req, res) => {
     }
 
     res.status(200).json({
-      message: "İlan ve fotoğraflar başarıyla yayınlandı.",
+      message: "İlan ve görseller başarıyla oluşturuldu.",
       advertId: newAdvertId,
     });
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası oluştu" });
+    res
+      .status(500)
+      .json({ message: "İlan oluşturulurken bir sunucu hatası oluştu." });
   }
 });
 
@@ -465,6 +495,12 @@ router.put("/edit", verifyToken, upload.any(), async (req, res) => {
     coverImageIdentifier,
     coverImageType,
   } = req.body;
+
+  if (!id || isNaN(Number(id))) {
+    return res.status(400).json({
+      message: "Düzenlenecek geçerli bir ilan ID bilgisi gereklidir.",
+    });
+  }
 
   const user = req.user;
   const newFiles = req.files;
@@ -616,12 +652,21 @@ router.put("/edit", verifyToken, upload.any(), async (req, res) => {
 
     res.status(200).json({ message: "İlan başarıyla güncellendi." });
   } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası oluştu." });
+    res
+      .status(500)
+      .json({ message: "İlan güncellenirken bir sunucu hatası oluştu." });
   }
 });
 
 router.patch("/soldAdvert", verifyToken, async (req, res) => {
   const { advertId, slot_date, slot_time } = req.body;
+
+  if (!advertId || !slot_date || !slot_time) {
+    return res
+      .status(400)
+      .json({ message: "İlan ID, randevu tarihi ve saati zorunludur." });
+  }
+
   try {
     await db.query("BEGIN");
 
@@ -632,14 +677,17 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
 
     if (checkStatus.rows.length === 0) {
       await db.query("ROLLBACK");
-      return res.status(404).json({ message: "İlan bulunamadı." });
+      return res
+        .status(404)
+        .json({ message: "İlan bulunamadı veya silinmiş." });
     }
 
     if (checkStatus.rows[0].is_sold === true) {
       await db.query("ROLLBACK");
-      return res
-        .status(400)
-        .json({ message: "Bu araç zaten daha önce satın alınmış!" });
+      return res.status(400).json({
+        message:
+          "Bu araç daha önce başka bir kullanıcı tarafından satın alınmış.",
+      });
     }
 
     const soldAdvertDetailRaw = await db.query(
@@ -734,26 +782,33 @@ router.patch("/soldAdvert", verifyToken, async (req, res) => {
     await db.query("COMMIT");
 
     res.status(200).json({
-      message: "İlan başarıyla satın alınmış ve randevu oluşturulmuştur.",
+      message: "İlan satın alma işlemi ve randevu kaydı başarıyla tamamlandı.",
     });
   } catch (err) {
     await db.query("ROLLBACK");
 
     if (err.code === "23505") {
-      return res.status(400).json({
+      return res.status(409).json({
         message:
-          "Bu araç aynı anda başka biri tarafından satın alındı veya bu saat dolu.",
+          "Seçtiğiniz randevu saati veya ilan eşzamanlı bir işlem nedeniyle artık uygun değil.",
       });
     }
 
-    res
-      .status(500)
-      .json({ message: "İlan satın alınırken sunucu hatası meydana geldi." });
+    res.status(500).json({
+      message:
+        "Satın alma işlemi gerçekleştirilirken bir sunucu hatası oluştu.",
+    });
   }
 });
 
 router.get("/similar-by-ai/:advertId", async (req, res) => {
   const { advertId } = req.params;
+
+  if (!advertId || isNaN(Number(advertId))) {
+    return res
+      .status(400)
+      .json({ message: "Geçerli bir ilan ID bilgisi gereklidir." });
+  }
 
   try {
     const similarAdverts = await db.query(
@@ -768,12 +823,19 @@ router.get("/similar-by-ai/:advertId", async (req, res) => {
 
     res.status(200).json(similarAdverts.rows);
   } catch (err) {
-    res.status(500).json({ message: "Benzer araçlar getirilemedi." });
+    res.status(500).json({
+      message: "Benzer araç ilanları hesaplanırken bir sunucu hatası oluştu.",
+    });
   }
 });
 
 router.get("/favoriteCount/:advertId", async (req, res) => {
   const advertId = Number(req.params.advertId);
+
+  if (isNaN(advertId)) {
+    return res.status(400).json({ message: "Geçersiz ilan kimliği." });
+  }
+
   const queryText = `SELECT COUNT(*)::int AS count 
       FROM favorite_adverts f 
       JOIN adverts a ON f.advert_id = a.id 
@@ -783,7 +845,7 @@ router.get("/favoriteCount/:advertId", async (req, res) => {
     return res.status(200).json(result.rows[0]);
   } catch (err) {
     return res.status(500).json({
-      message: "Favori sayısı getirilirken sunucu hatası meydana geldi.",
+      message: "Favori sayısı getirilirken bir sunucu hatası oluştu.",
     });
   }
 });
@@ -791,6 +853,13 @@ router.get("/favoriteCount/:advertId", async (req, res) => {
 router.get("/:advertId/view", async (req, res) => {
   try {
     const { advertId } = req.params;
+
+    if (!advertId || isNaN(Number(advertId))) {
+      return res.status(400).json({
+        success: false,
+        message: "Geçerli bir ilan ID bilgisi gereklidir.",
+      });
+    }
 
     const result = await db.query(
       "SELECT view_count FROM adverts WHERE id = $1 AND is_deleted = false",
@@ -800,7 +869,7 @@ router.get("/:advertId/view", async (req, res) => {
     if (!result.rows || result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "İlan bulunamadı.",
+        message: "Görüntülenme sayısı alınacak ilan bulunamadı.",
       });
     }
 
@@ -812,13 +881,21 @@ router.get("/:advertId/view", async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Sunucu kaynaklı bir hata oluştu.",
+      message: "Görüntülenme sayısı alınırken bir sunucu hatası oluştu.",
     });
   }
 });
 
 router.post("/:advertId/view", async (req, res) => {
   const { advertId } = req.params;
+
+  if (!advertId || isNaN(Number(advertId))) {
+    return res.status(400).json({
+      success: false,
+      message: "Geçerli bir ilan ID bilgisi gereklidir.",
+    });
+  }
+
   const userId = req.user ? req.user.id : null;
   const ipAddress = req.headers["x-forwarded-for"] || req.ip;
   const identifier = userId ? `user:${userId}` : `ip:${ipAddress}`;
@@ -840,17 +917,22 @@ router.post("/:advertId/view", async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: "Görüntüleme işlendi." });
+      .json({ success: true, message: "Görüntüleme başarıyla kaydedildi." });
   } catch (err) {
-    return res.status(500).json({ success: false, message: "Sunucu hatası" });
+    return res.status(500).json({
+      success: false,
+      message: "Görüntüleme işlenirken bir sunucu hatası oluştu.",
+    });
   }
 });
 
 router.patch("/recoverAdvert/:advertId", verifyToken, async (req, res) => {
   const { advertId } = req.params;
 
-  if (!advertId) {
-    return res.status(400).json({ message: "İlan ID bilgisi zorunludur." });
+  if (!advertId || isNaN(Number(advertId))) {
+    return res.status(400).json({
+      message: "Yayınlanacak geçerli bir ilan ID bilgisi zorunludur.",
+    });
   }
 
   try {
@@ -866,13 +948,13 @@ router.patch("/recoverAdvert/:advertId", verifyToken, async (req, res) => {
     const advert = checkAdvert.rows[0];
 
     if (Number(advert.user_id) !== Number(req.user.id)) {
-      return res
-        .status(403)
-        .json({ message: "Bu ilanı yayına almak için yetkiniz yok." });
+      return res.status(403).json({
+        message: "Bu ilanı tekrar yayına alma yetkiniz bulunmamaktadır.",
+      });
     }
 
     if (!advert.is_deleted) {
-      return res.status(400).json({ message: "Bu ilan zaten yayında." });
+      return res.status(400).json({ message: "Bu ilan zaten yayındadır." });
     }
 
     await db.query(
@@ -884,7 +966,6 @@ router.patch("/recoverAdvert/:advertId", verifyToken, async (req, res) => {
       message: "İlan başarıyla tekrar yayına alındı.",
     });
   } catch (err) {
-    console.error("İlan Yayına Alma Hatası Detayı:", err);
     res.status(500).json({
       message: "İlan tekrar yayına alınırken bir sunucu hatası oluştu.",
     });
@@ -894,6 +975,12 @@ router.patch("/recoverAdvert/:advertId", verifyToken, async (req, res) => {
 router.delete("/:advertId", verifyToken, async (req, res) => {
   const { advertId } = req.params;
   const userId = Number(req.user.id);
+
+  if (!advertId || isNaN(Number(advertId))) {
+    return res
+      .status(400)
+      .json({ message: "Silinecek geçerli bir ilan ID bilgisi gereklidir." });
+  }
 
   try {
     await db.query("BEGIN");
@@ -907,7 +994,7 @@ router.delete("/:advertId", verifyToken, async (req, res) => {
       await db.query("ROLLBACK");
       return res
         .status(404)
-        .json({ message: "İlan bulunamadı veya silme yetkiniz yok." });
+        .json({ message: "İlan bulunamadı veya bu ilanı silme yetkiniz yok." });
     }
 
     const canceledAppointments = await db.query(
@@ -939,11 +1026,12 @@ router.delete("/:advertId", verifyToken, async (req, res) => {
     await db.query("COMMIT");
     res.status(200).json({
       message:
-        "İlan başarıyla kaldırıldı, ilgili ödeme ve randevu süreçleri iptal edildi.",
+        "İlan başarıyla kaldırıldı, bağlı randevu ve ödeme süreçleri iptal edildi.",
     });
   } catch (err) {
     await db.query("ROLLBACK");
-    console.error("Delete advert error:", err);
-    res.status(500).json({ message: "Sunucu hatası!" });
+    res
+      .status(500)
+      .json({ message: "İlan kaldırılırken bir sunucu hatası oluştu." });
   }
 });

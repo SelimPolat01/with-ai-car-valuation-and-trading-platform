@@ -21,7 +21,9 @@ router.post("/register", async (req, res) => {
       req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Email ve password gerekli!" });
+      return res
+        .status(400)
+        .json({ message: "E-posta ve şifre alanları zorunludur." });
     }
 
     const existingUser = await db.query(
@@ -31,7 +33,8 @@ router.post("/register", async (req, res) => {
 
     if (existingUser.rows.length > 0) {
       return res.status(409).json({
-        message: "Bu email zaten kayıtlı!",
+        message:
+          "Bu e-posta adresi ile sistemimizde kayıtlı bir hesap bulunmaktadır.",
       });
     }
 
@@ -62,10 +65,17 @@ router.post("/register", async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({ message: "Kayıt başarılı!", user });
+    res
+      .status(200)
+      .json({ message: "Kayıt işlemi başarıyla tamamlandı.", user });
   } catch (err) {
     console.error(err?.message);
-    res.status(500).json({ message: "Sunucu hatası!" });
+    res
+      .status(500)
+      .json({
+        message:
+          "Kayıt işlemi sırasında sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });
 
@@ -78,50 +88,56 @@ router.post("/login", async (req, res) => {
       [email],
     );
 
-    if (existingUser.rows.length > 0) {
-      const user = existingUser.rows[0];
-
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (!isMatch) {
-        return res.status(400).json({ message: "Girilen parola hatalı." });
-      }
-
-      const durationDays = rememberMe === true ? 30 : 1;
-      const maxAgeMs = durationDays * 24 * 60 * 60 * 1000;
-
-      const token = jwt.sign(
-        {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          surname: user.surname,
-          tel_number: user.tel_number,
-          address: user.address,
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: `${durationDays}d` },
-      );
-
-      res.cookie("token", token, {
-        ...cookieOptions,
-        maxAge: maxAgeMs,
-      });
-
-      const { password: _, ...userWithoutPassword } = user;
-
-      return res.status(200).json({
-        message: "Giriş başarılı.",
-        user: userWithoutPassword,
-      });
-    } else {
+    if (existingUser.rows.length === 0) {
       return res
-        .status(404)
-        .json({ message: "Girilen e-postaya ait kullanıcı bulunamadı." });
+        .status(401)
+        .json({ message: "E-posta adresi veya şifre hatalı." });
     }
+
+    const user = existingUser.rows[0];
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ message: "E-posta adresi veya şifre hatalı." });
+    }
+
+    const durationDays = rememberMe === true ? 30 : 1;
+    const maxAgeMs = durationDays * 24 * 60 * 60 * 1000;
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        surname: user.surname,
+        tel_number: user.tel_number,
+        address: user.address,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: `${durationDays}d` },
+    );
+
+    res.cookie("token", token, {
+      ...cookieOptions,
+      maxAge: maxAgeMs,
+    });
+
+    const { password: _, ...userWithoutPassword } = user;
+
+    return res.status(200).json({
+      message: "Başarıyla giriş yapıldı.",
+      user: userWithoutPassword,
+    });
   } catch (err) {
     console.error(err?.message);
-    return res.status(500).json({ message: "Sunucu hatası." });
+    return res
+      .status(500)
+      .json({
+        message:
+          "Giriş yapılırken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });
 
@@ -130,7 +146,7 @@ router.post("/logout", (req, res) => {
     ...cookieOptions,
   });
 
-  res.status(200).json({ message: "Çıkış başarılı." });
+  res.status(200).json({ message: "Başarıyla çıkış yapıldı." });
 });
 
 router.get("/me", verifyToken, async (req, res) => {
@@ -141,12 +157,20 @@ router.get("/me", verifyToken, async (req, res) => {
     );
 
     if (result.rows.length === 0)
-      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+      return res
+        .status(404)
+        .json({
+          message: "Kullanıcı bilgileri bulunamadı veya oturum süresi dolmuş.",
+        });
 
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err?.message);
-    res.status(500).json({ message: "Sunucu hatası." });
+    res
+      .status(500)
+      .json({
+        message: "Kullanıcı bilgileri alınırken sistemsel bir hata oluştu.",
+      });
   }
 });
 
@@ -157,12 +181,13 @@ router.post("/contact", async (req, res) => {
     if (!name || !surname || !email || !subject || !message) {
       return res
         .status(400)
-        .json({ message: "Lütfen tüm zorunlu alanları doldurun." });
+        .json({ message: "Lütfen tüm zorunlu alanları eksiksiz doldurunuz." });
     }
 
     if (subject === "Konu") {
       return res.status(400).json({
-        message: "Lütfen geçerli bir konu seçiniz.",
+        message:
+          "Lütfen iletmek istediğiniz mesaj için geçerli bir konu başlığı seçiniz.",
       });
     }
 
@@ -213,16 +238,25 @@ router.post("/contact", async (req, res) => {
       console.error("Resend Gönderim Hatası:", error);
       return res
         .status(500)
-        .json({ message: "Mail gönderilerken sunucu hatası oluştu." });
+        .json({
+          message:
+            "Mesajınız iletilirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+        });
     }
 
     return res.status(200).json({
-      message: "Mesajınız başarıyla iletildi.",
+      message:
+        "Mesajınız başarıyla iletilmiştir. En kısa sürede tarafınıza dönüş yapılacaktır.",
       data: result.rows[0],
     });
   } catch (err) {
     console.error(err?.message);
-    return res.status(500).json({ message: "Sunucu hatası." });
+    return res
+      .status(500)
+      .json({
+        message:
+          "Mesajınız iletilirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });
 
@@ -231,7 +265,9 @@ router.post("/email", async (req, res) => {
   const { forLogin } = req.query;
 
   if (!email) {
-    return res.status(400).json({ message: "E-posta adresi gerekli." });
+    return res
+      .status(400)
+      .json({ message: "Lütfen geçerli bir e-posta adresi giriniz." });
   }
 
   try {
@@ -245,7 +281,10 @@ router.post("/email", async (req, res) => {
       if (userCheck.rows.length === 0) {
         return res
           .status(404)
-          .json({ message: "Girilen e-postaya ait kullanıcı bulunamadı." });
+          .json({
+            message:
+              "Sistemimizde bu e-posta adresine ait bir hesap bulunamadı.",
+          });
       }
 
       await db.query(
@@ -275,12 +314,15 @@ router.post("/email", async (req, res) => {
         console.error("Resend OTP Hatası:", error);
         return res
           .status(500)
-          .json({ message: "Doğrulama kodu gönderilemedi." });
+          .json({
+            message:
+              "Doğrulama kodu e-posta adresinize gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+          });
       }
 
       return res.status(200).json({
         success: true,
-        message: "Doğrulama kodu e-postanıza gönderildi.",
+        message: "Doğrulama kodu e-posta adresinize gönderildi.",
       });
     } else {
       const existingUser = await db.query(
@@ -290,7 +332,10 @@ router.post("/email", async (req, res) => {
       if (existingUser.rows.length > 0) {
         return res
           .status(409)
-          .json({ message: "Bu e-posta adresi zaten kullanımda." });
+          .json({
+            message:
+              "Bu e-posta adresi zaten kullanımda. Lütfen giriş yapmayı deneyiniz.",
+          });
       }
 
       await db.query(
@@ -323,7 +368,10 @@ router.post("/email", async (req, res) => {
         console.error("Resend OTP Hatası:", error);
         return res
           .status(500)
-          .json({ message: "Doğrulama kodu gönderilemedi." });
+          .json({
+            message:
+              "Doğrulama kodu e-posta adresinize gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+          });
       }
 
       return res.status(200).json({
@@ -334,7 +382,8 @@ router.post("/email", async (req, res) => {
   } catch (err) {
     console.error("Sunucu Hatası Detayı:", err?.message);
     return res.status(500).json({
-      message: "E-posta kontrol edilirken sunucu hatası meydana geldi.",
+      message:
+        "İşlem sırasında sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
     });
   }
 });
@@ -346,7 +395,9 @@ router.post("/otp", async (req, res) => {
   if (!email || !otp) {
     return res
       .status(400)
-      .json({ message: "E-posta ve doğrulama kodu gerekli." });
+      .json({
+        message: "E-posta adresi ve doğrulama kodu alanları zorunludur.",
+      });
   }
 
   try {
@@ -356,7 +407,12 @@ router.post("/otp", async (req, res) => {
       const result = await db.query(queryText, [email]);
 
       if (result.rows.length === 0) {
-        return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+        return res
+          .status(404)
+          .json({
+            message:
+              "Sistemimizde bu e-posta adresine ait bir hesap bulunamadı.",
+          });
       }
 
       const user = result.rows[0];
@@ -368,14 +424,17 @@ router.post("/otp", async (req, res) => {
         );
         return res.status(400).json({
           message:
-            "Doğrulama kodunun süresi dolmuş. Lütfen yeni bir kod isteyin.",
+            "Doğrulama kodunun geçerlilik süresi dolmuştur. Lütfen yeni bir kod talep ediniz.",
         });
       }
 
       if (!user.otp || String(user.otp) !== String(otp)) {
         return res
           .status(400)
-          .json({ message: "Girilen doğrulama kodu hatalı." });
+          .json({
+            message:
+              "Girdiğiniz doğrulama kodu hatalıdır. Lütfen kontrol edip tekrar deneyiniz.",
+          });
       }
 
       await db.query(
@@ -385,7 +444,7 @@ router.post("/otp", async (req, res) => {
 
       return res.status(200).json({
         success: true,
-        message: "Doğrulama başarılı.",
+        message: "Doğrulama işlemi başarıyla tamamlandı.",
       });
     } else {
       const queryText =
@@ -395,7 +454,10 @@ router.post("/otp", async (req, res) => {
       if (result.rows.length === 0) {
         return res
           .status(404)
-          .json({ message: "Bu e-posta için doğrulama kodu bulunamadı." });
+          .json({
+            message:
+              "Bu e-posta adresi için aktif bir doğrulama kodu talebi bulunmamaktadır.",
+          });
       }
 
       const otpRecord = result.rows[0];
@@ -404,25 +466,28 @@ router.post("/otp", async (req, res) => {
         await db.query("DELETE FROM otp_codes WHERE email = $1", [email]);
         return res.status(400).json({
           message:
-            "Doğrulama kodunun süresi dolmuş. Lütfen yeni bir kod isteyin.",
+            "Doğrulama kodunun geçerlilik süresi dolmuştur. Lütfen yeni bir kod talep ediniz.",
         });
       }
 
       if (!otpRecord.otp || String(otpRecord.otp) !== String(otp)) {
         return res
           .status(400)
-          .json({ message: "Girilen doğrulama kodu hatalı." });
+          .json({
+            message:
+              "Girdiğiniz doğrulama kodu hatalıdır. Lütfen kontrol edip tekrar deneyiniz.",
+          });
       }
 
       return res.status(200).json({
         success: true,
-        message: "Doğrulama başarılı.",
+        message: "Doğrulama işlemi başarıyla tamamlandı.",
       });
     }
   } catch (err) {
     console.error("OTP Doğrulama Hatası:", err?.message);
     return res.status(500).json({
-      message: "OTP doğrulanırken sunucu hatası meydana geldi.",
+      message: "Doğrulama işlemi sırasında sistemsel bir hata oluştu.",
     });
   }
 });
@@ -431,13 +496,18 @@ router.patch("/reset-password", async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
   if (!email || !otp || !newPassword) {
-    return res.status(400).json({ message: "Lütfen tüm alanları doldurun." });
+    return res
+      .status(400)
+      .json({ message: "Lütfen tüm alanları eksiksiz doldurunuz." });
   }
 
   if (newPassword.length < 6) {
     return res
       .status(400)
-      .json({ message: "Yeni şifre en az 6 karakter olmalıdır." });
+      .json({
+        message:
+          "Yeni şifreniz güvenlik amacıyla en az 6 karakterden oluşmalıdır.",
+      });
   }
 
   try {
@@ -447,7 +517,11 @@ router.patch("/reset-password", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+      return res
+        .status(404)
+        .json({
+          message: "Sistemimizde bu e-posta adresine ait bir hesap bulunamadı.",
+        });
     }
 
     const user = result.rows[0];
@@ -455,13 +529,18 @@ router.patch("/reset-password", async (req, res) => {
     if (!user.otp || user.otp !== otp) {
       return res
         .status(400)
-        .json({ message: "Geçersiz veya hatalı doğrulama kodu." });
+        .json({
+          message: "Girdiğiniz doğrulama kodu hatalı veya geçersizdir.",
+        });
     }
 
     if (new Date() > new Date(user.otp_expires_at)) {
       return res
         .status(400)
-        .json({ message: "Doğrulama kodunun süresi dolmuş." });
+        .json({
+          message:
+            "Doğrulama kodunun geçerlilik süresi dolmuştur. Lütfen yeni bir kod talep ediniz.",
+        });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -473,12 +552,14 @@ router.patch("/reset-password", async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Şifreniz başarıyla güncellendi.",
+      message:
+        "Şifreniz başarıyla güncellenmiştir. Yeni şifrenizle giriş yapabilirsiniz.",
     });
   } catch (err) {
     console.error("Şifre Sıfırlama Hatası: ", err);
     return res.status(500).json({
-      message: "Şifre güncellenirken sunucu hatası meydana geldi.",
+      message:
+        "Şifre sıfırlama işlemi sırasında sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
     });
   }
 });

@@ -11,7 +11,8 @@ router.get("/", async (req, res) => {
 
     if (result.rows.length === 0) {
       return res.status(404).json({
-        message: "Henüz kayıtlı Sıkça Sorulan Soru bulunamadı.",
+        message:
+          "Sistemimizde henüz kayıtlı Sıkça Sorulan Soru (SSS) bulunmamaktadır.",
       });
     }
 
@@ -21,7 +22,7 @@ router.get("/", async (req, res) => {
 
     return res.status(500).json({
       message:
-        "Sıkça Sorulan Sorular getirilirken bir sunucu hatası meydana geldi.",
+        "Sıkça sorulan sorular yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
     });
   }
 });

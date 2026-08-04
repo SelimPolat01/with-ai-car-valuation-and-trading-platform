@@ -18,7 +18,12 @@ router.get("/personal-notifications", verifyToken, async (req, res) => {
     return res.status(200).json(result.rows);
   } catch (err) {
     console.error("Bildirimler getirilirken hata oluştu:", err);
-    res.status(500).json({ message: "Sunucu tarafında bir hata oluştu." });
+    res
+      .status(500)
+      .json({
+        message:
+          "Bildirimleriniz yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });
 
@@ -29,13 +34,20 @@ router.patch("/:id/read", verifyToken, async (req, res) => {
   try {
     await db.query(
       `UPDATE notifications 
-   SET is_read = TRUE 
-   WHERE id = $1 AND user_id = $2 AND is_read = FALSE`,
+       SET is_read = TRUE 
+       WHERE id = $1 AND user_id = $2 AND is_read = FALSE`,
       [notificationId, userId],
     );
-    res.status(200).json({ message: "Bildirim okundu olarak işaretlendi." });
+    res
+      .status(200)
+      .json({ message: "Bildirim başarıyla okundu olarak işaretlendi." });
   } catch (err) {
     console.error("Bildirim güncellenirken hata:", err);
-    res.status(500).json({ message: "Sunucu hatası." });
+    res
+      .status(500)
+      .json({
+        message:
+          "Bildirim durumu güncellenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });

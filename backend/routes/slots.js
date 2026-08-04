@@ -12,6 +12,11 @@ router.get("/available-slots", verifyToken, async (req, res) => {
     res.status(200).json(result.rows);
   } catch (err) {
     console.error("Müsait slotlar getirilirken hata oluştu:", err);
-    res.status(500).json({ message: "Sunucu tarafında bir hata oluştu." });
+    res
+      .status(500)
+      .json({
+        message:
+          "Müsait randevu saatleri yüklenirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
   }
 });

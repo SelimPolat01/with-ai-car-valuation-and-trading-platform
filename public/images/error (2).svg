@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Renk Geçişleri (Projenizin CSS'inden alındı) -->
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#934b8e" />
+      <stop offset="100%" stop-color="#2d1457" />
+    </linearGradient>
+    
+    <linearGradient id="sparkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff2521" />
+      <stop offset="100%" stop-color="#ef4444" />
+    </linearGradient>
+
+    <style>
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+      }
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+      }
+      @keyframes spinGears {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .robot { animation: float 4s ease-in-out infinite; transform-origin: center; }
+      .alert-light { animation: blink 1s ease-in-out infinite; }
+      .gear-left { animation: spinGears 10s linear infinite; transform-origin: 100px 100px; }
+      .gear-right { animation: spinGears 12s linear infinite reverse; transform-origin: 400px 380px; }
+    </style>
+  </defs>
+
+  <!-- Arka Plan Süslemeleri (Hata Sayfası Hissi) -->
+  <circle cx="100" cy="100" r="30" fill="#a7b8d4" opacity="0.2" class="gear-left" stroke-dasharray="10 10" stroke="#934b8e" stroke-width="5" />
+  <circle cx="400" cy="380" r="45" fill="none" opacity="0.3" class="gear-right" stroke-dasharray="15 15" stroke="#a7b8d4" stroke-width="8" />
+  <path d="M 400 150 L 415 120 L 430 150 Z" fill="#f5af19" opacity="0.4" />
+  <circle cx="80" cy="350" r="10" fill="#f5af19" opacity="0.5" />
+
+  <!-- Yerdeki Gölge -->
+  <ellipse cx="250" cy="420" rx="90" ry="15" fill="rgba(0,0,0,0.1)" />
+
+  <!-- Robot Grubu (Yukarı Aşağı Süzülme Animasyonu) -->
+  <g class="robot">
+    <!-- Anten Çubuğu -->
+    <line x1="250" y1="160" x2="250" y2="100" stroke="#a7b8d4" stroke-width="8" stroke-linecap="round" />
+    
+    <!-- Anten Işığı (Yanıp Sönen Kırmızı) -->
+    <circle cx="250" cy="90" r="16" fill="url(#sparkGrad)" class="alert-light" />
+    <circle cx="250" cy="90" r="6" fill="#ffffff" class="alert-light" opacity="0.8" />
+
+    <!-- Robot Kulakları -->
+    <rect x="130" y="220" width="30" height="60" rx="10" fill="#a7b8d4" />
+    <rect x="340" y="220" width="30" height="60" rx="10" fill="#a7b8d4" />
+
+    <!-- Robot Kafası (Ana Kasa) -->
+    <rect x="150" y="160" width="200" height="170" rx="35" fill="url(#bodyGrad)" />
+    
+    <!-- Ekran (Yüzey) -->
+    <rect x="170" y="185" width="160" height="110" rx="20" fill="#150a29" />
+    <rect x="175" y="190" width="150" height="100" rx="15" fill="#a7b8d4" opacity="0.95" />
+
+    <!-- Gözler (Hata X'leri) -->
+    <!-- Sol Göz -->
+    <path d="M 200 215 L 230 245 M 230 215 L 200 245" stroke="#ef4444" stroke-width="8" stroke-linecap="round" />
+    <!-- Sağ Göz -->
+    <path d="M 270 215 L 300 245 M 300 215 L 270 245" stroke="#ef4444" stroke-width="8" stroke-linecap="round" />
+
+    <!-- Ağız (Şaşkın/Bozuk) -->
+    <path d="M 220 270 Q 250 255 280 270" fill="none" stroke="#2d1457" stroke-width="6" stroke-linecap="round" />
+    
+    <!-- Boyun ve Gövde Bağlantısı -->
+    <rect x="230" y="330" width="40" height="20" fill="#a7b8d4" />
+    <path d="M 190 350 L 310 350 L 290 390 L 210 390 Z" fill="url(#bodyGrad)" />
+    
+    <!-- Kırık Kablo/Kıvılcım Etkisi (Göğüs Kısmında) -->
+    <path d="M 230 365 L 245 365 L 240 375 L 260 375 L 250 385" fill="none" stroke="#f5af19" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>

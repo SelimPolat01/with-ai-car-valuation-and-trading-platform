@@ -8,7 +8,7 @@ import { AlertTriangle, RotateCcw, Home } from "lucide-react";
 export default function ErrorDisplay({
   error,
   reset,
-  title = "HATA",
+  title = "500",
   message,
   imageSrc = "/images/error.svg",
   notFound,
@@ -55,14 +55,7 @@ export default function ErrorDisplay({
             className={`errorImage ${notFound ? "notFoundErrorImage" : ""} `}
           />
 
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              flexWrap: "wrap",
-              justifyContent: "center",
-            }}
-          >
+          <div className="errorButtonContainer">
             {reset && (
               <button onClick={() => reset()} className="backHomeButton">
                 <RotateCcw size={20} />

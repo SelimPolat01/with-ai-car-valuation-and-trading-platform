@@ -501,7 +501,7 @@ a {
   display: flex;
   justify-content: center;
   width: 100%;
-  padding: 70px 1rem 80px 1rem;
+  padding: 1.5rem 1rem 2rem 1rem;
   box-sizing: border-box;
   flex: 1;
 }
@@ -531,14 +531,14 @@ a {
   -webkit-backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 40px;
-  padding: 3rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
   text-align: center;
   width: 100%;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .textWrapper {
@@ -565,10 +565,40 @@ a {
 
 .errorImage {
   width: 100%;
-  max-width: 600px;
-  height: auto;
+  max-width: 500px;
+  max-height: 300px;
+  margin: 10px 0 0 0;
+  opacity: 0.8;
+  animation: floatAndPulse 4s ease-in-out infinite;
+}
+
+.notFoundErrorImage {
+  width: 100%;
+  max-width: 500px;
   margin: 0;
   opacity: 0.8;
+}
+
+@keyframes floatAndPulse {
+  0% {
+    transform: translateY(0px) scale(1);
+    filter: drop-shadow(0px 0px 0px rgba(147, 75, 142, 0));
+  }
+  50% {
+    transform: translateY(-15px) scale(1.02);
+    filter: drop-shadow(0px 20px 20px rgba(147, 75, 142, 0.4));
+  }
+  100% {
+    transform: translateY(0px) scale(1);
+    filter: drop-shadow(0px 0px 0px rgba(147, 75, 142, 0));
+  }
+}
+
+.errorButtonContainer {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .backHomeButton {
@@ -641,32 +671,51 @@ a {
   .authLoadingSpinner {
     min-height: 100dvh !important;
   }
+
   .dropdownDiv {
     width: 100%;
     padding: 0;
   }
+
   .homeContainer {
     padding: 0 1rem 1.25rem 1rem;
     flex-grow: 1;
   }
+
   .whiteFormSection {
     flex: 1;
   }
+
   .errorDiv {
     padding: 1rem 1rem 2rem 1rem;
   }
+
   .glassCard {
     padding: 2.5rem 1.5rem;
     border-radius: 30px;
     gap: 0.75rem;
   }
+
   .errorText {
     font-size: 1.1rem;
   }
+
   .errorImage {
-    margin: 0;
+    margin: 20px 0 0 0;
     max-height: 170px;
+    width: auto;
   }
+
+  .notFoundErrorImage {
+    margin: 0;
+    max-height: 258px;
+    width: auto;
+  }
+
+  .errorButtonContainer {
+    gap: 13px;
+  }
+
   .backHomeButton {
     padding: 12px 28px;
     font-size: 1.05rem;
@@ -677,29 +726,43 @@ a {
   .errorDiv {
     padding: 0.25rem 1rem 0.75rem 1rem;
   }
+
   .glassCard {
     padding: 1rem;
     border-radius: 24px;
     gap: 10px;
   }
+
   .errorTitle {
     font-size: clamp(60px, 16vw, 90px);
   }
+
   .textWrapper {
     flex-direction: column;
     gap: 8px;
     margin: 0;
   }
+
   .errorText {
     font-size: 1rem;
   }
+
   .errorImage {
-    margin: 0;
+    margin: 15px 0 0 0;
     max-height: 165px;
+    width: auto;
   }
+
   .notFoundErrorImage {
+    margin: 0;
     max-height: 238.28px;
+    width: auto;
   }
+
+  .errorButtonContainer {
+    gap: 10px;
+  }
+
   .backHomeButton {
     width: 100%;
     padding: 12px 20px;

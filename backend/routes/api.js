@@ -70,12 +70,10 @@ router.post("/register", async (req, res) => {
       .json({ message: "Kayıt işlemi başarıyla tamamlandı.", user });
   } catch (err) {
     console.error(err?.message);
-    res
-      .status(500)
-      .json({
-        message:
-          "Kayıt işlemi sırasında sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
-      });
+    res.status(500).json({
+      message:
+        "Kayıt işlemi sırasında sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+    });
   }
 });
 
@@ -132,12 +130,10 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.error(err?.message);
-    return res
-      .status(500)
-      .json({
-        message:
-          "Giriş yapılırken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
-      });
+    return res.status(500).json({
+      message:
+        "Giriş yapılırken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+    });
   }
 });
 
@@ -157,20 +153,16 @@ router.get("/me", verifyToken, async (req, res) => {
     );
 
     if (result.rows.length === 0)
-      return res
-        .status(404)
-        .json({
-          message: "Kullanıcı bilgileri bulunamadı veya oturum süresi dolmuş.",
-        });
+      return res.status(404).json({
+        message: "Kullanıcı bilgileri bulunamadı veya oturum süresi dolmuş.",
+      });
 
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err?.message);
-    res
-      .status(500)
-      .json({
-        message: "Kullanıcı bilgileri alınırken sistemsel bir hata oluştu.",
-      });
+    res.status(500).json({
+      message: "Kullanıcı bilgileri alınırken sistemsel bir hata oluştu.",
+    });
   }
 });
 
@@ -196,52 +188,77 @@ router.post("/contact", async (req, res) => {
       [name, surname, email, subject, message],
     );
 
+    const escapeHTML = (str) => {
+      if (!str) return "";
+      return String(str).replace(
+        /[&<>'"]/g,
+        (tag) =>
+          ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "'": "&#39;",
+            '"': "&quot;",
+          })[tag],
+      );
+    };
+
+    const safeName = escapeHTML(name);
+    const safeSurname = escapeHTML(surname);
+    const safeEmail = escapeHTML(email);
+    const safeSubject = escapeHTML(subject);
+    const safeMessage = escapeHTML(message).replace(/\n/g, "<br>");
+    const currentDate = new Date().toLocaleString("tr-TR");
+
     const { error } = await resend.emails.send({
       from: `İletişim Formu <${process.env.CONTACT_RECEIVER_EMAIL_SUPPORT}>`,
-      reply_to: email,
+      reply_to: safeEmail,
       to: process.env.CONTACT_RECEIVER_EMAIL_SUPPORT,
-      subject: `[İletişim] ${subject} - ${name} ${surname}`,
+      subject: `[İletişim] ${safeSubject} - ${safeName} ${safeSurname}`,
+      text: `Yeni İletişim Mesajı\n\nGönderen: ${safeName} ${safeSurname}\nE-posta: ${safeEmail}\nKonu: ${safeSubject}\nTarih: ${currentDate}\n\nMesaj:\n${message}`, // Spam filtreleri için HTML'in düz metin hali
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-          <h2 style="color: #333; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">Yeni İletişim Mesajı</h2>
-          
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
-            <tr>
-              <td style="padding: 10px 0; color: #666; width: 100px; border-bottom: 1px solid #f9f9f9;"><strong>Gönderen:</strong></td>
-              <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;">${name} ${surname}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px 0; color: #666; border-bottom: 1px solid #f9f9f9;"><strong>E-posta:</strong></td>
-              <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;"><a href="mailto:${email}" style="color: #934b8e; text-decoration: none;">${email}</a></td>
-            </tr>
-            <tr>
-              <td style="padding: 10px 0; color: #666; border-bottom: 1px solid #f9f9f9;"><strong>Konu:</strong></td>
-              <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;">${subject}</td>
-            </tr>
-          </table>
-          
-          <h3 style="color: #444; margin-bottom: 12px; font-size: 16px;">Mesaj Detayı:</h3>
-          <div style="background: #f8f9fa; padding: 18px; border-left: 4px solid #934b8e; color: #333; line-height: 1.6; border-radius: 0 4px 4px 0; font-size: 15px;">
-            ${message.replace(/\n/g, "<br>")}
-          </div>
-          
-          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0 15px 0;" />
-          <p style="color: #999; font-size: 12px; line-height: 1.5; text-align: center; margin: 0;">
-            Bu e-posta sistem tarafından otomatik olarak iletilmiştir.<br>
-            Doğrudan bu e-postayı yanıtlayarak göndericiye (<strong>${email}</strong>) cevap verebilirsiniz.
-          </p>
-        </div>
-      `,
+    <div style="font-family: Arial, sans-serif; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+      <h2 style="color: #333; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">Yeni İletişim Mesajı</h2>
+      
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+        <tr>
+          <td style="padding: 10px 0; color: #666; width: 100px; border-bottom: 1px solid #f9f9f9;"><strong>Gönderen:</strong></td>
+          <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;">${safeName} ${safeSurname}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: #666; border-bottom: 1px solid #f9f9f9;"><strong>E-posta:</strong></td>
+          <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;"><a href="mailto:${safeEmail}" style="color: #934b8e; text-decoration: none;">${safeEmail}</a></td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: #666; border-bottom: 1px solid #f9f9f9;"><strong>Konu:</strong></td>
+          <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;">${safeSubject}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: #666; border-bottom: 1px solid #f9f9f9;"><strong>Tarih:</strong></td>
+          <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;">${currentDate}</td>
+        </tr>
+      </table>
+      
+      <h3 style="color: #444; margin-bottom: 12px; font-size: 16px;">Mesaj Detayı:</h3>
+      <div style="background: #f8f9fa; padding: 18px; border-left: 4px solid #934b8e; color: #333; line-height: 1.6; border-radius: 0 4px 4px 0; font-size: 15px;">
+        ${safeMessage}
+      </div>
+      
+      <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0 15px 0;" />
+      <p style="color: #999; font-size: 12px; line-height: 1.5; text-align: center; margin: 0;">
+        Bu e-posta sistem tarafından otomatik olarak iletilmiştir.<br>
+        Doğrudan bu e-postayı yanıtlayarak göndericiye (<strong>${safeEmail}</strong>) cevap verebilirsiniz.
+      </p>
+    </div>
+  `,
     });
 
     if (error) {
       console.error("Resend Gönderim Hatası:", error);
-      return res
-        .status(500)
-        .json({
-          message:
-            "Mesajınız iletilirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
-        });
+      return res.status(500).json({
+        message:
+          "Mesajınız iletilirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+      });
     }
 
     return res.status(200).json({
@@ -251,12 +268,10 @@ router.post("/contact", async (req, res) => {
     });
   } catch (err) {
     console.error(err?.message);
-    return res
-      .status(500)
-      .json({
-        message:
-          "Mesajınız iletilirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
-      });
+    return res.status(500).json({
+      message:
+        "Mesajınız iletilirken sistemsel bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+    });
   }
 });
 
@@ -279,12 +294,9 @@ router.post("/email", async (req, res) => {
         email,
       ]);
       if (userCheck.rows.length === 0) {
-        return res
-          .status(404)
-          .json({
-            message:
-              "Sistemimizde bu e-posta adresine ait bir hesap bulunamadı.",
-          });
+        return res.status(404).json({
+          message: "Sistemimizde bu e-posta adresine ait bir hesap bulunamadı.",
+        });
       }
 
       await db.query(
@@ -292,32 +304,57 @@ router.post("/email", async (req, res) => {
         [otpCode, expireTime, email],
       );
 
+      const companyName = "YapayOto";
+
       const { error } = await resend.emails.send({
-        from: `Güvenlik Ekibi <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
+        from: `${companyName} Güvenlik Ekibi <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
         to: email,
-        subject: "Giriş ve Şifre Sıfırlama Doğrulama Kodu",
+        subject: `${otpCode} - ${companyName} Doğrulama Kodunuz`,
         html: `
-          <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 500px; margin: 0 auto;">
-            <h2 style="color: #333;">Hesap Doğrulama Talebi</h2>
-            <p style="color: #555; line-height: 1.5;">Hesabınıza giriş yapmak veya şifrenizi sıfırlamak için aşağıdaki 6 haneli doğrulama kodunu kullanabilirsiniz:</p>
-            <div style="text-align: center; margin: 20px 0;">
-              <h1 style="color: #934b8e; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
-            </div>
-            <p style="color: #555;">Bu kodun geçerlilik süresi <strong>5 dakikadır</strong>.</p>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-            <p style="color: #dc2626; font-size: 13px; line-height: 1.4; font-weight: 600; background-color: #fef2f2; padding: 10px; border-radius: 6px; border: 1px solid #fecaca; margin: 0;">Eğer bu işlemi siz başlatmadıysanız, hesabınızın güvenliği için lütfen bu e-postayı dikkate almayınız ve şifrenizi güncelleyiniz.</p>
-          </div>
-        `,
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; max-width: 500px; margin: 0 auto; background-color: #ffffff;">
+      
+      <div style="margin-bottom: 20px; text-align: center;">
+        <h2 style="color: #111827; margin: 0; font-size: 20px; font-weight: 700;">${companyName}</h2>
+      </div>
+
+      <h3 style="color: #374151; font-size: 16px; margin-top: 0;">Hesap Doğrulama Talebi</h3>
+      
+      <p style="color: #4b5563; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+        Hesabınıza giriş yapmak veya şifrenizi sıfırlamak için aşağıdaki 6 haneli doğrulama kodunu kullanabilirsiniz:
+      </p>
+      
+      <div style="text-align: center; background-color: #f9fafb; border: 1px dashed #d1d5db; padding: 15px; border-radius: 6px; margin: 20px 0;">
+        <span style="color: #934b8e; font-size: 32px; font-weight: bold; letter-spacing: 6px; display: inline-block;">${otpCode}</span>
+      </div>
+      
+      <p style="color: #6b7280; font-size: 13px; text-align: center; margin-bottom: 20px;">
+        Bu kodun geçerlilik süresi <strong>5 dakikadır</strong>.
+      </p>
+
+      <div style="background-color: #fffbebfb; border-left: 4px solid #f59e0b; padding: 12px; margin-bottom: 20px;">
+        <p style="color: #b45309; font-size: 12px; margin: 0; line-height: 1.4;">
+          <strong>Güvenlik Uyarısı:</strong> Bu kodu <u>hiç kimseyle paylaşmayın</u>. Güvenlik ekibimiz dahil hiç kimse sizden bu kodu talep etmez.
+        </p>
+      </div>
+
+      <p style="color: #dc2626; font-size: 12px; line-height: 1.4; background-color: #fef2f2; padding: 10px; border-radius: 6px; border: 1px solid #fecaca; margin: 0;">
+        Bu işlemi siz başlatmadıysanız, hesabınızın güvenliği için lütfen bu e-postayı dikkate almayın ve şifrenizi değiştirin.
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #f3f4f6; margin: 24px 0 16px 0;" />
+      <p style="color: #9ca3af; font-size: 11px; text-align: center; margin: 0;">
+        Bu e-posta ${companyName} güvenlik sistemi tarafından otomatik olarak gönderilmiştir. Lütfen yanıtlamayınız.
+      </p>
+    </div>
+  `,
       });
 
       if (error) {
         console.error("Resend OTP Hatası:", error);
-        return res
-          .status(500)
-          .json({
-            message:
-              "Doğrulama kodu e-posta adresinize gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
-          });
+        return res.status(500).json({
+          message:
+            "Doğrulama kodu e-posta adresinize gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+        });
       }
 
       return res.status(200).json({
@@ -330,12 +367,10 @@ router.post("/email", async (req, res) => {
         [email],
       );
       if (existingUser.rows.length > 0) {
-        return res
-          .status(409)
-          .json({
-            message:
-              "Bu e-posta adresi zaten kullanımda. Lütfen giriş yapmayı deneyiniz.",
-          });
+        return res.status(409).json({
+          message:
+            "Bu e-posta adresi zaten kullanımda. Lütfen giriş yapmayı deneyiniz.",
+        });
       }
 
       await db.query(
@@ -366,12 +401,10 @@ router.post("/email", async (req, res) => {
 
       if (error) {
         console.error("Resend OTP Hatası:", error);
-        return res
-          .status(500)
-          .json({
-            message:
-              "Doğrulama kodu e-posta adresinize gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
-          });
+        return res.status(500).json({
+          message:
+            "Doğrulama kodu e-posta adresinize gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.",
+        });
       }
 
       return res.status(200).json({
@@ -393,11 +426,9 @@ router.post("/otp", async (req, res) => {
   const { forLogin } = req.query;
 
   if (!email || !otp) {
-    return res
-      .status(400)
-      .json({
-        message: "E-posta adresi ve doğrulama kodu alanları zorunludur.",
-      });
+    return res.status(400).json({
+      message: "E-posta adresi ve doğrulama kodu alanları zorunludur.",
+    });
   }
 
   try {
@@ -407,12 +438,9 @@ router.post("/otp", async (req, res) => {
       const result = await db.query(queryText, [email]);
 
       if (result.rows.length === 0) {
-        return res
-          .status(404)
-          .json({
-            message:
-              "Sistemimizde bu e-posta adresine ait bir hesap bulunamadı.",
-          });
+        return res.status(404).json({
+          message: "Sistemimizde bu e-posta adresine ait bir hesap bulunamadı.",
+        });
       }
 
       const user = result.rows[0];
@@ -429,12 +457,10 @@ router.post("/otp", async (req, res) => {
       }
 
       if (!user.otp || String(user.otp) !== String(otp)) {
-        return res
-          .status(400)
-          .json({
-            message:
-              "Girdiğiniz doğrulama kodu hatalıdır. Lütfen kontrol edip tekrar deneyiniz.",
-          });
+        return res.status(400).json({
+          message:
+            "Girdiğiniz doğrulama kodu hatalıdır. Lütfen kontrol edip tekrar deneyiniz.",
+        });
       }
 
       await db.query(
@@ -452,12 +478,10 @@ router.post("/otp", async (req, res) => {
       const result = await db.query(queryText, [email]);
 
       if (result.rows.length === 0) {
-        return res
-          .status(404)
-          .json({
-            message:
-              "Bu e-posta adresi için aktif bir doğrulama kodu talebi bulunmamaktadır.",
-          });
+        return res.status(404).json({
+          message:
+            "Bu e-posta adresi için aktif bir doğrulama kodu talebi bulunmamaktadır.",
+        });
       }
 
       const otpRecord = result.rows[0];
@@ -471,12 +495,10 @@ router.post("/otp", async (req, res) => {
       }
 
       if (!otpRecord.otp || String(otpRecord.otp) !== String(otp)) {
-        return res
-          .status(400)
-          .json({
-            message:
-              "Girdiğiniz doğrulama kodu hatalıdır. Lütfen kontrol edip tekrar deneyiniz.",
-          });
+        return res.status(400).json({
+          message:
+            "Girdiğiniz doğrulama kodu hatalıdır. Lütfen kontrol edip tekrar deneyiniz.",
+        });
       }
 
       return res.status(200).json({
@@ -502,12 +524,10 @@ router.patch("/reset-password", async (req, res) => {
   }
 
   if (newPassword.length < 6) {
-    return res
-      .status(400)
-      .json({
-        message:
-          "Yeni şifreniz güvenlik amacıyla en az 6 karakterden oluşmalıdır.",
-      });
+    return res.status(400).json({
+      message:
+        "Yeni şifreniz güvenlik amacıyla en az 6 karakterden oluşmalıdır.",
+    });
   }
 
   try {
@@ -517,30 +537,24 @@ router.patch("/reset-password", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res
-        .status(404)
-        .json({
-          message: "Sistemimizde bu e-posta adresine ait bir hesap bulunamadı.",
-        });
+      return res.status(404).json({
+        message: "Sistemimizde bu e-posta adresine ait bir hesap bulunamadı.",
+      });
     }
 
     const user = result.rows[0];
 
     if (!user.otp || user.otp !== otp) {
-      return res
-        .status(400)
-        .json({
-          message: "Girdiğiniz doğrulama kodu hatalı veya geçersizdir.",
-        });
+      return res.status(400).json({
+        message: "Girdiğiniz doğrulama kodu hatalı veya geçersizdir.",
+      });
     }
 
     if (new Date() > new Date(user.otp_expires_at)) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Doğrulama kodunun geçerlilik süresi dolmuştur. Lütfen yeni bir kod talep ediniz.",
-        });
+      return res.status(400).json({
+        message:
+          "Doğrulama kodunun geçerlilik süresi dolmuştur. Lütfen yeni bir kod talep ediniz.",
+      });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

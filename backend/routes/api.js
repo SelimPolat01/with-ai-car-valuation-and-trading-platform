@@ -387,22 +387,50 @@ router.post("/email", async (req, res) => {
         [email, otpCode, expireTime],
       );
 
+      const companyName = "YapayOto";
+      const logoUrl = process.env.APP_LOGO_URL;
+
       const { error } = await resend.emails.send({
-        from: `Güvenlik Ekibi <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
+        from: `${companyName} Güvenlik Ekibi <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
         to: email,
-        subject: "Yeni Kayıt Doğrulama Kodu",
+        subject: `${otpCode} - ${companyName} Kayıt Doğrulama Kodunuz`,
         html: `
-          <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 500px; margin: 0 auto;">
-            <h2 style="color: #333;">Aramıza Hoş Geldiniz!</h2>
-            <p style="color: #555; line-height: 1.5;">Kayıt işleminizi tamamlamak ve e-posta adresinizi doğrulamak için aşağıdaki 6 haneli kodu kullanabilirsiniz:</p>
-            <div style="text-align: center; margin: 20px 0;">
-              <h1 style="color: #934b8e; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
-            </div>
-            <p style="color: #555;">Bu kodun geçerlilik süresi <strong>5 dakikadır</strong>.</p>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-            <p style="color: #dc2626; font-size: 13px; line-height: 1.4; font-weight: 600; background-color: #fef2f2; padding: 10px; border-radius: 6px; border: 1px solid #fecaca; margin: 0;">Bu talebi siz oluşturmadıysanız, herhangi bir işlem yapmanıza gerek yoktur.</p>
-          </div>
-        `,
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; max-width: 500px; margin: 0 auto; background-color: #ffffff;">
+      
+      <div style="text-align: center; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 1px solid #f3f4f6;">
+        <img src="${logoUrl}" alt="${companyName}" style="max-height: 45px; width: auto; display: inline-block; border: 0;" />
+      </div>
+
+      <h3 style="color: #374151; font-size: 16px; margin-top: 0;">Aramıza Hoş Geldiniz!</h3>
+      
+      <p style="color: #4b5563; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+        Kayıt işleminizi tamamlamak ve e-posta adresinizi doğrulamak için aşağıdaki 6 haneli kodu kullanabilirsiniz:
+      </p>
+      
+      <div style="text-align: center; background-color: #f9fafb; border: 1px dashed #d1d5db; padding: 15px; border-radius: 6px; margin: 20px 0;">
+        <span style="color: #934b8e; font-size: 32px; font-weight: bold; letter-spacing: 6px; display: inline-block;">${otpCode}</span>
+      </div>
+      
+      <p style="color: #6b7280; font-size: 13px; text-align: center; margin-bottom: 20px;">
+        Bu kodun geçerlilik süresi <strong>5 dakikadır</strong>.
+      </p>
+
+      <div style="background-color: #fffbebfb; border-left: 4px solid #f59e0b; padding: 12px; margin-bottom: 20px;">
+        <p style="color: #b45309; font-size: 12px; margin: 0; line-height: 1.4;">
+          <strong>Güvenlik Uyarısı:</strong> Bu kodu <u>hiç kimseyle paylaşmayın</u>. Güvenlik ekibimiz dahil hiç kimse sizden bu kodu talep etmez.
+        </p>
+      </div>
+
+      <p style="color: #dc2626; font-size: 12px; line-height: 1.4; background-color: #fef2f2; padding: 10px; border-radius: 6px; border: 1px solid #fecaca; margin: 0;">
+        Bu talebi siz oluşturmadıysanız, hesabınızın güvenliği için lütfen bu e-postayı dikkate almayın.
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #f3f4f6; margin: 24px 0 16px 0;" />
+      <p style="color: #9ca3af; font-size: 11px; text-align: center; margin: 0;">
+        Bu e-posta ${companyName} güvenlik sistemi tarafından otomatik olarak gönderilmiştir. Lütfen yanıtlamayınız.
+      </p>
+    </div>
+  `,
       });
 
       if (error) {

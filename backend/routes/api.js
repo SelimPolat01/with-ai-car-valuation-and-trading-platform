@@ -209,7 +209,9 @@ router.post("/contact", async (req, res) => {
     const safeSubject = escapeHTML(subject);
     const safeMessage = escapeHTML(message).replace(/\n/g, "<br>");
     const currentDate = new Date().toLocaleString("tr-TR");
-    const logoUrl = process.env.APP_LOGO_URL;
+    const logoUrl = process.env.APP_LOGO_URL
+      ? `${process.env.APP_LOGO_URL}?v=${Date.now()}`
+      : "https://yapayoto.com.tr/images/icon.png";
 
     const { error } = await resend.emails.send({
       from: `İletişim Formu <${process.env.CONTACT_RECEIVER_EMAIL_SUPPORT}>`,
@@ -310,7 +312,9 @@ router.post("/email", async (req, res) => {
       );
 
       const companyName = "YapayOto";
-      const logoUrl = process.env.APP_LOGO_URL;
+      const logoUrl = process.env.APP_LOGO_URL
+        ? `${process.env.APP_LOGO_URL}?v=${Date.now()}`
+        : "https://yapayoto.com.tr/images/icon.png";
 
       const { error } = await resend.emails.send({
         from: `${companyName} Güvenlik Ekibi <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
@@ -388,7 +392,9 @@ router.post("/email", async (req, res) => {
       );
 
       const companyName = "YapayOto";
-      const logoUrl = process.env.APP_LOGO_URL;
+      const logoUrl = process.env.APP_LOGO_URL
+        ? `${process.env.APP_LOGO_URL}?v=${Date.now()}`
+        : "https://yapayoto.com.tr/images/icon.png";
 
       const { error } = await resend.emails.send({
         from: `${companyName} Güvenlik Ekibi <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,

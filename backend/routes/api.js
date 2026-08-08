@@ -187,7 +187,6 @@ router.post("/contact", async (req, res) => {
       "INSERT INTO contact_messages (name, surname, email, subject, message) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [name, surname, email, subject, message],
     );
-
     const escapeHTML = (str) => {
       if (!str) return "";
       return String(str).replace(
@@ -220,47 +219,66 @@ router.post("/contact", async (req, res) => {
       subject: `[İletişim] ${safeSubject} - ${safeName} ${safeSurname}`,
       text: `Yeni İletişim Mesajı\n\nGönderen: ${safeName} ${safeSurname}\nE-posta: ${safeEmail}\nKonu: ${safeSubject}\nTarih: ${currentDate}\n\nMesaj:\n${message}`,
       html: `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-      
-      <div style="text-align: center; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0; margin-bottom: 20px;">
-        <img src="${logoUrl}" alt="YapayOto Logo" style="max-height: 40px; width: auto; display: inline-block; vertical-align: middle; border: 0;" />
-        <span style="display: inline-block; vertical-align: middle; margin-left: 10px; font-size: 22px; font-weight: 700; color: #111827; letter-spacing: -0.5px;">YapayOto</span>
-      </div>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        blockquote .system-footer,
+        .gmail_quote .system-footer,
+        .WordSection1 .system-footer,
+        div[dir="ltr"] blockquote .system-footer,
+        #mail-editor-reference-message .system-footer {
+          display: none !important;
+        }
+      </style>
+    </head>
+    <body>
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+        
+        <div style="text-align: center; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0; margin-bottom: 20px;">
+          <img src="${logoUrl}" alt="YapayOto Logo" style="max-height: 40px; width: auto; display: inline-block; vertical-align: middle; border: 0;" />
+          <span style="display: inline-block; vertical-align: middle; margin-left: 10px; font-size: 22px; font-weight: 700; color: #111827; letter-spacing: -0.5px;">YapayOto</span>
+        </div>
 
-      <h2 style="color: #333333; margin-top: 0; font-size: 18px; margin-bottom: 20px;">Yeni İletişim Mesajı</h2>
-      
-      <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
-        <tr>
-          <td style="padding: 10px 0; color: #666666; width: 100px; border-bottom: 1px solid #f9f9f9;"><strong>Gönderen:</strong></td>
-          <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;">${safeName} ${safeSurname}</td>
-        </tr>
-        <tr>
-          <td style="padding: 10px 0; color: #666666; border-bottom: 1px solid #f9f9f9;"><strong>E-posta:</strong></td>
-          <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;"><a href="mailto:${safeEmail}" style="color: #934b8e; text-decoration: none;">${safeEmail}</a></td>
-        </tr>
-        <tr>
-          <td style="padding: 10px 0; color: #666666; border-bottom: 1px solid #f9f9f9;"><strong>Konu:</strong></td>
-          <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;">${safeSubject}</td>
-        </tr>
-        <tr>
-          <td style="padding: 10px 0; color: #666666; border-bottom: 1px solid #f9f9f9;"><strong>Tarih:</strong></td>
-          <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;">${currentDate}</td>
-        </tr>
-      </table>
-      
-      <h3 style="color: #444444; margin-bottom: 12px; font-size: 15px;">Mesaj Detayı:</h3>
-      <div style="background: #f8f9fa; padding: 18px; border-left: 4px solid #934b8e; color: #333333; line-height: 1.6; border-radius: 0 4px 4px 0; font-size: 14px;">
-        ${safeMessage}
+        <h2 style="color: #333333; margin-top: 0; font-size: 18px; margin-bottom: 20px;">Yeni İletişim Mesajı</h2>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+          <tr>
+            <td style="padding: 10px 0; color: #666666; width: 100px; border-bottom: 1px solid #f9f9f9;"><strong>Gönderen:</strong></td>
+            <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;">${safeName} ${safeSurname}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #666666; border-bottom: 1px solid #f9f9f9;"><strong>E-posta:</strong></td>
+            <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;"><a href="mailto:${safeEmail}" style="color: #934b8e; text-decoration: none;">${safeEmail}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #666666; border-bottom: 1px solid #f9f9f9;"><strong>Konu:</strong></td>
+            <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;">${safeSubject}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; color: #666666; border-bottom: 1px solid #f9f9f9;"><strong>Tarih:</strong></td>
+            <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;">${currentDate}</td>
+          </tr>
+        </table>
+        
+        <h3 style="color: #444444; margin-bottom: 12px; font-size: 15px;">Mesaj Detayı:</h3>
+        <div style="background: #f8f9fa; padding: 18px; border-left: 4px solid #934b8e; color: #333333; line-height: 1.6; border-radius: 0 4px 4px 0; font-size: 14px;">
+          ${safeMessage}
+        </div>
+        
+        <div class="system-footer">
+          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0 15px 0;" />
+          <p style="color: #999999; font-size: 12px; line-height: 1.5; text-align: center; margin: 0;">
+            Bu e-posta sistem tarafından otomatik olarak iletilmiştir.<br>
+            Doğrudan bu e-postayı yanıtlayarak göndericiye (<strong>${safeEmail}</strong>) cevap verebilirsiniz.
+          </p>
+        </div>
       </div>
-      
-      <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0 15px 0;" />
-      <p style="color: #999999; font-size: 12px; line-height: 1.5; text-align: center; margin: 0;">
-        Bu e-posta sistem tarafından otomatik olarak iletilmiştir.<br>
-        Doğrudan bu e-postayı yanıtlayarak göndericiye (<strong>${safeEmail}</strong>) cevap verebilirsiniz.
-      </p>
-    </div>
+    </body>
+    </html>
   `,
     });
+
     if (error) {
       console.error("Resend Gönderim Hatası:", error);
       return res.status(500).json({

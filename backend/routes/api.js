@@ -215,7 +215,7 @@ router.post("/contact", async (req, res) => {
 
     const { error } = await resend.emails.send({
       from: `İletişim Formu <${process.env.CONTACT_RECEIVER_EMAIL_SUPPORT}>`,
-      reply_to: safeEmail,
+      replyTo: email.trim(),
       to: process.env.CONTACT_RECEIVER_EMAIL_SUPPORT,
       subject: `[İletişim] ${safeSubject} - ${safeName} ${safeSurname}`,
       text: `Yeni İletişim Mesajı\n\nGönderen: ${safeName} ${safeSurname}\nE-posta: ${safeEmail}\nKonu: ${safeSubject}\nTarih: ${currentDate}\n\nMesaj:\n${message}`,
@@ -261,7 +261,6 @@ router.post("/contact", async (req, res) => {
     </div>
   `,
     });
-
     if (error) {
       console.error("Resend Gönderim Hatası:", error);
       return res.status(500).json({

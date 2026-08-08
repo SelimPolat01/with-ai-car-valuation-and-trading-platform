@@ -209,43 +209,48 @@ router.post("/contact", async (req, res) => {
     const safeSubject = escapeHTML(subject);
     const safeMessage = escapeHTML(message).replace(/\n/g, "<br>");
     const currentDate = new Date().toLocaleString("tr-TR");
+    const logoUrl = process.env.APP_LOGO_URL;
 
     const { error } = await resend.emails.send({
       from: `İletişim Formu <${process.env.CONTACT_RECEIVER_EMAIL_SUPPORT}>`,
       reply_to: safeEmail,
       to: process.env.CONTACT_RECEIVER_EMAIL_SUPPORT,
       subject: `[İletişim] ${safeSubject} - ${safeName} ${safeSurname}`,
-      text: `Yeni İletişim Mesajı\n\nGönderen: ${safeName} ${safeSurname}\nE-posta: ${safeEmail}\nKonu: ${safeSubject}\nTarih: ${currentDate}\n\nMesaj:\n${message}`, // Spam filtreleri için HTML'in düz metin hali
+      text: `Yeni İletişim Mesajı\n\nGönderen: ${safeName} ${safeSurname}\nE-posta: ${safeEmail}\nKonu: ${safeSubject}\nTarih: ${currentDate}\n\nMesaj:\n${message}`,
       html: `
-    <div style="font-family: Arial, sans-serif; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-      <h2 style="color: #333; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">Yeni İletişim Mesajı</h2>
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+      <div style="text-align: center; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0; margin-bottom: 20px;">
+        <img src="${logoUrl}" alt="YapayOto" style="max-height: 45px; width: auto; display: inline-block; border: 0;" />
+      </div>
+
+      <h2 style="color: #333333; margin-top: 0; font-size: 18px; margin-bottom: 20px;">Yeni İletişim Mesajı</h2>
       
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
         <tr>
-          <td style="padding: 10px 0; color: #666; width: 100px; border-bottom: 1px solid #f9f9f9;"><strong>Gönderen:</strong></td>
-          <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;">${safeName} ${safeSurname}</td>
+          <td style="padding: 10px 0; color: #666666; width: 100px; border-bottom: 1px solid #f9f9f9;"><strong>Gönderen:</strong></td>
+          <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;">${safeName} ${safeSurname}</td>
         </tr>
         <tr>
-          <td style="padding: 10px 0; color: #666; border-bottom: 1px solid #f9f9f9;"><strong>E-posta:</strong></td>
-          <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;"><a href="mailto:${safeEmail}" style="color: #934b8e; text-decoration: none;">${safeEmail}</a></td>
+          <td style="padding: 10px 0; color: #666666; border-bottom: 1px solid #f9f9f9;"><strong>E-posta:</strong></td>
+          <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;"><a href="mailto:${safeEmail}" style="color: #934b8e; text-decoration: none;">${safeEmail}</a></td>
         </tr>
         <tr>
-          <td style="padding: 10px 0; color: #666; border-bottom: 1px solid #f9f9f9;"><strong>Konu:</strong></td>
-          <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;">${safeSubject}</td>
+          <td style="padding: 10px 0; color: #666666; border-bottom: 1px solid #f9f9f9;"><strong>Konu:</strong></td>
+          <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;">${safeSubject}</td>
         </tr>
         <tr>
-          <td style="padding: 10px 0; color: #666; border-bottom: 1px solid #f9f9f9;"><strong>Tarih:</strong></td>
-          <td style="padding: 10px 0; color: #333; border-bottom: 1px solid #f9f9f9;">${currentDate}</td>
+          <td style="padding: 10px 0; color: #666666; border-bottom: 1px solid #f9f9f9;"><strong>Tarih:</strong></td>
+          <td style="padding: 10px 0; color: #333333; border-bottom: 1px solid #f9f9f9;">${currentDate}</td>
         </tr>
       </table>
       
-      <h3 style="color: #444; margin-bottom: 12px; font-size: 16px;">Mesaj Detayı:</h3>
-      <div style="background: #f8f9fa; padding: 18px; border-left: 4px solid #934b8e; color: #333; line-height: 1.6; border-radius: 0 4px 4px 0; font-size: 15px;">
+      <h3 style="color: #444444; margin-bottom: 12px; font-size: 15px;">Mesaj Detayı:</h3>
+      <div style="background: #f8f9fa; padding: 18px; border-left: 4px solid #934b8e; color: #333333; line-height: 1.6; border-radius: 0 4px 4px 0; font-size: 14px;">
         ${safeMessage}
       </div>
       
       <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0 15px 0;" />
-      <p style="color: #999; font-size: 12px; line-height: 1.5; text-align: center; margin: 0;">
+      <p style="color: #999999; font-size: 12px; line-height: 1.5; text-align: center; margin: 0;">
         Bu e-posta sistem tarafından otomatik olarak iletilmiştir.<br>
         Doğrudan bu e-postayı yanıtlayarak göndericiye (<strong>${safeEmail}</strong>) cevap verebilirsiniz.
       </p>
@@ -305,6 +310,7 @@ router.post("/email", async (req, res) => {
       );
 
       const companyName = "YapayOto";
+      const logoUrl = process.env.APP_LOGO_URL;
 
       const { error } = await resend.emails.send({
         from: `${companyName} Güvenlik Ekibi <${process.env.CONTACT_RECEIVER_EMAIL_AUTH}>`,
@@ -313,8 +319,8 @@ router.post("/email", async (req, res) => {
         html: `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; max-width: 500px; margin: 0 auto; background-color: #ffffff;">
       
-      <div style="margin-bottom: 20px; text-align: center;">
-        <h2 style="color: #111827; margin: 0; font-size: 20px; font-weight: 700;">${companyName}</h2>
+      <div style="text-align: center; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 1px solid #f3f4f6;">
+        <img src="${logoUrl}" alt="${companyName}" style="max-height: 45px; width: auto; display: inline-block; border: 0;" />
       </div>
 
       <h3 style="color: #374151; font-size: 16px; margin-top: 0;">Hesap Doğrulama Talebi</h3>

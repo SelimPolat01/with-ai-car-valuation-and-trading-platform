@@ -257,7 +257,6 @@ router.post("/contact", async (req, res) => {
         <div style="background: #f8f9fa; padding: 18px; border-left: 4px solid #934b8e; color: #333333; line-height: 1.6; border-radius: 0 4px 4px 0; font-size: 14px;">
           ${safeMessage}
         </div>
-        
       </div>
     </body>
     </html>

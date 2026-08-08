@@ -221,8 +221,10 @@ router.post("/contact", async (req, res) => {
       text: `Yeni İletişim Mesajı\n\nGönderen: ${safeName} ${safeSurname}\nE-posta: ${safeEmail}\nKonu: ${safeSubject}\nTarih: ${currentDate}\n\nMesaj:\n${message}`,
       html: `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+      
       <div style="text-align: center; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0; margin-bottom: 20px;">
-        <img src="${logoUrl}" alt="YapayOto" style="max-height: 45px; width: auto; display: inline-block; border: 0;" />
+        <img src="${logoUrl}" alt="YapayOto Logo" style="max-height: 40px; width: auto; display: inline-block; vertical-align: middle; border: 0;" />
+        <span style="display: inline-block; vertical-align: middle; margin-left: 10px; font-size: 22px; font-weight: 700; color: #111827; letter-spacing: -0.5px;">YapayOto</span>
       </div>
 
       <h2 style="color: #333333; margin-top: 0; font-size: 18px; margin-bottom: 20px;">Yeni İletişim Mesajı</h2>
@@ -324,7 +326,8 @@ router.post("/email", async (req, res) => {
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; max-width: 500px; margin: 0 auto; background-color: #ffffff;">
       
       <div style="text-align: center; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 1px solid #f3f4f6;">
-        <img src="${logoUrl}" alt="${companyName}" style="max-height: 45px; width: auto; display: inline-block; border: 0;" />
+        <img src="${logoUrl}" alt="${companyName} Logo" style="max-height: 40px; width: auto; display: inline-block; vertical-align: middle; border: 0;" />
+        <span style="display: inline-block; vertical-align: middle; margin-left: 10px; font-size: 22px; font-weight: 700; color: #111827; letter-spacing: -0.5px;">${companyName}</span>
       </div>
 
       <h3 style="color: #374151; font-size: 16px; margin-top: 0;">Hesap Doğrulama Talebi</h3>
@@ -404,7 +407,8 @@ router.post("/email", async (req, res) => {
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; max-width: 500px; margin: 0 auto; background-color: #ffffff;">
       
       <div style="text-align: center; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 1px solid #f3f4f6;">
-        <img src="${logoUrl}" alt="${companyName}" style="max-height: 45px; width: auto; display: inline-block; border: 0;" />
+        <img src="${logoUrl}" alt="${companyName} Logo" style="max-height: 40px; width: auto; display: inline-block; vertical-align: middle; border: 0;" />
+        <span style="display: inline-block; vertical-align: middle; margin-left: 10px; font-size: 22px; font-weight: 700; color: #111827; letter-spacing: -0.5px;">${companyName}</span>
       </div>
 
       <h3 style="color: #374151; font-size: 16px; margin-top: 0;">Aramıza Hoş Geldiniz!</h3>

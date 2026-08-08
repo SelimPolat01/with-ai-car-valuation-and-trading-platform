@@ -222,15 +222,7 @@ router.post("/contact", async (req, res) => {
     <!DOCTYPE html>
     <html>
     <head>
-      <style>
-        blockquote .system-footer,
-        .gmail_quote .system-footer,
-        .WordSection1 .system-footer,
-        div[dir="ltr"] blockquote .system-footer,
-        #mail-editor-reference-message .system-footer {
-          display: none !important;
-        }
-      </style>
+      <meta charset="utf-8">
     </head>
     <body>
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
@@ -266,13 +258,6 @@ router.post("/contact", async (req, res) => {
           ${safeMessage}
         </div>
         
-        <div class="system-footer">
-          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0 15px 0;" />
-          <p style="color: #999999; font-size: 12px; line-height: 1.5; text-align: center; margin: 0;">
-            Bu e-posta sistem tarafından otomatik olarak iletilmiştir.<br>
-            Doğrudan bu e-postayı yanıtlayarak göndericiye (<strong>${safeEmail}</strong>) cevap verebilirsiniz.
-          </p>
-        </div>
       </div>
     </body>
     </html>

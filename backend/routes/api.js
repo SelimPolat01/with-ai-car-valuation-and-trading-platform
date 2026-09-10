@@ -12,18 +12,20 @@ const resend = new Resend(process.env.SMTP_PASS);
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "none",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 };
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, name, surname, tel_number, address, iban } =
+    const { email, password, name, surname, tel_number, address, iban, otp } =
       req.body;
 
-    if (!email || !password) {
+    if (!email || !password || !otp) {
       return res
         .status(400)
-        .json({ message: "E-posta ve şifre alanları zorunludur." });
+        .json({
+          message: "E-posta, şifre ve doğrulama kodu alanları zorunludur.",
+        });
     }
 
     const existingUser = await db.query(
@@ -35,6 +37,34 @@ router.post("/register", async (req, res) => {
       return res.status(409).json({
         message:
           "Bu e-posta adresi ile sistemimizde kayıtlı bir hesap bulunmaktadır.",
+      });
+    }
+
+    const otpCheck = await db.query(
+      "SELECT otp, expires_at FROM otp_codes WHERE email = $1",
+      [email],
+    );
+
+    if (otpCheck.rows.length === 0) {
+      return res.status(404).json({
+        message:
+          "Bu e-posta adresi için onaylanmış bir doğrulama kodu bulunamadı.",
+      });
+    }
+
+    const otpRecord = otpCheck.rows[0];
+
+    if (new Date() > new Date(otpRecord.expires_at)) {
+      await db.query("DELETE FROM otp_codes WHERE email = $1", [email]);
+      return res.status(400).json({
+        message:
+          "Doğrulama kodunun geçerlilik süresi dolmuştur. Lütfen yeni bir kod talep ediniz.",
+      });
+    }
+
+    if (String(otpRecord.otp) !== String(otp)) {
+      return res.status(400).json({
+        message: "Girdiğiniz doğrulama kodu hatalıdır.",
       });
     }
 
